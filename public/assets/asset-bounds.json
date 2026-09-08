@@ -1,0 +1,140 @@
+{
+  "mack": {
+    "sourceAlpha": [
+      0,
+      254
+    ],
+    "parts": {
+      "head": {
+        "width": 250,
+        "height": 331,
+        "url": "/assets/mack/head.png"
+      },
+      "happy": {
+        "width": 252,
+        "height": 331,
+        "url": "/assets/mack/happy.png"
+      },
+      "angry": {
+        "width": 254,
+        "height": 330,
+        "url": "/assets/mack/angry.png"
+      },
+      "body": {
+        "width": 318,
+        "height": 324,
+        "url": "/assets/mack/body.png"
+      },
+      "upperBack": {
+        "width": 180,
+        "height": 273,
+        "url": "/assets/mack/upperBack.png"
+      },
+      "lowerBack": {
+        "width": 211,
+        "height": 294,
+        "url": "/assets/mack/lowerBack.png"
+      },
+      "upperFront": {
+        "width": 171,
+        "height": 276,
+        "url": "/assets/mack/upperFront.png"
+      },
+      "lowerFront": {
+        "width": 143,
+        "height": 300,
+        "url": "/assets/mack/lowerFront.png"
+      },
+      "thighBack": {
+        "width": 218,
+        "height": 321,
+        "url": "/assets/mack/thighBack.png"
+      },
+      "shinBack": {
+        "width": 221,
+        "height": 351,
+        "url": "/assets/mack/shinBack.png"
+      },
+      "thighFront": {
+        "width": 216,
+        "height": 327,
+        "url": "/assets/mack/thighFront.png"
+      },
+      "shinFront": {
+        "width": 223,
+        "height": 351,
+        "url": "/assets/mack/shinFront.png"
+      }
+    },
+    "family": "human"
+  },
+  "marmalade": {
+    "sourceAlpha": [
+      0,
+      254
+    ],
+    "parts": {
+      "head": {
+        "width": 360,
+        "height": 328,
+        "url": "/assets/marmalade/head.png"
+      },
+      "happy": {
+        "width": 358,
+        "height": 330,
+        "url": "/assets/marmalade/happy.png"
+      },
+      "angry": {
+        "width": 357,
+        "height": 329,
+        "url": "/assets/marmalade/angry.png"
+      },
+      "body": {
+        "width": 373,
+        "height": 284,
+        "url": "/assets/marmalade/body.png"
+      },
+      "upperBack": {
+        "width": 189,
+        "height": 304,
+        "url": "/assets/marmalade/upperBack.png"
+      },
+      "lowerBack": {
+        "width": 166,
+        "height": 293,
+        "url": "/assets/marmalade/lowerBack.png"
+      },
+      "upperFront": {
+        "width": 173,
+        "height": 298,
+        "url": "/assets/marmalade/upperFront.png"
+      },
+      "lowerFront": {
+        "width": 182,
+        "height": 279,
+        "url": "/assets/marmalade/lowerFront.png"
+      },
+      "hindBack": {
+        "width": 269,
+        "height": 347,
+        "url": "/assets/marmalade/hindBack.png"
+      },
+      "hindFront": {
+        "width": 221,
+        "height": 348,
+        "url": "/assets/marmalade/hindFront.png"
+      },
+      "tail": {
+        "width": 287,
+        "height": 353,
+        "url": "/assets/marmalade/tail.png"
+      },
+      "focused": {
+        "width": 360,
+        "height": 336,
+        "url": "/assets/marmalade/focused.png"
+      }
+    },
+    "family": "cat"
+  }
+}

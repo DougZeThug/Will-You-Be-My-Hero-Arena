@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "cardId": "card-marmalade",
+  "cardImage": "/assets/marmalade/card.png",
+  "family": "cat",
+  "sheet": "/assets/marmalade/sheet.png",
+  "parts": {
+    "head": {
+      "url": "/assets/marmalade/head.png",
+      "width": 360,
+      "height": 328
+    },
+    "happy": {
+      "url": "/assets/marmalade/happy.png",
+      "width": 358,
+      "height": 330
+    },
+    "angry": {
+      "url": "/assets/marmalade/angry.png",
+      "width": 357,
+      "height": 329
+    },
+    "body": {
+      "url": "/assets/marmalade/body.png",
+      "width": 373,
+      "height": 284
+    },
+    "upperBack": {
+      "url": "/assets/marmalade/upperBack.png",
+      "width": 189,
+      "height": 304
+    },
+    "lowerBack": {
+      "url": "/assets/marmalade/lowerBack.png",
+      "width": 166,
+      "height": 293
+    },
+    "upperFront": {
+      "url": "/assets/marmalade/upperFront.png",
+      "width": 173,
+      "height": 298
+    },
+    "lowerFront": {
+      "url": "/assets/marmalade/lowerFront.png",
+      "width": 182,
+      "height": 279
+    },
+    "hindBack": {
+      "url": "/assets/marmalade/hindBack.png",
+      "width": 269,
+      "height": 347
+    },
+    "hindFront": {
+      "url": "/assets/marmalade/hindFront.png",
+      "width": 221,
+      "height": 348
+    },
+    "tail": {
+      "url": "/assets/marmalade/tail.png",
+      "width": 287,
+      "height": 353
+    },
+    "focused": {
+      "url": "/assets/marmalade/focused.png",
+      "width": 360,
+      "height": 336
+    }
+  },
+  "scale": 1,
+  "groundAnchor": [
+    0,
+    0
+  ],
+  "facing": "right-three-quarter",
+  "clips": [
+    "summon",
+    "idle",
+    "walk",
+    "prepare",
+    "cornhole",
+    "football",
+    "pong",
+    "basketball",
+    "follow",
+    "await",
+    "success",
+    "miss",
+    "special",
+    "disappointment",
+    "victory"
+  ],
+  "attachments": {
+    "release": [
+      83,
+      -36
+    ]
+  },
+  "supportedEvents": [
+    "cornhole",
+    "football",
+    "pong",
+    "basketball"
+  ],
+  "props": [
+    "bag",
+    "football",
+    "pong-ball",
+    "basketball"
+  ],
+  "effectPalette": [
+    "#d9fb76",
+    "#b495ff",
+    "#ff977f"
+  ],
+  "signatureMove": "The velvet paw",
+  "audioCues": {
+    "summon": "portal",
+    "release": "whoosh",
+    "success": "chime",
+    "miss": "tap",
+    "victory": "fanfare"
+  }
+}

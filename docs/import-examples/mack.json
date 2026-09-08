@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "cardId": "card-mack",
+  "cardImage": "/assets/mack/card.png",
+  "family": "human",
+  "sheet": "/assets/mack/sheet.png",
+  "parts": {
+    "head": {
+      "url": "/assets/mack/head.png",
+      "width": 250,
+      "height": 331
+    },
+    "happy": {
+      "url": "/assets/mack/happy.png",
+      "width": 252,
+      "height": 331
+    },
+    "angry": {
+      "url": "/assets/mack/angry.png",
+      "width": 254,
+      "height": 330
+    },
+    "body": {
+      "url": "/assets/mack/body.png",
+      "width": 318,
+      "height": 324
+    },
+    "upperBack": {
+      "url": "/assets/mack/upperBack.png",
+      "width": 180,
+      "height": 273
+    },
+    "lowerBack": {
+      "url": "/assets/mack/lowerBack.png",
+      "width": 211,
+      "height": 294
+    },
+    "upperFront": {
+      "url": "/assets/mack/upperFront.png",
+      "width": 171,
+      "height": 276
+    },
+    "lowerFront": {
+      "url": "/assets/mack/lowerFront.png",
+      "width": 143,
+      "height": 300
+    },
+    "thighBack": {
+      "url": "/assets/mack/thighBack.png",
+      "width": 218,
+      "height": 321
+    },
+    "shinBack": {
+      "url": "/assets/mack/shinBack.png",
+      "width": 221,
+      "height": 351
+    },
+    "thighFront": {
+      "url": "/assets/mack/thighFront.png",
+      "width": 216,
+      "height": 327
+    },
+    "shinFront": {
+      "url": "/assets/mack/shinFront.png",
+      "width": 223,
+      "height": 351
+    }
+  },
+  "scale": 1,
+  "groundAnchor": [
+    0,
+    0
+  ],
+  "facing": "right-three-quarter",
+  "clips": [
+    "summon",
+    "idle",
+    "walk",
+    "prepare",
+    "cornhole",
+    "football",
+    "pong",
+    "basketball",
+    "follow",
+    "await",
+    "success",
+    "miss",
+    "special",
+    "disappointment",
+    "victory"
+  ],
+  "attachments": {
+    "release": [
+      65,
+      -83
+    ]
+  },
+  "supportedEvents": [
+    "cornhole",
+    "football",
+    "pong",
+    "basketball"
+  ],
+  "props": [
+    "bag",
+    "football",
+    "pong-ball",
+    "basketball"
+  ],
+  "effectPalette": [
+    "#d9fb76",
+    "#b495ff",
+    "#ff977f"
+  ],
+  "signatureMove": "The shirt straightener",
+  "audioCues": {
+    "summon": "portal",
+    "release": "whoosh",
+    "success": "chime",
+    "miss": "tap",
+    "victory": "fanfare"
+  }
+}
