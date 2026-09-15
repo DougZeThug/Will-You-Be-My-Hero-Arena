@@ -1,0 +1,82 @@
+{
+  "dan": {
+    "source": "lab/loongbones/assets/dan-editor-r2/dan-arena-restored_ske.json",
+    "sourceSHA256": "49a52acf424412ba6a10bf1429982d7d2782687f1a8683fc438db87db2bac489",
+    "assetsSha256": {
+      "dan_ske.json": "de7e65d87b3738f8c3430aef27f6cf53a0e178033b7f1a55354d3b5f22a3500b",
+      "dan_tex.json": "b6f8527ed6f17e6499ca0025695c66ce08da10f5f7f58340b6ae26753ca81f06",
+      "dan_tex.png": "2940cbc720af00265fe0240164f3115579f23a72688cff1022ee0c04c513a745"
+    },
+    "motionRevision": 2,
+    "clips": {
+      "cornhole_throw_flat_R_dan": {
+        "duration": 2.216666666666667,
+        "release": 1.0166666666666666
+      },
+      "cornhole_throw_slide_R_dan": {
+        "duration": 2.216666666666667,
+        "release": 1.0166666666666666
+      },
+      "cornhole_throw_airmail_R_dan": {
+        "duration": 2.3333333333333335,
+        "release": 1.1333333333333333
+      },
+      "cornhole_throw_roll_R_dan": {
+        "duration": 2.216666666666667,
+        "release": 1.0166666666666666
+      },
+      "cornhole_throw_blocker_R_dan": {
+        "duration": 2.2666666666666666,
+        "release": 1.0666666666666667
+      }
+    },
+    "derivedMotion": true,
+    "editorRoundTripVerified": false,
+    "productionInstalled": false,
+    "changes": [
+      "Anatomical right hand is image L; socket association corrected without mirroring art",
+      "Five sparse curved full-body throw tracks with bagRelease inside accelerating swing",
+      "Material-aware near-arm overlap; local clothing/hand weight boundaries and fabric underlap; original PNG bytes retained"
+    ]
+  },
+  "doug": {
+    "source": "lab/loongbones/assets/doug-weighted-v1/doug_ske.json",
+    "sourceSHA256": "04fa653c83f3de4addd626b4c027ec28120a47ba68ea1423c099708349a6cf39",
+    "assetsSha256": {
+      "doug_ske.json": "8b4cc9907bb41b7ee46a1efdeb1d7f20b2011c8082452e318a83ddfa4cf947f1",
+      "doug_tex.json": "482fbd613363e2c022fdbc54cd44b35a082efa4e347c19f0a42fa04d18acd93f",
+      "doug_tex.png": "725048791432765dd85c413a71bf30dd6afdaaaf1f85d991484e273fd436b471"
+    },
+    "motionRevision": 2,
+    "clips": {
+      "cornhole_throw_flat_R_doug": {
+        "duration": 1.9833333333333334,
+        "release": 0.9166666666666666
+      },
+      "cornhole_throw_slide_R_doug": {
+        "duration": 1.9833333333333334,
+        "release": 0.9166666666666666
+      },
+      "cornhole_throw_airmail_R_doug": {
+        "duration": 2.1,
+        "release": 1.0333333333333334
+      },
+      "cornhole_throw_roll_R_doug": {
+        "duration": 1.9833333333333334,
+        "release": 0.9166666666666666
+      },
+      "cornhole_throw_blocker_R_doug": {
+        "duration": 2.033333333333333,
+        "release": 0.9666666666666667
+      }
+    },
+    "derivedMotion": true,
+    "editorRoundTripVerified": false,
+    "productionInstalled": false,
+    "changes": [
+      "Anatomical right hand is image L; socket association corrected without mirroring art",
+      "Five sparse curved full-body throw tracks with bagRelease inside accelerating swing",
+      "Material-aware near-arm overlap; local clothing/hand weight boundaries and fabric underlap; original PNG bytes retained"
+    ]
+  }
+}

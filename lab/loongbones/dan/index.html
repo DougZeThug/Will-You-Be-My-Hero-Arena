@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arena Lab · Dan weighted rig</title>
+    <style>
+      body {
+        margin: 0;
+        background: #17221b;
+        color: #f4ecd8;
+        font: 15px system-ui;
+      }
+      main {
+        max-width: 1280px;
+        margin: 16px auto;
+        padding: 0 16px;
+      }
+      header,
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 auto 0 0;
+      }
+      a {
+        color: #e9c575;
+      }
+      p {
+        line-height: 1.5;
+        margin: 10px 0;
+      }
+      .controls {
+        margin: 12px 0;
+      }
+      button,
+      select {
+        font: inherit;
+        padding: 8px 12px;
+        background: #f5ecd4;
+        color: #182319;
+        border: 1px solid #8b927f;
+        cursor: pointer;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      #stage {
+        width: 100%;
+        aspect-ratio: 1280/760;
+      }
+      output {
+        display: block;
+        margin: 8px 0;
+      }
+      pre {
+        max-height: 220px;
+        overflow: auto;
+        font-size: 12px;
+      }
+      small {
+        color: #d9cfae;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Dan · weighted rig</h1>
+        <a href="/">Arena Lab</a><a href="/loongbones/">Runtime proof</a>
+      </header>
+      <p>
+        <a href="?sample=authored">Original authored rig</a> ·
+        <a href="?sample=editor">Unchanged LoongBones export</a> ·
+        <a href="?sample=restored">Arena compatibility restoration</a>
+      </p>
+      <p id="dataset-status"></p>
+      <p>
+        Approved drawing, anatomical bones and blended mesh weights. This is an
+        authoring review; Dan’s current game character is unchanged.
+      </p>
+      <div class="controls">
+        <button id="play">Play</button><button id="pause">Pause</button
+        ><button id="reset">Reset</button><button id="step">+1 frame</button>
+        <label
+          >Animation
+          <select id="clip"></select></label
+        ><label><input type="checkbox" id="overlay" />Joints</label
+        ><label><input type="checkbox" id="silhouette" />Silhouette</label
+        ><label><input type="checkbox" id="mirrored" />Mirror</label
+        ><label><input type="checkbox" id="court" />Court scale</label>
+      </div>
+      <output id="status">Loading Dan…</output>
+      <div id="stage"></div>
+      <p>
+        <a href="../assets/dan-weighted-v1/dan-rig-import.zip" download
+          >Download Dan’s editor import pack</a
+        >
+      </p>
+      <p>
+        <a
+          href="../assets/dan-weighted-v1/dan_ske.json"
+          download="dan-editor-fix-r2.json"
+          >Download corrected editor skeleton (revision 2)</a
+        >. If Dan’s texture is already imported, drag only this corrected JSON
+        into LoongBones Library. The first editor import is preserved as
+        <code>dan_import_r1</code>.
+      </p>
+      <small
+        >Initial rig scope: idle, target look, arm bend, low throw, quiet nod
+        and planted weight shift. Hidden artwork, alternate hand views and full
+        locomotion still need authoring. The local interchange data has not yet
+        completed production review. The returned LoongBones export and the
+        explicit compatibility restoration can be compared above.</small
+      >
+      <details>
+        <summary>Rig state / animation markers</summary>
+        <pre id="state"></pre>
+      </details>
+      <script type="module" src="./main.ts"></script>
+    </main>
+  </body>
+</html>

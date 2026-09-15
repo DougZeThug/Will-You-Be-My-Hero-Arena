@@ -1,0 +1,15 @@
+{
+  "name": "doug_weighted_v1",
+  "imagePath": "doug_tex.png",
+  "width": 255,
+  "height": 589,
+  "SubTexture": [
+    {
+      "name": "doug_approved_body",
+      "x": 0,
+      "y": 0,
+      "width": 255,
+      "height": 589
+    }
+  ]
+}

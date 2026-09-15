@@ -1,0 +1,252 @@
+{
+  "schema": "arena-reviewed-references-v31",
+  "sources": [
+    {
+      "id": "basketball",
+      "source": {
+        "file": "basketball.mp4",
+        "sha256": "99d56d7c463f2e388fd35871c14bfc47bf91b88d8e845241b7ba725bc6e06e8f",
+        "url": "https://www.youtube.com/watch?v=nDMDOZW6rPs",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 59.94006,
+        "width": 1280,
+        "height": 720,
+        "crop": null,
+        "start": 192.5,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 147.265697,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 150,
+      "confidenceCoverage": {
+        "rightShoulder": 1.0,
+        "rightElbow": 0.793333,
+        "rightWrist": 0.946667,
+        "rightHip": 1.0,
+        "rightKnee": 1.0,
+        "rightAnkle": 1.0
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 0.93892,
+        "rightElbow": 2.394547,
+        "rightWrist": 4.662731,
+        "rightHip": 0.157712,
+        "rightKnee": 0.566635,
+        "rightAnkle": 0.663736
+      },
+      "limits": "Upper-body gather; coach does not jump.",
+      "derivedTrackSHA256": "4ef14d2d586ae875d6d5ee881596552f20da778b46bd2dedf851fd95f9118e37"
+    },
+    {
+      "id": "basketball-jump",
+      "source": {
+        "file": "basketball.mp4",
+        "sha256": "99d56d7c463f2e388fd35871c14bfc47bf91b88d8e845241b7ba725bc6e06e8f",
+        "url": "https://www.youtube.com/watch?v=nDMDOZW6rPs",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 59.94006,
+        "width": 820,
+        "height": 720,
+        "crop": [
+          0,
+          0,
+          820,
+          720
+        ],
+        "start": 196.0,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 135.337886,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 111,
+      "confidenceCoverage": {
+        "rightShoulder": 0.972973,
+        "rightElbow": 0.0,
+        "rightWrist": 0.0,
+        "rightHip": 0.963964,
+        "rightKnee": 0.0,
+        "rightAnkle": 0.0
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 2.054571,
+        "rightElbow": null,
+        "rightWrist": null,
+        "rightHip": 0.66248,
+        "rightKnee": null,
+        "rightAnkle": null
+      },
+      "limits": "Load/takeoff only; moving broadcast camera; no observed landing.",
+      "derivedTrackSHA256": "181f18b708b9ccd6fbbf821547984b20bedb9ed90e7aa33f7452ae1af04cc899"
+    },
+    {
+      "id": "boxing",
+      "source": {
+        "file": "boxing.mp4",
+        "sha256": "701f417af29db52ace519434dde76ac151b6133a82a76c0e0781a4785df1ad4e",
+        "url": "https://www.youtube.com/watch?v=vyTaKpylOcU",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 29.97003,
+        "width": 1280,
+        "height": 720,
+        "crop": null,
+        "start": 214.0,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 158.292268,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 240,
+      "confidenceCoverage": {
+        "rightShoulder": 1.0,
+        "rightElbow": 1.0,
+        "rightWrist": 1.0,
+        "rightHip": 1.0,
+        "rightKnee": 1.0,
+        "rightAnkle": 1.0
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 0.715691,
+        "rightElbow": 3.249823,
+        "rightWrist": 4.370702,
+        "rightHip": 0.237021,
+        "rightKnee": 0.736474,
+        "rightAnkle": 1.101939
+      },
+      "limits": "Instructional jab/cross and held front-leg support, not calibrated competitive cadence.",
+      "derivedTrackSHA256": "5752f02c4e345987e3b3b858d2c05e53593fac9b1de8bce1a60c6cef63c09eff"
+    },
+    {
+      "id": "dodge",
+      "source": {
+        "file": "3lawJ1dO0Mk.mp4",
+        "sha256": "b7373e3a626ac283562b167bb3cf753717496c76a4c7b8e32c3735e895859057",
+        "url": "https://www.youtube.com/watch?v=3lawJ1dO0Mk",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 29.97003,
+        "width": 360,
+        "height": 640,
+        "crop": null,
+        "start": 18.0,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 146.067837,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 120,
+      "confidenceCoverage": {
+        "rightShoulder": 1.0,
+        "rightElbow": 1.0,
+        "rightWrist": 1.0,
+        "rightHip": 1.0,
+        "rightKnee": 1.0,
+        "rightAnkle": 0.625
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 2.698332,
+        "rightElbow": 2.07319,
+        "rightWrist": 3.662624,
+        "rightHip": 0.565914,
+        "rightKnee": 1.837084,
+        "rightAnkle": 1.277073
+      },
+      "limits": "Correct supported slip example; deliberately wrong earlier examples excluded.",
+      "derivedTrackSHA256": "14d7475747837a42cbab3e66d0c1feb76cca8d112740fdaf2f42f151e01bdcce"
+    },
+    {
+      "id": "football",
+      "source": {
+        "file": "-ZE7a4MpvQw.mp4",
+        "sha256": "6285a4ff8416e59bd67fbf599ca6295657ccaf587355bc0ec5c197100ad8c25a",
+        "url": "https://www.youtube.com/watch?v=-ZE7a4MpvQw",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 29.97003,
+        "width": 810,
+        "height": 720,
+        "crop": [
+          470,
+          0,
+          810,
+          720
+        ],
+        "start": 3.0,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 314.217623,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 300,
+      "confidenceCoverage": {
+        "rightShoulder": 1.0,
+        "rightElbow": 0.936667,
+        "rightWrist": 0.946667,
+        "rightHip": 0.466667,
+        "rightKnee": 0.02,
+        "rightAnkle": 0.003333
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 2.192467,
+        "rightElbow": 2.438881,
+        "rightWrist": 2.749692,
+        "rightHip": 0.373647,
+        "rightKnee": 2.979447,
+        "rightAnkle": null
+      },
+      "limits": "Upper-body archive; feet out of frame, camera pans, slow-motion rate unknown.",
+      "derivedTrackSHA256": "48691817d0d67e62d449896d3f6a16c03934e57114983dad552f1874ebcae854"
+    },
+    {
+      "id": "celebration",
+      "source": {
+        "file": "N_HmZMB8NPs.mp4",
+        "sha256": "62567f574f15b77abf0218629ae9f4e4cd516b721dcae336cb16ee100506a6fa",
+        "url": "https://www.youtube.com/watch?v=N_HmZMB8NPs",
+        "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+        "mediapipe": "0.10.32",
+        "opencv": "4.13.0",
+        "fps": 29.97003,
+        "width": 1280,
+        "height": 720,
+        "crop": null,
+        "start": 0.0,
+        "normalization": "fixed median torso length in aspect-correct image pixels",
+        "torsoPixels": 270.278524,
+        "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+        "timestampFallbacks": 0
+      },
+      "frames": 96,
+      "confidenceCoverage": {
+        "rightShoulder": 0.979167,
+        "rightElbow": 0.96875,
+        "rightWrist": 0.979167,
+        "rightHip": 0.979167,
+        "rightKnee": 0.614583,
+        "rightAnkle": 0.072917
+      },
+      "p95NormalizedSpeed": {
+        "rightShoulder": 1.519259,
+        "rightElbow": 1.288145,
+        "rightWrist": 2.259053,
+        "rightHip": 0.379541,
+        "rightKnee": 2.582774,
+        "rightAnkle": 1.1575
+      },
+      "limits": "Broadcast gesture; crowd and partial occlusion. No identity or belief inferred.",
+      "derivedTrackSHA256": "f7c043f9cbda390e715e8c902b66e2cf5cbde4dcf30a23825134f34eca74edce"
+    }
+  ],
+  "automaticRetarget": false,
+  "physicsCalibration": false,
+  "filter": "Existing confidence-gated NumPy local-window smoothing; derivatives kept; no new dependency."
+}

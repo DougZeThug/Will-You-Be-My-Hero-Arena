@@ -1,0 +1,368 @@
+{
+  "coordinateSystem": "Pixel coordinates in the final individual cropped PNG, origin at top-left; x rightward and y downward. Bounds are [left, top, right, bottom].",
+  "topPlaneCornerOrder": [
+    "near-left",
+    "far-left",
+    "far-right",
+    "near-right"
+  ],
+  "artNotes": "Undistorted art in gentle three-quarter view. Generated with the built-in imagegen tool; gray checkerboard was baked into RGB, then removed by neutral-color masking with crop cleanup. Each cream cutout contour is retained. Target circles appear elliptical under perspective; their actual art bounds are provided rather than game radii.",
+  "assets": {
+    "board": {
+      "file": "board.png",
+      "width": 665,
+      "height": 505,
+      "source_sheet": 0,
+      "source_crop": [
+        25,
+        100,
+        690,
+        605
+      ],
+      "opaque_pixels": 189503,
+      "topPlaneCorners": [
+        [
+          24,
+          307
+        ],
+        [
+          412,
+          24
+        ],
+        [
+          639,
+          65
+        ],
+        [
+          411,
+          398
+        ]
+      ],
+      "holeCenter": [
+        477,
+        88
+      ],
+      "holeOpeningBounds": [
+        429,
+        70,
+        527,
+        109
+      ],
+      "holeOuterRimBounds": [
+        417,
+        57,
+        541,
+        120
+      ],
+      "hasAlpha": true
+    },
+    "hoop": {
+      "file": "hoop.png",
+      "width": 426,
+      "height": 675,
+      "source_sheet": 0,
+      "source_crop": [
+        763,
+        0,
+        1189,
+        675
+      ],
+      "opaque_pixels": 128764,
+      "rimCenter": [
+        111,
+        153
+      ],
+      "rimBounds": [
+        20,
+        132,
+        205,
+        183
+      ],
+      "rimOpeningBounds": [
+        33,
+        143,
+        191,
+        169
+      ],
+      "frontRimBounds": [
+        20,
+        153,
+        205,
+        184
+      ],
+      "netBounds": [
+        31,
+        154,
+        192,
+        308
+      ],
+      "frontRimNetBounds": [
+        20,
+        153,
+        205,
+        310
+      ],
+      "hasAlpha": true
+    },
+    "target": {
+      "file": "target.png",
+      "width": 570,
+      "height": 624,
+      "source_sheet": 0,
+      "source_crop": [
+        5,
+        612,
+        575,
+        1236
+      ],
+      "opaque_pixels": 191637,
+      "bullseyeCenter": [
+        286,
+        231
+      ],
+      "outerRingBounds": [
+        155,
+        66,
+        421,
+        395
+      ],
+      "rings": [
+        {
+          "name": "outer teal",
+          "bounds": [
+            155,
+            66,
+            421,
+            395
+          ]
+        },
+        {
+          "name": "yellow",
+          "bounds": [
+            188,
+            109,
+            386,
+            351
+          ]
+        },
+        {
+          "name": "orange",
+          "bounds": [
+            216,
+            146,
+            356,
+            315
+          ]
+        },
+        {
+          "name": "black bullseye",
+          "bounds": [
+            247,
+            187,
+            326,
+            277
+          ]
+        }
+      ],
+      "gameZoneSuggestedBounds": {
+        "outer": [
+          155,
+          66,
+          421,
+          395
+        ],
+        "middle": [
+          216,
+          146,
+          356,
+          315
+        ],
+        "inner": [
+          247,
+          187,
+          326,
+          277
+        ]
+      },
+      "hasAlpha": true
+    },
+    "table": {
+      "file": "table.png",
+      "width": 673,
+      "height": 536,
+      "source_sheet": 0,
+      "source_crop": [
+        580,
+        700,
+        1253,
+        1236
+      ],
+      "opaque_pixels": 133689,
+      "topPlaneCorners": [
+        [
+          20,
+          197
+        ],
+        [
+          451,
+          18
+        ],
+        [
+          650,
+          39
+        ],
+        [
+          335,
+          258
+        ]
+      ],
+      "hasAlpha": true
+    },
+    "bag-yellow": {
+      "file": "bag-yellow.png",
+      "width": 423,
+      "height": 395,
+      "source_sheet": 1,
+      "source_crop": [
+        15,
+        6,
+        438,
+        401
+      ],
+      "opaque_pixels": 90414,
+      "center": [
+        214,
+        199
+      ],
+      "hasAlpha": true
+    },
+    "bag-teal": {
+      "file": "bag-teal.png",
+      "width": 432,
+      "height": 396,
+      "source_sheet": 1,
+      "source_crop": [
+        420,
+        5,
+        852,
+        401
+      ],
+      "opaque_pixels": 91257,
+      "center": [
+        216,
+        198
+      ],
+      "hasAlpha": true
+    },
+    "football": {
+      "file": "football.png",
+      "width": 397,
+      "height": 328,
+      "source_sheet": 1,
+      "source_crop": [
+        856,
+        34,
+        1253,
+        362
+      ],
+      "opaque_pixels": 84972,
+      "center": [
+        199,
+        164
+      ],
+      "hasAlpha": true
+    },
+    "basketball": {
+      "file": "basketball.png",
+      "width": 409,
+      "height": 404,
+      "source_sheet": 1,
+      "source_crop": [
+        10,
+        401,
+        419,
+        805
+      ],
+      "opaque_pixels": 119883,
+      "center": [
+        205,
+        202
+      ],
+      "hasAlpha": true
+    },
+    "ping-pong": {
+      "file": "ping-pong.png",
+      "width": 299,
+      "height": 298,
+      "source_sheet": 1,
+      "source_crop": [
+        482,
+        461,
+        781,
+        759
+      ],
+      "opaque_pixels": 62902,
+      "center": [
+        150,
+        149
+      ],
+      "hasAlpha": true
+    },
+    "cup-yellow": {
+      "file": "cup-yellow.png",
+      "width": 349,
+      "height": 407,
+      "source_sheet": 1,
+      "source_crop": [
+        878,
+        399,
+        1227,
+        806
+      ],
+      "opaque_pixels": 97765,
+      "rimCenter": [
+        174,
+        64
+      ],
+      "rimOpeningBounds": [
+        35,
+        31,
+        309,
+        91
+      ],
+      "baseCenter": [
+        174,
+        383
+      ],
+      "hasAlpha": true
+    },
+    "cup-orange": {
+      "file": "cup-orange.png",
+      "width": 354,
+      "height": 422,
+      "source_sheet": 1,
+      "source_crop": [
+        38,
+        801,
+        392,
+        1223
+      ],
+      "opaque_pixels": 101617,
+      "rimCenter": [
+        177,
+        66
+      ],
+      "rimOpeningBounds": [
+        39,
+        31,
+        313,
+        94
+      ],
+      "baseCenter": [
+        177,
+        398
+      ],
+      "hasAlpha": true
+    }
+  }
+}

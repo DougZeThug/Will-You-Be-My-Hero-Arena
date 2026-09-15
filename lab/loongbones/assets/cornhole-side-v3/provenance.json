@@ -1,0 +1,112 @@
+{
+  "dan": {
+    "source": "lab/loongbones/assets/cornhole-side-v3/dan_source.png",
+    "sourceSHA256": "233da1a99c31f23f2e9d95c917fae17669d9a17a1f259a249dacf7a6c6fb5123",
+    "limbSource": "lab/loongbones/assets/cornhole-side-v3/dan_limbs-source.png",
+    "limbSourceSHA256": "0dc0596214607e7e1e9a2c5e51ea8ff016631c4b73233f4758e5933fa9b9742d",
+    "atlasAssembly": "Body from original sheet x<840; isolated limbs from wrist-clean generated edit x>=840. Edited body discarded.",
+    "assetsSha256": {
+      "dan_ske.json": "5c6d58cc12733bff662e54108b4586461bae7b9e7f4de1192e95480bb773d28e",
+      "dan_tex.json": "464c0bc1cdc7235e3ba7a0c780baee27a383a937c791e1be7b6c0e9d1a1f8eb7",
+      "dan_tex.png": "3ab18b381a7f534c8b4971910952ea71a649a6f60d3e1982f61e5aaa579953fb"
+    },
+    "motionRevision": 3,
+    "motionPolishRevision": 2,
+    "motionPolish": "Seventeen reference-informed whole-body landmarks: independent pelvis load/compression, forward torso pitch, clavicle travel, soft elbow, ancestor-compensated palm, stabilized head and non-reversed recovery. Character/shot timing derives from the authored markers.",
+    "biomechanicsRevision": 1,
+    "handRegistrationRevision": 2,
+    "handRegistration": "Anatomical wrist creases replace cut-edge pivots. Uniform hand scale Dan 0.90 / Doug 0.79 matches forearm thickness; proximal source stubs overlap the arm. Hand rotation bounded to 38–88 local degrees. Single opaque grip/open/relaxed exposures replace ghost-finger crossfades. Original atlas pixels unchanged.",
+    "motionReference": {
+      "url": "https://www.youtube.com/watch?v=i1OqktIH0Uw&t=1486s",
+      "range": "24:28–24:55; throw breakdown 24:46.4–24:50.2",
+      "method": "Visual frame-by-frame study, adapted to planted-foot stances. Not rotoscoped coordinates or motion capture."
+    },
+    "bodyMaterialRevision": 1,
+    "bodyMaterials": "Whole far-arm, far-leg, near-leg and torso regions render in that order. Source contour partitions prevent triangles crossing limb ownership and row-interleaved zipper occlusion. Original source and atlas artwork preserved.",
+    "attachmentRevision": 4,
+    "sleeveAssembly": "Torso fabric uses chest/spine weights with a source-silhouette-registered back underlay. Sleeve back and front are separate from torso material; front excludes opaque empty opening. Eight mesh layers. Source images, landmarks and animation tracks unchanged by attachment revision 4.",
+    "clips": {
+      "cornhole_throw_flat_R_dan": {
+        "duration": 2.1666666666666665,
+        "release": 0.8166666666666667
+      },
+      "cornhole_throw_slide_R_dan": {
+        "duration": 2.2,
+        "release": 0.85
+      },
+      "cornhole_throw_airmail_R_dan": {
+        "duration": 2.283333333333333,
+        "release": 0.9333333333333333
+      },
+      "cornhole_throw_roll_R_dan": {
+        "duration": 2.183333333333333,
+        "release": 0.8333333333333334
+      },
+      "cornhole_throw_blocker_R_dan": {
+        "duration": 2.216666666666667,
+        "release": 0.8666666666666667
+      }
+    },
+    "editorExportReceived": false,
+    "editorRoundTripVerified": false,
+    "productionInstalled": false,
+    "sourceArtwork": "Built-in image generation; new near-profile body, continuous near arm, three authored hands",
+    "sourceAlpha": false,
+    "atlasAlpha": "Derived using existing chroma-key preparation"
+  },
+  "doug": {
+    "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+    "sourceSHA256": "a9ec98a336dc589e535f97645f4f49e81216cba9ca437b87a10faf801be6b5c8",
+    "limbSource": "lab/loongbones/assets/cornhole-side-v3/doug_limbs-source.png",
+    "limbSourceSHA256": "98b5c2b32e6ba19e8e52f355a519805d539f0798534d5c72e1a0994525c107cd",
+    "atlasAssembly": "Body from original sheet x<840; isolated limbs from wrist-clean generated edit x>=840. Edited body discarded.",
+    "assetsSha256": {
+      "doug_ske.json": "35f761239247de3bd49bdd24d528d0bee55a6268d0f5add6520d682e9349a1aa",
+      "doug_tex.json": "0450a8a0e8c2427e703c7f0d9a7d902b5f364c68e3a9b95e0d3b07ff27ce3b55",
+      "doug_tex.png": "c558fcd634ea998d4c9c97a27135b0003239a9f9f0de1bdae551de69675e5f4d"
+    },
+    "motionRevision": 3,
+    "motionPolishRevision": 2,
+    "motionPolish": "Seventeen reference-informed whole-body landmarks: independent pelvis load/compression, forward torso pitch, clavicle travel, soft elbow, ancestor-compensated palm, stabilized head and non-reversed recovery. Character/shot timing derives from the authored markers.",
+    "biomechanicsRevision": 1,
+    "handRegistrationRevision": 2,
+    "handRegistration": "Anatomical wrist creases replace cut-edge pivots. Uniform hand scale Dan 0.90 / Doug 0.79 matches forearm thickness; proximal source stubs overlap the arm. Hand rotation bounded to 38–88 local degrees. Single opaque grip/open/relaxed exposures replace ghost-finger crossfades. Original atlas pixels unchanged.",
+    "motionReference": {
+      "url": "https://www.youtube.com/watch?v=i1OqktIH0Uw&t=1486s",
+      "range": "24:28–24:55; throw breakdown 24:46.4–24:50.2",
+      "method": "Visual frame-by-frame study, adapted to planted-foot stances. Not rotoscoped coordinates or motion capture."
+    },
+    "bodyMaterialRevision": 1,
+    "bodyMaterials": "Whole far-arm, far-leg, near-leg and torso regions render in that order. Source contour partitions prevent triangles crossing limb ownership and row-interleaved zipper occlusion. Original source and atlas artwork preserved.",
+    "attachmentRevision": 4,
+    "sleeveAssembly": "Torso fabric uses chest/spine weights with a source-silhouette-registered back underlay. Sleeve back and front are separate from torso material; front excludes opaque empty opening. Eight mesh layers. Source images, landmarks and animation tracks unchanged by attachment revision 4.",
+    "clips": {
+      "cornhole_throw_flat_R_doug": {
+        "duration": 2.033333333333333,
+        "release": 0.7166666666666667
+      },
+      "cornhole_throw_slide_R_doug": {
+        "duration": 2.066666666666667,
+        "release": 0.75
+      },
+      "cornhole_throw_airmail_R_doug": {
+        "duration": 2.15,
+        "release": 0.8333333333333334
+      },
+      "cornhole_throw_roll_R_doug": {
+        "duration": 2.05,
+        "release": 0.7333333333333333
+      },
+      "cornhole_throw_blocker_R_doug": {
+        "duration": 2.0833333333333335,
+        "release": 0.7666666666666667
+      }
+    },
+    "editorExportReceived": false,
+    "editorRoundTripVerified": false,
+    "productionInstalled": false,
+    "sourceArtwork": "Built-in image generation; new near-profile body, continuous near arm, three authored hands",
+    "sourceAlpha": false,
+    "atlasAlpha": "Derived using existing chroma-key preparation"
+  }
+}

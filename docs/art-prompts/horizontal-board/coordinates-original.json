@@ -1,0 +1,14 @@
+{
+  "image": "board-horizontal-original.png",
+  "width": 2206,
+  "height": 713,
+  "coordinate_space": "Uncropped original source pixels; top-left origin; x right, y down",
+  "corner_order": ["near-left", "far-left", "far-right", "near-right"],
+  "corner_description": "Near means low LEFT throwing end; far means raised RIGHT hole end. Left is the back long edge as projected, right is the front long edge.",
+  "tabletop_corners": [[253, 269], [1946, 43], [2165, 288], [47, 531]],
+  "hole_center": [1778, 195],
+  "coordinate_method": "Visually selected at tabletop exterior edges, excludes cream cutout outline. Approximate within 5 source pixels.",
+  "usable_transparent_sprite": false,
+  "crop_offset": null,
+  "warning": "Opaque RGB background. These coordinates apply only to the first generated horizontal view, not the later transparency attempt."
+}

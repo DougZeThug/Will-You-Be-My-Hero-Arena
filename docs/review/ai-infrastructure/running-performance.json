@@ -1,0 +1,986 @@
+{
+  "apiVersion": 1,
+  "ready": true,
+  "status": "ready",
+  "errors": [],
+  "scenario": {
+    "id": "running-live",
+    "version": 1,
+    "label": "Running · live",
+    "kind": "live",
+    "sport": "running",
+    "description": "P0 keyboard, P1 AI. Continuous movement, obstacles, stamina and finish conditions.",
+    "seed": "arena-lab:running-live:v1"
+  },
+  "runtime": "live",
+  "time": 5.833333333333318,
+  "paused": true,
+  "clockMode": "manual",
+  "checkpoints": [
+    {
+      "name": "intro",
+      "time": 0
+    },
+    {
+      "name": "ready",
+      "time": 1.6
+    },
+    {
+      "name": "obstacle",
+      "time": 3
+    }
+  ],
+  "event": {
+    "title": "Clubhouse Dash",
+    "stage": {
+      "lanes": [
+        493,
+        555,
+        617,
+        679
+      ]
+    },
+    "phase": "running",
+    "message": "Go — jump hurdles, slide under bars",
+    "time": 5.833333333333318,
+    "finished": false,
+    "winners": [],
+    "scores": {
+      "p0": 25,
+      "p1": 39
+    },
+    "camera": "running",
+    "worldWidth": 3100,
+    "objects": [
+      {
+        "id": "obstacle-0-0",
+        "x": 490,
+        "y": 520,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 90,
+        "color": 1614253
+      },
+      {
+        "id": "obstacle-0-1",
+        "x": 540,
+        "y": 582,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-1-0",
+        "x": 735,
+        "y": 520,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-1-2",
+        "x": 735,
+        "y": 644,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-2-1",
+        "x": 1030,
+        "y": 582,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-2-2",
+        "x": 980,
+        "y": 644,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 90,
+        "color": 1614253
+      },
+      {
+        "id": "obstacle-3-0",
+        "x": 1225,
+        "y": 520,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-3-1",
+        "x": 1275,
+        "y": 582,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 90,
+        "color": 1614253
+      },
+      {
+        "id": "obstacle-4-0",
+        "x": 1470,
+        "y": 520,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 90,
+        "color": 1614253
+      },
+      {
+        "id": "obstacle-4-2",
+        "x": 1470,
+        "y": 644,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-5-1",
+        "x": 1765,
+        "y": 582,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-5-2",
+        "x": 1715,
+        "y": 644,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-6-0",
+        "x": 1960,
+        "y": 520,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "obstacle-6-1",
+        "x": 2010,
+        "y": 582,
+        "kind": "obstacle",
+        "width": 36,
+        "height": 42,
+        "color": 16764709
+      },
+      {
+        "id": "finish",
+        "kind": "finish",
+        "x": 2400,
+        "y": 585,
+        "width": 24,
+        "height": 210
+      }
+    ],
+    "paused": true,
+    "notice": "",
+    "players": [
+      {
+        "id": "p0",
+        "name": "Doug",
+        "device": "keyboard",
+        "family": "keyboard",
+        "state": "stumbling",
+        "health": 100,
+        "stamina": 95.63333333333338,
+        "score": 25,
+        "buffer": [],
+        "lastCommand": ""
+      },
+      {
+        "id": "p1",
+        "name": "Dan",
+        "device": "ai",
+        "family": "ai",
+        "state": "airborne",
+        "health": 100,
+        "stamina": 17.949999999999413,
+        "score": 39,
+        "buffer": [],
+        "lastCommand": "sprint"
+      }
+    ],
+    "eventId": "running",
+    "seed": "arena-lab:running-live:v1",
+    "fixedSteps": 350,
+    "characters": [
+      {
+        "id": "p0",
+        "cardId": "card-doug",
+        "body": {
+          "x": 724.5556168350362,
+          "y": 520,
+          "z": 0,
+          "vx": 45.26574734885488,
+          "vy": 0,
+          "vz": 0,
+          "facing": 1,
+          "scale": 0.65
+        },
+        "state": "reaction",
+        "substate": "stumbling",
+        "moveIntent": {
+          "x": 0,
+          "y": 0
+        },
+        "aimIntent": {
+          "x": 0,
+          "y": 0
+        },
+        "animation": {
+          "clip": "running.stumble",
+          "time": 0.4333333333333333,
+          "duration": 0.75,
+          "progress": 0.5777777777777777,
+          "active": true,
+          "canCancel": false,
+          "idle": "idle_heelTap",
+          "locomotion": "",
+          "timeline": {
+            "clip": "running.stumble",
+            "time": 0.4333333333333333,
+            "duration": 0.75,
+            "progress": 0.5777777777777777,
+            "active": true,
+            "canCancel": false
+          },
+          "poseCoordinateSpace": "character-local",
+          "pose": {
+            "hipX": 0,
+            "hipY": -160.57869291766562,
+            "body": 8.484000293541524,
+            "head": 0.24988958150168417,
+            "shrug": 0,
+            "handLX": -53,
+            "handLY": -142,
+            "handRX": 55,
+            "handRY": -142,
+            "footLX": -40,
+            "footLY": -22,
+            "footRX": 41,
+            "footRY": -22,
+            "footL": 0,
+            "footR": 0,
+            "turn": 1
+          },
+          "sockets": {
+            "coordinateSpace": "character-local",
+            "throwingHand": {
+              "x": 55,
+              "y": -142
+            },
+            "offHand": {
+              "x": -53,
+              "y": -142
+            },
+            "footL": {
+              "x": -40,
+              "y": -22
+            },
+            "footR": {
+              "x": 41,
+              "y": -22
+            },
+            "head": {
+              "x": 14.180893597231002,
+              "y": -267.6468613905252
+            },
+            "chest": {
+              "x": 14.180893597231002,
+              "y": -223.6468613905252
+            },
+            "waist": {
+              "x": 0,
+              "y": -172.57869291766562
+            }
+          }
+        },
+        "sockets": {
+          "coordinateSpace": "simulation-world",
+          "throwingHand": {
+            "x": 760.3056168350362,
+            "y": 427.7
+          },
+          "offHand": {
+            "x": 690.1056168350361,
+            "y": 427.7
+          },
+          "footL": {
+            "x": 698.5556168350362,
+            "y": 505.7
+          },
+          "footR": {
+            "x": 751.2056168350362,
+            "y": 505.7
+          },
+          "head": {
+            "x": 733.7731976732364,
+            "y": 346.0295400961586
+          },
+          "chest": {
+            "x": 733.7731976732364,
+            "y": 374.6295400961586
+          },
+          "waist": {
+            "x": 724.5556168350362,
+            "y": 407.8238496035174
+          }
+        }
+      },
+      {
+        "id": "p1",
+        "cardId": "card-dan",
+        "body": {
+          "x": 1048.1175669956804,
+          "y": 582,
+          "z": 4.916666666666648,
+          "vx": 116.38811404469777,
+          "vy": 0,
+          "vz": -280.16666666666674,
+          "facing": 1,
+          "scale": 0.685
+        },
+        "state": "moving",
+        "substate": "airborne",
+        "moveIntent": {
+          "x": 1,
+          "y": 0
+        },
+        "aimIntent": {
+          "x": 0,
+          "y": 0
+        },
+        "animation": {
+          "clip": "idle_focused",
+          "time": 1.0333333333333181,
+          "duration": 4.8,
+          "progress": 0.21527777777777463,
+          "active": false,
+          "canCancel": false,
+          "idle": "idle_focused",
+          "locomotion": "",
+          "timeline": {
+            "clip": "",
+            "time": 0,
+            "duration": 0.75,
+            "progress": 0,
+            "active": false,
+            "canCancel": false
+          },
+          "poseCoordinateSpace": "character-local",
+          "pose": {
+            "hipX": 0,
+            "hipY": -172,
+            "body": 0,
+            "head": -1.5912558499379892,
+            "shrug": 0,
+            "handLX": -53,
+            "handLY": -142,
+            "handRX": 51.652145021735976,
+            "handRY": -144.67828398261122,
+            "footLX": -40,
+            "footLY": -22,
+            "footRX": 41,
+            "footRY": -22,
+            "footL": 0,
+            "footR": 0,
+            "turn": 1
+          },
+          "sockets": {
+            "coordinateSpace": "character-local",
+            "throwingHand": {
+              "x": 51.652145021735976,
+              "y": -144.67828398261122
+            },
+            "offHand": {
+              "x": -53,
+              "y": -142
+            },
+            "footL": {
+              "x": -40,
+              "y": -22
+            },
+            "footR": {
+              "x": 41,
+              "y": -22
+            },
+            "head": {
+              "x": 0,
+              "y": -280.12
+            },
+            "chest": {
+              "x": 0,
+              "y": -236.12
+            },
+            "waist": {
+              "x": 0,
+              "y": -184
+            }
+          }
+        },
+        "sockets": {
+          "coordinateSpace": "simulation-world",
+          "throwingHand": {
+            "x": 1083.4992863355694,
+            "y": 477.97870880524465
+          },
+          "offHand": {
+            "x": 1011.8125669956804,
+            "y": 479.8133333333334
+          },
+          "footL": {
+            "x": 1020.7175669956804,
+            "y": 562.0133333333333
+          },
+          "footR": {
+            "x": 1076.2025669956804,
+            "y": 562.0133333333333
+          },
+          "head": {
+            "x": 1048.1175669956804,
+            "y": 385.20113333333336
+          },
+          "chest": {
+            "x": 1048.1175669956804,
+            "y": 415.34113333333335
+          },
+          "waist": {
+            "x": 1048.1175669956804,
+            "y": 451.04333333333335
+          }
+        }
+      }
+    ],
+    "inputs": [
+      {
+        "player": "p0",
+        "deviceId": "keyboard",
+        "family": "keyboard",
+        "connected": true,
+        "values": {},
+        "awaitingNeutral": false
+      },
+      {
+        "player": "p1",
+        "deviceId": "ai:p1",
+        "family": "ai",
+        "connected": true,
+        "values": {
+          "move": {
+            "x": 1,
+            "y": 0
+          },
+          "charge": 1
+        },
+        "awaitingNeutral": false
+      }
+    ],
+    "controllers": [
+      {
+        "id": "p0",
+        "commands": 0,
+        "buffered": 0,
+        "pending": [],
+        "lastCommand": ""
+      },
+      {
+        "id": "p1",
+        "commands": 594,
+        "buffered": 0,
+        "pending": [],
+        "lastCommand": "sprint"
+      }
+    ],
+    "markers": [
+      {
+        "player": "p1",
+        "time": 1.0500000000000012,
+        "clip": "enter_grounded",
+        "name": "animationComplete",
+        "at": 1.05
+      },
+      {
+        "player": "p0",
+        "time": 1.1500000000000008,
+        "clip": "enter_slide",
+        "name": "animationComplete",
+        "at": 1.15
+      },
+      {
+        "player": "p1",
+        "time": 3.0333333333333274,
+        "clip": "athletic.jump",
+        "name": "jump",
+        "at": 0.096
+      },
+      {
+        "player": "p1",
+        "time": 3.6999999999999917,
+        "clip": "athletic.jump",
+        "name": "land",
+        "at": 0.76
+      },
+      {
+        "player": "p1",
+        "time": 3.733333333333325,
+        "clip": "athletic.jump",
+        "name": "animationComplete",
+        "at": 0.8
+      },
+      {
+        "player": "p0",
+        "time": 4.099999999999991,
+        "clip": "running.stumble",
+        "name": "animationComplete",
+        "at": 0.75
+      },
+      {
+        "player": "p1",
+        "time": 4.949999999999988,
+        "clip": "athletic.jump",
+        "name": "jump",
+        "at": 0.096
+      },
+      {
+        "player": "p1",
+        "time": 5.7666666666666515,
+        "clip": "running.stumble",
+        "name": "animationComplete",
+        "at": 0.75
+      }
+    ]
+  },
+  "characters": [
+    {
+      "id": "p0",
+      "cardId": "card-doug",
+      "body": {
+        "x": 724.5556168350362,
+        "y": 520,
+        "z": 0,
+        "vx": 45.26574734885488,
+        "vy": 0,
+        "vz": 0,
+        "facing": 1,
+        "scale": 0.65
+      },
+      "state": "reaction",
+      "substate": "stumbling",
+      "moveIntent": {
+        "x": 0,
+        "y": 0
+      },
+      "aimIntent": {
+        "x": 0,
+        "y": 0
+      },
+      "animation": {
+        "clip": "running.stumble",
+        "time": 0.4333333333333333,
+        "duration": 0.75,
+        "progress": 0.5777777777777777,
+        "active": true,
+        "canCancel": false,
+        "idle": "idle_heelTap",
+        "locomotion": "",
+        "timeline": {
+          "clip": "running.stumble",
+          "time": 0.4333333333333333,
+          "duration": 0.75,
+          "progress": 0.5777777777777777,
+          "active": true,
+          "canCancel": false
+        },
+        "poseCoordinateSpace": "character-local",
+        "pose": {
+          "hipX": 0,
+          "hipY": -160.57869291766562,
+          "body": 8.484000293541524,
+          "head": 0.24988958150168417,
+          "shrug": 0,
+          "handLX": -53,
+          "handLY": -142,
+          "handRX": 55,
+          "handRY": -142,
+          "footLX": -40,
+          "footLY": -22,
+          "footRX": 41,
+          "footRY": -22,
+          "footL": 0,
+          "footR": 0,
+          "turn": 1
+        },
+        "sockets": {
+          "coordinateSpace": "character-local",
+          "throwingHand": {
+            "x": 55,
+            "y": -142
+          },
+          "offHand": {
+            "x": -53,
+            "y": -142
+          },
+          "footL": {
+            "x": -40,
+            "y": -22
+          },
+          "footR": {
+            "x": 41,
+            "y": -22
+          },
+          "head": {
+            "x": 14.180893597231002,
+            "y": -267.6468613905252
+          },
+          "chest": {
+            "x": 14.180893597231002,
+            "y": -223.6468613905252
+          },
+          "waist": {
+            "x": 0,
+            "y": -172.57869291766562
+          }
+        }
+      },
+      "sockets": {
+        "coordinateSpace": "simulation-world",
+        "throwingHand": {
+          "x": 760.3056168350362,
+          "y": 427.7
+        },
+        "offHand": {
+          "x": 690.1056168350361,
+          "y": 427.7
+        },
+        "footL": {
+          "x": 698.5556168350362,
+          "y": 505.7
+        },
+        "footR": {
+          "x": 751.2056168350362,
+          "y": 505.7
+        },
+        "head": {
+          "x": 733.7731976732364,
+          "y": 346.0295400961586
+        },
+        "chest": {
+          "x": 733.7731976732364,
+          "y": 374.6295400961586
+        },
+        "waist": {
+          "x": 724.5556168350362,
+          "y": 407.8238496035174
+        }
+      }
+    },
+    {
+      "id": "p1",
+      "cardId": "card-dan",
+      "body": {
+        "x": 1048.1175669956804,
+        "y": 582,
+        "z": 4.916666666666648,
+        "vx": 116.38811404469777,
+        "vy": 0,
+        "vz": -280.16666666666674,
+        "facing": 1,
+        "scale": 0.685
+      },
+      "state": "moving",
+      "substate": "airborne",
+      "moveIntent": {
+        "x": 1,
+        "y": 0
+      },
+      "aimIntent": {
+        "x": 0,
+        "y": 0
+      },
+      "animation": {
+        "clip": "idle_focused",
+        "time": 1.0333333333333181,
+        "duration": 4.8,
+        "progress": 0.21527777777777463,
+        "active": false,
+        "canCancel": false,
+        "idle": "idle_focused",
+        "locomotion": "",
+        "timeline": {
+          "clip": "",
+          "time": 0,
+          "duration": 0.75,
+          "progress": 0,
+          "active": false,
+          "canCancel": false
+        },
+        "poseCoordinateSpace": "character-local",
+        "pose": {
+          "hipX": 0,
+          "hipY": -172,
+          "body": 0,
+          "head": -1.5912558499379892,
+          "shrug": 0,
+          "handLX": -53,
+          "handLY": -142,
+          "handRX": 51.652145021735976,
+          "handRY": -144.67828398261122,
+          "footLX": -40,
+          "footLY": -22,
+          "footRX": 41,
+          "footRY": -22,
+          "footL": 0,
+          "footR": 0,
+          "turn": 1
+        },
+        "sockets": {
+          "coordinateSpace": "character-local",
+          "throwingHand": {
+            "x": 51.652145021735976,
+            "y": -144.67828398261122
+          },
+          "offHand": {
+            "x": -53,
+            "y": -142
+          },
+          "footL": {
+            "x": -40,
+            "y": -22
+          },
+          "footR": {
+            "x": 41,
+            "y": -22
+          },
+          "head": {
+            "x": 0,
+            "y": -280.12
+          },
+          "chest": {
+            "x": 0,
+            "y": -236.12
+          },
+          "waist": {
+            "x": 0,
+            "y": -184
+          }
+        }
+      },
+      "sockets": {
+        "coordinateSpace": "simulation-world",
+        "throwingHand": {
+          "x": 1083.4992863355694,
+          "y": 477.97870880524465
+        },
+        "offHand": {
+          "x": 1011.8125669956804,
+          "y": 479.8133333333334
+        },
+        "footL": {
+          "x": 1020.7175669956804,
+          "y": 562.0133333333333
+        },
+        "footR": {
+          "x": 1076.2025669956804,
+          "y": 562.0133333333333
+        },
+        "head": {
+          "x": 1048.1175669956804,
+          "y": 385.20113333333336
+        },
+        "chest": {
+          "x": 1048.1175669956804,
+          "y": 415.34113333333335
+        },
+        "waist": {
+          "x": 1048.1175669956804,
+          "y": 451.04333333333335
+        }
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "player": "p0",
+      "deviceId": "keyboard",
+      "family": "keyboard",
+      "connected": true,
+      "values": {},
+      "awaitingNeutral": false
+    },
+    {
+      "player": "p1",
+      "deviceId": "ai:p1",
+      "family": "ai",
+      "connected": true,
+      "values": {
+        "move": {
+          "x": 1,
+          "y": 0
+        },
+        "charge": 1
+      },
+      "awaitingNeutral": false
+    }
+  ],
+  "controllers": [
+    {
+      "id": "p0",
+      "commands": 0,
+      "buffered": 0,
+      "pending": [],
+      "lastCommand": ""
+    },
+    {
+      "id": "p1",
+      "commands": 594,
+      "buffered": 0,
+      "pending": [],
+      "lastCommand": "sprint"
+    }
+  ],
+  "markers": [
+    {
+      "player": "p1",
+      "time": 1.0500000000000012,
+      "clip": "enter_grounded",
+      "name": "animationComplete",
+      "at": 1.05
+    },
+    {
+      "player": "p0",
+      "time": 1.1500000000000008,
+      "clip": "enter_slide",
+      "name": "animationComplete",
+      "at": 1.15
+    },
+    {
+      "player": "p1",
+      "time": 3.0333333333333274,
+      "clip": "athletic.jump",
+      "name": "jump",
+      "at": 0.096
+    },
+    {
+      "player": "p1",
+      "time": 3.6999999999999917,
+      "clip": "athletic.jump",
+      "name": "land",
+      "at": 0.76
+    },
+    {
+      "player": "p1",
+      "time": 3.733333333333325,
+      "clip": "athletic.jump",
+      "name": "animationComplete",
+      "at": 0.8
+    },
+    {
+      "player": "p0",
+      "time": 4.099999999999991,
+      "clip": "running.stumble",
+      "name": "animationComplete",
+      "at": 0.75
+    },
+    {
+      "player": "p1",
+      "time": 4.949999999999988,
+      "clip": "athletic.jump",
+      "name": "jump",
+      "at": 0.096
+    },
+    {
+      "player": "p1",
+      "time": 5.7666666666666515,
+      "clip": "running.stumble",
+      "name": "animationComplete",
+      "at": 0.75
+    }
+  ],
+  "rendering": null,
+  "syntheticGamepad": false,
+  "performance": {
+    "mode": "manual",
+    "capacity": 240,
+    "realtime": {
+      "frames": 337,
+      "windowFrames": 240,
+      "frameTiming": {
+        "samples": 240,
+        "meanMs": 17.701,
+        "p95Ms": 18.6,
+        "worstMs": 26.1
+      },
+      "updateWork": {
+        "samples": 240,
+        "meanMs": 4.11,
+        "p95Ms": 5.7,
+        "worstMs": 10.2
+      },
+      "renderWork": {
+        "samples": 240,
+        "meanMs": 4.311,
+        "p95Ms": 6.4,
+        "worstMs": 11.4
+      },
+      "slowFrames": 0,
+      "fps": 56.494
+    },
+    "manual": {
+      "frames": 1,
+      "windowFrames": 1,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 1,
+        "meanMs": 3.5,
+        "p95Ms": 3.5,
+        "worstMs": 3.5
+      },
+      "renderWork": {
+        "samples": 1,
+        "meanMs": 0.7,
+        "p95Ms": 0.7,
+        "worstMs": 0.7
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "drawCalls": 4,
+    "counters": {
+      "scenes": 1,
+      "objects": 47,
+      "visibleObjects": 45,
+      "meshes": 6,
+      "meshVertices": 14086,
+      "meshTriangles": 26624,
+      "textures": 23,
+      "textureSources": 23,
+      "textureMBEstimate": 60.245
+    },
+    "notes": [
+      "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+      "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+      "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+      "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+    ]
+  }
+}

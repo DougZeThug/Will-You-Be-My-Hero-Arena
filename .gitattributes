@@ -1,0 +1,10 @@
+# Asset identity/provenance compares exact bytes. Never rewrite line endings
+# in editor exports, authored rigs, reference tracks or their reviewed fixtures.
+/lab/assets/** -text whitespace=cr-at-eol
+/lab/loongbones/assets/** -text whitespace=cr-at-eol
+/lab/loongbones/vendor/** -text whitespace=cr-at-eol
+/lab/human-motion/assets/** -text whitespace=cr-at-eol
+/public/assets/** -text whitespace=cr-at-eol
+/motion-reference/** -text whitespace=cr-at-eol
+/tests/fixtures/** -text whitespace=cr-at-eol
+/docs/review/** -text whitespace=cr-at-eol

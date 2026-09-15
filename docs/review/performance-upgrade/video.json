@@ -1,0 +1,159 @@
+{
+  "file": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Animation-Performance-Review.mp4",
+  "fps": 30,
+  "frames": 4320,
+  "decodedFrames": 4320,
+  "durationSeconds": 144.0,
+  "width": 1280,
+  "height": 864,
+  "method": "Captured renderer frames. Quarter speed advances simulation 1/120s per 30fps frame. No interpolation. No audio recording.",
+  "chapters": [
+    {
+      "event": "cornhole",
+      "actor": "doug",
+      "mode": "comparison",
+      "start": 0.0,
+      "duration": 3.0
+    },
+    {
+      "event": "cornhole",
+      "actor": "doug",
+      "mode": "normal",
+      "start": 3.0,
+      "duration": 3.0
+    },
+    {
+      "event": "cornhole",
+      "actor": "doug",
+      "mode": "quarter",
+      "start": 6.0,
+      "duration": 12.0
+    },
+    {
+      "event": "cornhole",
+      "actor": "dan",
+      "mode": "comparison",
+      "start": 18.0,
+      "duration": 3.0
+    },
+    {
+      "event": "cornhole",
+      "actor": "dan",
+      "mode": "normal",
+      "start": 21.0,
+      "duration": 3.0
+    },
+    {
+      "event": "cornhole",
+      "actor": "dan",
+      "mode": "quarter",
+      "start": 24.0,
+      "duration": 12.0
+    },
+    {
+      "event": "running",
+      "actor": "doug",
+      "mode": "comparison",
+      "start": 36.0,
+      "duration": 3.0
+    },
+    {
+      "event": "running",
+      "actor": "doug",
+      "mode": "normal",
+      "start": 39.0,
+      "duration": 3.0
+    },
+    {
+      "event": "running",
+      "actor": "doug",
+      "mode": "quarter",
+      "start": 42.0,
+      "duration": 12.0
+    },
+    {
+      "event": "running",
+      "actor": "dan",
+      "mode": "comparison",
+      "start": 54.0,
+      "duration": 3.0
+    },
+    {
+      "event": "running",
+      "actor": "dan",
+      "mode": "normal",
+      "start": 57.0,
+      "duration": 3.0
+    },
+    {
+      "event": "running",
+      "actor": "dan",
+      "mode": "quarter",
+      "start": 60.0,
+      "duration": 12.0
+    },
+    {
+      "event": "basketball",
+      "actor": "doug",
+      "mode": "comparison",
+      "start": 72.0,
+      "duration": 3.0
+    },
+    {
+      "event": "basketball",
+      "actor": "doug",
+      "mode": "normal",
+      "start": 75.0,
+      "duration": 3.0
+    },
+    {
+      "event": "basketball",
+      "actor": "doug",
+      "mode": "quarter",
+      "start": 78.0,
+      "duration": 12.0
+    },
+    {
+      "event": "basketball",
+      "actor": "dan",
+      "mode": "comparison",
+      "start": 90.0,
+      "duration": 3.0
+    },
+    {
+      "event": "basketball",
+      "actor": "dan",
+      "mode": "normal",
+      "start": 93.0,
+      "duration": 3.0
+    },
+    {
+      "event": "basketball",
+      "actor": "dan",
+      "mode": "quarter",
+      "start": 96.0,
+      "duration": 12.0
+    },
+    {
+      "event": "fighting",
+      "actor": "doug",
+      "mode": "comparison",
+      "start": 108.0,
+      "duration": 6.0
+    },
+    {
+      "event": "fighting",
+      "actor": "doug",
+      "mode": "normal",
+      "start": 114.0,
+      "duration": 6.0
+    },
+    {
+      "event": "fighting",
+      "actor": "doug",
+      "mode": "quarter",
+      "start": 120.0,
+      "duration": 24.0
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arena Lab · internal development</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">WILL YOU BE MY HERO? / DEVELOPMENT</p>
+          <h1>Arena Lab <span>Internal</span></h1>
+        </div>
+        <a href="http://localhost:3001/" target="_blank" rel="noopener"
+          >Open player game ↗</a
+        >
+      </header>
+      <p class="intro">
+        Reproduce a moment. Inspect the real engine. No collection, points or
+        saved matches are changed here.
+        <a
+          href="/?scenario=character-dan&amp;animation=idle_breathe&amp;rigView=source-fit"
+          >Dan · revised full-body source →</a
+        >
+        <a href="/loongbones/">LoongBones compatibility proof →</a>
+        <a href="/human-motion/">Human Motion V2 · four-event runtime →</a>
+        <a href="/loongbones/doug/?character=dan"
+          >Dan · current cornhole rig →</a
+        >
+        <a href="/loongbones/doug/"
+          >Doug · weighted rig review / editor pack →</a
+        >
+      </p>
+      <section class="toolbar" aria-label="Scenario setup">
+        <label>Test scenario<select id="scenario"></select></label>
+        <label
+          >Reproducible seed<input id="seed" maxlength="120" spellcheck="false"
+        /></label>
+        <label id="character-field" hidden
+          >Character<select id="character">
+            <option value="doug">Doug</option>
+            <option value="dan">Dan</option>
+          </select></label
+        >
+        <label id="animation-field" hidden
+          >Animation<select id="animation"></select
+        ></label>
+        <button id="load" class="primary">Load / reset</button>
+      </section>
+      <div class="description">
+        <p id="description"></p>
+        <output id="status" aria-live="polite">Loading engine…</output>
+      </div>
+      <div class="workspace">
+        <section class="stage-panel" aria-label="Arena inspection">
+          <div id="arena" tabindex="0"></div>
+          <div class="transport">
+            <button id="play">Play</button><button id="pause">Pause</button
+            ><button id="step">+1 frame</button
+            ><button id="second">+1 second</button
+            ><output id="time">0.000s</output
+            ><span id="clock-mode">Manual clock</span>
+          </div>
+          <div id="checkpoints" aria-label="Named checkpoints"></div>
+          <p class="hint" id="stage-hint">
+            Checkpoints pause at exact game times. Live checkpoints reset and
+            replay the named seed. Press Play and focus the arena for real
+            keyboard or controller input.
+          </p>
+        </section>
+        <aside>
+          <details id="rig-qa-controls" hidden>
+            <summary>Anatomy / rig inspection</summary>
+            <label
+              >Evidence view<select id="rig-view">
+                <option value="source-fit">
+                  Dan revised full-body source · static
+                </option>
+                <option value="current">Current artwork / evaluated rig</option>
+                <option value="setup-plan">Dan setup skeleton proposal</option>
+                <option value="idle-plan">Dan idle skeleton proposal</option>
+              </select></label
+            >
+            <label
+              >Scale<select id="rig-scale">
+                <option value="detail">Close inspection</option>
+                <option value="court">Court scale · 1×</option>
+              </select></label
+            >
+            <label><input id="rig-overlay" type="checkbox" />Show joints</label>
+            <label
+              ><input id="rig-silhouette" type="checkbox" />Black
+              silhouette</label
+            >
+            <label
+              ><input id="rig-mirror" type="checkbox" />Mirror
+              horizontally</label
+            >
+            <p class="hint">
+              Plans are unfinished authoring targets, not corrected artwork. The
+              revised source view preserves Dan's selected full-body drawing
+              with uniform scaling; its animations are pending. Current-rig dots
+              show actual solver joints; absent bones are not invented.
+            </p>
+          </details>
+          <section class="readout">
+            <h2>State at this moment</h2>
+            <dl id="summary"></dl>
+          </section>
+          <section class="readout">
+            <h2>Performance</h2>
+            <dl id="performance"></dl>
+            <p class="hint">
+              Live frame cadence and CPU work estimates. Manual steps are
+              counted separately and do not measure display FPS. Texture memory
+              is an estimate.
+            </p>
+          </section>
+          <details>
+            <summary>Input test controls</summary>
+            <p class="hint">
+              These buttons inject semantic human input through the existing
+              controller system. Hold Charge, then release.
+            </p>
+            <div class="input-buttons">
+              <button data-intent="primaryAction">Primary</button
+              ><button data-intent="secondaryAction">Secondary</button
+              ><button data-intent="specialAction">Special</button
+              ><button data-intent="charge">Charge</button>
+            </div>
+            <label
+              >Gamepad source<select id="pad">
+                <option value="hardware">Real browser gamepad</option>
+                <option value="xbox">Virtual Xbox · synthetic</option>
+                <option value="playstation">
+                  Virtual PlayStation · synthetic
+                </option>
+                <option value="disconnected">Virtual disconnect</option>
+              </select></label
+            >
+            <p class="hint">
+              Virtual pads test mapping and lifecycle only. Physical pairing,
+              hardware latency and vibration still require a real controller.
+            </p>
+          </details>
+          <div class="exports">
+            <button id="copy-link">Copy scenario link</button
+            ><button id="export">Download state JSON</button>
+          </div>
+        </aside>
+      </div>
+      <details class="raw">
+        <summary>Full read-only state · window.__HERO_ARENA__</summary>
+        <pre id="state"></pre>
+      </details>
+      <p id="error" role="alert"></p>
+      <footer>
+        Production runtime and labeled source studies · standalone local
+        development entry · API v1
+      </footer>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,574 @@
+{
+  "reviewedAt": "2026-09-14T17:53:36.092724+00:00",
+  "scope": "V2 runtime extended in opt-in /human-motion/ Lab. Production Play/Watch not migrated.",
+  "regression": {
+    "started": "2026-09-14T17:24:07.199Z",
+    "completed": "2026-09-14T17:39:38.898Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 29.617
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 37.316
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 824.078
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 22.576
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 18.101
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "pureChecks": 170625,
+  "seededContests": 2000,
+  "browser": {
+    "passed": 101,
+    "skipped": 1,
+    "skippedReason": "Optional @visual reviewed-image baseline comparison. No baseline was updated.",
+    "failed": 0
+  },
+  "protectedSourceHashes": {
+    "dan_ske.json": true,
+    "dan_tex.json": true,
+    "dan_tex.png": true,
+    "doug_ske.json": true,
+    "doug_tex.json": true,
+    "doug_tex.png": true
+  },
+  "derivedGeometry": "Runtime-only whole-face shoe material ownership and seam vertices; bind coordinates and UVs preserved. Not an editor round-trip export.",
+  "runningReference": {
+    "measuredFrames": 241,
+    "source": "https://www.youtube.com/watch?v=j8P_GLzV_3U",
+    "compiledDataReproduced": true,
+    "limitation": "Slowed source cadence uncalibrated; far-side half-cycle is authored adaptation."
+  },
+  "motionMetrics": {
+    "dan": {
+      "basketball": {
+        "launchError": 0,
+        "handoffError": 9.30590529092197e-15,
+        "maxHeight": 60.5,
+        "compression": 10.081369451003633,
+        "guide": 7.2252914823193075,
+        "heldFrames": 87,
+        "phases": [
+          "settle",
+          "gather",
+          "load",
+          "rise",
+          "airborne",
+          "release",
+          "followThrough",
+          "recovery",
+          "anticipation",
+          "active"
+        ]
+      },
+      "running": {
+        "maxSole": 2.5372952848101704e-05,
+        "maxAnkle": 2.0495186137532014e-13,
+        "maxLength": 1.4921397450962104e-13,
+        "maxSpeed": 215,
+        "maxFit": 2.842170943040401e-14,
+        "maxStep": 9.101853905237398,
+        "plantSamples": 37089,
+        "clips": [
+          "idle",
+          "walk",
+          "jog",
+          "run",
+          "sprint"
+        ],
+        "contacts": [
+          "rightFootPlant",
+          "leftFootPlant",
+          "leftFootRelease",
+          "rightFootRelease"
+        ]
+      }
+    },
+    "doug": {
+      "basketball": {
+        "launchError": 0,
+        "handoffError": 5.796132467250313e-15,
+        "maxHeight": 42.349999999999994,
+        "compression": 7.056958615702545,
+        "guide": 8.296525470049414,
+        "heldFrames": 87,
+        "phases": [
+          "settle",
+          "gather",
+          "load",
+          "rise",
+          "airborne",
+          "release",
+          "followThrough",
+          "recovery",
+          "anticipation",
+          "active"
+        ]
+      },
+      "running": {
+        "maxSole": 2.4225374431807722e-05,
+        "maxAnkle": 1.4210854715202004e-13,
+        "maxLength": 1.4921397450962104e-13,
+        "maxSpeed": 225,
+        "maxFit": 2.842170943040401e-14,
+        "maxStep": 8.139677045249986,
+        "plantSamples": 50022,
+        "clips": [
+          "idle",
+          "walk",
+          "jog",
+          "run",
+          "sprint"
+        ],
+        "contacts": [
+          "rightFootPlant",
+          "leftFootPlant",
+          "leftFootRelease",
+          "rightFootRelease"
+        ]
+      }
+    }
+  },
+  "metricScope": "Sole samples are actual evaluated mesh vertices during established full-weight foot locks, after touchdown blend; length error is relative. Metrics do not certify human realism.",
+  "captures": [
+    {
+      "path": "work/qa/v3-review/dan/basketball-0.25x.json",
+      "event": "basketball",
+      "rate": 0.25,
+      "gameSeconds": 3.62499999999999,
+      "wallSeconds": 15.50030000001192,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/dan/basketball-1x.json",
+      "event": "basketball",
+      "rate": 1,
+      "gameSeconds": 3.6166666666666565,
+      "wallSeconds": 4.546800000011921,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/dan/cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "gameSeconds": 3.6499999999999897,
+      "wallSeconds": 4.579699999988079,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/dan/running-0.25x.json",
+      "event": "running",
+      "rate": 0.25,
+      "gameSeconds": 3.608333333333323,
+      "wallSeconds": 15.362600000023843,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/dan/running-1x.json",
+      "event": "running",
+      "rate": 1,
+      "gameSeconds": 3.683333333333323,
+      "wallSeconds": 4.588399999976158,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/doug/cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "gameSeconds": 5.625000000000069,
+      "wallSeconds": 23.442900000035763,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/doug/cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "gameSeconds": 5.633333333333403,
+      "wallSeconds": 6.856300000011921,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/doug-extra/basketball-1x.json",
+      "event": "basketball",
+      "rate": 1,
+      "gameSeconds": 3.6666666666666563,
+      "wallSeconds": 4.575900000035762,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/doug-extra/running-1x.json",
+      "event": "running",
+      "rate": 1,
+      "gameSeconds": 3.683333333333323,
+      "wallSeconds": 4.591399999976158,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/combat/fighting-0.25x.json",
+      "event": "fighting",
+      "rate": 0.25,
+      "gameSeconds": 6.000000000000088,
+      "wallSeconds": 24.934,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/combat/fighting-1x.json",
+      "event": "fighting",
+      "rate": 1,
+      "gameSeconds": 6.066666666666758,
+      "wallSeconds": 6.986900000035763,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/close/basketball-0.25x.json",
+      "event": "basketball",
+      "rate": 0.25,
+      "gameSeconds": 3.6166666666666565,
+      "wallSeconds": 15.4,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/silhouette/cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "gameSeconds": 3.62499999999999,
+      "wallSeconds": 15.435900000035764,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    },
+    {
+      "path": "work/qa/v3-review/silhouette/running-0.25x.json",
+      "event": "running",
+      "rate": 0.25,
+      "gameSeconds": 3.62499999999999,
+      "wallSeconds": 15.423900000035763,
+      "errors": [],
+      "checkedEncodedFrames": 8
+    }
+  ],
+  "performance": {
+    "method": "One headless Chrome page at a time; 12 seconds real-time per event, except running at 4.2 seconds before finish. No video recorder or manual stepping. Last bounded 240-frame timing window. Other user apps may remain open.",
+    "events": [
+      {
+        "event": "cornhole",
+        "seconds": 12,
+        "realtime": {
+          "frames": 735,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.682,
+            "p95Ms": 17.7,
+            "worstMs": 20.4
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.804,
+            "p95Ms": 13.1,
+            "worstMs": 14.7
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.039,
+            "p95Ms": 2.6,
+            "worstMs": 4.1
+          },
+          "slowFrames": 5,
+          "fps": 59.945
+        },
+        "counters": {
+          "scenes": 1,
+          "objects": 49,
+          "visibleObjects": 23,
+          "meshes": 32,
+          "meshVertices": 11735,
+          "meshTriangles": 20551,
+          "textures": 18,
+          "textureSources": 18,
+          "textureMBEstimate": 31.706
+        },
+        "drawCalls": 8,
+        "errors": []
+      },
+      {
+        "event": "running",
+        "seconds": 4.2,
+        "realtime": {
+          "frames": 263,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.683,
+            "p95Ms": 17.5,
+            "worstMs": 18.7
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.895,
+            "p95Ms": 12.7,
+            "worstMs": 14.7
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.618,
+            "p95Ms": 2,
+            "worstMs": 3.1
+          },
+          "slowFrames": 5,
+          "fps": 59.941
+        },
+        "counters": {
+          "scenes": 1,
+          "objects": 40,
+          "visibleObjects": 18,
+          "meshes": 32,
+          "meshVertices": 11735,
+          "meshTriangles": 20551,
+          "textures": 18,
+          "textureSources": 18,
+          "textureMBEstimate": 31.706
+        },
+        "drawCalls": 3,
+        "errors": []
+      },
+      {
+        "event": "basketball",
+        "seconds": 12,
+        "realtime": {
+          "frames": 732,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.684,
+            "p95Ms": 17.4,
+            "worstMs": 22.3
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.625,
+            "p95Ms": 12.8,
+            "worstMs": 14.5
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.707,
+            "p95Ms": 2.1,
+            "worstMs": 2.9
+          },
+          "slowFrames": 7,
+          "fps": 59.938
+        },
+        "counters": {
+          "scenes": 1,
+          "objects": 51,
+          "visibleObjects": 23,
+          "meshes": 32,
+          "meshVertices": 11735,
+          "meshTriangles": 20551,
+          "textures": 18,
+          "textureSources": 18,
+          "textureMBEstimate": 31.706
+        },
+        "drawCalls": 3,
+        "errors": []
+      },
+      {
+        "event": "fighting",
+        "seconds": 12,
+        "realtime": {
+          "frames": 731,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.682,
+            "p95Ms": 17.8,
+            "worstMs": 20.7
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 8.903,
+            "p95Ms": 11.7,
+            "worstMs": 13.6
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.73,
+            "p95Ms": 2.2,
+            "worstMs": 3.1
+          },
+          "slowFrames": 6,
+          "fps": 59.945
+        },
+        "counters": {
+          "scenes": 1,
+          "objects": 40,
+          "visibleObjects": 18,
+          "meshes": 32,
+          "meshVertices": 11735,
+          "meshTriangles": 20551,
+          "textures": 18,
+          "textureSources": 18,
+          "textureMBEstimate": 31.706
+        },
+        "drawCalls": 3,
+        "errors": []
+      }
+    ]
+  },
+  "media": {
+    "file": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Human-Motion-V3-Review.mp4",
+    "width": 1280,
+    "height": 760,
+    "fps": 30,
+    "codec": "H.264",
+    "pixelFormat": "yuv420p",
+    "duration": 104.60000000000001,
+    "bytes": 38481936,
+    "fullDecodeErrors": [],
+    "segments": [
+      {
+        "label": "DAN / CORNHOLE / NORMAL SPEED",
+        "start": 0,
+        "duration": 3.6,
+        "frames": 108,
+        "source": "work\\qa\\v3-review\\dan\\cornhole-1x.webm",
+        "captureLeadTrimSeconds": 0.9204000000357628
+      },
+      {
+        "label": "DOUG / THROW - WATCH - CHEST TAP / NORMAL SPEED",
+        "start": 3.6,
+        "duration": 5.6,
+        "frames": 168,
+        "source": "work\\qa\\v3-review\\doug\\cornhole-1x.webm",
+        "captureLeadTrimSeconds": 0.9213000000119209
+      },
+      {
+        "label": "DOUG / THROW AND CHEST CONTACT / QUARTER SPEED",
+        "start": 9.2,
+        "duration": 21.933333333333334,
+        "frames": 658,
+        "source": "work\\qa\\v3-review\\doug\\cornhole-0.25x.webm",
+        "captureLeadTrimSeconds": 0.9037000000476837
+      },
+      {
+        "label": "DAN / START - RUN - STOP / NORMAL SPEED",
+        "start": 31.133333333333333,
+        "duration": 3.7,
+        "frames": 111,
+        "source": "work\\qa\\v3-review\\dan\\running-1x.webm",
+        "captureLeadTrimSeconds": 0.9035
+      },
+      {
+        "label": "DAN / FOOT SUPPORT AND RECOVERY / QUARTER SPEED",
+        "start": 34.833333333333336,
+        "duration": 14.233333333333333,
+        "frames": 427,
+        "source": "work\\qa\\v3-review\\dan\\running-0.25x.webm",
+        "captureLeadTrimSeconds": 0.9008999999761581
+      },
+      {
+        "label": "DOUG / START - RUN - STOP / NORMAL SPEED",
+        "start": 49.06666666666667,
+        "duration": 3.6666666666666665,
+        "frames": 110,
+        "source": "work\\qa\\v3-review\\doug-extra\\running-1x.webm",
+        "captureLeadTrimSeconds": 0.901699999988079
+      },
+      {
+        "label": "DAN / GATHER - JUMP - RELEASE - LAND",
+        "start": 52.733333333333334,
+        "duration": 3.6,
+        "frames": 108,
+        "source": "work\\qa\\v3-review\\dan\\basketball-1x.webm",
+        "captureLeadTrimSeconds": 0.919
+      },
+      {
+        "label": "DAN / BASKETBALL CLOSE / QUARTER SPEED",
+        "start": 56.333333333333336,
+        "duration": 14.5,
+        "frames": 435,
+        "source": "work\\qa\\v3-review\\close\\basketball-0.25x.webm",
+        "captureLeadTrimSeconds": 0.9028999999761581
+      },
+      {
+        "label": "DOUG / BASKETBALL / NORMAL SPEED",
+        "start": 70.83333333333334,
+        "duration": 3.6666666666666665,
+        "frames": 110,
+        "source": "work\\qa\\v3-review\\doug-extra\\basketball-1x.webm",
+        "captureLeadTrimSeconds": 0.904800000011921
+      },
+      {
+        "label": "COMBAT SPACING PROOF / OPPOSITE-VIEW ART STILL NEEDED",
+        "start": 74.50000000000001,
+        "duration": 6.066666666666666,
+        "frames": 182,
+        "source": "work\\qa\\v3-review\\combat\\fighting-1x.webm",
+        "captureLeadTrimSeconds": 0.906800000011921
+      },
+      {
+        "label": "COMBAT CONTACT / QUARTER SPEED - FACING ART UNFINISHED",
+        "start": 80.56666666666668,
+        "duration": 24.033333333333335,
+        "frames": 721,
+        "source": "work\\qa\\v3-review\\combat\\fighting-0.25x.webm",
+        "captureLeadTrimSeconds": 0.9100999999642372
+      }
+    ],
+    "method": "Continuous forward runtime recording; no interpolation between stills."
+  },
+  "visualReview": {
+    "method": "Continuous forward runtime captures at normal and quarter speed; actual encoded frames inspected sequentially at action breakdowns. Close, Arena and silhouette views. No reconstructed tween between stills.",
+    "findings": [
+      "Foot-tip fragments no longer separate when running legs move apart.",
+      "Running uses lower knee recovery, bent opposite arm swing and visible first-step/deceleration changes.",
+      "Doug chest tap has two visible contacts and a short dwell.",
+      "Basketball shows gather/load, motor jump, actual handoff and contact-driven landing.",
+      "Court-space collision prevents pelvis overlap; opposite visual facing is still unavailable."
+    ],
+    "limitations": [
+      "Both protected side-view drawings face right; facing/counter-facing combat art still needed.",
+      "Foot roll/toe articulation and three drawn hand exposures remain stylized approximations.",
+      "Running, basketball and combat are development proofs, not final human-motion certification.",
+      "Synthetic gamepad tests do not replace physical controller validation."
+    ]
+  },
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

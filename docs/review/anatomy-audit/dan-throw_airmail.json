@@ -1,0 +1,392 @@
+{
+  "browser": "153.0.8010.37",
+  "viewport": {
+    "width": 1440,
+    "height": 1080
+  },
+  "capture": "Actual canvas MediaRecorder, 4 seconds real-time; decoded frames are analysis evidence, not a device performance benchmark.",
+  "state": {
+    "apiVersion": 1,
+    "ready": true,
+    "status": "ready",
+    "errors": [],
+    "scenario": {
+      "id": "character-dan",
+      "version": 1,
+      "label": "Dan · animation",
+      "kind": "character",
+      "sport": "cornhole",
+      "description": "One actual connected paper rig. Compare anatomy, grounding and recovery.",
+      "seed": "arena-lab:character-dan:v1",
+      "character": "dan",
+      "animation": "throw_airmail"
+    },
+    "runtime": "character",
+    "time": 0.29677333333928824,
+    "paused": true,
+    "clockMode": "manual",
+    "checkpoints": [
+      {
+        "name": "start",
+        "time": 0
+      },
+      {
+        "name": "anticipation",
+        "time": 0.1434094117647059
+      },
+      {
+        "name": "release",
+        "time": 0.6965600000000001
+      },
+      {
+        "name": "gesture",
+        "time": 0.89656
+      },
+      {
+        "name": "result",
+        "time": 2.10656
+      },
+      {
+        "name": "recovery",
+        "time": 2.95656
+      },
+      {
+        "name": "end",
+        "time": 3.25656
+      }
+    ],
+    "event": {
+      "phase": "inspection",
+      "scores": [],
+      "complete": false,
+      "animation": "throw_airmail",
+      "timeline": {
+        "kind": "production-throw",
+        "duration": 3.25656,
+        "cycleDuration": 3.70656,
+        "markers": [
+          {
+            "name": "release",
+            "time": 0.6965600000000001
+          },
+          {
+            "name": "contact",
+            "time": 1.94656
+          }
+        ],
+        "checkpoints": [
+          {
+            "name": "start",
+            "time": 0
+          },
+          {
+            "name": "anticipation",
+            "time": 0.1434094117647059
+          },
+          {
+            "name": "release",
+            "time": 0.6965600000000001
+          },
+          {
+            "name": "gesture",
+            "time": 0.89656
+          },
+          {
+            "name": "result",
+            "time": 2.10656
+          },
+          {
+            "name": "recovery",
+            "time": 2.95656
+          },
+          {
+            "name": "end",
+            "time": 3.25656
+          }
+        ]
+      }
+    },
+    "characters": [
+      {
+        "actor": 0,
+        "cardId": "card-dan",
+        "name": "Dan",
+        "rig": "connected-paper",
+        "root": {
+          "x": 640,
+          "y": 625,
+          "scaleX": 1.45,
+          "scaleY": 1.45,
+          "rotation": 0,
+          "alpha": 1,
+          "visible": true
+        },
+        "animation": {
+          "clip": "throw_airmail",
+          "progress": 0.14088055091679716,
+          "pose": {
+            "hipX": -4.970556554624874,
+            "hipY": -172,
+            "body": 0,
+            "head": -2.7112126661590223,
+            "shrug": 0,
+            "handLX": -41.48129891438938,
+            "handLY": -160.7506615151872,
+            "handRX": 22.181049573889293,
+            "handRY": -130.97944048161645,
+            "footLX": -40,
+            "footLY": -22,
+            "footRX": 41,
+            "footRY": -22,
+            "footL": 0,
+            "footR": 0,
+            "turn": 1
+          }
+        },
+        "sockets": {
+          "coordinateSpace": "render-world",
+          "throwingHand": {
+            "x": 672.1625229398144,
+            "y": 435.07980505606974
+          },
+          "offHand": {
+            "x": 579.8521145961529,
+            "y": 391.91153313778966
+          },
+          "footL": {
+            "x": 581.9999980926514,
+            "y": 593.0999989509583
+          },
+          "footR": {
+            "x": 699.4500019550323,
+            "y": 593.0999989509583
+          },
+          "head": {
+            "x": 632.7926927587794,
+            "y": 218.8259866428375
+          },
+          "chest": {
+            "x": 632.7926927587794,
+            "y": 282.625988740921
+          },
+          "waist": {
+            "x": 632.7926927587794,
+            "y": 358.1999912261963
+          }
+        }
+      }
+    ],
+    "inputs": [],
+    "controllers": [],
+    "markers": [],
+    "rendering": null,
+    "rigQA": {
+      "options": {
+        "overlay": true,
+        "silhouette": false,
+        "mirror": false,
+        "view": "current",
+        "scale": "detail"
+      },
+      "current": {
+        "status": "current-production-solver",
+        "coordinates": "character-local-y-down",
+        "joints": {
+          "root": {
+            "x": 0,
+            "y": 0
+          },
+          "pelvis": {
+            "x": -4.970556554624874,
+            "y": -184
+          },
+          "neck": {
+            "x": -4.970556554624874,
+            "y": -280.12
+          },
+          "shoulder_L": {
+            "x": -49.03455655462487,
+            "y": -260.88
+          },
+          "elbow_L": {
+            "x": -60.49027812661842,
+            "y": -212.17439429562629
+          },
+          "palm_L": {
+            "x": -41.48129891438938,
+            "y": -160.7506615151872
+          },
+          "shoulder_R": {
+            "x": 39.09344344537513,
+            "y": -260.88
+          },
+          "elbow_R": {
+            "x": 48.21716749468159,
+            "y": -195.5741979235836
+          },
+          "palm_R": {
+            "x": 22.181049573889293,
+            "y": -130.97944048161645
+          },
+          "hip_L": {
+            "x": -27.970556554624874,
+            "y": -178
+          },
+          "knee_L": {
+            "x": -45.570684010026504,
+            "y": -91.77798707085518
+          },
+          "ankle_L": {
+            "x": -40,
+            "y": -22
+          },
+          "hip_R": {
+            "x": 18.029443445375126,
+            "y": -178
+          },
+          "knee_R": {
+            "x": 35.75145708061191,
+            "y": -91.8029569375348
+          },
+          "ankle_R": {
+            "x": 41,
+            "y": -22
+          }
+        },
+        "chains": [
+          [
+            "pelvis",
+            "neck"
+          ],
+          [
+            "neck",
+            "shoulder_L",
+            "elbow_L",
+            "palm_L"
+          ],
+          [
+            "neck",
+            "shoulder_R",
+            "elbow_R",
+            "palm_R"
+          ],
+          [
+            "pelvis",
+            "hip_L",
+            "knee_L",
+            "ankle_L"
+          ],
+          [
+            "pelvis",
+            "hip_R",
+            "knee_R",
+            "ankle_R"
+          ]
+        ],
+        "missingControls": [
+          "clavicle_L",
+          "clavicle_R",
+          "spine_lower",
+          "spine_mid",
+          "chest rotation",
+          "pelvis rotation",
+          "wrist_L",
+          "wrist_R",
+          "support-leg load"
+        ],
+        "balance": null,
+        "targets": {
+          "palm_L": {
+            "x": -41.48129891438938,
+            "y": -160.7506615151872
+          },
+          "palm_R": {
+            "x": 22.181049573889293,
+            "y": -130.97944048161645
+          },
+          "ankle_L": {
+            "x": -40,
+            "y": -22
+          },
+          "ankle_R": {
+            "x": 41,
+            "y": -22
+          }
+        },
+        "note": "Dots are evaluated solver joints. Neck–pelvis and neck–shoulder lines summarize one torso transform, not independent spine/clavicle bones. Arm endpoints are palms, not wrists. Ankle y=-22 is the registered ankle above the drawn sole at floor y=0. Targets are the actual requested palm/ankle coordinates before solving; they are not Spine IK bones. There is no center-of-mass model."
+      },
+      "plan": null
+    },
+    "syntheticGamepad": false,
+    "performance": {
+      "mode": "manual",
+      "capacity": 240,
+      "realtime": {
+        "frames": 241,
+        "windowFrames": 240,
+        "frameTiming": {
+          "samples": 240,
+          "meanMs": 16.677,
+          "p95Ms": 17.6,
+          "worstMs": 22.6
+        },
+        "updateWork": {
+          "samples": 240,
+          "meanMs": 1.887,
+          "p95Ms": 2.4,
+          "worstMs": 2.9
+        },
+        "renderWork": {
+          "samples": 240,
+          "meanMs": 2.273,
+          "p95Ms": 2.8,
+          "worstMs": 3.3
+        },
+        "slowFrames": 0,
+        "fps": 59.963
+      },
+      "manual": {
+        "frames": 2,
+        "windowFrames": 2,
+        "frameTiming": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "updateWork": {
+          "samples": 2,
+          "meanMs": 1.45,
+          "p95Ms": 1.5,
+          "worstMs": 1.5
+        },
+        "renderWork": {
+          "samples": 2,
+          "meanMs": 4.95,
+          "p95Ms": 8,
+          "worstMs": 8
+        },
+        "slowFrames": 0,
+        "fps": null
+      },
+      "drawCalls": 4,
+      "counters": {
+        "scenes": 1,
+        "objects": 27,
+        "visibleObjects": 27,
+        "meshes": 3,
+        "meshVertices": 7043,
+        "meshTriangles": 13312,
+        "textures": 37,
+        "textureSources": 37,
+        "textureMBEstimate": 58.78
+      },
+      "notes": [
+        "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+        "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+        "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+        "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+      ]
+    }
+  }
+}

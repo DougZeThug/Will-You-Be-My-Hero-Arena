@@ -1,0 +1,190 @@
+{
+  "apiVersion": 1,
+  "ready": true,
+  "status": "ready",
+  "errors": [],
+  "scenario": {
+    "id": "character-dan",
+    "version": 1,
+    "label": "Dan · animation",
+    "kind": "character",
+    "sport": "cornhole",
+    "description": "One actual connected paper rig. Compare anatomy, grounding and recovery.",
+    "seed": "arena-lab:character-dan:v1",
+    "character": "dan",
+    "animation": "quiet_reset"
+  },
+  "runtime": "character",
+  "time": 0.385,
+  "paused": true,
+  "clockMode": "manual",
+  "checkpoints": [
+    {
+      "name": "start",
+      "time": 0
+    },
+    {
+      "name": "anticipation",
+      "time": 0.13999999999999999
+    },
+    {
+      "name": "gesture",
+      "time": 0.385
+    },
+    {
+      "name": "recovery",
+      "time": 0.7
+    }
+  ],
+  "event": {
+    "phase": "inspection",
+    "scores": [],
+    "complete": false,
+    "animation": "quiet_reset"
+  },
+  "characters": [
+    {
+      "actor": 0,
+      "cardId": "card-dan",
+      "name": "Dan",
+      "rig": "connected-paper",
+      "root": {
+        "x": 640,
+        "y": 625,
+        "scaleX": 1.65,
+        "scaleY": 1.65,
+        "rotation": 0,
+        "alpha": 1,
+        "visible": true
+      },
+      "animation": {
+        "clip": "quiet_reset",
+        "progress": 0.55,
+        "pose": {
+          "hipX": 0,
+          "hipY": -170,
+          "body": 0,
+          "head": 4.487384615384613,
+          "shrug": 0,
+          "handLX": -53,
+          "handLY": -142,
+          "handRX": 35.60220952380953,
+          "handRY": -177.39048648648648,
+          "footLX": -40,
+          "footLY": -22,
+          "footRX": 41,
+          "footRY": -22,
+          "footL": 0,
+          "footR": 0,
+          "turn": 1
+        }
+      },
+      "sockets": {
+        "coordinateSpace": "render-world",
+        "throwingHand": {
+          "x": 698.7436448654629,
+          "y": 332.3057015266161
+        },
+        "offHand": {
+          "x": 552.5500012636185,
+          "y": 390.7000033855438
+        },
+        "footL": {
+          "x": 574.0000009536743,
+          "y": 588.7000005245209
+        },
+        "footR": {
+          "x": 707.6499990224838,
+          "y": 588.7000005245209
+        },
+        "head": {
+          "x": 640,
+          "y": 166.1020066308975
+        },
+        "chest": {
+          "x": 640,
+          "y": 238.70200558185576
+        },
+        "waist": {
+          "x": 640,
+          "y": 324.70000433921814
+        }
+      }
+    }
+  ],
+  "inputs": [],
+  "controllers": [],
+  "markers": [],
+  "rendering": null,
+  "syntheticGamepad": false,
+  "performance": {
+    "mode": "manual",
+    "capacity": 240,
+    "realtime": {
+      "frames": 0,
+      "windowFrames": 0,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "renderWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "manual": {
+      "frames": 2,
+      "windowFrames": 2,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 2,
+        "meanMs": 1.55,
+        "p95Ms": 1.6,
+        "worstMs": 1.6
+      },
+      "renderWork": {
+        "samples": 2,
+        "meanMs": 2,
+        "p95Ms": 2.5,
+        "worstMs": 2.5
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "drawCalls": 2,
+    "counters": {
+      "scenes": 1,
+      "objects": 9,
+      "visibleObjects": 9,
+      "meshes": 3,
+      "meshVertices": 7043,
+      "meshTriangles": 13312,
+      "textures": 20,
+      "textureSources": 20,
+      "textureMBEstimate": 58.78
+    },
+    "notes": [
+      "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+      "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+      "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+      "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+    ]
+  }
+}

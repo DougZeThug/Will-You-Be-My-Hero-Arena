@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arena Lab · cornhole motion</title>
+    <style>
+      body {
+        margin: 0;
+        background: #17221b;
+        color: #f4ecd8;
+        font: 15px system-ui;
+      }
+      main {
+        max-width: 1280px;
+        margin: 16px auto;
+        padding: 0 16px;
+      }
+      header,
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 auto 0 0;
+      }
+      a {
+        color: #e9c575;
+      }
+      p {
+        line-height: 1.5;
+      }
+      button,
+      select {
+        font: inherit;
+        padding: 8px 12px;
+        background: #f5ecd4;
+        color: #182319;
+        border: 1px solid #8b927f;
+        cursor: pointer;
+      }
+      label {
+        display: flex;
+        gap: 6px;
+      }
+      #stage {
+        width: 100%;
+        aspect-ratio: 1280/760;
+      }
+      output {
+        display: block;
+        margin: 10px 0;
+      }
+      pre {
+        max-height: 260px;
+        overflow: auto;
+        font-size: 12px;
+      }
+      .caption {
+        display: flex;
+        justify-content: space-around;
+        color: #d9cfae;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Doug · weighted rig</h1>
+        <a href="/?scenario=cornhole-recorded&amp;checkpoint=anticipation"
+          >Dan + Doug in Arena</a
+        ><a href="/loongbones/dan/?sample=restored"
+          >Original Dan export comparison</a
+        >
+      </header>
+      <p>
+        Board-facing cornhole stances with cupped, open-palm and relaxed hand
+        artwork. These newly authored layered rigs await editor round-trip
+        verification. Add ?version=2 to compare the preserved earlier motion.
+      </p>
+      <div class="controls">
+        <label
+          >Character
+          <select id="character">
+            <option value="doug">Doug</option>
+            <option value="dan">Dan</option>
+          </select></label
+        >
+        <button id="play">Play</button><button id="pause">Pause</button
+        ><button id="reset">Reset</button><button id="step">+1 frame</button
+        ><label
+          >Animation
+          <select id="clip"></select></label
+        ><label><input type="checkbox" id="overlay" />Joints</label
+        ><label><input type="checkbox" id="silhouette" />Silhouette</label
+        ><label><input type="checkbox" id="mirrored" />Mirror</label
+        ><label><input type="checkbox" id="court" />Court scale</label>
+        <label
+          >Speed
+          <select id="speed">
+            <option value="1">1×</option>
+            <option value="0.5">0.5×</option>
+            <option value="0.25">0.25×</option>
+          </select></label
+        >
+        <label
+          >Pose landmark
+          <select id="phase">
+            <option value="">Choose pose landmark</option>
+          </select></label
+        >
+      </div>
+      <output id="status">Loading Doug…</output>
+      <div class="caption">
+        <span>Neutral assembly</span><span>Evaluated weighted rig</span>
+      </div>
+      <div id="stage"></div>
+      <p>
+        <a
+          id="import-pack"
+          href="../assets/cornhole-motion-v2/doug-motion-v2-import.zip"
+          download
+          >Download LoongBones import pack</a
+        >. Extract it, import the PNG and texture JSON into Library, then import
+        the skeleton JSON into a separate armature/project. Keep your existing
+        editor work as a backup.
+      </p>
+      <p>
+        Three authored hand poses blend during grip, release and recovery.
+        Finger bones, other viewing angles, full locomotion and overhand sports
+        clips remain separate work. The main cornhole Lab uses these rigs; other
+        sports and the player app retain their existing versions.
+      </p>
+      <details>
+        <summary>Rig state / markers / performance</summary>
+        <pre id="state"></pre>
+      </details>
+      <script type="module" src="./main.ts"></script>
+    </main>
+  </body>
+</html>

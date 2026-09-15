@@ -1,0 +1,95 @@
+{
+  "id": "card-doug",
+  "version": 1,
+  "name": "Doug",
+  "personality": {
+    "confidence": 0.86,
+    "showmanship": 0.76,
+    "intensity": 0.82,
+    "calmness": 0.48,
+    "humor": 0.67,
+    "patience": 0.32,
+    "resilience": 0.8,
+    "sociability": 0.8
+  },
+  "throwingStyle": {
+    "speed": 0.85,
+    "flatness": 0.92,
+    "accuracy": 0.68,
+    "tendencies": {
+      "flat": 5,
+      "slide": 3,
+      "fast": 2,
+      "airmail": 1.6,
+      "roll": 1,
+      "cut": 0.7,
+      "push": 0.5
+    }
+  },
+  "pools": {
+    "idle": [
+      "idle_heelTap",
+      "idle_scan",
+      "idle_confident"
+    ],
+    "entrance": [
+      "enter_pop",
+      "enter_slide",
+      "enter_casual"
+    ],
+    "ritual": [
+      "bag_flip",
+      "chest_tap",
+      "hat_adjust",
+      "bag_squeeze"
+    ],
+    "celebration": [
+      "chest_tap",
+      "fist_pump",
+      "walk_off",
+      "finger_guns",
+      "celebrate_nod",
+      "victory_dance",
+      "jump_fist"
+    ],
+    "reaction": [
+      "laugh_miss",
+      "annoyed_wave",
+      "head_shake",
+      "shrug",
+      "hands_on_head"
+    ],
+    "locomotion": [
+      "walk",
+      "shuffle",
+      "sidestep"
+    ]
+  },
+  "signatures": [
+    {
+      "id": "bag_flip",
+      "chance": 0.42,
+      "cooldown": 3,
+      "tags": [
+        "ritual"
+      ]
+    },
+    {
+      "id": "chest_tap",
+      "chance": 0.55,
+      "cooldown": 2,
+      "tags": [
+        "celebration"
+      ]
+    },
+    {
+      "id": "walk_off",
+      "chance": 0.35,
+      "cooldown": 4,
+      "tags": [
+        "celebration",
+        "clutch"
+      ]
+    }
+  ]
+}

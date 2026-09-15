@@ -1,0 +1,13 @@
+{
+  "source": "Local-only browser-results.json (raw historical Playwright dump)",
+  "rawSHA256": "5f05b291040927ae05eddcd29893d13f6cf253cfc821bb2b59a5ac4dad118598",
+  "stats": {
+    "startTime": "2026-09-11T23:15:00.482Z",
+    "duration": 138896.91,
+    "expected": 30,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": []
+}

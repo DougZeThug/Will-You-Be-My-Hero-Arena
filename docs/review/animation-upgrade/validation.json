@@ -1,0 +1,97 @@
+{
+  "scope": "Implemented and validated in the real Arena LoongBones workshop; production rig promotion remains gated by editor interchange.",
+  "typecheck": {
+    "passed": true,
+    "stage": "Final source including shoulder underlay"
+  },
+  "simulation": {
+    "passed": true,
+    "checks": 170668,
+    "seededContests": 2000
+  },
+  "browser": {
+    "runs": [
+      {
+        "file": "initial-browser-results.json",
+        "passed": 107,
+        "failed": 10,
+        "skipped": 1
+      },
+      {
+        "file": "resolved-browser-results.json",
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "workshop-browser-results.json",
+        "passed": 11,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "final-motion-browser-results.json",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "final-shoulder-browser-results.json",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      }
+    ],
+    "distinctPassed": 119,
+    "distinctSkipped": 1,
+    "unresolved": []
+  },
+  "production": {
+    "passed": true,
+    "inspectedFiles": 17,
+    "noLabGlobal": true,
+    "play": true,
+    "watch": true,
+    "noPracticeSaveWrites": true,
+    "errors": [],
+    "playReadyEvidence": "Doug: aim, hold charge, then release\n\n2s \u00c2\u00b7 Practice / no club points",
+    "watchReadyEvidence": {
+      "round": "ROUND 1\nPAUSED",
+      "score": "DAN\n0\n1/4 bags\nDOUG\n0\n0/4 bags\nCORNHOLE\nEXHIBITION / NO POINTS",
+      "progressPercent": 16,
+      "mode": "exhibition"
+    }
+  },
+  "productionBuild": {
+    "name": "production-build",
+    "passed": true,
+    "exitCode": 0,
+    "seconds": 26.44
+  },
+  "editorImport": "Both packed character imports pass local runtime loading; not a returned editor export.",
+  "editorRoundTripVerified": false,
+  "productionInstalled": false,
+  "performance": "performance-summary.json",
+  "motionEvidence": "captures.json; pose-measurements.json; contact-measurements.json; silhouettes/",
+  "integration": "SHA-256 guarded copy with rollback archive; final path list is outside the repository in the task workspace.",
+  "videos": {
+    "passed": true,
+    "clips": 30,
+    "frames": 3360
+  },
+  "reviewPage": {
+    "passed": true,
+    "combinations": 14,
+    "playing": [
+      {
+        "time": 0.626288,
+        "paused": false
+      },
+      {
+        "time": 0.626246,
+        "paused": false
+      }
+    ],
+    "errors": []
+  }
+}

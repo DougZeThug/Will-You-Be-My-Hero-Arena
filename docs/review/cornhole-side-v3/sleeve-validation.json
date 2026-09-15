@@ -1,0 +1,89 @@
+{
+  "scope": "Side-view Dan and Doug sleeve attachment revision 1; Lab only",
+  "finalChecksPassed": true,
+  "checks": [
+    {
+      "name": "simulation-and-animation",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 26.814
+    },
+    {
+      "name": "browser",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 269.976
+    },
+    {
+      "name": "production-build",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 15.877
+    },
+    {
+      "name": "production-isolation",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 15.525
+    }
+  ],
+  "typecheckRetest": {
+    "passed": true,
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "note": "The first aggregate run found an unknown JSON type in the new pixel test. Added its RigExport type annotation; the standalone typecheck then exited 0. The initial aggregate report is preserved."
+  },
+  "browser": {
+    "passed": 60,
+    "skippedReason": "Opt-in visual baseline comparison",
+    "skipped": 1,
+    "cuffSamples": 50
+  },
+  "pairedPixelAudit": {
+    "viewCharacterHeight": 625,
+    "units": "Pixels from registered lower cuff toward the elbow until visible skin",
+    "dougBefore": [
+      8,
+      6,
+      4,
+      4,
+      8
+    ],
+    "danBefore": [
+      11,
+      10,
+      10,
+      5,
+      10
+    ],
+    "times": [
+      0,
+      0.45,
+      0.82,
+      1.08,
+      1.7
+    ],
+    "dougAfter": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "danAfter": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "motion": {
+    "pageErrors": [],
+    "decodedFrames": 45,
+    "evidenceRoot": "work/qa/sleeve-attachment/",
+    "clips": "Idle, weight shift, flat throw, airmail and reaction for both characters"
+  },
+  "importPacksRebuilt": true,
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

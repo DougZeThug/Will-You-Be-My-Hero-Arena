@@ -1,0 +1,76 @@
+{
+  "referenceEvents": [
+    {
+      "event": "cornhole",
+      "seconds": 31.849999999999472,
+      "scores": [
+        12,
+        8
+      ],
+      "health": [
+        100,
+        100
+      ],
+      "commands": [
+        3830,
+        3830
+      ],
+      "buffered": [
+        0,
+        0
+      ]
+    },
+    {
+      "event": "running",
+      "seconds": 13.650000000000258,
+      "scores": [
+        100,
+        100
+      ],
+      "health": [
+        100,
+        100
+      ],
+      "commands": [
+        1267,
+        1283
+      ],
+      "buffered": [
+        2,
+        0
+      ]
+    },
+    {
+      "event": "fighting",
+      "seconds": 12.183333333333518,
+      "scores": [
+        31,
+        105
+      ],
+      "health": [
+        0,
+        69
+      ],
+      "commands": [
+        802,
+        799
+      ],
+      "buffered": [
+        8,
+        13
+      ]
+    }
+  ],
+  "hardware": "Gamepad input and haptics contracts are tested with synthetic snapshots; physical devices need hardware verification.",
+  "proofs": [
+    "semantic input parity",
+    "charging changes outcomes",
+    "four player infrastructure",
+    "continuous acceleration and jumping",
+    "combat active windows",
+    "blocking",
+    "input buffering and expiry",
+    "deterministic AI sessions",
+    "pause"
+  ]
+}

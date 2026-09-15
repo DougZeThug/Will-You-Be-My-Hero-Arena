@@ -1,0 +1,28 @@
+{
+  "method": "built-in image_gen edit",
+  "status": "rejected-not-installed",
+  "trials": [
+    {
+      "id": 1,
+      "prompt": "Use case: identity-preserve edit.\nEdit target: the provided full-body Dan character illustration. Produce ONE full-body anatomy-corrected source illustration on a genuinely transparent background for the same 2D Arena character. This is an anatomical source candidate, NOT a sprite sheet, new design, new person, or a diagram.\n\nPreserve Dan's precise recognizable identity: the same face and facial proportions, three-quarter head turned toward image-right, swept tousled brown hair, beard/moustache, friendly small smile, skin tone; the same plain white short-sleeve shirt with the exact sunglasses pizza mascot and orange/yellow \"PEPPERONI CHEESERS\" print, the same black shorts with fine light side trim, the same black flip-flops. Preserve the original black-ink illustration, restrained cel/painterly shadowing and thin cream cut edge. Do NOT make him more muscular, heroic, broad, squat, glossy, photorealistic or stylistically different.\n\nCHANGE BODY CONSTRUCTION ONLY. Reconstruct a believable lean adult skeleton beneath the clothes, approximately 6.5 to 7 head lengths in total height. Relaxed recreational athlete between turns. Small contrapposto: about 65% weight on image-left leg, pelvis slightly shifted toward that supporting hip; support femur, knee and ankle nearly vertical; image-right knee relaxed, that foot modestly outward/forward without an exaggerated wide stance. Both soles visibly meet one level ground line. Chest subtly counterbalances the pelvis, not a rectangular torso. Keep hip sockets INSIDE the pelvis and shorts, not on the outer shorts corners.\n\nUse a gentle sloping neck-trapezius-clavicle transition and rounded deltoids, never shrugged, square or externally attached shoulders. Actual shoulder sockets sit inside shirt sleeves. Upper arms hang largely downward under gravity, elbows with a very small natural bend, relaxed wrists, hands terminating at upper/mid thigh. Both hands natural with slightly curled fingers of differing visible lengths, viewed obliquely/edge-on; no giant flat open camera-facing palms or splayed fingers. Leave narrow clean negative space between arms and torso so source can be weighted later. Do not paste one hand onto the waist. Legs and feet not mirrored; no bodybuilder stance, military stance, A/T pose, big hip thrust or fashion pose.\n\nFull figure head to toes with clean margin on all sides, high detail matching the input illustration. No new equipment, no background, no text outside the unchanged shirt print, no ground shadow, no labels, no visible skeleton or joints. Character identity, apparel and illustration style must remain the same; anatomy and relaxed posture are the only edits.",
+      "output": "exec-07a33035-c700-4505-83a6-bd9b6292364e.png",
+      "findings": [
+        "RGB without alpha; painted checkerboard",
+        "Preserved much of the old wide stance instead of fitting the support-leg target"
+      ],
+      "accepted": false
+    },
+    {
+      "id": 2,
+      "prompt": "Identity-preserving anatomy correction, second pass. Image 1 is the Dan illustration to edit. Image 2 is an anatomical landmark guide, NOT art style. Use ONLY its central skeleton as body-position guidance; do NOT reproduce labels, grid or any visible diagram.\n\nThe first pass preserved the wide-legged original stance instead of fitting the anatomical structure. Fix this specific issue now. Keep Dan's face, hairstyle, beard, head direction, clothing, Pepperoni Cheesers pizza logo, colors and black-ink illustration unchanged. Do not redesign any identity feature.\n\nFit the BODY to the second image's skeleton: support on IMAGE-LEFT leg. Pelvis shifted a little image-left; left hip, left knee and left ankle form an almost vertical supporting column. Image-RIGHT leg rests with knee subtly bent and foot a little to the right. Narrow the excessively spread original stance. Feet at the same floor height. Pelvis tilt and ribcage counter-tilt should make mild natural contrapposto, NOT a fashion pose. In the skeleton the right knee/foot is relaxed and the left leg carries the person. Do not preserve the old wide spread-leg silhouette. Arms hang under internal shoulder sockets with slight inward angle and relaxed wrists and gently curled fingers, leaving narrow negative space alongside the waist. No open flat palms.\n\nMatch the guide's approximately 6.4 head-height adult proportions. Preserve the same face and head shape while sizing the body coherently; do not make the head larger, shoulders broad or muscles heroic. Relax trapezius/clavicles away from the neck, round the deltoids. Shirt and shorts drape over those body masses.\n\nOutput one complete high-resolution Dan cutout head to flip-flops. BACKGROUND MUST BE ACTUAL TRANSPARENT ALPHA, not a painted gray checkerboard. Remove the reference's checkerboard completely. No shadow, text outside the unchanged shirt logo, labels, grid, joint overlay, crop, or added objects. This is a source-art candidate, not a finished Spine rig.",
+      "output": "exec-96b8b96c-cab1-4715-9e82-dca4aca5b57b.png",
+      "findings": [
+        "RGB without alpha; painted checkerboard",
+        "Shirt mascot changed; identity/brand invariant failed",
+        "Pose not approved as a source for production weighting"
+      ],
+      "accepted": false
+    }
+  ],
+  "productionAssetsModified": false
+}

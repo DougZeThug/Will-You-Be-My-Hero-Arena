@@ -1,0 +1,84 @@
+{
+  "stats": {
+    "startTime": "2026-09-12T00:47:24.182Z",
+    "duration": 32765.492,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "dan: rig inspection shows actual joints and restores original rendering",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4750,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "doug: rig inspection shows actual joints and restores original rendering",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4168,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan setup and idle proposals remain separate from production art",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2887,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "rig QA rejects unsupported views without mutating the scenario",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3734,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "gait inspection loops without inserting the action settling pause",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5034,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan revised source loads through the Lab UI, survives reload and stays distinct from animated production art",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10159,
+          "errors": []
+        }
+      ]
+    }
+  ]
+}

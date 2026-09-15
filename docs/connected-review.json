@@ -1,0 +1,9 @@
+{
+  "originalArtFilesPreserved": 32,
+  "newAtlases": [
+    "public/assets/dan/puppet-v2.png",
+    "public/assets/doug/puppet-v2.png"
+  ],
+  "browserReview": "Supplied recording, multiple rendered video passes, final 1920-frame alpha scan, dense transition images, and live exhibition review; details in CONNECTED-ANIMATION-REVIEW.md.",
+  "checks": 40134
+}

@@ -1,0 +1,67 @@
+{
+  "archive": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-LoongBones-Performance-v2.zip",
+  "files": [
+    {
+      "file": "dan\\authoring.json",
+      "bytes": 54509,
+      "sha256": "7f9c4e367a666b13c2394bf339a1ddbff3324c95fd46b382659b1427bcec2b51"
+    },
+    {
+      "file": "dan\\dan_ske.json",
+      "bytes": 2726190,
+      "sha256": "4ec1a5627b5f1b7f850df3657596ee6d334a8e6f4b771fd73d973a32211c74e0"
+    },
+    {
+      "file": "dan\\dan_tex.json",
+      "bytes": 569,
+      "sha256": "28f08f743fda1a42ca468ea3b9a026c23dc20c4093a809afa273bd9eadf16168"
+    },
+    {
+      "file": "dan\\dan_tex.png",
+      "bytes": 1868867,
+      "sha256": "fd1812603648ba08a6ba6b54ad29361ec633cbd94c9faa999338a0c1bd13c5a3"
+    },
+    {
+      "file": "doug\\authoring.json",
+      "bytes": 54953,
+      "sha256": "f314438881181d8130b79c607b0d5e92ac2f7daa44ec96fd3bdf394c760d306e"
+    },
+    {
+      "file": "doug\\doug_ske.json",
+      "bytes": 2883771,
+      "sha256": "9138d4e6b9482a186e7574f3e37e5ad0abb920c359994453d51a49c73b0e2c90"
+    },
+    {
+      "file": "doug\\doug_tex.json",
+      "bytes": 571,
+      "sha256": "fa1bb17a61eaa0aeb804eff6f33664efd00c636fdf2a55404d901606694e9725"
+    },
+    {
+      "file": "doug\\doug_tex.png",
+      "bytes": 2032338,
+      "sha256": "03a8d130475942245ea072357e47ddb89efdb17f9c41c2992a5fff0534a3b470"
+    },
+    {
+      "file": "README.md",
+      "bytes": 1502,
+      "sha256": "7980e708e1706ba5e54101cfa2087b33ea03a95c6db8a6cfda4beb24e2c9d437"
+    }
+  ],
+  "preservedTextureSources": [
+    {
+      "file": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_tex.png",
+      "sha256": "3ab18b381a7f534c8b4971910952ea71a649a6f60d3e1982f61e5aaa579953fb"
+    },
+    {
+      "file": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_tex.png",
+      "sha256": "c558fcd634ea998d4c9c97a27135b0003239a9f9f0de1bdae551de69675e5f4d"
+    },
+    {
+      "file": "lab\\human-motion\\assets\\hands\\hand-sheet-v1.png",
+      "sha256": "d2c49185fe7951dde8b6758bb3a9aebf94dedd662498d292fa00cb1cea04babe"
+    }
+  ],
+  "provenance": "Arena-authored derivatives. Existing artwork copied into a combined atlas.",
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

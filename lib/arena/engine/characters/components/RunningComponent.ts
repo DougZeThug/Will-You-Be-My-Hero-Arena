@@ -1,0 +1,62 @@
+import type { ArenaCharacter, CharacterComponent } from '../ArenaCharacter';
+import type { ActionPayload } from '../../controllers/ControllableEntity';
+import type { RunnerMotion } from '../../events/running/RunningPhysics';
+export class RunningComponent implements CharacterComponent {
+  constructor(
+    private c: ArenaCharacter,
+    readonly motion: RunnerMotion,
+    private time: () => number,
+    private active: () => boolean,
+  ) {}
+  can(action: string) {
+    if (!this.active() || this.motion.finished) return false;
+    if (['sprint', 'stopSprint', 'brake', 'stopBrake'].includes(action))
+      return true;
+    if (
+      !['jump', 'dodge', 'slide', 'burst'].includes(action) ||
+      this.motion.stumble
+    )
+      return false;
+    return (
+      action === 'burst' ||
+      ((!this.c.animation.timeline.active || this.c.canCancel()) &&
+        this.c.body.z === 0)
+    );
+  }
+  perform(action: string, p: ActionPayload) {
+    const c = this.c,
+      m = this.motion;
+    if (action === 'sprint') {
+      m.sprint = typeof p.value === 'number' ? p.value : 1;
+      return true;
+    }
+    if (action === 'stopSprint') {
+      m.sprint = 0;
+      return true;
+    }
+    if (action === 'brake' || action === 'stopBrake') {
+      m.brake = action === 'brake';
+      return true;
+    }
+    if (action === 'burst') {
+      const a = c.abilities.activate('burstSprint', this.time(), c.stamina);
+      if (!a) return false;
+      c.stamina -= a.cost;
+      return true;
+    }
+    if (c.stamina < 8) return false;
+    c.stamina -= 8;
+    if (action === 'jump') {
+      c.startAction('athletic.jump');
+      c.body.vz = 300;
+      return true;
+    }
+    if (action === 'slide' || action === 'dodge') {
+      m.slide = 0.6;
+      c.startAction('running.slide');
+      if (action === 'dodge') m.lane = (m.lane + 1) % 3;
+      return true;
+    }
+    return false;
+  }
+}

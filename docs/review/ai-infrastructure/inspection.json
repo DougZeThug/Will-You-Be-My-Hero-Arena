@@ -1,0 +1,140 @@
+{
+  "browser": "153.0.8010.37",
+  "viewport": {
+    "width": 1440,
+    "height": 1080
+  },
+  "captures": [
+    {
+      "scenario": "cornhole-recorded",
+      "checkpoint": "release",
+      "time": 3.1548,
+      "phase": "release",
+      "scores": [
+        0,
+        0
+      ],
+      "objects": 27
+    },
+    {
+      "scenario": "basketball-recorded",
+      "checkpoint": "flight",
+      "time": 3.8447999999999998,
+      "phase": "bagFlight",
+      "scores": [
+        0,
+        0
+      ],
+      "objects": 29
+    },
+    {
+      "scenario": "football-recorded",
+      "checkpoint": "landing",
+      "time": 4.366128714716411,
+      "phase": "landing",
+      "scores": [
+        0,
+        0
+      ],
+      "objects": 33
+    },
+    {
+      "scenario": "beer-pong-recorded",
+      "checkpoint": "result",
+      "time": 5.077544235306159,
+      "phase": "result",
+      "scores": [
+        0,
+        0
+      ],
+      "objects": 39
+    },
+    {
+      "scenario": "character-dan",
+      "checkpoint": "gesture",
+      "time": 0.385,
+      "phase": "inspection",
+      "scores": [],
+      "objects": 9
+    },
+    {
+      "scenario": "character-doug",
+      "checkpoint": "gesture",
+      "time": 0.5060000000000001,
+      "phase": "inspection",
+      "scores": [],
+      "objects": 9
+    }
+  ],
+  "performance": {
+    "mode": "manual",
+    "capacity": 240,
+    "realtime": {
+      "frames": 337,
+      "windowFrames": 240,
+      "frameTiming": {
+        "samples": 240,
+        "meanMs": 17.701,
+        "p95Ms": 18.6,
+        "worstMs": 26.1
+      },
+      "updateWork": {
+        "samples": 240,
+        "meanMs": 4.11,
+        "p95Ms": 5.7,
+        "worstMs": 10.2
+      },
+      "renderWork": {
+        "samples": 240,
+        "meanMs": 4.311,
+        "p95Ms": 6.4,
+        "worstMs": 11.4
+      },
+      "slowFrames": 0,
+      "fps": 56.494
+    },
+    "manual": {
+      "frames": 1,
+      "windowFrames": 1,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 1,
+        "meanMs": 3.5,
+        "p95Ms": 3.5,
+        "worstMs": 3.5
+      },
+      "renderWork": {
+        "samples": 1,
+        "meanMs": 0.7,
+        "p95Ms": 0.7,
+        "worstMs": 0.7
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "drawCalls": 4,
+    "counters": {
+      "scenes": 1,
+      "objects": 47,
+      "visibleObjects": 45,
+      "meshes": 6,
+      "meshVertices": 14086,
+      "meshTriangles": 26624,
+      "textures": 23,
+      "textureSources": 23,
+      "textureMBEstimate": 60.245
+    },
+    "notes": [
+      "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+      "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+      "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+      "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+    ]
+  },
+  "errors": []
+}

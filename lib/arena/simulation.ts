@@ -1,18 +1,22 @@
-import {cardById,EVENTS,type Sport,type Setup,type Recording,type Attempt,type V3,type Point} from './model';
-export const RULES_VERSION='club-arcade-1.0.1';
-export const INTRO=9;
-export const ATTEMPT_LENGTH=5.3;
+import {characterProfile} from './engine/characters/CharacterRegistry';
+import {weighted} from './engine/animation/AnimationSelector';
+import {seeded} from './engine/core/Random';
+import type {ShotStyle} from './engine/animation/AnimationTypes';
+import {resolveBoard} from './engine/events/cornhole/CornholeBoard';
+import {directBattle} from './engine/core/BattleDirector';
+import {animation} from './engine/animation/AnimationRegistry';
+import {cardById,EVENTS,type Sport,type Setup,type Recording,type Attempt,type V3,type Point,type AssetManifest} from './model';
+import {paperSocket,releasePose} from './paper';
+import {TIMING,flightDuration,personalityTiming,matchState} from './match-timeline';
+import {resolvePersonality} from './personality';
+export const RULES_VERSION='phaser-arena-3.0.0';
+export const INTRO=TIMING.entrance;
 export function hash(text:string){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16).padStart(8,'0');}
 export function rng(seed:string){let a=parseInt(hash(seed),16);return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
 const normal=(r:()=>number)=>Math.sqrt(-2*Math.log(Math.max(1e-9,r())))*Math.cos(2*Math.PI*r());
 export function project(p:V3){return {x:140+p.x*85+p.z*55,y:610-p.z*38-p.y*78};}
 export function unprojectSocket(x:number,y:number,z:number):V3{return {x:(x-140-z*55)/85,y:(610-z*38-y)/78,z};}
-export function releasePosition(family:string,sport:Sport,actor:number):V3 {
- const z=actor*3.5;
- // Sockets match the authored release poses in rig.ts, relative to planted feet.
- const local=family==='cat'?({cornhole:[83,-36],football:[80,-74],pong:[86,-47],basketball:[71,-89]}[sport]):({cornhole:[65,-83],football:[44,-186],pong:[66,-123],basketball:[33,-219]}[sport]);
- return {x:1+local[0]/85,y:-local[1]/78,z};
-}
+export function releasePosition(asset:string,sport:Sport,actor:number,prepared?:AssetManifest):V3 {const f=prepared?.frames?.[releasePose(sport)],scale=prepared?.frameScale;const local=f&&scale?{x:(f.hand[0]-f.origin[0])*scale,y:(f.hand[1]-f.origin[1])*scale}:paperSocket(asset,releasePose(sport));return{x:1+local.x/85,y:-local.y/78,z:actor*3.5};}
 export function cupPosition(id:number,z:number):V3 {const row=id<1?0:id<3?1:2;const col=id-(row===0?0:row===1?1:3);return{x:8.4+row*.32,y:1.05,z:z+(col-row/2)*.32};}
 export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{contact:Attempt['contact'];score:number}{
  const dz=p.z-lane;
@@ -53,15 +57,33 @@ export function simulate(setup:Setup):Recording {
   if(outcome.contact==='cup')removed[actor].push(targetId!);
   if(sport==='cornhole')boards[actor].push({position:{...target},score:outcome.score});
   scores[actor]=sport==='cornhole'?boards[actor].reduce((n,b)=>n+b.score,0):scores[actor]+outcome.score;
-  const release=releasePosition(card.family,sport,actor),duration=sport==='football'?.78:sport==='basketball'?1.38:1.25;
-  const path=trajectory(release,target,duration,outcome.contact),start=INTRO+i*ATTEMPT_LENGTH;
+  const release=releasePosition(card.asset,sport,actor,setup.characterAssets?.[actor]),duration=flightDuration(sport);
+  const path=trajectory(release,target,duration,outcome.contact),start=attempts.at(-1)?.end??INTRO;
+  const personality=resolvePersonality(setup.characterAssets?.[actor],card.id),timing=personalityTiming(sport,personality,i);
   const special=setup.secret&&round===2;
-  attempts.push({id:`${setup.id}:attempt:${i}`,index:i,round,actor,sport,start,releaseAt:start+1.35,contactAt:start+1.35+duration,end:start+ATTEMPT_LENGTH,release,velocity:path.velocity,duration,target,trajectory:path.path,contact:outcome.contact,score:outcome.score,scoreAfter:[...scores],targetId,removedCups:[...removed[actor]],boardState:structuredClone(boards[actor]),modifiers:special?['cosmetic:blacklight-bloom']:[],commentary:comment(card.name,outcome.contact,i===total-1),special});
+  attempts.push({id:`${setup.id}:attempt:${i}`,index:i,round,actor,sport,personality,start,releaseAt:start+timing.lead,contactAt:start+timing.lead+duration,scoreAt:start+timing.lead+duration+TIMING.landing,end:start+timing.length,release,velocity:path.velocity,duration,target,trajectory:path.path,contact:outcome.contact,score:outcome.score,scoreAfter:[...scores],targetId,removedCups:[...removed[actor]],boardState:structuredClone(boards[actor]),modifiers:special?['cosmetic:heat-check']:[],commentary:comment(card.name,outcome.contact,i===total-1),special});
+  if(sport==='cornhole'){
+   const a=attempts.at(-1)!,profile=characterProfile(part.cardId,setup.characterAssets?.[actor]);
+   const shot=weighted(Object.entries(profile.throwingStyle.tendencies) as [ShotStyle,number][],([,weight])=>weight,seeded(setup.seed+':shot:'+a.index))[0];
+   const before=attempts.slice(0,-1).filter(b=>b.actor===actor).at(-1)?.boardResolution?.bags??[];
+   const result=resolveBoard(before,a.id,target,lane,shot);a.boardResolution=result;a.score=result.delta;
+   boards[actor]=result.bags.map(b=>({position:b.position,score:b.score}));a.boardState=structuredClone(boards[actor]);
+   scores[actor]=result.bags.reduce((n,b)=>n+b.score,0);a.scoreAfter=[...scores];
+   if(result.interactions.length)a.commentary=card.name+' '+(result.outcome==='collect'?'collects another bag into the hole.':'moves the bags already on the board.')+' Net '+(a.score>=0?'+':'')+a.score+'.';
+  }
   if(i===total+overtime*2-1&&setup.tie==='paired'&&scores[0]===scores[1]&&overtime<3)overtime++;
  }
- const rec:Recording={id:setup.id,setup:structuredClone(setup),attempts,scores,winner:scores[0]===scores[1]?null:scores[0]>scores[1]?0:1,duration:INTRO+attempts.length*ATTEMPT_LENGTH+5,introDuration:INTRO,rulesVersion:RULES_VERSION,unresolvedDraw:setup.tie==='paired'&&scores[0]===scores[1],integrity:''};
+ const rec:Recording={id:setup.id,setup:structuredClone(setup),attempts,scores,winner:scores[0]===scores[1]?null:scores[0]>scores[1]?0:1,duration:(attempts.at(-1)?.end??INTRO)+TIMING.finale,introDuration:INTRO,rulesVersion:RULES_VERSION,unresolvedDraw:setup.tie==='paired'&&scores[0]===scores[1],integrity:''};
+ // Allocate time for the selected performances without altering scored targets.
+ const plan=directBattle(rec);let cursor=rec.introDuration;
+ for(const a of rec.attempts){const d=plan.actions[a.index],ritual=d.ritual?animation(d.ritual).duration:0;
+  const lead=(.50-(plan.profiles[a.actor].throwingStyle.speed-.5)*.12)/(a.personality?.tempo??1)+ritual/d.tempo,reaction=Math.min(1.18,animation(d.reaction).duration)/d.tempo;
+  a.start=cursor;a.releaseAt=cursor+lead;a.contactAt=a.releaseAt+a.duration;a.scoreAt=a.contactAt+TIMING.landing;
+  a.end=a.scoreAt+reaction+.12;cursor=a.end;
+ }
+ rec.duration=cursor+2.6;rec.direction=directBattle(rec);
  rec.integrity=hash(JSON.stringify({...rec,integrity:''}));return JSON.parse(JSON.stringify(rec)) as Recording;
 }
-export function validateRecording(rec:Recording):string[]{const errors:string[]=[];if(rec.integrity!==hash(JSON.stringify({...rec,integrity:''})))errors.push('Recording checksum mismatch');const tally=[0,0];for(const a of rec.attempts){const c=contactScore(a.sport,a.target,a.actor*3.5,a.targetId);if(c.score!==a.score)errors.push(`Attempt ${a.index}: contact disagrees with score`);const p=pathAt(a,a.duration);if(Math.hypot(p.x-a.target.x,p.y-a.target.y,p.z-a.target.z)>1e-6)errors.push(`Attempt ${a.index}: path misses recorded contact`);tally[a.actor]+=a.score;if(tally[0]!==a.scoreAfter[0]||tally[1]!==a.scoreAfter[1])errors.push(`Attempt ${a.index}: tally mismatch`);}if(tally[0]!==rec.scores[0]||tally[1]!==rec.scores[1])errors.push('Final tally mismatch');if(rec.attempts.filter(a=>a.actor===0).length!==rec.attempts.filter(a=>a.actor===1).length)errors.push('Unequal budgets');return errors;}
-export function revealed(rec:Recording,time:number){const contacts=rec.attempts.filter(a=>a.contactAt<=time);const current=rec.attempts.find(a=>time>=a.start&&time<a.end);const scores=contacts.at(-1)?.scoreAfter??[0,0];return{contacts,current,scores,complete:time>=rec.duration-5};}
+export function validateRecording(rec:Recording):string[]{const errors:string[]=[];if(rec.integrity!==hash(JSON.stringify({...rec,integrity:''})))errors.push('Recording checksum mismatch');const tally=[0,0];for(const a of rec.attempts){const c=contactScore(a.sport,a.target,a.actor*3.5,a.targetId);if(!a.boardResolution&&c.score!==a.score)errors.push(`Attempt ${a.index}: contact disagrees with score`);const p=pathAt(a,a.duration);if(Math.hypot(p.x-a.target.x,p.y-a.target.y,p.z-a.target.z)>1e-6)errors.push(`Attempt ${a.index}: path misses recorded contact`);if(a.boardResolution){const prior=rec.attempts.slice(0,a.index).filter(b=>b.actor===a.actor).at(-1)?.boardResolution?.bags??[];const result=resolveBoard(prior,a.id,a.target,a.actor*3.5,a.boardResolution.shot);if(JSON.stringify(result)!==JSON.stringify(a.boardResolution)||result.delta!==a.score)errors.push(`Attempt ${a.index}: board resolution mismatch`);}tally[a.actor]+=a.score;if(tally[0]!==a.scoreAfter[0]||tally[1]!==a.scoreAfter[1])errors.push(`Attempt ${a.index}: tally mismatch`);}if(tally[0]!==rec.scores[0]||tally[1]!==rec.scores[1])errors.push('Final tally mismatch');if(rec.attempts.filter(a=>a.actor===0).length!==rec.attempts.filter(a=>a.actor===1).length)errors.push('Unequal budgets');return errors;}
+export const revealed=matchState;
 

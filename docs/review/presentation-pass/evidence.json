@@ -1,0 +1,853 @@
+{
+  "captured": "2026-09-15T16:08:17.306Z",
+  "conditions": {
+    "viewport": "1440×1080",
+    "browser": "desktop Chrome, headless",
+    "clock": "named manual checkpoints for images; independent real-time requests for performance",
+    "reference": "Codex Image Sep 15, 2026, 10_49_32 AM.png"
+  },
+  "comparisons": [
+    {
+      "scenario": "cornhole-recorded",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "basketball-recorded",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "football-recorded",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "beer-pong-recorded",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "running-live",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "fighting-live",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "motion-cornhole",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "motion-running",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "motion-basketball",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    },
+    {
+      "scenario": "motion-fighting",
+      "event": true,
+      "characters": true,
+      "projectiles": true,
+      "inputs": true
+    }
+  ],
+  "performance": [
+    {
+      "event": "cornhole",
+      "before": {
+        "samples": 715,
+        "meanMs": 16.82321678321676,
+        "fps": 59.44166403405225,
+        "p95Ms": 16.899999999999636,
+        "worstMs": 83.5
+      },
+      "after": {
+        "samples": 503,
+        "meanMs": 23.880715705765407,
+        "fps": 41.874791874791875,
+        "p95Ms": 50,
+        "worstMs": 116.80000000000018
+      },
+      "slowerRun": {
+        "samples": 623,
+        "meanMs": 19.280738362760818,
+        "fps": 51.86523364330377,
+        "p95Ms": 33.399999999999636,
+        "worstMs": 116.80000000000018
+      },
+      "drawCalls": {
+        "before": 8,
+        "after": 9
+      },
+      "counters": {
+        "before": {
+          "scenes": 1,
+          "objects": 82,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "after": {
+          "scenes": 1,
+          "objects": 107,
+          "visibleObjects": 48,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 38,
+          "textureSources": 38,
+          "textureMBEstimate": 37.706
+        }
+      }
+    },
+    {
+      "event": "running",
+      "before": {
+        "samples": 249,
+        "meanMs": 16.95140562248996,
+        "fps": 58.99215807055367,
+        "p95Ms": 16.900000000000546,
+        "worstMs": 66.69999999999982
+      },
+      "after": {
+        "samples": 188,
+        "meanMs": 22.363297872340425,
+        "fps": 44.71612396831815,
+        "p95Ms": 33.5,
+        "worstMs": 100.30000000000018
+      },
+      "slowerRun": {
+        "samples": 175,
+        "meanMs": 24.024571428571434,
+        "fps": 41.624051566253584,
+        "p95Ms": 33.5,
+        "worstMs": 116.90000000000055
+      },
+      "drawCalls": {
+        "before": 3,
+        "after": 4
+      },
+      "counters": {
+        "before": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "after": {
+          "scenes": 1,
+          "objects": 98,
+          "visibleObjects": 43,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 42,
+          "textureSources": 42,
+          "textureMBEstimate": 61.7
+        }
+      }
+    },
+    {
+      "event": "basketball",
+      "before": {
+        "samples": 713,
+        "meanMs": 16.870406732117793,
+        "fps": 59.275393645145805,
+        "p95Ms": 16.80000000000109,
+        "worstMs": 100.09999999999991
+      },
+      "after": {
+        "samples": 603,
+        "meanMs": 19.920066334991702,
+        "fps": 50.20063604122614,
+        "p95Ms": 33.399999999999636,
+        "worstMs": 150.10000000000036
+      },
+      "slowerRun": {
+        "samples": 609,
+        "meanMs": 19.72397372742199,
+        "fps": 50.69972277491492,
+        "p95Ms": 33.399999999999636,
+        "worstMs": 133.39999999999964
+      },
+      "drawCalls": {
+        "before": 3,
+        "after": 4
+      },
+      "counters": {
+        "before": {
+          "scenes": 1,
+          "objects": 84,
+          "visibleObjects": 29,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "after": {
+          "scenes": 1,
+          "objects": 109,
+          "visibleObjects": 48,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 38,
+          "textureSources": 38,
+          "textureMBEstimate": 37.706
+        }
+      }
+    },
+    {
+      "event": "fighting",
+      "before": {
+        "samples": 715,
+        "meanMs": 16.823216783216747,
+        "fps": 59.4416640340523,
+        "p95Ms": 16.80000000000109,
+        "worstMs": 83.29999999999973
+      },
+      "after": {
+        "samples": 593,
+        "meanMs": 20.312478920741988,
+        "fps": 49.23082031995882,
+        "p95Ms": 33.5,
+        "worstMs": 166.80000000000018
+      },
+      "slowerRun": {
+        "samples": 546,
+        "meanMs": 21.970146520146518,
+        "fps": 45.51631001108731,
+        "p95Ms": 33.5,
+        "worstMs": 133.39999999999964
+      },
+      "drawCalls": {
+        "before": 3,
+        "after": 3
+      },
+      "counters": {
+        "before": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "after": {
+          "scenes": 1,
+          "objects": 98,
+          "visibleObjects": 43,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 42,
+          "textureSources": 42,
+          "textureMBEstimate": 61.7
+        }
+      }
+    }
+  ],
+  "renderAblation": [
+    {
+      "mode": "presentation",
+      "fps": 59.96791014927583,
+      "self": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "hits": 979
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 442
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 341
+        },
+        {
+          "function": "isInView",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 151
+        },
+        {
+          "function": "MeshWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 127
+        },
+        {
+          "function": "tint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 63
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "hits": 57
+        },
+        {
+          "function": "GraphicsWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 51
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 50
+        },
+        {
+          "function": "push",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 48
+        },
+        {
+          "function": "isEarHashed",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 47
+        },
+        {
+          "function": "sortLinked",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 40
+        },
+        {
+          "function": "bufferData",
+          "url": "",
+          "hits": 36
+        },
+        {
+          "function": "advance",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 35
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:3010/human-motion/MotionActor.ts?t=1789479347331",
+          "hits": 30
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/human-motion/events/PrecisionProof.ts",
+          "hits": 22
+        },
+        {
+          "function": "joint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 21
+        },
+        {
+          "function": "structuredClone",
+          "url": "",
+          "hits": 21
+        },
+        {
+          "function": "tick",
+          "url": "http://127.0.0.1:3010/human-motion/MotionSession.ts?t=1789479906378",
+          "hits": 19
+        },
+        {
+          "function": "batchFillPath",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 19
+        }
+      ]
+    },
+    {
+      "mode": "control",
+      "fps": 59.967910148128816,
+      "self": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "hits": 1354
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 416
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 256
+        },
+        {
+          "function": "isInView",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 157
+        },
+        {
+          "function": "MeshWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 129
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "hits": 68
+        },
+        {
+          "function": "tint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 62
+        },
+        {
+          "function": "push",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 44
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 44
+        },
+        {
+          "function": "advance",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 39
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:3010/human-motion/MotionActor.ts?t=1789479347331",
+          "hits": 35
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/human-motion/events/PrecisionProof.ts",
+          "hits": 23
+        },
+        {
+          "function": "tick",
+          "url": "http://127.0.0.1:3010/human-motion/MotionSession.ts?t=1789479906378",
+          "hits": 21
+        },
+        {
+          "function": "bufferData",
+          "url": "",
+          "hits": 21
+        },
+        {
+          "function": "structuredClone",
+          "url": "",
+          "hits": 18
+        },
+        {
+          "function": "joint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 16
+        },
+        {
+          "function": "apply",
+          "url": "http://127.0.0.1:3010/human-motion/InertialPose.ts?t=1789474590246",
+          "hits": 16
+        },
+        {
+          "function": "_updateGlobalTransformMatrix",
+          "url": "http://127.0.0.1:3010/loongbones/vendor/dragonBones.js",
+          "hits": 14
+        },
+        {
+          "function": "joint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 10
+        },
+        {
+          "function": "advanceTime",
+          "url": "http://127.0.0.1:3010/loongbones/vendor/dragonBones.js",
+          "hits": 9
+        }
+      ]
+    },
+    {
+      "mode": "control",
+      "fps": 59.88743565634384,
+      "self": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "hits": 1306
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 469
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 290
+        },
+        {
+          "function": "isInView",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 157
+        },
+        {
+          "function": "MeshWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 120
+        },
+        {
+          "function": "tint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 74
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "hits": 69
+        },
+        {
+          "function": "push",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 53
+        },
+        {
+          "function": "advance",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 33
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 32
+        },
+        {
+          "function": "structuredClone",
+          "url": "",
+          "hits": 23
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/human-motion/events/PrecisionProof.ts",
+          "hits": 20
+        },
+        {
+          "function": "bufferData",
+          "url": "",
+          "hits": 20
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:3010/human-motion/MotionActor.ts?t=1789479347331",
+          "hits": 19
+        },
+        {
+          "function": "pose",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 16
+        },
+        {
+          "function": "joint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 15
+        },
+        {
+          "function": "_updateGlobalTransformMatrix",
+          "url": "http://127.0.0.1:3010/loongbones/vendor/dragonBones.js",
+          "hits": 9
+        },
+        {
+          "function": "CircumferencePoint",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 9
+        },
+        {
+          "function": "bufferSubData",
+          "url": "",
+          "hits": 9
+        },
+        {
+          "function": "tick",
+          "url": "http://127.0.0.1:3010/human-motion/MotionSession.ts?t=1789479906378",
+          "hits": 8
+        }
+      ]
+    },
+    {
+      "mode": "presentation",
+      "fps": 60.080507880846824,
+      "self": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "hits": 1193
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 412
+        },
+        {
+          "function": "_updateMesh",
+          "url": "http://127.0.0.1:3010/loongbones/NativeSlot.ts",
+          "hits": 274
+        },
+        {
+          "function": "isInView",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 150
+        },
+        {
+          "function": "MeshWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 125
+        },
+        {
+          "function": "tint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 64
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "hits": 63
+        },
+        {
+          "function": "push",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 58
+        },
+        {
+          "function": "GraphicsWebGLRenderer",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 54
+        },
+        {
+          "function": "sortLinked",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 42
+        },
+        {
+          "function": "advance",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 36
+        },
+        {
+          "function": "isEarHashed",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 36
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/lib/arena/engine/motion/MotionAnalyzer.ts",
+          "hits": 32
+        },
+        {
+          "function": "bufferData",
+          "url": "",
+          "hits": 31
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:3010/human-motion/MotionActor.ts?t=1789479347331",
+          "hits": 27
+        },
+        {
+          "function": "snapshot",
+          "url": "http://127.0.0.1:3010/human-motion/events/PrecisionProof.ts",
+          "hits": 25
+        },
+        {
+          "function": "structuredClone",
+          "url": "",
+          "hits": 24
+        },
+        {
+          "function": "batchFillPath",
+          "url": "http://127.0.0.1:3010/@fs/C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/node_modules/.vite/deps/phaser.js?v=91d1176d",
+          "hits": 19
+        },
+        {
+          "function": "joint",
+          "url": "http://127.0.0.1:3010/human-motion/NativeAnimator.ts?t=1789479347345",
+          "hits": 16
+        },
+        {
+          "function": "(garbage collector)",
+          "url": "",
+          "hits": 16
+        }
+      ]
+    }
+  ],
+  "video": {
+    "file": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Presentation-Review.mp4",
+    "frames": 420,
+    "fps": 30,
+    "duration": 14,
+    "width": 1280,
+    "height": 760,
+    "audio": false,
+    "source": "actual Phaser/LoongBones canvas capture; paused recording preroll removed; no generated or optical-flow frames",
+    "events": [
+      "cornhole",
+      "running",
+      "basketball",
+      "fighting"
+    ],
+    "removedPreroll": [
+      0.9017000000476837,
+      0.9028000000715256,
+      0.9017000000476837,
+      0.9062000000476838
+    ]
+  },
+  "assets": [
+    {
+      "file": "public/assets/paper-arena.webp",
+      "width": 1672,
+      "height": 941,
+      "role": "preserved original background",
+      "bytes": 568530,
+      "sha256": "c503cf0dad3ccc33032292d430e626575aa982bd80b7283b3bdcd7c850d939cb"
+    },
+    {
+      "file": "public/assets/arena-sunset-v2.png",
+      "width": 1672,
+      "height": 941,
+      "role": "generated environment derivative",
+      "bytes": 2767289,
+      "sha256": "f5912b7faa339d66b54eff79828877bd48a12215e6489f8fa83a71573ae89757"
+    },
+    {
+      "file": "public/assets/equipment/board.png",
+      "width": 2206,
+      "height": 713,
+      "role": "preserved original equipment",
+      "bytes": 2553917,
+      "sha256": "946ff21c143daba789eac1b632e85c5f3d9b65abae018dcc93dde1b23f5ab3c4"
+    },
+    {
+      "file": "public/assets/equipment/board-finish-v2.png",
+      "width": 2170,
+      "height": 725,
+      "role": "generated registered appearance derivative",
+      "bytes": 1555466,
+      "sha256": "93ea31587bde4ae78c8460f81daac94b255516ae79c9afd6fb4316a2b304b4cb"
+    }
+  ],
+  "baselines": [
+    {
+      "file": "basketball-recorded-flight.png",
+      "changed": true
+    },
+    {
+      "file": "beer-pong-recorded-result.png",
+      "changed": true
+    },
+    {
+      "file": "character-dan-gesture.png",
+      "changed": false
+    },
+    {
+      "file": "character-doug-gesture.png",
+      "changed": false
+    },
+    {
+      "file": "cornhole-recorded-release.png",
+      "changed": true
+    },
+    {
+      "file": "football-recorded-landing.png",
+      "changed": true
+    }
+  ],
+  "playerUI": {
+    "errors": [],
+    "views": [
+      {
+        "label": "desktop",
+        "view": "play",
+        "viewport": 1440,
+        "width": 1440,
+        "canvases": 1
+      },
+      {
+        "label": "desktop",
+        "view": "watch",
+        "viewport": 1440,
+        "width": 1440,
+        "canvases": 1
+      },
+      {
+        "label": "phone",
+        "view": "play",
+        "viewport": 390,
+        "width": 390,
+        "canvases": 1
+      },
+      {
+        "label": "phone",
+        "view": "watch",
+        "viewport": 390,
+        "width": 390,
+        "canvases": 1
+      },
+      {
+        "label": "desktop",
+        "view": "four-player",
+        "participants": 4
+      }
+    ]
+  },
+  "production": {
+    "passed": true,
+    "inspectedFiles": 18,
+    "noLabGlobal": true,
+    "play": true,
+    "watch": true,
+    "noPracticeSaveWrites": true,
+    "errors": [],
+    "playReadyEvidence": "Doug: aim, hold charge, then release\n\n2s · Practice / no club points",
+    "watchReadyEvidence": {
+      "round": "ROUND 1\nPAUSED",
+      "score": "DAN\n1\n1/4 bags\nDOUG\n0\n0/4 bags\nCORNHOLE\nEXHIBITION / NO POINTS",
+      "progressPercent": 15,
+      "mode": "exhibition"
+    }
+  }
+}

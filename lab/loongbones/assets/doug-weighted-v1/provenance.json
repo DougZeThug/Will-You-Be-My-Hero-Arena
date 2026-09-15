@@ -1,0 +1,16 @@
+{
+  "character": "doug",
+  "authoringRevision": 1,
+  "authoredBy": "Astra; local DragonBones 5.5 authoring",
+  "editorExport": false,
+  "editorRoundTripVerified": false,
+  "productionInstalled": false,
+  "source": "public/assets/doug/ready.png",
+  "sourceSha256": "725048791432765dd85c413a71bf30dd6afdaaaf1f85d991484e273fd436b471",
+  "texturePreparation": "Exact unchanged source PNG; no generated/repainted/resized pixels",
+  "assetsSha256": {
+    "doug_ske.json": "04fa653c83f3de4addd626b4c027ec28120a47ba68ea1423c099708349a6cf39",
+    "doug_tex.json": "482fbd613363e2c022fdbc54cd44b35a082efa4e347c19f0a42fa04d18acd93f",
+    "doug_tex.png": "725048791432765dd85c413a71bf30dd6afdaaaf1f85d991484e273fd436b471"
+  }
+}

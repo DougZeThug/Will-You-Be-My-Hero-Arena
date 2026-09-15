@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "combinations": 14,
+  "playing": [
+    {
+      "time": 0.626288,
+      "paused": false
+    },
+    {
+      "time": 0.626246,
+      "paused": false
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,396 @@
+{
+  "stats": {
+    "startTime": "2026-09-12T00:43:41.114Z",
+    "duration": 133767.334,
+    "expected": 31,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "API inputs are detached and clock operations are serialized",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4906,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "API scenario changes refresh controls and invalid input preserves the provider",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3730,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "graphics context loss is visible in diagnostic errors",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2497,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character throw inspection retains production release and full recovery timing",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3643,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keyboard: focused physical keys charge and release through the controller",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5487,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keyboard: editable fields and focus loss do not leave stuck actions",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4576,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: xbox raw Gamepad API reaches semantic input",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4926,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: playstation raw Gamepad API reaches semantic input",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4835,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: generic raw Gamepad API reaches semantic input",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4986,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: disconnect pauses, held trigger waits for neutral on resume",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4423,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: named checkpoint ignores current held hardware during fixture replay",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5964,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: exact Phaser runtime plays an authored character and transitions continuously",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1713,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: weighted mesh, FFD and authored marker drive the handoff",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1525,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: real file import is local and rejects unsupported exports without replacing the character",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1286,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: pause, deterministic replay and bounded realtime diagnostics",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2395,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "dan: rig inspection shows actual joints and restores original rendering",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4318,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "doug: rig inspection shows actual joints and restores original rendering",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4091,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan setup and idle proposals remain separate from production art",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2845,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "rig QA rejects unsupported views without mutating the scenario",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3518,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "gait inspection loops without inserting the action settling pause",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4688,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "cornhole-recorded: release, landing, score and reproducible replay",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4894,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "basketball-recorded: release, landing, score and reproducible replay",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4921,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "football-recorded: release, landing, score and reproducible replay",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5038,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "beer-pong-recorded: release, landing, score and reproducible replay",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4959,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character-doug: clip selection, deterministic pose and screenshot",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2536,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character-dan: clip selection, deterministic pose and screenshot",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2605,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "running-live: real event update and stable pause",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4434,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "fighting-live: real event update and stable pause",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4311,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "scenario lifecycle: one canvas, detached snapshots and no save writes",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 8546,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "live performance publishes finite frame timing and render counters",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4108,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "@visual fixed-clock approved reference images",
+      "project": "desktop-chromium",
+      "status": "skipped",
+      "results": [
+        {
+          "status": "skipped",
+          "duration": 242,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan revised source loads through the Lab UI, survives reload and stays distinct from animated production art",
+      "project": "desktop-chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 8630,
+          "errors": []
+        }
+      ]
+    }
+  ]
+}

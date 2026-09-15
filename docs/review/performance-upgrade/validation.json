@@ -1,0 +1,172 @@
+{
+  "verifiedCurrentBrowserChecks": 127,
+  "allCurrentBrowserChecksPassed": true,
+  "initialFullRegression": {
+    "started": "2026-09-15T12:42:10.641Z",
+    "completed": "2026-09-15T13:36:34.523Z",
+    "passed": false,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 45.923
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 153.358
+      },
+      {
+        "name": "browser",
+        "passed": false,
+        "exitCode": 1,
+        "seconds": 2921.851
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 101.965
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 40.742
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "browserRuns": [
+    {
+      "name": "browser-initial",
+      "stats": {
+        "startTime": "2026-09-15T12:45:40.906Z",
+        "duration": 2902534.8800000004,
+        "expected": 118,
+        "skipped": 1,
+        "unexpected": 8,
+        "flaky": 0
+      },
+      "failed": [
+        {
+          "file": "animation-upgrade.spec.ts",
+          "title": "Upgrade: fractional stepping, frame schedules and reload seek are deterministic",
+          "project": "desktop-chromium",
+          "status": "timedOut",
+          "durationMs": 74674,
+          "error": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+        },
+        {
+          "file": "motion-v3.spec.ts",
+          "title": "V3 dan: measured gait reconciles motor, support, soles and limb lengths",
+          "project": "desktop-chromium",
+          "status": "failed",
+          "durationMs": 25733,
+          "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m2\u001b[39m\nReceived:   \u001b[31m16.448607920901928\u001b[39m"
+        },
+        {
+          "file": "motion-v3.spec.ts",
+          "title": "V3 doug: measured gait reconciles motor, support, soles and limb lengths",
+          "project": "desktop-chromium",
+          "status": "failed",
+          "durationMs": 25756,
+          "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m2\u001b[39m\nReceived:   \u001b[31m18.581487179385086\u001b[39m"
+        },
+        {
+          "file": "motion-v31.spec.ts",
+          "title": "V3.1 dan reverses direction with planted opposite-view feet",
+          "project": "desktop-chromium",
+          "status": "failed",
+          "durationMs": 15839,
+          "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m2\u001b[39m\nReceived:   \u001b[31m18.347710305997325\u001b[39m"
+        },
+        {
+          "file": "motion-v31.spec.ts",
+          "title": "V3.1 doug reverses direction with planted opposite-view feet",
+          "project": "desktop-chromium",
+          "status": "failed",
+          "durationMs": 24944,
+          "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m2\u001b[39m\nReceived:   \u001b[31m18.250804318763098\u001b[39m"
+        },
+        {
+          "file": "motion-v31.spec.ts",
+          "title": "V3.1 Doug limb volume stays stable in basketball",
+          "project": "desktop-chromium",
+          "status": "timedOut",
+          "durationMs": 55549,
+          "error": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+        },
+        {
+          "file": "reference-throw.spec.ts",
+          "title": "Reference cornhole: dan slide preserves contact, launch and recovery",
+          "project": "desktop-chromium",
+          "status": "timedOut",
+          "durationMs": 64842,
+          "error": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+        },
+        {
+          "file": "reference-throw.spec.ts",
+          "title": "Reference cornhole: dan blocker preserves contact, launch and recovery",
+          "project": "desktop-chromium",
+          "status": "timedOut",
+          "durationMs": 86156,
+          "error": "\u001b[31mTest timeout of 45000ms exceeded.\u001b[39m"
+        }
+      ]
+    },
+    {
+      "name": "browser-retest",
+      "stats": {
+        "startTime": "2026-09-15T13:38:43.624Z",
+        "duration": 288258.02900000004,
+        "expected": 16,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "failed": []
+    },
+    {
+      "name": "browser-final",
+      "stats": {
+        "startTime": "2026-09-15T13:46:40.081Z",
+        "duration": 139753.125,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "failed": [
+        {
+          "file": "scenarios.spec.ts",
+          "title": "@visual fixed-clock approved reference images",
+          "project": "desktop-chromium",
+          "status": "failed",
+          "durationMs": 32693,
+          "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#arena canvas')\n  36146 pixels (ratio 0.06 of all image pixels) are different.\n\n  Snapshot: cornhole-recorded-release.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(cornhole-recorded-release.png)\" with timeout 10000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - waiting for locator('#arena canvas')\u001b[22m\n\u001b[2m    - locator resolved to <canvas width=\"1280\" height=\"720\" aria-label=\"Animated sports arena. Scores and commentary are also shown as text.\"></canvas>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - 36146 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - waiting for locator('#arena canvas')\u001b[22m\n\u001b[2m    - locator resolved to <canvas width=\"1280\" height=\"720\" aria-label=\"Animated sports arena. Scores and commentary are also shown as text.\"></canvas>\u001b[22m\n\u001b[2m  - taking element screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 36146 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n"
+        }
+      ]
+    },
+    {
+      "name": "browser-visual",
+      "stats": {
+        "startTime": "2026-09-15T14:04:07.961Z",
+        "duration": 64547.44499999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "failed": []
+    }
+  ],
+  "finalTypecheck": "tsc --noEmit passed before the final browser run",
+  "resolution": "Four frozen-whole-sole assertions updated for intentional rigid heel/forefoot roll, retaining 2px tolerance. Four initial 45s timeouts passed in a separate run. Explicit budgets: multi-load timeline 120s, six-scenario visual 180s. Three stale recorded-event baselines (cornhole character migration; basketball/football pose timing) were deliberately refreshed after image review and checking that the changed Human Motion modules are not used by those legacy paths. Other baselines and all pixel tolerances were preserved.",
+  "extraCoverage": "Six hit/block/miss cases rechecked after adding direction and normalized damage intensity; preserved pixel baseline also passed.",
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

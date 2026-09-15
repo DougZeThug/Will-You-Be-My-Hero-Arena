@@ -1,0 +1,110 @@
+{
+  "date": "2026-09-13T04:34:04.276Z",
+  "scope": "Lab side-v3 Dan/Doug only",
+  "finalChecksPassedAfterTargetedRetest": true,
+  "aggregateFirstRun": {
+    "started": "2026-09-13T04:25:12.765Z",
+    "completed": "2026-09-13T04:31:57.416Z",
+    "passed": false,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 6.46
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 33.862
+      },
+      {
+        "name": "browser",
+        "passed": false,
+        "exitCode": 1,
+        "seconds": 332.274
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 15.865
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 16.183
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "browser": {
+    "firstRun": {
+      "startTime": "2026-09-13T04:25:54.123Z",
+      "duration": 330598.036,
+      "expected": 62,
+      "skipped": 1,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "correction": "Hand opacity differed by one floating-point rounding unit after reload. Only opacity uses 14-decimal comparison; all other character state retains exact equality.",
+    "targetedRetest": {
+      "status": "passed",
+      "failedTests": []
+    },
+    "passedAcrossRuns": 63,
+    "skippedOptInPixelBaseline": 1
+  },
+  "finalTypecheck": "Passed after test assertion correction",
+  "pureChecks": 169248,
+  "cuffPixelPoses": 50,
+  "sourceTextureUnchanged": {
+    "dan": true,
+    "doug": true
+  },
+  "continuousMatch": {
+    "transitions": 24,
+    "hashBefore": "f873f99b",
+    "hashAfter": "f873f99b",
+    "finalScoresBefore": [
+      5,
+      3
+    ],
+    "finalScoresAfter": [
+      5,
+      3
+    ],
+    "maximumTransitionHandStepPx": 1.0840738972080974,
+    "maximumTransitionHeadStepPx": 1.2390733595834633,
+    "errors": []
+  },
+  "videos": {
+    "dan": {
+      "path": "work/qa/animation-polish/motion/dan.webm",
+      "decodedFrames": 15,
+      "errors": [],
+      "maxDecodeOffsetSeconds": 0.03636666665474486
+    },
+    "doug": {
+      "path": "work/qa/animation-polish/motion/doug.webm",
+      "decodedFrames": 15,
+      "errors": [],
+      "maxDecodeOffsetSeconds": 0.034266666630902165
+    },
+    "match": {
+      "path": "work/qa/animation-polish/match/cornhole.webm",
+      "decodedFrames": 15,
+      "errors": []
+    }
+  },
+  "ui": "Existing IAB Lab reloaded, Play clicked, full match completed at [5,3], Doug follow-through inspected at court scale.",
+  "limits": [
+    "Three registered hand drawings; no individual finger rig",
+    "Planted stance; no stepping approach",
+    "LoongBones editor round-trip remains unverified",
+    "Production app and other events retain their existing rigs"
+  ]
+}

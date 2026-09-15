@@ -1,0 +1,3574 @@
+[
+  {
+    "path": ".gitignore",
+    "sha256": "5E6FA4657B9137264501FE36610E7AC9E64931E80A89C4CA46B7F1F893A37862"
+  },
+  {
+    "path": ".oxfmtrc.json",
+    "sha256": "0962FDDDB1840A06B5AFB918FF3F2FF56BCE346082651EC5C3567C01DD809F17"
+  },
+  {
+    "path": ".oxlintrc.json",
+    "sha256": "1A7AA1C7D83B05939E4E697EED9316224CAEA8958C4AD12837F8BE740C13A47D"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "F55966CA537782602FFE19B1146ADA3337066DC22881E75D97F72FD1EAA3703C"
+  },
+  {
+    "path": "components.json",
+    "sha256": "9928283696D86836422959A2C520DF83A718D31FFBCAB533A14CA8DCA2C8D475"
+  },
+  {
+    "path": "next-env.d.ts",
+    "sha256": "74ECF1A3BC702F296A7363C9EC6FE560278E32BD7F44C1BBAC987F81EF7AA6DF"
+  },
+  {
+    "path": "next.config.ts",
+    "sha256": "2649872627445ACE1F69AD15DF002E364155D8519DA98E568E5CD78EDDE928EE"
+  },
+  {
+    "path": "package.json",
+    "sha256": "B4D1ADB60263BBCC45E1B444E4BB381A4E02296BE6CE19567229750A3E5C33E4"
+  },
+  {
+    "path": "playwright.config.ts",
+    "sha256": "F6CE29191851AF15EFB878B560871E85F1A7687B31428DEEA916FD977B39DAF4"
+  },
+  {
+    "path": "pnpm-lock.yaml",
+    "sha256": "63727147126868916C0143F28AE097B2FAF79EBE7352E06F264A6490727079DB"
+  },
+  {
+    "path": "pnpm-workspace.yaml",
+    "sha256": "368FD9E50A46D5CA8AF48E7EB08751063280A5D933BE56ED5EED91E304CDA90E"
+  },
+  {
+    "path": "README.md",
+    "sha256": "9FC2C966753D90C85A31878FDB92A73C0EA3459EC3C5A9EB17B1F68E61716622"
+  },
+  {
+    "path": "tsconfig.json",
+    "sha256": "C2775632C4DADD3CBE49AF14CA25D62956F955A00504D248DE8B0B3863303E49"
+  },
+  {
+    "path": "vite.config.ts",
+    "sha256": "85C888524024C9527B9DCF6EEA40BCD603E2191F971A76EAAFCBBA606BDBF758"
+  },
+  {
+    "path": ".agents\\skills\\arena-animation-direction\\SKILL.md",
+    "sha256": "B77AA497EE408CA7CD766E959F1AE17B5CDA4AD488F5F7D65D1E485DF0662749"
+  },
+  {
+    "path": ".agents\\skills\\arena-gameplay-testing\\SKILL.md",
+    "sha256": "75484D02891497CDA401C3D240D0B5F6E64649E4D1EE9D47E904DB4FEFEE5AA4"
+  },
+  {
+    "path": ".agents\\skills\\arena-input-qa\\SKILL.md",
+    "sha256": "EE62BF0B44C4F9DDE141AE4784DD537027CE146928076023800A92CAFF95DA74"
+  },
+  {
+    "path": ".agents\\skills\\arena-performance-audit\\SKILL.md",
+    "sha256": "E937C97CAF1A25A2E5D128F66461B514BC01B9978665D4F32C3DC5AE9D249D5E"
+  },
+  {
+    "path": ".agents\\skills\\arena-regression-check\\SKILL.md",
+    "sha256": "8FE2BD1A8862638BA7DF9F70C362EAA3294D5BCBCCA6B489F22BADEDDA9C2D41"
+  },
+  {
+    "path": ".agents\\skills\\arena-visual-qa\\SKILL.md",
+    "sha256": "C498BC60AF4D041EFB6765A4022D952CA1FA8E69F37EDCC2E8C0F75E2041031D"
+  },
+  {
+    "path": ".openai\\hosting.json",
+    "sha256": "C6DBA69759368E9255ED44D61AC1A3F63D4CD05C1998508C0DA3791D47876AAC"
+  },
+  {
+    "path": "app\\globals.css",
+    "sha256": "BB245482CC3EE9B9E9D873EB850BB6200BF07582F3AB7A5D757664F00F1D730C"
+  },
+  {
+    "path": "app\\layout.tsx",
+    "sha256": "77493B13FABE7B4969327163EC098EF7FEC69FE7AB630CF6C550706F5544055E"
+  },
+  {
+    "path": "app\\live-arena.css",
+    "sha256": "A61DD1DC55B3AA5059F5EF6553F5862A13200E8285CB8D67F8C0357C0EEB3A7A"
+  },
+  {
+    "path": "app\\page.tsx",
+    "sha256": "AA3AE13F60EF71D671A408E82F6FF284037C9EDC3CFA0131B828C99BBE85CD64"
+  },
+  {
+    "path": "components\\arena\\ArenaStage.tsx",
+    "sha256": "97F1AD698CB0F8CA892B3782E42410F3B0F3C7E78E3C2A2DBC845BFCDEFE27D1"
+  },
+  {
+    "path": "components\\arena\\CharacterInstaller.tsx",
+    "sha256": "A16E2EDB50D906B959E43F83BF2E3256F6A5B81C452D9CB22A240F3D604898A6"
+  },
+  {
+    "path": "components\\arena\\Controls.tsx",
+    "sha256": "246F2CFD33F73AB7C1544A70B1DE50EC7CEC91187E1756CD952BA65D8196B260"
+  },
+  {
+    "path": "components\\arena\\Game.tsx",
+    "sha256": "40ECFD46F3D1C768B2F9A435B61242FDA9A825340FFE79E9AD0CF782B21E6E77"
+  },
+  {
+    "path": "components\\arena\\MotionExplorer.tsx",
+    "sha256": "775EE505F40ABFD17824C7F7F4DD9B6ACCB1D631F904A0C052720DD5D3F77BCA"
+  },
+  {
+    "path": "components\\arena\\Panels.tsx",
+    "sha256": "34536B8DB47B38231C87D257DB07092983FC2E7A9A9C21F225D44A4BAB0D8C88"
+  },
+  {
+    "path": "components\\arena\\SecondaryViews.tsx",
+    "sha256": "D682346E2FA122CEFFB7225C900B2E5214E24856F743D9021686D5798E6E3584"
+  },
+  {
+    "path": "components\\arena\\SetupDialog.tsx",
+    "sha256": "F84A95501F3C3F00B5F93071F30CF9A4DAF35DDADC62EC162CB54BD6A282C976"
+  },
+  {
+    "path": "components\\arena\\live\\LiveStage.tsx",
+    "sha256": "7745C89BD295ADCAE97C1C0F454056E24C220B3F1C6EA4EE5B32DBB34506C9A4"
+  },
+  {
+    "path": "components\\arena\\live\\PlayableArena.tsx",
+    "sha256": "6469145F9890FC916C51C0BF52AE0F7381704C662ADC2050390BEE1B8503117C"
+  },
+  {
+    "path": "components\\arena\\live\\TouchControls.tsx",
+    "sha256": "04EB7BD1D43C48CB37B246503FF2637901AF684FAABA658A1337AB68C5A5EBD4"
+  },
+  {
+    "path": "components\\ui\\accordion.tsx",
+    "sha256": "33E1C60BA503F4EB36F9A8B1F68B236174B11656D8EFEA6BAC65ABDDDA2F9019"
+  },
+  {
+    "path": "components\\ui\\alert-dialog.tsx",
+    "sha256": "ED0F1FC432BCA4C72F9DD8741AE2268A00D2D3429FF1149BF463C4271B13D8E9"
+  },
+  {
+    "path": "components\\ui\\alert.tsx",
+    "sha256": "E760C470414C9E617D7292094146D906352FEE3B1526B790A611D4A118E79196"
+  },
+  {
+    "path": "components\\ui\\aspect-ratio.tsx",
+    "sha256": "B7FB499905E441A0602392CE118828425AD059079060109694D01F9FAC00AD20"
+  },
+  {
+    "path": "components\\ui\\attachment.tsx",
+    "sha256": "DCB9E899F1322158F016D75C400FA8CCE9B797EA49BEC65528BAC686CEE2EC5C"
+  },
+  {
+    "path": "components\\ui\\avatar.tsx",
+    "sha256": "342F32B683937B826CDFF2999D5E3057836D459AA43EADB0C3538B818D195B9A"
+  },
+  {
+    "path": "components\\ui\\badge.tsx",
+    "sha256": "5706189B86E8670499FB33F37147DD6F65C39D59EEF5211E34157F2952C35E32"
+  },
+  {
+    "path": "components\\ui\\breadcrumb.tsx",
+    "sha256": "B28B76D6F8D0FEAFBBEFF2220CF83F9A6B03D8C81F0145B3AF4C7D19933AB2C0"
+  },
+  {
+    "path": "components\\ui\\bubble.tsx",
+    "sha256": "DFB9F52AE3B89E4A419B336C3893AB6FB658FC324FB402759D878D54E3B2DB5A"
+  },
+  {
+    "path": "components\\ui\\button-group.tsx",
+    "sha256": "79AD8FB6644A775CC49131C1AA737CA26CAE6A563BEEC0FA52EF6E8D85202FAB"
+  },
+  {
+    "path": "components\\ui\\button.tsx",
+    "sha256": "081D2A1CB4F3AEC636A6894D9EFF4E90D476D5DB85B82D0399C1F4D18517112E"
+  },
+  {
+    "path": "components\\ui\\calendar.tsx",
+    "sha256": "E7BC682EFF8F2215E6B0AAB40D1AFB7EE927C5F5BEF348CCFF207631B9261658"
+  },
+  {
+    "path": "components\\ui\\card.tsx",
+    "sha256": "625FCE5E16577A45108A86D7AFCD70B8931CB2032ABE0D6A3FAF1010F666D672"
+  },
+  {
+    "path": "components\\ui\\carousel.tsx",
+    "sha256": "7444126492D4E0B85B1270F0D83A0955350FA95B3D3FB7B88EDC2A5C2B4E5D14"
+  },
+  {
+    "path": "components\\ui\\chart.tsx",
+    "sha256": "56AB0E0B41F0CC7902414E046EA4F710BDBF0B756028672EA8C7E5137A278F2B"
+  },
+  {
+    "path": "components\\ui\\checkbox.tsx",
+    "sha256": "56B2869E5478F38238E6A3D8AEFABFBE8AF565B38B2FFAD06466487B3EACF154"
+  },
+  {
+    "path": "components\\ui\\collapsible.tsx",
+    "sha256": "3FDF7EF1CA89C4D85DE5ECBB25813D0F572003A53B021BAF43C5F3523E48EC97"
+  },
+  {
+    "path": "components\\ui\\combobox.tsx",
+    "sha256": "282041E2E8C52CC12E7BBC717BBD3F8C9C5BA18E7FA75B97053BC79687E1181E"
+  },
+  {
+    "path": "components\\ui\\command.tsx",
+    "sha256": "9C1EAE65AA105935A34C6B736F673B71A2EF939DDE53DCE29D986221EDBF1F9F"
+  },
+  {
+    "path": "components\\ui\\context-menu.tsx",
+    "sha256": "05C3646B452F5E3B9EB952EEBA3D90657606D2B0875CB77652CDB5EADBA0EB5C"
+  },
+  {
+    "path": "components\\ui\\dialog.tsx",
+    "sha256": "8BC85DEF62538B4E62E8530C6B0BA167A192C38519C05F104BF6E10DE73B811F"
+  },
+  {
+    "path": "components\\ui\\direction.tsx",
+    "sha256": "2DEA8A95ACCB1723DB2454CCC858697D5B1F1454568CF4DA5E8FCBD0CF7CC1EE"
+  },
+  {
+    "path": "components\\ui\\drawer.tsx",
+    "sha256": "B7AC53D0E5D1FED25FC3F2AC5F5A36E247CA684C677AC376829FA8A7C039B79E"
+  },
+  {
+    "path": "components\\ui\\dropdown-menu.tsx",
+    "sha256": "EFC088F3D79F64CF96E222701AE23DCF385B53947B3CD57FFB7BE6F5DADCBFE2"
+  },
+  {
+    "path": "components\\ui\\empty.tsx",
+    "sha256": "BF54BAC4881B79F6A53F55E70C18640F58A058ADD88AED763C71BE35C4F64F59"
+  },
+  {
+    "path": "components\\ui\\field.tsx",
+    "sha256": "79023CA89AAE39F9CFFA83A9483C9C672099B4547CC821486283DB61C6AE9327"
+  },
+  {
+    "path": "components\\ui\\hover-card.tsx",
+    "sha256": "D8CB7270C5893213FC00B5F270F9BC461E2D7CE5B81F77B8778253A1AEDA6A2C"
+  },
+  {
+    "path": "components\\ui\\input-group.tsx",
+    "sha256": "2E65DDECB4401220BE374CC6CFC42344538266CAFEB2E590B3C760C7ED6B490A"
+  },
+  {
+    "path": "components\\ui\\input-otp.tsx",
+    "sha256": "867F568259CAAC95F682D128D72E681B3FE7C31701A396EACC9284401D917A6A"
+  },
+  {
+    "path": "components\\ui\\input.tsx",
+    "sha256": "6763C86C34C1C07826386D376F5DA8FE2E41585BFF3615716D5DA88915E088D8"
+  },
+  {
+    "path": "components\\ui\\item.tsx",
+    "sha256": "9C5E45E6C4AAE5B9C4C1304E1F1208D32681AB616A6E0DE9DE6E0D6B22690592"
+  },
+  {
+    "path": "components\\ui\\kbd.tsx",
+    "sha256": "BDFB38A4F7B9B604E196B5CEE0D86F12311DAE72946F0DBF5928C8AD0638178F"
+  },
+  {
+    "path": "components\\ui\\label.tsx",
+    "sha256": "E4A6FB662C44A44C468D16D79D02B3A3E5BF7B77BD50AEF1E586C4D9613DF0F6"
+  },
+  {
+    "path": "components\\ui\\marker.tsx",
+    "sha256": "CD1E872384CF5001E48B4DC3CC2BB011EBA9700561D41C83A89E872B60BAF175"
+  },
+  {
+    "path": "components\\ui\\menubar.tsx",
+    "sha256": "A3715F8E8B78261F5784929C532E100759C58E831C91E842438730797BC9A124"
+  },
+  {
+    "path": "components\\ui\\message-scroller.tsx",
+    "sha256": "9512C586D1B0885CF3AE4F1C3DD4281CBDFEC7428FE98FF48A66B4BA2A7319F4"
+  },
+  {
+    "path": "components\\ui\\message.tsx",
+    "sha256": "2FEDCC64ED8563A44F6697615E77574D96F819FE6E5E2FA8A555E30F8ED6BBD7"
+  },
+  {
+    "path": "components\\ui\\native-select.tsx",
+    "sha256": "3AAFB74B98C039DAE4EB2C64C47EC6F5D61FDC888C057DE47550346F702F434B"
+  },
+  {
+    "path": "components\\ui\\navigation-menu.tsx",
+    "sha256": "C8E64BF5241145B512AE18F1062DA8275691EDF927736496A3860BEC76AD6FA1"
+  },
+  {
+    "path": "components\\ui\\pagination.tsx",
+    "sha256": "1F3C1713E8824CCA7C3C0EDACF9DA7B0114BFDA58640771B8FE0BC6179B370CE"
+  },
+  {
+    "path": "components\\ui\\popover.tsx",
+    "sha256": "7376624438588E2D64B6E0C5CDF82CBC5FD4530BBCF1F0235C5F3EE08D12E877"
+  },
+  {
+    "path": "components\\ui\\progress.tsx",
+    "sha256": "0D8DDEC9731940E104B851CF3AC67D2FA8589B289824317A9E8F326E090BA65A"
+  },
+  {
+    "path": "components\\ui\\radio-group.tsx",
+    "sha256": "43F2D6C2F5BDD4A26C57D93E6F141BE20472F9BB8777D9A0D61CD8A5E281A999"
+  },
+  {
+    "path": "components\\ui\\resizable.tsx",
+    "sha256": "EA7B85817D4DC70866E0BCF15264E7E1BD7E1893EB4404261FBC23A4D6FF9029"
+  },
+  {
+    "path": "components\\ui\\scroll-area.tsx",
+    "sha256": "730C4CC49F8F1B705EB1389CD32C774056A0A2A7A48A9B092CBE44C608BE3A0B"
+  },
+  {
+    "path": "components\\ui\\select.tsx",
+    "sha256": "45489C502A21FDD5271481D64AD8F762181C9653D8D26BDC6F75450B78C3C852"
+  },
+  {
+    "path": "components\\ui\\separator.tsx",
+    "sha256": "92AD5065F03D7EDC98F367E729F3EC84ECE1D99EE8CD0D3A8137F266D4AB3D8A"
+  },
+  {
+    "path": "components\\ui\\sheet.tsx",
+    "sha256": "ADB432B6F9D7A4733CAA45BA8BF510A8A7FF0F6D0DD3AA1F013959FB61268234"
+  },
+  {
+    "path": "components\\ui\\sidebar.tsx",
+    "sha256": "AA3322CA63F098AA1D2ABF750F9D097DA07362FCE25939357F2CEFC9B6A03988"
+  },
+  {
+    "path": "components\\ui\\skeleton.tsx",
+    "sha256": "4C342102B2BBF5BD8C04FA151FE5C13C42FAEE2F9587A3586C27322020CA35D1"
+  },
+  {
+    "path": "components\\ui\\slider.tsx",
+    "sha256": "AF657E73D672F4DD205F19ABF151D21A172CF36ABFDCA49FD7014A20E12367A9"
+  },
+  {
+    "path": "components\\ui\\spinner.tsx",
+    "sha256": "8DDBB330E5564A1F53026DA36C2322ED4B027687E91A88F63348AB10F26AE0CB"
+  },
+  {
+    "path": "components\\ui\\switch.tsx",
+    "sha256": "04B085443A1C6A72D408E6EB7DD45DF881CA27814415B81B39F614806B52C8FC"
+  },
+  {
+    "path": "components\\ui\\table.tsx",
+    "sha256": "88F2BA7877EEA7F34A5DA18B7FA096EB2C7BED602677CE54F5494B494C5AFC2E"
+  },
+  {
+    "path": "components\\ui\\tabs.tsx",
+    "sha256": "DD914D769BC223B5D5EA56839A7752E534EB475F8D2897D5675606C368BBCA1F"
+  },
+  {
+    "path": "components\\ui\\textarea.tsx",
+    "sha256": "7AE7F0F5D907BE24658652C771FEE1685193102BF3200AAFBF578D144D379FBF"
+  },
+  {
+    "path": "components\\ui\\toast.tsx",
+    "sha256": "9126B09F47F0B117BF748CF19AAA4987A1F72D0813D10BFC4B4B0128E6439E48"
+  },
+  {
+    "path": "components\\ui\\toggle-group.tsx",
+    "sha256": "9B006523BE0FE3230CD75F7ADF78A501829D594FD3506C56C55BB38211FF1850"
+  },
+  {
+    "path": "components\\ui\\toggle.tsx",
+    "sha256": "6BF41D6F6FFE602C3E28274A82AC029E6EE1331BA3C670A6D814048E1823CC28"
+  },
+  {
+    "path": "components\\ui\\tooltip.tsx",
+    "sha256": "B86E51969931C3D62E88D0BDACD1CD8219105DC6D6B6A588A80011BF92E987CD"
+  },
+  {
+    "path": "docs\\ADDING-CHARACTERS.md",
+    "sha256": "0F13485C06507BB043C7FF1B9C688A390FA97B32E978020D4018DDEDCF5515FE"
+  },
+  {
+    "path": "docs\\AI-DEVELOPMENT-WORKFLOW.md",
+    "sha256": "83D75D62C2C59AA351520B3545FDFF5F724A56D9DC607DB0716D297588754618"
+  },
+  {
+    "path": "docs\\animation-catalog.json",
+    "sha256": "A310FDCD11DCD1251216F0F938A38DF9122E8B02F462F7F8B8BD3A646283093A"
+  },
+  {
+    "path": "docs\\ANIMATION-TIMELINE.md",
+    "sha256": "83319FE58E258492930D71865CB7896F348D0B30ECD0933B5A85C110C5E5C308"
+  },
+  {
+    "path": "docs\\ARTICULATED-ANIMATION.md",
+    "sha256": "7D95A68708693D78EA06EED86767581A3A90C13684C4B843A3D8DBE76200A03C"
+  },
+  {
+    "path": "docs\\articulated-review.json",
+    "sha256": "005A94EA1C8D3B8C861B5363B279E64FCCCB807B4F5F13D4FEDE43DC20FA6271"
+  },
+  {
+    "path": "docs\\CHARACTER-PERSONALITIES.md",
+    "sha256": "F2B6B337E6E98BF94450BA778DA03758331DE7205FFFDC71260A8F84E144946B"
+  },
+  {
+    "path": "docs\\CHARACTER-PIPELINE.md",
+    "sha256": "A8C90C6D68566442BE7D4EB665E17B8CDB1D5F2CDADE1CC68964E3575F3BDCBF"
+  },
+  {
+    "path": "docs\\CHARACTER-RIG-ROOT-CAUSE.md",
+    "sha256": "02550699A4841A1A05151A91FA2D14212F117011167F55DA19F4F9CBB8C8C369"
+  },
+  {
+    "path": "docs\\CONNECTED-ANIMATION-REVIEW.md",
+    "sha256": "61A38881764B855852426EE22FD68468F8B78E54533142700C9A31ECB6F4B096"
+  },
+  {
+    "path": "docs\\connected-review.json",
+    "sha256": "FE63D2D08B3B7EAFF3271879AEF919FA1A10C6E1F3E947FD9E9F0D67ADA865D0"
+  },
+  {
+    "path": "docs\\DESIGN.md",
+    "sha256": "6940AFEBB515A5851A80708DA2A1B994F81FA6C7DD9074290A27B024D63BA3C7"
+  },
+  {
+    "path": "docs\\GIT-WORKFLOW.md",
+    "sha256": "9CB13EB3587273A077C411B8459885F3A7A301AC8CAF9CEB1C5EBFA36B4FA471"
+  },
+  {
+    "path": "docs\\HUMAN-MOTION-V2.md",
+    "sha256": "AA0220A36CC0083F27260DBB246A77578ED50686706EBF1FBDFD20792B75A827"
+  },
+  {
+    "path": "docs\\INTEGRATION.md",
+    "sha256": "99E19A2A6E0A717DCED9B98A74BFED8593D6DEE3C282F5ABC1C8298414E992B4"
+  },
+  {
+    "path": "docs\\LOONGBONES-COMPATIBILITY.md",
+    "sha256": "E72E231D2FBBACAE6DD30BD99DB06C72BDEA7607785569312861B9BCEEC1B414"
+  },
+  {
+    "path": "docs\\NATURAL-POSTURE.md",
+    "sha256": "BDF79F6C7BAB8AD12A3A50DF92F952C363B29FF29058AC19BD860DDB7053BE0A"
+  },
+  {
+    "path": "docs\\ORGANIC-PERFORMANCE.md",
+    "sha256": "D9466BE1447961D824F10C9C4384CE5E795D84D97FE0EC5226248651A0F5026D"
+  },
+  {
+    "path": "docs\\PHASER-ENGINE.md",
+    "sha256": "4FAC4A0A3D4FE68EC0569A542C1C54C1E766C88FACECD99E4324372FCF801AD4"
+  },
+  {
+    "path": "docs\\PLAYABLE-ENGINE.md",
+    "sha256": "BAF52C445A4AD98BAA8482F8D5928D48C74B2981172AC8C138DE179AACD09DC9"
+  },
+  {
+    "path": "docs\\PUPPET-ART-PROVENANCE.json",
+    "sha256": "AE758ECCB171D48062E2438AB46FC825AB4DEB44C621E82EA27111452F8ED1D6"
+  },
+  {
+    "path": "docs\\REVIEW-STATUS.md",
+    "sha256": "1E0F1A1E7DE7A6301C1C91406779DEBE46E378315724049B7EE7CA63A9197538"
+  },
+  {
+    "path": "docs\\showcase-recording.json",
+    "sha256": "6400B75A501895B950025E94B4941FF3AA71CAB730C47CC102DD652D42EBC85F"
+  },
+  {
+    "path": "docs\\SPINE-PRODUCTION-PIPELINE.md",
+    "sha256": "5B3773B9DC62EB8C3665546066A6EFBC62DDA8550C8FD7FE119BB9C646648283"
+  },
+  {
+    "path": "docs\\test-results.json",
+    "sha256": "5EDA98F580E232D681A1DE936A862BED26FB5338DE67FA9D052D677B50DF2B8E"
+  },
+  {
+    "path": "docs\\art-prompts\\anatomy-source-trials.json",
+    "sha256": "7E32395587E19F76805903AAA90A7883D658580745802322837C535076D5017B"
+  },
+  {
+    "path": "docs\\art-prompts\\arena-refinement-prompt-pass2.txt",
+    "sha256": "61850782375951B4816C45004F4C10C33162909EE2CC0FA17985DE93139526FD"
+  },
+  {
+    "path": "docs\\art-prompts\\arena-refinement-prompt.txt",
+    "sha256": "2C31729AB5278B15C04EB26C97D96E8CF2650EBA219DCD71D928B535E4E920F3"
+  },
+  {
+    "path": "docs\\art-prompts\\arena-refinement-provenance.json",
+    "sha256": "677DAC4BDF96AA72EA8A9F2C50F01B1DDCBBD9D276A1480276D7F4AD03AE4C20"
+  },
+  {
+    "path": "docs\\art-prompts\\board-prompt.txt",
+    "sha256": "3E1C86432833A79506D71ABBA48787F85C7447EAC61D10569FC10CF156829DE9"
+  },
+  {
+    "path": "docs\\art-prompts\\clubhouse-prompt.txt",
+    "sha256": "9431A19D8317C8C4C0D40FB850496039C4D5E9ACCE7733A3C74EFD15555FBF43"
+  },
+  {
+    "path": "docs\\art-prompts\\continuous-limb-repair.txt",
+    "sha256": "6FB23C5973EC75F44BD955DBA326C5BDE2D3A550919DDD3FC56823CF8025A651"
+  },
+  {
+    "path": "docs\\art-prompts\\dan-connected-source-v1.txt",
+    "sha256": "7EC20A06603DF3444583F671577CA40191B96D5418CA10FCBF8590F8590245B8"
+  },
+  {
+    "path": "docs\\art-prompts\\dan-reference-background-v2.txt",
+    "sha256": "AE1BE21E82CC107880AEC9B9F76FA0F01E279858E07D3A071C10753D48164AEB"
+  },
+  {
+    "path": "docs\\art-prompts\\generation-provenance.json",
+    "sha256": "0CA1C89F8A307BBBAC5F05DC834124B9D88E4FCFFD8F732EF3DE44AF3E216317"
+  },
+  {
+    "path": "docs\\art-prompts\\joined-shoulder-repair.txt",
+    "sha256": "CCB99E44DEB3F633872AB57FADDBF4FF0858C6348983C625E42D6B80C91345DF"
+  },
+  {
+    "path": "docs\\art-prompts\\paper-redesign.json",
+    "sha256": "5D237101DB95880C5B01C272D806F6BB63213AEC04E05650C9D0C16F2397C5CB"
+  },
+  {
+    "path": "docs\\art-prompts\\prompts.json",
+    "sha256": "65D66DDB17654DF114DB7773BC1EF489F4E5C771A17B70A5C2CE70743A75C19E"
+  },
+  {
+    "path": "docs\\art-prompts\\sports-props-prompt.txt",
+    "sha256": "9265805866CA07E6575651A0E4CCE154FDA11A9D5ADEF0D68B7D052445FEA822"
+  },
+  {
+    "path": "docs\\art-prompts\\equipment-refresh\\anchors.json",
+    "sha256": "211E49DA6C67548D6B50E0A728CE94B4DD6872DBEB983B6CE9525C9EEC83B202"
+  },
+  {
+    "path": "docs\\art-prompts\\equipment-refresh\\prompts.json",
+    "sha256": "38913B3870D8AC6CBC818C80CD1CBA218B3F10ECF47299D7ECE08B67343B6CB0"
+  },
+  {
+    "path": "docs\\art-prompts\\equipment-refresh\\provenance.json",
+    "sha256": "EA40698624A9C1FFE5C2534D709E41F12F4219D8661CE8E195E07F14E13990D0"
+  },
+  {
+    "path": "docs\\art-prompts\\horizontal-board\\coordinates-original.json",
+    "sha256": "E479B066A8E9710D2C4ACB2453A582B6635ED13F1C21E3C2D1C6E96A1EEE8588"
+  },
+  {
+    "path": "docs\\art-prompts\\horizontal-board\\outline.json",
+    "sha256": "0176AEDDBCAEB0C35ECD8CB4FF0ADA7F131E84F632278F84199AFB9860337A19"
+  },
+  {
+    "path": "docs\\art-prompts\\horizontal-board\\prompt.txt",
+    "sha256": "EFA080B89E36819EB52F6B6D683F7C2E4673A482428DF8DA8C6F73AFF9EDF533"
+  },
+  {
+    "path": "docs\\art-prompts\\horizontal-board\\provenance.json",
+    "sha256": "17B90B8B8071585486799CAC4822BC75DCCEC89B51616AB8049A6CA5390633CD"
+  },
+  {
+    "path": "docs\\art-prompts\\horizontal-board\\transparency-edit-prompt.txt",
+    "sha256": "17EE10CEEC51289F8A0E1D8E2C6D20EC81F29A1FD8E5CC6C7D1C4A0A5536FDC0"
+  },
+  {
+    "path": "docs\\import-examples\\dan-performance.json",
+    "sha256": "AD43357744055B2C5D955F8BF7F6AD5AA530DE132514B816EE8ECF0F538C9112"
+  },
+  {
+    "path": "docs\\import-examples\\dan.json",
+    "sha256": "710179D5A5C7FF68C4AEF620A71B89B157AA0A6E39B58DEAA2A533635D200431"
+  },
+  {
+    "path": "docs\\import-examples\\doug-performance.json",
+    "sha256": "C2D56F9A71F5352D0C7F1A3B616CA49EBC72C08DC83331F47B9A2D42705C4751"
+  },
+  {
+    "path": "docs\\import-examples\\doug.json",
+    "sha256": "5EFC4A9954632A5BDEDAEF79DBFD805D9403D7B63419C13FE52A552F3658C678"
+  },
+  {
+    "path": "docs\\import-examples\\mack.json",
+    "sha256": "F495E270CF0EB46DE6F9136FDBC8D09E9965D679CF339850C335C41E8561C84A"
+  },
+  {
+    "path": "docs\\import-examples\\marmalade.json",
+    "sha256": "F7312C6E14B39CD626CD3A18513007BD3239224A34A172B0AA248ABDBE6CBED2"
+  },
+  {
+    "path": "docs\\review\\engine-metrics.json",
+    "sha256": "31493946F8995B98D231824279361AAF15790E3EF56758AD64499C29EAB4A149"
+  },
+  {
+    "path": "docs\\review\\live-engine-tests.json",
+    "sha256": "6405526966E5DDB20E9C209366059C691ADCEB2418281C86A9A84044A46DE073"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\arena-lab.png",
+    "sha256": "D00257F711BA5481C38CF53B9AC17BDFB5FEAC2010A66555E4D5F3C926A79AC3"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\basketball-recorded-flight.json",
+    "sha256": "C69DC3D48EC16434F43138BAF506C5D31E2DBCB0F6CE2470C396728A677B55AF"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\basketball-recorded-flight.png",
+    "sha256": "8CE2FC2949403EA828C2CBD2B2CB102B88A7B8D07E097C3CAE2B25AD0CEC6D20"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\beer-pong-recorded-result.json",
+    "sha256": "83AD2CB619928BC6D68ED8F8F8B8D62D7716E2F56CCB7FED0C739531CFC62609"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\beer-pong-recorded-result.png",
+    "sha256": "CA26E3D0815D478638E5C64DF38CEF4EDFC6C457C168E232186CA2851795CF46"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\character-dan-gesture.json",
+    "sha256": "20000F3CC572CBFD81A7427566F41A14F625AD5C0FCD7AAC3EB0CE89E5B466BE"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\character-dan-gesture.png",
+    "sha256": "E123E2585532EE2F5E58AED3D08CB5139F83655115B2C8C8459CE51CFC13153B"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\character-doug-gesture.json",
+    "sha256": "35E088B261093FFFFD21F64768984772E2881C1904D7553416C01CE257E4D70B"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\character-doug-gesture.png",
+    "sha256": "973942C712DF2910ADD439016A56D258FD50E41917C9B8BDD31789681AE4803B"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\cornhole-recorded-release.json",
+    "sha256": "F43D84C876363E0FB5300791EEC132EBCCA5927629DF1ADBF2D73E7B7D061F95"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\cornhole-recorded-release.png",
+    "sha256": "87BF1A83130AFD905A037F28786865DFCE52BAF45B18823B7D6E4A28A2DCDC38"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\football-recorded-landing.json",
+    "sha256": "190EA2C1F601711B8D8718BA601145C16A0D930E97D73FFC2EEBC04AB7FDCF7C"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\football-recorded-landing.png",
+    "sha256": "9325833231B894993136E3CFC7510E6B4B7E4F975AC7A9CBC44955FB93484C58"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\inspection.json",
+    "sha256": "68E3B9A02CEC9663267F6648EA8679B3F03ECF283BB49E0DBA358E89D7316352"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\production-play.png",
+    "sha256": "2267164049AFD85D5FAB539A1CB8D1D44934B94E029A1899AFF80115ABD3FB68"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\production-report.json",
+    "sha256": "2984AB0F92A4D54EF862C834D1DCC595C54D01FE69B68CAC082AFD462ADA097C"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\production-watch.png",
+    "sha256": "09EF0BD1F025BD7573ABB383289F3EB530B8FEF589EAA91FD5D924E218808B72"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\regression.json",
+    "sha256": "BDFFBD00A15BB60E7DA2F1DED0F6CEE2A1BDAE16B6085E7B04A812F4ABE5FBBD"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\running-lab.png",
+    "sha256": "D9DC6ED6FCB1258013F156F6E0F5216C22D7EDF5B252482850DDA1181B89A301"
+  },
+  {
+    "path": "docs\\review\\ai-infrastructure\\running-performance.json",
+    "sha256": "DF175F46422B2BD34E981CEFE519D99EA279177673FF9A9A12B8C6A2B0835CCD"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\browser-results.json",
+    "sha256": "5175BAA91331CA42F249DB1B95227846150375855F49FCF2362A03877393C684"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-joints.png",
+    "sha256": "C51F4C5B44C569F4BE92A6A1F0114C629AF77525AF3DCAF07FA113C45D285F0A"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-joints.state.json",
+    "sha256": "46DF2AFA15D0CB7D3DF25D1932490C93446BBDF668FDE163CDA4CE6125C68B62"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-mirrored-court.png",
+    "sha256": "C2F51ED2759CE8548EF2105EE6C8AEF5FDCD89C5C31AE7D1BB7F395B155A8976"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-mirrored-court.state.json",
+    "sha256": "A51854D10CCF6EDFD2B4CA112D3354D3B0C7F9ADC7F0FD22D95C26B99C73EABD"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-silhouette.png",
+    "sha256": "9F1E65CA7AD0E7CF164CD4EAD16893A41858CB239D0F5B538A291577F21DDFC3"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-current-silhouette.state.json",
+    "sha256": "A5989CB5FEE8B603CBC5A8928A6624AE3E11FAD84B62E088AB7050A2097EDE22"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-idle-proposal.png",
+    "sha256": "B780C9ADE2538C055D12CE2CD9F41CAD4706E0E529493893DD3436DF2A71E754"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-idle-proposal.state.json",
+    "sha256": "3EC105E9A19FCB998AEE16E34EC2A6E3958AAFD00B266E210FF7495050426F1D"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-run.json",
+    "sha256": "8F9077CC3EC15C5EB794BFE874C94C41227A3A88226FC2CF0C3F5A7402BE3569"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-run.webm",
+    "sha256": "CEBD99A388208533FD7772EE511ACCF5ED2799AEFADE0506E73B7B847DB96B3D"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-setup-proposal.png",
+    "sha256": "B3FAC72395D5020549D3663D02A5787B96954FE9E8A728E3DF7692833BACC766"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-setup-proposal.state.json",
+    "sha256": "442826659B53E8188C373E1D50C7C678B655F568DE6588E36A4D099460B07D10"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-throw_airmail.json",
+    "sha256": "14FB5611BFE7E55AAD95125E936418A1764C8D340D8794DBC8A774B1079179B0"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\dan-throw_airmail.webm",
+    "sha256": "547F2C929BAC9A32566AB47226B46274AB92252752363C8A984061161030FFD4"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-joints.png",
+    "sha256": "8EDA03ABBA661105F9187D325D240A7EC7F05D62F73D3756D76813FE7A32E70B"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-joints.state.json",
+    "sha256": "8C31CDB487522FB00A35619100CB938167C943924E5DBFDEF18EE9C18CEF91B4"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-mirrored-court.png",
+    "sha256": "939925F75E871E542B85448898C8E8F3068993FF7821417250E6D44FE703D94B"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-mirrored-court.state.json",
+    "sha256": "C783C9AF67C4A847A27BF6D4FC17BD8B087009833DAAE023001C8305C13A5CB5"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-silhouette.png",
+    "sha256": "C284D12304FF6916491CF98C8024B220A02DE4AB68A6EA7027C841D89F4D688A"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-current-silhouette.state.json",
+    "sha256": "080E4667CDEE1A43BAA91FD7DCA48B447E4545C93689F7BE21BCE9B8698B6E6A"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-run.json",
+    "sha256": "CE4DC6E4FE54D67F9C319C2FE19856C4E33DA0903FDA8D7C7DBCDBEABCEFEE39"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-run.webm",
+    "sha256": "616A1CA36A1FA9985C7E1ED302C269226E622BB18E50B52436B9D8E12DC55BF3"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-throw_airmail.json",
+    "sha256": "11A4DC5592ABE202136ABAC1E028D8E5E9EDBE27FB3FEE48AFB28D7580745CB1"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\doug-throw_airmail.webm",
+    "sha256": "3B7579A27AE322F16080B4D77DAFFE677AA40E8EE09AD25F9459E76E81841109"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\production-play-page.png",
+    "sha256": "60F02D7F63D7624261967077656FD919E851ABB552C22399074E3D756B0D922E"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\production-play.png",
+    "sha256": "75C2DB845C2517076077B7F7A8B409040ABA88BE3716FB565A32C29972380D27"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\production-watch.png",
+    "sha256": "FA95E221B8FE0262D2D50314D3B3502068E7A18C820BCF16784950230ED0B13E"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\pure-tests.json",
+    "sha256": "2DCAFF37B35F822B1F94518D1668F9DE4480B9A8DC9171D35BBBC4624DEBEC6F"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\README.md",
+    "sha256": "844D5E98C27C1945823828F19B6A73E44C1920F0E915B03BB692D99B41EBC1DD"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\regression.json",
+    "sha256": "0B11BE1F2347311B9DA92F5E69CA576617034060F462C79FAA9CFF58DB101348"
+  },
+  {
+    "path": "docs\\review\\anatomy-audit\\rig-browser-results.json",
+    "sha256": "C955843BE137D2CFECF60833039F6E471B544BAF28E6ABC765C7E5B75D19CCC9"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\court-dan-release.png",
+    "sha256": "09FF0DA5F900B5346BAFEECC08B2A6BD861CD8D6DE3AAAC12BA7BA3FDDED7545"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\court-doug-release.png",
+    "sha256": "C59B429F1C46345164D6427B6C701EA61B4A9D610F0EF18F6CE8D996A17B537F"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\dan-breakdown.png",
+    "sha256": "1B62A5C4AE1378F0EA7B1DFDC054BE916908A99F8CBA5DEC00EC7FA98B3CA76B"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\dan-silhouette.png",
+    "sha256": "918CB2C68B88A9299CB813C0044FE0569E99B49ED2696C87416789919BA7FF34"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\doug-breakdown.png",
+    "sha256": "879BBB55C83406526459204DA29BF7687EA7A0C1C2C53615703F349136E14899"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\doug-silhouette.png",
+    "sha256": "4FC6E0C9558B266E7113B4711B94F1850B3DD214850A271FA3D90D7294E6CE35"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\README.md",
+    "sha256": "51575A2C9733E317FADDF31F58FA337FEC3EB2584EDC3A6C033E15C566212800"
+  },
+  {
+    "path": "docs\\review\\cornhole-biomechanics\\validation.json",
+    "sha256": "BE1C69719B8B25C76B57EB253604FAF1B810329A93805EAEF7C7A383B7D9E49E"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\court-dan-release.png",
+    "sha256": "261B5996384FDC1F85167EDE69007192B12EB9D2DC7FDB4B1DC54D3FE0873B0E"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\court-doug-release.png",
+    "sha256": "91C314A5C14C28D574DBBA52612B78F95360A055E47BBF42439E43F1EB6E381F"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\dan-follow.png",
+    "sha256": "CB62C7CE3769DDE0CB95E2C197F54923E9ABE9D4A69A95363C45E4546B67887F"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\doug-follow.png",
+    "sha256": "263192855437ECAA9569B9C57C0858B6B99C7F9CF4D5B4B906041B34557B3B47"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\README.md",
+    "sha256": "E57272387F7412E9524A06B4D663245D2A14EB965D549A80B65269A5978EC463"
+  },
+  {
+    "path": "docs\\review\\cornhole-motion-v2\\validation.json",
+    "sha256": "B967CA5A5C97166A8D9869D0FD151F032933DF814D059E67DD67A183147F7A52"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\arena-doug-follow.png",
+    "sha256": "81DD524C2B18B49AA925A116B2CFDB44D48FF80E4745CCDA2B669627974E889F"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\arena-ready.png",
+    "sha256": "54A95BA5FC90649F9CA8AF66CE0B7C0E8F96B961508C47C989091872E1E30C36"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\ART-GENERATION.md",
+    "sha256": "06F97FBA02D0CC9F5FABAC7C2A0E084F44E8099C4D2281026D1885AF9F15CE5A"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\back-dan-after.png",
+    "sha256": "7CD9FD7F8D9A559FDA260CDEE7F50786E268CA03B393B5FF0E43530162DA370F"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\back-dan-before.png",
+    "sha256": "EE4389FE694AED567972BFF0F2B8B5F63B10325D9656DF2D7305FEBFB627F355"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\back-doug-after.png",
+    "sha256": "64EC97244259AB6D98BC65FDFA85AD055028DCE365C64DA6CC231705929999D3"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\back-doug-before.png",
+    "sha256": "AADDB8384A26AC653C06112A940A11E37B6E71578D4B58C8E28F7D0F30166928"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\back-validation.json",
+    "sha256": "D513F324921A81EEFB6C42A7D34669799F98E55E8644B35129ABD3357DA9BC04"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-chroma-prompt.txt",
+    "sha256": "6461E0058E8F907411A068E3BF494BB1BE2A66FC48ADAEE6E96BD33A027A87F2"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-correction-prompt.txt",
+    "sha256": "96DC1E4831B1B1924DC8097F0DBA5B62343E1942810A5F6F334BD9371C6C7035"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-mirror.png",
+    "sha256": "0E392C4C352373BB071AAC624702EA2359C194BA08CBF77EA3A9AF81868F00CA"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-palm-release.png",
+    "sha256": "3F92DD3781F09A51986EB80FB3D8A2CF4AD1CEC071615997EF97873A8BA2B4E3"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-prompt.txt",
+    "sha256": "17FB2DC48FC6227337DA5EDAEE36A81FFBA5EB4AD4861B2E664F9190DD8E636A"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-silhouette.png",
+    "sha256": "A23D6FEA81236C1E840AA06C5D97EFD6AF209E35951714E595D8B0929CF91C1D"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-skeleton.png",
+    "sha256": "1D52988B92BAB00178BA1EA8A265FD31C20F4EEABC8224528D11167611913CF0"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\dan-wrist-clean-prompt.txt",
+    "sha256": "E921670E1DF34A38D773236A6CA12F1AFBE5CC5606F0A72DE7A7D75F5950AB4B"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-correction-prompt.txt",
+    "sha256": "9DD55F5E56AE3048ECE11AA0E71ECC339718B10E9757D951BA4CF68DB87A44F3"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-mirror.png",
+    "sha256": "9233F45E9C8294E7442972CCD71EFF98BDD8A2DDFCE360DBEB6E11A734C131FD"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-palm-follow.png",
+    "sha256": "5F0187AF16BDB1D732B3EF3F60D0B1BD99BE30E067C3A0DD350238C4F99D3DFB"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-prompt.txt",
+    "sha256": "29C200FEF3507551CAA0E1E1F5A00F044C2877EFC955A8069345D6D9E0D5F08D"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-silhouette.png",
+    "sha256": "135932CE0B3FD8B9A29E908878482A9516150C55F86A2CC4FE2C03CAE1FCD8E5"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-skeleton.png",
+    "sha256": "308F06EE408FFFC7EC6CCBAAB054CD4BC191E565513F25E49AC63EB5064E9856"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\doug-wrist-clean-prompt.txt",
+    "sha256": "9457ECCCD2D639DF2B7C4E2505FA8726795F3574EE6F0A494B398FD497031312"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\equal-height.png",
+    "sha256": "FC5037413B9D3EF38AE87A2D0CE91CEE25087943339D5493D724F80E72332DBD"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-court.png",
+    "sha256": "F2634D95AB951E09F4E0B3B062691E61A150F2D338BA12026650ED78255607DA"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-dan-after.png",
+    "sha256": "1705AC8D37A22795FC56B83DF1AF1B112553B0785A54F10052A5B6484E3350E3"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-dan-before.png",
+    "sha256": "9632F2AD5FC4E3CDF66EA97962183DA6A40C805F28178F693981CC08EBA8219E"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-doug-after.png",
+    "sha256": "AADDB8384A26AC653C06112A940A11E37B6E71578D4B58C8E28F7D0F30166928"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-doug-before.png",
+    "sha256": "F2210E742157C50B7BC15AF2461574C05EEB24BDFEA3D4D819399626BF2D72C5"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\opening-validation.json",
+    "sha256": "691964AC5CCF12DD1E0D0C7BA56ECA0C71EF8A0150BE16179766868E95832497"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\polish-court-release.png",
+    "sha256": "0E4DCC62F224A99B077DE24C7E88D15FE5DDDE858D3A438094FF0ABF744F01F5"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\polish-dan-follow.png",
+    "sha256": "608942F941B9AB5FD9E906CEBDF9F43ACA181AA52F578BBEA96DB76628E8FDA0"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\polish-doug-reaction.png",
+    "sha256": "6DEA8D5A3209ED96679AB74D0C0965EF3476829ADF173CC234DE0E2792CBBA30"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\polish-validation.json",
+    "sha256": "D28251FB0464F3060482466EDAA27FD67CA850A336556D11437632A15E19E84B"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\README.md",
+    "sha256": "8A98038C5F239073E556BB0E88CD6F95CBFE02610B451C7DF82605993651DBDD"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\sheet-inspection.json",
+    "sha256": "9BAAA9407F7857498552EFB98153AE325961731D2246CCF40C10E56D2BCBE880"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\sleeve-dan-release.png",
+    "sha256": "AE1205E7EC628458547A3D3923FD7952DB4142455953B0523F4FC9D13FF50AF0"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\sleeve-doug-backswing.png",
+    "sha256": "D5279D17A92934051D106193D13F084088153323462A2B1026CDEF88B8D54041"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\sleeve-validation.json",
+    "sha256": "C369D48F42B742899ED50D037208B718DDBA23A3F93510A613A393DF69D4852B"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\validation.json",
+    "sha256": "7A1C86ADCDB8C550EE661E27E7356B7F6F7FFB0BB8B29B97D392C4B9A504E140"
+  },
+  {
+    "path": "docs\\review\\cornhole-side-v3\\wrist-clean-inspection.json",
+    "sha256": "F8E4F9074F04805099C88F25D8C57CF14CF1F8BF223CAC5D012B1DAD01FE6196"
+  },
+  {
+    "path": "docs\\review\\dan-editor-import-r1\\browser-results.json",
+    "sha256": "51152B5C06665B6BFE7CA1832829A8D2811A21E0B62B34728A70DE51D1CF658A"
+  },
+  {
+    "path": "docs\\review\\dan-editor-import-r1\\README.md",
+    "sha256": "80B6A079CD416EBBE1401CFEBFCB03B02712F0D005253D30657768B0A490C7B2"
+  },
+  {
+    "path": "docs\\review\\dan-editor-import-r1\\regression.json",
+    "sha256": "1E9F4FE210E6D4C09234DE66D5A69F6E8BCFA05CA12121C1C38091098FBD8D3C"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\arm-check-preview.png",
+    "sha256": "0FC5BA0E7B2F6CBB52DAF8DB2392CDFD431F1E0943ED4E06D63A02BD1DFCA5C4"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\export-settings.png",
+    "sha256": "7E74A79BACE1C9BE692198970DBA3ABA16E9DE62A3F8A033FC1E1AE6A6F99B86"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\idle_breathe-timeline.png",
+    "sha256": "387598CCD1AC216450CE9ED7F97C993558112729DDBAA28984C8FA54C6FF0DB8"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\left-ik.txt",
+    "sha256": "5521B4B5DDBB9782B5DCF5778C4E516BD1EB0D5F99D755DD259D496F6845C4A8"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\look_target-timeline.png",
+    "sha256": "498D7BDBEDB42A8E205C7166D337A6BDDF856A67E8736B1AB423E18A39916229"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\neutral-after-throw-preview.png",
+    "sha256": "FAED9D00FDA6ABAE34E74A90AF12073E3070DD30CF65D828393BC2CE4352EA91"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\neutral-timeline.png",
+    "sha256": "907BBBEB74A6B85D34995B3E01CA04702048D5D7EC52C959DEAA1C2BF59AB079"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\playback-checks.json",
+    "sha256": "DC5CDA383C53FE97F99BB37B50D5C02F86DA288576A52EB38452316763A338D3"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\quiet_nod-timeline.png",
+    "sha256": "A9853BCDC62D41267BAE4A61B36AB4CF2105F424C51BF6E6A0B17A9E70321D22"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\README.md",
+    "sha256": "BC55D29FADEB978615400700CC4FFB8688A9EBFEED4ED2E40206078DF8C7FB3B"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\right-ik.txt",
+    "sha256": "C633A4D5A90184D74E63B670ABBE5640C14E029BA189DDBBFD817380C7D0611D"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\throw-low-preview.png",
+    "sha256": "D8C208D8573862CAF05EF38EA45345FC7576DC2980E2F9294FBA3C55F1B9498A"
+  },
+  {
+    "path": "docs\\review\\dan-editor-r2\\weight-shift-preview.png",
+    "sha256": "10EB8EBB6919C26726400CC21CF1C7E01AD4EB81D4960FD2FA6B6084C86EDAF3"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\before.png",
+    "sha256": "3C6DDE12ED7F6C07DD1F4A4363B26EA0341CF43FA39D72246EB0097B64721523"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\court.png",
+    "sha256": "502B5E3DAE0A657F7A918EF6380B2BAB3F92827C5DA3CDBA2A36CD55D8111E32"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\joints.png",
+    "sha256": "91D037603498741B6E822BEAA2BA10A326B0540485BAD5E409D598D2426CADDF"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\mirrored.png",
+    "sha256": "7C40CED54855DC0AB9FE4B5A6D127E001D448478EC538474B3639A9609C7FF73"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\README.md",
+    "sha256": "3446CDCF6197CD045F59EBE55C8D8BE3CC77B3275B577F222BEA8FC3B0894BF5"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\revised.png",
+    "sha256": "F523EDAE2234CCFCAF1FEB0F00D1CCA162E9825566E3A23D179735EDF85267A0"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\silhouette.png",
+    "sha256": "45019FC9E2443F38636EE083750D2E8BFCDB2764BB4759AA49ACF7E8D0A92E13"
+  },
+  {
+    "path": "docs\\review\\dan-reference-proportions\\state.json",
+    "sha256": "CDF932E52F98CEA999DEDB52430C862B02F16552AFDEF654BF11F794FADA16AA"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\browser-results.json",
+    "sha256": "8EE9156E89FA428AA431CCADEB1C926488A18AE4A3D189A36FFB777C897D3F9C"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\comparison.json",
+    "sha256": "1944BCDBB565BEFD5332BA8F69789430411ED06040351B5860B5AFC69ECBDD1A"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\court.png",
+    "sha256": "08BD149B899F2962629F398508A7F453EDB8CD26EF02879CF1D2CE28F5B9105B"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\editor-weight_shift.png",
+    "sha256": "9573F9A887FB7A14810245E92BEE4E423D416DC0F20A9CB34A645D1BB2030F25"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\mirror.png",
+    "sha256": "3790A11C41644AC45EC54157DD6E3DD84B58602BAF3F2F12D3C5CFB61A6EBF44"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\raw-motion.json",
+    "sha256": "650821164F2830766A2FDF191614D2E527295BB80AC71AB178AE224BD9B10F3A"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\README.md",
+    "sha256": "D3F28C092AC81C5B339840F27ACBBE1599143000C224CC87618C6563239344B6"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\regression.json",
+    "sha256": "2CFA8CB5AFBAF5BD13CE1667F86E6A1AC0B31128C7A38CB5E78E2E930053E715"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\release.png",
+    "sha256": "007DBD1686B8DF6ECA4F076DCD1764EA54A3DC9895EF41197598B4CA776967A4"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\restored-motion.json",
+    "sha256": "1C81B3EDAA6F34F1AE8BB51E8369D0F9667E975A3AFFE3E76C38692D895BE7F3"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\restored-neutral.png",
+    "sha256": "EC97F45529F9B758C3F0046D11DF5545C53D9C69BF597708F78D8C3862DDF268"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\restored-weight_shift.png",
+    "sha256": "131ED2CCBCCAF8FF9B9F6092980DF9D0DFC2C51A92FCED22873F77DFD25BB6B3"
+  },
+  {
+    "path": "docs\\review\\dan-roundtrip-r2\\silhouette.png",
+    "sha256": "4F6624FE243A4C12476C0B3A1F7D69AFE53C7D1B5013848970B1D26F43BBAC8F"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\browser-results.json",
+    "sha256": "652E33CA7996A4F955C46B77D0A46DD8CCAB5DCF429BFB74FC9E621C02D0E2C1"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\court.png",
+    "sha256": "F78851BC64CE36BF799BAA09F3C8F26A16E2CC38F9D158BB23BA9ED7EA82379C"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\current.png",
+    "sha256": "451CF139E72D53133288963639F2D3D78FAFCE5BEA176BEDD0CE159A7AE032D2"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\focused-results.json",
+    "sha256": "201ECEED29C2B6671C1D3DE775F827E29D1EE5404815AD748937B597F1CDCB09"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\joints.png",
+    "sha256": "A0A95532DCEFED1CF6B501B776F8A8CF9ADF3C87EA5BAB800F5B37728B108417"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\mirrored.png",
+    "sha256": "13694BD06B498CF628459A6529984E132D324815C0AF95F76A89207252945AE7"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\README.md",
+    "sha256": "FA22F1A6D05C4D549FABEB6E2F9F1F51CA78CC9988F59BCBE58D7CD556178BB4"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\regression.json",
+    "sha256": "75704AE1889CADA3696EE73365DD3875289BCE961E12EB7C34099E3D025E181C"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\revised.json",
+    "sha256": "72E98C8897EBEF0E7BBB473FA7CD6200EFF32F968861A8F4F334E2355B8B5EF5"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\revised.png",
+    "sha256": "3C6DDE12ED7F6C07DD1F4A4363B26EA0341CF43FA39D72246EB0097B64721523"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\silhouette.png",
+    "sha256": "9FD396E758C1CCB4DA2B8700EA89A518EA1B467D4F4CEB9DF0DA2386B8FB6921"
+  },
+  {
+    "path": "docs\\review\\dan-source-fit\\visual-results.json",
+    "sha256": "8B3335354CA4F78E1C8260298F0AE50ECD13835496AB687081D16C0A81E39B20"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\browser-results.json",
+    "sha256": "9D38B7E99C88C99E70411DC25421B4F51511510F08E54061B8EBC8D323C9841A"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\court.png",
+    "sha256": "AA80DD1942F2D5E4759551528BA086442C32BBD277B02DA7A6BF1E976B423048"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\mirrored.png",
+    "sha256": "CFDF83390161B15D05B9B8DB016AC218D659DDA7253ECEADC9C4B7147AF58D2D"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\neutral.png",
+    "sha256": "314A6056B41AD1D589A2A5F77AA569789C8202E89E5BA7BFEB92F93A8E86BEBA"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\README.md",
+    "sha256": "32F2DC4091682DC5BCEDDD86910DCDE5BBAF9128B1406C7D9340E18470181467"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\regression.json",
+    "sha256": "8D4EC413D2357BF8DFA0133344386D33DCE46F15876EA93561476386B7C80297"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\release.png",
+    "sha256": "CD9C451D4FC0E5D0CDE37888EC88C58749CB3741A86A2E6DFC9BA529BD915FD6"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\silhouette.png",
+    "sha256": "1109E424C0AC703173845013EBDA6E0A46DE305B52712334869756C0B7440AA2"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\state.json",
+    "sha256": "0030EBDF0F514D0C695438F67BEF62CCA9852A272E0E4B2D97B377BDC370CBFD"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\visual-results.json",
+    "sha256": "A54D8764773BB13109633280E544F9F609F32BF632E209AA3C4EFCF89243729E"
+  },
+  {
+    "path": "docs\\review\\dan-weighted-v1\\weight-shift.png",
+    "sha256": "33D09CEC123AC732B0247AE1A6799458F7B82027875922BD3DBD735E9D133103"
+  },
+  {
+    "path": "docs\\review\\doug-weighted\\README.md",
+    "sha256": "8C24EBFB855B72F43BF66CF8E4DA3F4E52AB356E7DDAC4B4CF7D0CBE09D9EFF1"
+  },
+  {
+    "path": "docs\\review\\human-motion-v2\\cornhole-normal.png",
+    "sha256": "B79050F05C2901FE86ECBDECB9BDAB7FFA5CF0E80D317BF3FD05D8E22ECAF953"
+  },
+  {
+    "path": "docs\\review\\human-motion-v2\\README.md",
+    "sha256": "2124998EE3B64E0EB37E8AF67E9D8CECECE35891F47AB0906EA06F180B2248FD"
+  },
+  {
+    "path": "docs\\review\\human-motion-v2\\reference-overlay.png",
+    "sha256": "0261E09D30DCEA90BF202C2F9B8F15899FD51ECCA859E5E617B5012034FD20BF"
+  },
+  {
+    "path": "docs\\review\\human-motion-v2\\validation.json",
+    "sha256": "06CD7B49DE4D27C57A5DCE0E251AC9282F29FE2910DD80E7DFF2FC8A1A44B389"
+  },
+  {
+    "path": "docs\\review\\human-motion-v3\\AUDIT.md",
+    "sha256": "67578867FC6B0CDEB2D142644BC35B03702E01F0C8A11E83E69A48EC80C34F61"
+  },
+  {
+    "path": "docs\\review\\human-motion-v3\\README.md",
+    "sha256": "E5022C238B280C6A07B01A737A60BFB3B33284ADFA5A0EB94BF87EF03FC4953D"
+  },
+  {
+    "path": "docs\\review\\human-motion-v3\\validation.json",
+    "sha256": "9AD1E3BDAE8C679A633CA48171685BB831B032BC1CCFCD8DCA35C0B11F05BF9A"
+  },
+  {
+    "path": "docs\\review\\human-motion-v31\\AUDIT.md",
+    "sha256": "594D9BBADFFC6F37BD5D268741C77E24D7568637A48338DA293F6298BF7469F6"
+  },
+  {
+    "path": "docs\\review\\human-motion-v31\\playlist.json",
+    "sha256": "AFBAC84F170FF3C4073B0FBFE5CCA51E4707CBAD4B98192C7A302B841D43C070"
+  },
+  {
+    "path": "docs\\review\\human-motion-v31\\README.md",
+    "sha256": "B52912EBA0B1043F06C694093E2569BE27F757F8F1F9CE95D85EBE6D7E7C1922"
+  },
+  {
+    "path": "docs\\review\\human-motion-v31\\validation.json",
+    "sha256": "46D057B6F5DF6CF9B3A8DEA198D08571834907315B96467BF95689B381D576AD"
+  },
+  {
+    "path": "docs\\review\\human-motion-v31\\VISUAL-REVIEW.md",
+    "sha256": "C0474AD4F2E568BEC24A07658BAC04087FEFEF8E38A8FA32D5D9C434E254B724"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\idle-frame.png",
+    "sha256": "1C7537546DC67F73F8CFE77A43935C293526C3CAC662AD6B9741D96673F57C44"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\proof-page.png",
+    "sha256": "FF815B5B5A91FE5FCC722052BD40F59B710AC228B2D6E52618E53E18351140EF"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\README.md",
+    "sha256": "1AEEC6DAF370FF926DDE5596A7AD7CD1EEEF7EBF21FCA05469B5A9D734D0211F"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\regression.json",
+    "sha256": "01A9FCF75F05EAF00B2570C6D3443B9C416EDA0CF4E27A5AABF9FA0103CA3651"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\state.json",
+    "sha256": "D1175DE3CA1128CEC010A22439DA7DCCB8861BC2F709244C8BEB2F462E1B6BF0"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-export\\turn-frame.png",
+    "sha256": "72D9E1E90CEE68AF09DC47A58C8F15FCA7B0A01D5BDB4966E0A4FE8214381EC8"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-session\\export-settings.png",
+    "sha256": "4E6918030B3D37D00436346BF586C323F8C78E0391C50E5F63BFDD9E6124341C"
+  },
+  {
+    "path": "docs\\review\\loongbones-editor-session\\README.md",
+    "sha256": "21E9C0E009226CBB6DAC6646C202AEC675F3E73F7750110433C9B7DDA1113664"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\anticipation.png",
+    "sha256": "08D4F7779DDDCB4F5E62319A53C7C9B4E85ACF2CCF6FD9F51BF37A179B9B7DEB"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\browser-results.json",
+    "sha256": "5F05B291040927AE05EDDCD29893D13F6CF253CFC821BB2B59A5AC4DAD118598"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\flight.png",
+    "sha256": "4A6276B0A35940836675D0D01EBF46EB7039BF33FC5687D34A18D7FEFEC64091"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\focused-results.json",
+    "sha256": "FBC2371AC78E6A25BFBB5A096570B04E8FC981889A002E55A6AC3BF98540D09A"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\native-motion.webm",
+    "sha256": "004BFF6B4293F2DF008523D67CB0D591534820E31E449FBF6869C994B80F2875"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\production-play.png",
+    "sha256": "AD5C5158CA382251D6FEF6F2BBEE253B7174E6D9C3E57C43058C2D3FEFC80891"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\production-watch.png",
+    "sha256": "7E71BFBAD8B8192945FA7D74937F2CB752E0B05EDF4DCA94093ED720A5BC7D4C"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\proof-page.png",
+    "sha256": "4980A1F527065071D62F1F595BE0617F5A2D4BF14CE549C4F089B765A0FF67FA"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\pure-tests.json",
+    "sha256": "2DCAFF37B35F822B1F94518D1668F9DE4480B9A8DC9171D35BBBC4624DEBEC6F"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\README.md",
+    "sha256": "40A60A390C0E1FA3BAE602975FB0471DF229053E1F700406F7EA52EA7FC0599C"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\regression.json",
+    "sha256": "3D75FBEC756DE1C2DC87CEA669B9159DA751952156C6FA1CEEED3E467FFA4710"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\release.png",
+    "sha256": "5CFECC628699035B7CC4626486BA7CA8413589454415BB43936BD355530B8AC9"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\state.json",
+    "sha256": "02CD90F15A8329FA735C1081C6B09758E5A2988C00EFA0790A24A7AF4F98FFB5"
+  },
+  {
+    "path": "docs\\review\\loongbones-proof\\visual-results.json",
+    "sha256": "E44A3AA75758E976B653625CDB286FD124DC3323AB65FC0B02B9187896FD3228"
+  },
+  {
+    "path": "docs\\review\\organic-performance\\basketball-close.png",
+    "sha256": "E2497387B4930E7AD5AA5E31B6DB9639397B24E7F6BB9305E17E0BB806EA7BC2"
+  },
+  {
+    "path": "docs\\review\\organic-performance\\curve-review.png",
+    "sha256": "2279EDDDA950768125758417C00159E11AF8E1526E100C88476BDD1C4E850329"
+  },
+  {
+    "path": "docs\\review\\organic-performance\\doug-follow-through.png",
+    "sha256": "01617EAADA08492B79A36F697E7DD81CD895DCC189F92BDF17F9333B8228F5CA"
+  },
+  {
+    "path": "docs\\review\\organic-performance\\README.md",
+    "sha256": "0DAB7F155628A4EF0265759F3F9D7B3D8B48A4E9CBE77EE1CD936492FE37B676"
+  },
+  {
+    "path": "docs\\review\\organic-performance\\validation.json",
+    "sha256": "035BB152445B0222D928633B6E3B55FAA548968EB3A37A4CC81CD5111C2D2278"
+  },
+  {
+    "path": "docs\\review\\reference-cornhole\\README.md",
+    "sha256": "C0629A083983C5B0511DB8313D768D76115FAF59FED31ADDA1A3C0660360ACF0"
+  },
+  {
+    "path": "docs\\review\\reference-cornhole\\validation.json",
+    "sha256": "04542346812EE865B0D3B7D4CC096E65A58ADDA87E20C58F7CC81376443735B2"
+  },
+  {
+    "path": "docs\\review\\reference-personality\\README.md",
+    "sha256": "DF9E03B13B28CEB4CE8A2E165EBADC40C367C873A414F15C6BE1911AB17A1035"
+  },
+  {
+    "path": "docs\\review\\reference-personality\\synchronized.png",
+    "sha256": "E41106DA2554DBAF5157D59B7161E9AD6E168450CF41A1765D0B18A7DE8D8D33"
+  },
+  {
+    "path": "docs\\review\\reference-personality\\validation.json",
+    "sha256": "E4348691DE18A7C5DCA4A56BA8817F35BB0BED5037563663856DB2F1ADD75BF3"
+  },
+  {
+    "path": "docs\\review\\sport-mechanics\\README.md",
+    "sha256": "B87C5890CA6EF5B96B4B8856519DFE1D8119E157C29723100842441625228F83"
+  },
+  {
+    "path": "hooks\\use-mobile.ts",
+    "sha256": "82BFF42FF087BD5DC90A5D17609CC428B8688DE92D1333073A839AF5AD3C9CBD"
+  },
+  {
+    "path": "lab\\API.ts",
+    "sha256": "62A98CA3FAC1604CF0B5B3F032F4A38333A2DA37B44D1DB003E8E7A001A412B4"
+  },
+  {
+    "path": "lab\\character-timeline.ts",
+    "sha256": "BD65FEFF3D2DF125F232D4FEB8A0D1C31302FC569C52BF1C2DFBFA2C55184D8E"
+  },
+  {
+    "path": "lab\\CharacterStage.ts",
+    "sha256": "46CB1D84AC2C08446EE7470B29CA27011123C5C705BC8ACBA660EBDB1BAB7143"
+  },
+  {
+    "path": "lab\\index.html",
+    "sha256": "F5175C5A982ECBBC81C99106210FDA71B3A4F3A69C1358305D7DEB12695C8E7C"
+  },
+  {
+    "path": "lab\\LabRuntime.ts",
+    "sha256": "8877CFC38F89A5901E4AF1AA0912AF7B9FD93D78D51032EBE9CD9C6609591C84"
+  },
+  {
+    "path": "lab\\main.ts",
+    "sha256": "C1B1C2937DBAB45156BAE1CDF7D6310BC549039AFDEB8A1A27172913027F617E"
+  },
+  {
+    "path": "lab\\README.md",
+    "sha256": "892D4F2256521B9ECE2C0CE1CE66815F5A9B11DD03AB5F319D40950C3827F7A2"
+  },
+  {
+    "path": "lab\\rig-qa.ts",
+    "sha256": "057107ED665979A5875EC12659D09B96549FA1D198E714E062BB2A111B15887D"
+  },
+  {
+    "path": "lab\\RigInspector.ts",
+    "sha256": "A34A6ABD8C141461B928E60CFE5F553B86CE4398FAA01D53AF497C69A6841A6A"
+  },
+  {
+    "path": "lab\\scenarios.ts",
+    "sha256": "8CF59F45C472EC2134BBCB77564AF3C508C137E432B789A31568F99BB3084642"
+  },
+  {
+    "path": "lab\\style.css",
+    "sha256": "96EF51B5A5C7C0D7A623CC6A2CC47F292CBA8A6E287E0E18D11F79B6230CC274"
+  },
+  {
+    "path": "lab\\vite.config.ts",
+    "sha256": "ECC990C358E888DCC128A7507E25B7937D67A72B3DFFD57E42FE8DE2279F42CF"
+  },
+  {
+    "path": "lab\\assets\\dan-source\\body-v1.png",
+    "sha256": "4AEE4C454D515B10397FD646CE77F0FDAF25554E4AA1C17117B0B2DBA11A7C47"
+  },
+  {
+    "path": "lab\\assets\\dan-source\\full-body-v2.png",
+    "sha256": "0EBFF85C3331B1EFBCF200741C1511412706D49D037C16ACA0182967CACFBD73"
+  },
+  {
+    "path": "lab\\assets\\dan-source\\proportion-reference.png",
+    "sha256": "89E95DAF20210C6E8306AA79CBA07DBFDEDB5BFD9F64C2F2696006916765291B"
+  },
+  {
+    "path": "lab\\assets\\dan-source\\provenance.json",
+    "sha256": "3FD3B686C5BCFD15C63A99CBF65A790A436BFC8BBE32B90AE607BC5534DA9035"
+  },
+  {
+    "path": "lab\\human-motion\\ArmMaterialRegistration.ts",
+    "sha256": "439A1108C51315A7B05B0AE51AD4F355494CAF4A9397EDF263B377BDC5B8E05B"
+  },
+  {
+    "path": "lab\\human-motion\\authoring.ts",
+    "sha256": "2A0BACD48CDAE4FB8C825082E60D5541BDC766266E4B611D3F30E6F1B3D09C88"
+  },
+  {
+    "path": "lab\\human-motion\\DirectionalSkin.ts",
+    "sha256": "599E4AC1DB5D3C84DC2AAF9C6A2E628250DC5D4EAF803DCFAD1501BE21B06B84"
+  },
+  {
+    "path": "lab\\human-motion\\FootMaterialRepair.ts",
+    "sha256": "7F5826DDF1E95598CC1947D8366910C25E2AC0F9164944623C51ECD50A8857E6"
+  },
+  {
+    "path": "lab\\human-motion\\index.html",
+    "sha256": "9C929625D2BF88730D4B4A2397B87AD5FE956B896CDF3255232945A4CFDA58CA"
+  },
+  {
+    "path": "lab\\human-motion\\InertialPose.ts",
+    "sha256": "0BFC8510CD3096F1CD57A4AA6AABCC5407A5FE0F68667D850E8C4D0B4940C279"
+  },
+  {
+    "path": "lab\\human-motion\\main.ts",
+    "sha256": "AE564E6666FC25006E39BFCE1538FDE5B75BDFF3FE923C11E92C914C675CCB72"
+  },
+  {
+    "path": "lab\\human-motion\\MotionActor.ts",
+    "sha256": "EB3FE5F54F4E176F6A4EC3B22BD59E5C43DDF9A0614DE3948E7D62CFEFF9F45C"
+  },
+  {
+    "path": "lab\\human-motion\\MotionReview.ts",
+    "sha256": "00DC61DF766A8F4F4BB9061F2224BAA530210D81E545211518D4A85E826493F3"
+  },
+  {
+    "path": "lab\\human-motion\\MotionScene.ts",
+    "sha256": "11CD1E73D27F8FFD819B5908D2AC1070B9D960C8C4894B63C58043743CBA5EF2"
+  },
+  {
+    "path": "lab\\human-motion\\MotionSession.ts",
+    "sha256": "13767CAB36DD28DF79F1465FA314E12F0965BE7BFFAFF63DA5A3E0CF32FF094A"
+  },
+  {
+    "path": "lab\\human-motion\\NativeAnimator.ts",
+    "sha256": "312F52DEF7800D96AEF8497E48E7FDA2E1C6610B9477B018D0C89DD2FBA43C5C"
+  },
+  {
+    "path": "lab\\human-motion\\NativeRigIntegrity.ts",
+    "sha256": "00A3BA56C66C291C09267FF795AF368710609B663561209AFEA6E6B1BE734214"
+  },
+  {
+    "path": "lab\\human-motion\\ReferenceCatalog.ts",
+    "sha256": "AD645539D596B6FCC14520C4117678D4A0C18D205E9A813B5F79EE19757595C0"
+  },
+  {
+    "path": "lab\\human-motion\\ReferenceComparison.ts",
+    "sha256": "2B98315C2543157F6F56A50567B712AC4AD56D6745E9DDB4FA2427CE6FDA7040"
+  },
+  {
+    "path": "lab\\human-motion\\ReviewTake.ts",
+    "sha256": "7F98954E5236AA276F12A232D4F1E1DA217600031ED1CDDDB10D8C014E419197"
+  },
+  {
+    "path": "lab\\human-motion\\RigDebugView.ts",
+    "sha256": "F2B7BA2B96FD8EEAAC5F46D2BCFC6B4B5516F8630F6C6D1D95637A0F95F1E2F1"
+  },
+  {
+    "path": "lab\\human-motion\\assets\\directional\\dan-rear-source.png",
+    "sha256": "BD6E6250AB29C28EA5F3ECBC979D2700AD42ACBF77CB1A8BD5E2EC2FAA144B84"
+  },
+  {
+    "path": "lab\\human-motion\\assets\\directional\\doug-rear-source.png",
+    "sha256": "36146444CE30920BEECD7CE9807EE475A6FAC59ECF466AA1C8B7B93B76B512FD"
+  },
+  {
+    "path": "lab\\human-motion\\assets\\directional\\README.md",
+    "sha256": "5ADDEB087BD3A4195022DD31C85DCFD82A2D6DB35EFD908D707742CA5601CCEE"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\basketball.ts",
+    "sha256": "2AF8643778AE1BA26B8DCB8F895BDD34FBD3373E53A94F84E900C61412083C3D"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\builder.ts",
+    "sha256": "788171D2FB831782AD56365D45FB71B0323EBE0CE4811CD7BB64224196D4A018"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\combat.ts",
+    "sha256": "8F81B7C3858BE90595DB566371F34D743A93E2D9918B03B3924089D967E18977"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\cornhole-curves.ts",
+    "sha256": "22425E93059ACDF85A65F3FEA0268CA78A4C0E2EED4902E0F12C1F052038CA14"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\cornhole.ts",
+    "sha256": "DF4EED7FB4A14F80F734B0A695CF42E25BEBF7A88B87B2C97DE3E3D97C284128"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\gait.ts",
+    "sha256": "9562F654CFC908F8C845B039F15FE17E053E0EC4682CE498D49A514DB996C1DC"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\gestures.ts",
+    "sha256": "E72367972D1F296342FD854C25E3A324E7E4BD915A54106813B98AD9E2F64A0E"
+  },
+  {
+    "path": "lab\\human-motion\\authoring\\locomotion.ts",
+    "sha256": "CE97183B7322B8D486E63F441083E9C10832016951BAA972251E16B6A067D377"
+  },
+  {
+    "path": "lab\\human-motion\\events\\CombatProof.ts",
+    "sha256": "EE3CA11B8E37069D4E61962D51D8C9D6CCFDD4785B7C8EEFF578AD518C5239DE"
+  },
+  {
+    "path": "lab\\human-motion\\events\\contracts.ts",
+    "sha256": "4E5887A73CF744FAC9A2F1307A581E86593F6CABF1358B74313E66E6B8395B7A"
+  },
+  {
+    "path": "lab\\human-motion\\events\\PrecisionProof.ts",
+    "sha256": "F5C223869CB5F732EF6E2BF14305EEBD5B9D3C9660E25804AD74A5E3C67CA05E"
+  },
+  {
+    "path": "lab\\human-motion\\events\\RunningProof.ts",
+    "sha256": "C3E1A9922B6E15FFCBD011D949A7EF5084D6D671FB437333077E155B5C9406E8"
+  },
+  {
+    "path": "lab\\loongbones\\editor-export.ts",
+    "sha256": "E61047BC762DC693EA5AAACBFB25BC6B29767CCD085F9934BC5D006877E889DE"
+  },
+  {
+    "path": "lab\\loongbones\\import-export.ts",
+    "sha256": "3CD2853C39F3161C94C111D9BB83CB65E7569A050747E7BFC4EA4DEE6F84E935"
+  },
+  {
+    "path": "lab\\loongbones\\index.html",
+    "sha256": "BC5B9E5737E219CF8F923AB87ED79C38BAA2635488699844B3DC3BB46848C8B6"
+  },
+  {
+    "path": "lab\\loongbones\\main.ts",
+    "sha256": "B1EC87D7EBE130BF910659C2EC76E4B969C7C974A4E0291974686517725257A8"
+  },
+  {
+    "path": "lab\\loongbones\\NativeFactory.ts",
+    "sha256": "BACA7B4547B62946CB1322F700BC0699DD2B36F2DDC68DC47ADFEDF59A32DBCC"
+  },
+  {
+    "path": "lab\\loongbones\\NativeMesh.ts",
+    "sha256": "E5EDDA00CD184E2CC70092E8C31FCA607E1030B4059E8CEB69A82B8BE02905B4"
+  },
+  {
+    "path": "lab\\loongbones\\NativeSlot.ts",
+    "sha256": "56E01B6A4649169ED1CA9521C65A9EE0B1C1C8E0AA83F8C0EC8863D754EF39BE"
+  },
+  {
+    "path": "lab\\loongbones\\ProofScene.ts",
+    "sha256": "985AB75BB32ECB744B41A6248BBC05B4357200D8B325897784FE333CE976FEC1"
+  },
+  {
+    "path": "lab\\loongbones\\validate-export.ts",
+    "sha256": "8EF1BC9926D172495F4843B277DDA130BF313A221710CBB43A941647FC018904"
+  },
+  {
+    "path": "lab\\loongbones\\weighted-fixture.ts",
+    "sha256": "EC645C4F6A84BF85F8E5B2BFA50168C19B2DE0A36B79580114BC61837BB20E75"
+  },
+  {
+    "path": "lab\\loongbones\\arena\\definitions.ts",
+    "sha256": "E7D1DBA8F87C1F5409BF0123C414748FED74831BE055CD6BA775A260F45FE504"
+  },
+  {
+    "path": "lab\\loongbones\\arena\\provider.ts",
+    "sha256": "8A11FFB6D4A0094B1E9D7D19F20FB637F5E8264F79B5E1D86DDA14A8C906A20C"
+  },
+  {
+    "path": "lab\\loongbones\\arena\\RigDefinition.ts",
+    "sha256": "1FEBE66BF6825B4E23F43AC238E8C6572EC1BED10CCED58F6062808EB98348D1"
+  },
+  {
+    "path": "lab\\loongbones\\arena\\RigReviewScene.ts",
+    "sha256": "3D94542981658FC2B2433FB5424E2E731BA178978DB51F2F211A2FA40A9A81DE"
+  },
+  {
+    "path": "lab\\loongbones\\arena\\WeightedMatchRig.ts",
+    "sha256": "A563551D9C3E40FEA0738963D2FDAB1DEBD079B2CF0E039349D78FAF0A93FDA9"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\mecha_1406_ske.json",
+    "sha256": "3E6F93A76436B57C98B1E2E54E39D2E41037A22A71B072C8B7B1CC33AC2596EE"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\mecha_1406_tex.json",
+    "sha256": "2B61D795679DCBB1F56A2D13154CE36BDBE9738FFBBC8E0600203D46AC748258"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\mecha_1406_tex.png",
+    "sha256": "C34FB6DDA28420CC588CBD28E8CBF238B4BEAA85D40F40FFE71C6C7E23EC3C0F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\dan_ske.json",
+    "sha256": "DE7E65D87B3738F8C3430AEF27F6CF53A0E178033B7F1A55354D3B5F22A3500B"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\dan_tex.json",
+    "sha256": "B6F8527ED6F17E6499CA0025695C66CE08DA10F5F7F58340B6AE26753CA81F06"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\dan_tex.png",
+    "sha256": "2940CBC720AF00265FE0240164F3115579F23A72688CFF1022EE0C04C513A745"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\dan-IMPORT.txt",
+    "sha256": "878E548B460C6FC647D8F66FA499B98B07B83C475DE9D60C1A1AF8B29997D96D"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\dan-motion-v2-import.zip",
+    "sha256": "67C98B076BDA52AC0AF6EC62BC52F28E8FC31AA1651E31D956253B979D00FCB9"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\doug_ske.json",
+    "sha256": "8B4CC9907BB41B7EE46A1EFDEB1D7F20B2011C8082452E318A83DDFA4CF947F1"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\doug_tex.json",
+    "sha256": "482FBD613363E2C022FDBC54CD44B35A082EFA4E347C19F0A42FA04D18ACD93F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\doug_tex.png",
+    "sha256": "725048791432765DD85C413A71BF30DD6AFDAAAF1F85D991484E273FD436B471"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\doug-IMPORT.txt",
+    "sha256": "5B4E1AB354C0C16980073CB8F64916083DABD746CB37926DCCDF35A0B46AE786"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\doug-motion-v2-import.zip",
+    "sha256": "F074C3E750EC1AFAE027169285E9DE6BADA80060B517BC037BAFF99351A92A2E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-motion-v2\\provenance.json",
+    "sha256": "0EFCD4615C6A51EE6635AE8B9DBA035C84E87AE9B76D5A1F232DDC5817307FDD"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_authoring.json",
+    "sha256": "B02F806AF3F0BF9A20B7DAA30AEC33F8D631B1681CD1974580AA28322D3E83FA"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_limbs-source.png",
+    "sha256": "0DC0596214607E7E1E9A2C5E51EA8FF016631C4B73233F4758E5933FA9B9742D"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_ske.json",
+    "sha256": "5C6D58CC12733BFF662E54108B4586461BAE7B9E7F4DE1192E95480BB773D28E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_source.png",
+    "sha256": "233DA1A99C31F23F2E9D95C917FAE17669D9A17A1F259A249DACF7A6C6FB5123"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_tex.json",
+    "sha256": "464C0BC1CDC7235E3BA7A0C780BAEE27A383A937C791E1BE7B6C0E9D1A1F8EB7"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan_tex.png",
+    "sha256": "3AB18B381A7F534C8B4971910952EA71A649A6F60D3E1982F61E5AAA579953FB"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan-IMPORT.txt",
+    "sha256": "A9818592B2BE37E1954DB9CA775D520218936651BFC5D0B21D41F127D72AA11F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\dan-side-v3-import.zip",
+    "sha256": "EAD40C9C740119F9A293A8B6B13B48F68E998C75B553A2C4DCC489D41A3ECE1A"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_authoring.json",
+    "sha256": "E916D53C6F6DC877B0989F75FFDA809D16DE258DB8C428F7F64ABE35214ADAD1"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_limbs-source.png",
+    "sha256": "98B5C2B32E6BA19E8E52F355A519805D539F0798534D5C72E1A0994525C107CD"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_ske.json",
+    "sha256": "35F761239247DE3BD49BDD24D528D0BEE55A6268D0F5ADD6520D682E9349A1AA"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_source.png",
+    "sha256": "A9EC98A336DC589E535F97645F4F49E81216CBA9CA437B87A10FAF801BE6B5C8"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_tex.json",
+    "sha256": "0450A8A0E8C2427E703C7F0D9A7D902B5F364C68E3A9B95E0D3B07FF27CE3B55"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug_tex.png",
+    "sha256": "C558FCD634EA998D4C9C97A27135B0003239A9F9F0DE1BDAE551DE69675E5F4D"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug-IMPORT.txt",
+    "sha256": "1A5EA4949498BB772A89048CEFD99DD1B1682BF098067954C5895A7478D55AAF"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\doug-side-v3-import.zip",
+    "sha256": "FE2C0A2A3B354F0EFBD7B8B1C6B4693D75FEE13047D86E1A332CB2BD0A7BC9EF"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\cornhole-side-v3\\provenance.json",
+    "sha256": "6009D46B0744D7C8584D3BE0C4990F22360EE53DCB62C2229D34D54E9E9F17A9"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\dan-arena-restored_ske.json",
+    "sha256": "49A52ACF424412BA6A10BF1429982D7D2782687F1A8683FC438DB87DB2BAC489"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\dan-editor-r2_ske.json",
+    "sha256": "309A78F9D26DA2A44EBB5A7202FDD43B942A67145D9066E68ACB7DF4CD2F5BE3"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\dan-editor-r2_tex.json",
+    "sha256": "F26087630AA7D5685AEB9D0F9AB95464FDE2883A713E7696B0E79274DC5CAB6F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\dan-editor-r2_tex.png",
+    "sha256": "2940CBC720AF00265FE0240164F3115579F23A72688CFF1022EE0C04C513A745"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\original-export.zip",
+    "sha256": "1DECE09A15C63F59EC0E7D4C2405CD979E2BB3A803B3196AD1BBA094D0BD1372"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\provenance.json",
+    "sha256": "D42068BBDAA78390BEB9CFF66D3A9D47D9325BF07C4CF04D1C08B633A0A1F6D0"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-editor-r2\\README.md",
+    "sha256": "639ACE504DE26AC23BBC463C72151218CF2AC618FEFEC09A98430FD25350357F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\authoring.json",
+    "sha256": "7F888D3D1E5E9CEB902F578160CC5D621F8499445A2DEC6D5CBD4330DE6ED352"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan_ske.json",
+    "sha256": "5336A11ED113BFCE20C72960701181FC2809CBB6991BF7222E90F9C165EA1862"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan_tex.json",
+    "sha256": "5093E17A433A982D2E3D05C424E00A3DA7A50FCD76989CD332E0A02EB7E72F0A"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan_tex.png",
+    "sha256": "D4B3AC26CA5835846ADC1AFB41FAEF4F2CA1E4C3449665AF5EF096196D01C13E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan-rig-import.zip",
+    "sha256": "AEBFDC0422593979D28F865BEC4C5522ADB7C1DA62BD3F6838773766CB29C86E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\provenance.json",
+    "sha256": "545E39B02E23AD98E5675EB2DF89E1E107CA2DEF74C35E63D715419D9013709E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\README.txt",
+    "sha256": "DF017AF16B860A888AEFAA19ECEAD14370E69020C95BADC1430913893DF35B31"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan-rig-import\\dan_ske.json",
+    "sha256": "D8BC39EE0060010BA1AC9AC5DFD6C764EEC123D885F0378722D010AD8A9D08C1"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan-rig-import\\dan_tex.json",
+    "sha256": "5093E17A433A982D2E3D05C424E00A3DA7A50FCD76989CD332E0A02EB7E72F0A"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan-rig-import\\dan_tex.png",
+    "sha256": "D4B3AC26CA5835846ADC1AFB41FAEF4F2CA1E4C3449665AF5EF096196D01C13E"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\dan-weighted-v1\\dan-rig-import\\README.txt",
+    "sha256": "A5FC24ECE1AF44BAE642AE0F9BABD4B8EA5260362DF153862B047F164356489C"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\authoring.json",
+    "sha256": "F233443843BFCCE0964BD6D9E962B9C60D481A64A19A2CBAEFB52A946A064E44"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\doug_ske.json",
+    "sha256": "04FA653C83F3DE4ADDD626B4C027EC28120A47BA68EA1423C099708349A6CF39"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\doug_tex.json",
+    "sha256": "482FBD613363E2C022FDBC54CD44B35A082EFA4E347C19F0A42FA04D18ACD93F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\doug_tex.png",
+    "sha256": "725048791432765DD85C413A71BF30DD6AFDAAAF1F85D991484E273FD436B471"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\doug-rig-import.zip",
+    "sha256": "492C7CC75C14FFF577E7E5DE2797FCF322AA63D1BC612BE7ACEDBC21266E087F"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\provenance.json",
+    "sha256": "5B4A28E7EB608F214708629B6734986F9EA158A65B57A7237F1207C6B2065149"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\doug-weighted-v1\\README.txt",
+    "sha256": "734793FFD0B97083037CBDE4F189D32A13454BD5D16AAF014F7D49A5CF73B5D4"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\editor-export-20260912\\arena-editor-test_ske.json",
+    "sha256": "B0D06E19EE8F49943736E828A9F7A6756F011900E66290DD71296F6C9D1F286C"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\editor-export-20260912\\arena-editor-test_tex.json",
+    "sha256": "B52886F8E548B3F12F2F441A223F355CE11C7DD44DCD0D6C2CA063EA7BD5984C"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\editor-export-20260912\\arena-editor-test_tex.png",
+    "sha256": "E19742AC21CD3D81B92FBAA7B70313E6043EE8C50FF48E36A0059B336412EDE6"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\editor-export-20260912\\arena-editor-test.zip",
+    "sha256": "637994A9F4132E1F114884050558C6D3FAFD2F796E385A9D211F99EFA4954A32"
+  },
+  {
+    "path": "lab\\loongbones\\assets\\editor-export-20260912\\provenance.json",
+    "sha256": "07627001FA865F7CF01BCAEA85AB3D5CE663BF7216E3322D9F1814E795D206EF"
+  },
+  {
+    "path": "lab\\loongbones\\authoring\\clips.ts",
+    "sha256": "F7267A9474D387A0CA4F2F29A3ED6CC572C1F113CBB0CDD96995516094A46443"
+  },
+  {
+    "path": "lab\\loongbones\\authoring\\material-contour.ts",
+    "sha256": "0F2AB18AB7C36D3435D0B38C49D6402461534D659DA1B8969893BEDA6CEFC80B"
+  },
+  {
+    "path": "lab\\loongbones\\authoring\\skeleton.ts",
+    "sha256": "235432D2F14C317C6863757603291019DD0DAC69DE55B6109E230EE946033276"
+  },
+  {
+    "path": "lab\\loongbones\\authoring\\weighted-mesh.ts",
+    "sha256": "F36D02267EE33C37C7C693650F95BFD42FB434573CE53D78435C63224222424A"
+  },
+  {
+    "path": "lab\\loongbones\\cornhole-motion\\compile.ts",
+    "sha256": "A1D58619A7D5E0ABF81AF07CD87A000DD29C8F728BC4491F14C2AF800391C354"
+  },
+  {
+    "path": "lab\\loongbones\\cornhole-motion\\curves.ts",
+    "sha256": "4BBC98CE526ED86AA9E85049305F3835C9A41D83D10D1E4CE52479D456741280"
+  },
+  {
+    "path": "lab\\loongbones\\cornhole-motion\\throws.ts",
+    "sha256": "42E1B0235189D2DF8E15A240BAEAD5D0EB886949C307706927E96822EF68B0EF"
+  },
+  {
+    "path": "lab\\loongbones\\cornhole-motion\\timing.ts",
+    "sha256": "53C93DA8EAA03836BA55DA93F27497735DB81F64EB5A451B1D67EA66BFF15DB5"
+  },
+  {
+    "path": "lab\\loongbones\\dan\\DanRigScene.ts",
+    "sha256": "18B5221B60A60D1A2B1D2CF647076D7B25CB7A3FB6B8535611BD62938A3BE100"
+  },
+  {
+    "path": "lab\\loongbones\\dan\\index.html",
+    "sha256": "C3B86DC0F8987C1D37F0F8895CB72024A8F3DDA8E2229EFE69C238E237E92BBA"
+  },
+  {
+    "path": "lab\\loongbones\\dan\\inspection.ts",
+    "sha256": "8F67A62449355CA8AF283B86FF2BEC75F37563D310638AD10A96A2CAC772A53E"
+  },
+  {
+    "path": "lab\\loongbones\\dan\\main.ts",
+    "sha256": "58063A958013767D0588E29F8FE9E8873C30F8806D3018E023889B66935A813C"
+  },
+  {
+    "path": "lab\\loongbones\\dan\\samples.ts",
+    "sha256": "C66C9540FAE589EFD1B38E21E2C55DE308A73DB3D7ACE13ABF3C9C34F01EEEAA"
+  },
+  {
+    "path": "lab\\loongbones\\dan-rig\\anatomy.ts",
+    "sha256": "9B19DA146BC758C0927B0368AA96729D0B87521AEE99FD837A15BFF3F6E202B9"
+  },
+  {
+    "path": "lab\\loongbones\\dan-rig\\build.ts",
+    "sha256": "E3C089FB6EFE048D209FBB82D272B6E3A476E6D8F11CD7DFA7040829648F5B6A"
+  },
+  {
+    "path": "lab\\loongbones\\dan-rig\\clips.ts",
+    "sha256": "80096753179EDC548CC312568BE84DEB52CFF7C9B44D3EBB1AF75D6F97723450"
+  },
+  {
+    "path": "lab\\loongbones\\dan-rig\\IMPORT-README.txt",
+    "sha256": "DF017AF16B860A888AEFAA19ECEAD14370E69020C95BADC1430913893DF35B31"
+  },
+  {
+    "path": "lab\\loongbones\\dan-rig\\skin.ts",
+    "sha256": "09E45C5655FA845803C67E5A421107B86790149BB333AA3AB8F3B962C354F9AB"
+  },
+  {
+    "path": "lab\\loongbones\\doug\\index.html",
+    "sha256": "55A77B4CA94F46C920E6BA06793FECCB491EEB7BC808888BC5696F1E1127CC59"
+  },
+  {
+    "path": "lab\\loongbones\\doug\\main.ts",
+    "sha256": "CF398F9DDEF240F76D26CC9D5C3D90E2928A28669151C614BDBCAA64F2C40EF4"
+  },
+  {
+    "path": "lab\\loongbones\\doug-rig\\anatomy.ts",
+    "sha256": "60D3A673310AB5B145947C6C98C9B3C1521489CABE4D1863C3486F639F9F843B"
+  },
+  {
+    "path": "lab\\loongbones\\doug-rig\\build.ts",
+    "sha256": "6C17C79DF37A924C5DC56FEF3FF7E22B9C295E7735E04AA159121EBBDDDF055E"
+  },
+  {
+    "path": "lab\\loongbones\\doug-rig\\clips.ts",
+    "sha256": "D86C10272A7FD6DA65B13286E946AF27D1C247E1A8634A1FF6844CDDA696B182"
+  },
+  {
+    "path": "lab\\loongbones\\doug-rig\\IMPORT-README.txt",
+    "sha256": "734793FFD0B97083037CBDE4F189D32A13454BD5D16AAF014F7D49A5CF73B5D4"
+  },
+  {
+    "path": "lab\\loongbones\\doug-rig\\skin.ts",
+    "sha256": "0988846242CFDFB7AEACF5973AFED9642DA33C8EACCAC8BE7BBD2466C42DF2C1"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\ambient-clips.ts",
+    "sha256": "AF6327A9B02EE7FAAC7C01FDADF3586DAE937675FF6A107087204F07EE6EDA4A"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\anatomy.ts",
+    "sha256": "D8B2993DDB7D172A41C4933F3EB9C0C4880485424C7E493811C44D08D476B4A9"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\body-materials.ts",
+    "sha256": "797892D935393A6EB0B0B5F9080F3E95B1FD64B5A64994C5F6DAFAE20EE97E1E"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\build.ts",
+    "sha256": "3B0DEA1A96200DE9D03D7C72645F62050406D121F44661AD85C062576C625368"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\clips.ts",
+    "sha256": "DED42C62F48349978C523EA4848186D6C9335F98699B60D060598408CDE852D1"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\cloth.ts",
+    "sha256": "7759D656615EEF6EEF67113C78896CBC3AD244B981FA6DB3690D97E15008AAA1"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\definitions.ts",
+    "sha256": "862586CFF65CF62DAC8641084ADF87EB37B50AEE7303B79F25B485AF1EEA1376"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\hand-surfaces.ts",
+    "sha256": "6A75DBA649AB59DCE62199CCFCF5AD4935D03AE899B483C9FC3FB56C76B61D2F"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\limits.ts",
+    "sha256": "705F8F1A1C9FC36ACBFB1D6FCAB0422A7B4D09C59F681A0E8FE528E78402BAAC"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\mesh.ts",
+    "sha256": "635052DD4EEEB582DF537BC6798C025254DD15CD5D30F5E2C2CB4867C8B9E742"
+  },
+  {
+    "path": "lab\\loongbones\\side-rig\\throw-performance.ts",
+    "sha256": "365A13E19D83DE29D71BA845022A69444A508A23A6F468FE46CB8BC49716C6B5"
+  },
+  {
+    "path": "lab\\loongbones\\vendor\\dragonBones.d.ts",
+    "sha256": "1E310CA9A71FEF4FC2FC325DEDCD8FD35B52354A67EEE435D0F6ADF543E7634B"
+  },
+  {
+    "path": "lab\\loongbones\\vendor\\dragonBones.js",
+    "sha256": "72AC204B593397F5B3B4DD1DFFEE963AA7FBAE63082DF7D55A5F1C59B96A3992"
+  },
+  {
+    "path": "lab\\loongbones\\vendor\\LICENSE",
+    "sha256": "7D8C274718B6017272DBE5B2027712BCFBF0734E4FEBEA83FADE4E6B60E9254B"
+  },
+  {
+    "path": "lab\\loongbones\\vendor\\provenance.json",
+    "sha256": "810DB33DD36CCED00F5C7B1399AA5375A7D339B59CBA7280F4D7F52A35A9294A"
+  },
+  {
+    "path": "lab\\source-fit\\dan-registration.ts",
+    "sha256": "88BFDF9FFBC094104D5A7CE2D429DD35D91E721E192F2131FD5F5AB280EB674D"
+  },
+  {
+    "path": "lab\\source-fit\\DanSourceFit.ts",
+    "sha256": "C8ACA99521C3A20D28002AA69614A9551ED2A9A11A0DA3A5AF21C75D64C5447A"
+  },
+  {
+    "path": "lab\\source-fit\\SourceCourt.ts",
+    "sha256": "CFD12EFAF9F691A4692A9EB0DB672DAAAF27C3C3BBC775A15472005A6DCA66FB"
+  },
+  {
+    "path": "lib\\utils.ts",
+    "sha256": "9304A861C8673BEE09E0F12DE31773ABBDE503B02E59DFD74763DDEC2E37CF05"
+  },
+  {
+    "path": "lib\\arena\\adapters.ts",
+    "sha256": "CCFB914EF503FD9FA6C01DA16F30F2831527565092D3DC2E4B2F2A87C68B8323"
+  },
+  {
+    "path": "lib\\arena\\animation-easing.ts",
+    "sha256": "25A4D602D459451385299C13CACFBBD02D013A6D7E8A47A244893A64CFEB9382"
+  },
+  {
+    "path": "lib\\arena\\assets.ts",
+    "sha256": "699D2DD442C86A81E6A995224602C0F6518ECC9F18BA510980A32A95BBE5C707"
+  },
+  {
+    "path": "lib\\arena\\audio.ts",
+    "sha256": "23AA0318E2381B6C6C366AB7D4717D6280C94D2F407D5BA03D62DBBB7025E831"
+  },
+  {
+    "path": "lib\\arena\\character-pack.ts",
+    "sha256": "FB7A1672B108C8B547180CCEE51A8FD61C21F0ABB5CE6F121EA747902F76CD52"
+  },
+  {
+    "path": "lib\\arena\\character-registry.ts",
+    "sha256": "54D6922F23699394C8FE0E5E612FFFCF40BF77F70F6CC818D732BF7605915716"
+  },
+  {
+    "path": "lib\\arena\\character-store.ts",
+    "sha256": "66565FB0B32601B176CF8A9CAB197AAB48D497E9432C444946B612947CA4989F"
+  },
+  {
+    "path": "lib\\arena\\clock.ts",
+    "sha256": "A6351DEE09017A3A54C5DCFAFE418629A431A8866664C4B864D496FEA760348F"
+  },
+  {
+    "path": "lib\\arena\\continuous-paper.ts",
+    "sha256": "F2FBC5205BE709AAA854EBF08E276590A8AB977307334B43E26ACC983A1BF328"
+  },
+  {
+    "path": "lib\\arena\\equipment-art.ts",
+    "sha256": "AB6D6E246BDB9403AC946F0A46FCA118AD3F5E5D386658BB17CEC8AB08A87521"
+  },
+  {
+    "path": "lib\\arena\\equipment-layout.ts",
+    "sha256": "494C1B714A6E92342751C0570010464673C76AB1A95A8B2B2F198ED67CBBC5B4"
+  },
+  {
+    "path": "lib\\arena\\equipment.ts",
+    "sha256": "3BAC615F0706C70102CAC94F83432F13327D1E3BF2DB00E61E6DDE24AA158518"
+  },
+  {
+    "path": "lib\\arena\\grounding.ts",
+    "sha256": "CD426522D9E594B5FE3F47973560F4835031F903DDC2D35109010E61F994F337"
+  },
+  {
+    "path": "lib\\arena\\hand-geometry.ts",
+    "sha256": "76BA3B51A6FF344FAAE751EEF9FDD48F098A98D015D65C5A01FBCD4495B9F764"
+  },
+  {
+    "path": "lib\\arena\\joined-paper.ts",
+    "sha256": "544B5E149558B3DA9F989EB963B118C32835732817C087172A61EDFC7E9010D1"
+  },
+  {
+    "path": "lib\\arena\\match-timeline.ts",
+    "sha256": "A3216753E9F71B7F36DC171D79E154ABFD4E2D66E6FA87730D8E09CCCAB98559"
+  },
+  {
+    "path": "lib\\arena\\model.ts",
+    "sha256": "9B7B7DCB7CF1189B7098EA9E6A456994FC9317C056935C13FE6063D7D4243B57"
+  },
+  {
+    "path": "lib\\arena\\motion-catalog.json",
+    "sha256": "CB8FBF5DEA8B07047F2F7D3E813A8721E3C4B5E583F4A54C52DBB005770182F9"
+  },
+  {
+    "path": "lib\\arena\\paper.ts",
+    "sha256": "74C7678F9600698FBAC7335A6F080B7AC10E3CB885D04E46AE25F169FEF42C17"
+  },
+  {
+    "path": "lib\\arena\\persistence.ts",
+    "sha256": "B5D7D5E6B590E74176785730CC10CA052F8D3B7FE87277F7EDD9052474B4B512"
+  },
+  {
+    "path": "lib\\arena\\personality.ts",
+    "sha256": "534ACD9091E0EA12157B441260C6C666E1B408624623952A23939CC9CDD741E4"
+  },
+  {
+    "path": "lib\\arena\\pose-motion.ts",
+    "sha256": "8D586A6557EC145394DE1C5D3E45F16D27A75B6AAAC0A16664FF91ED044DF79D"
+  },
+  {
+    "path": "lib\\arena\\puppet-assets.json",
+    "sha256": "D2682156C9B92631287073ED978265267938A065E757FAA3DF25788D90FD245C"
+  },
+  {
+    "path": "lib\\arena\\puppet-geometry.ts",
+    "sha256": "E68D0C727C2EDA183BDC3F139DCEE43B3B3CF1D256C735CEA21ACCA5D4F694AC"
+  },
+  {
+    "path": "lib\\arena\\puppet-motion.ts",
+    "sha256": "A5C789227F51A3F68D7748693BACE1E44DF8DA011FE6386DE2963643E6FFEB25"
+  },
+  {
+    "path": "lib\\arena\\puppet-renderer.ts",
+    "sha256": "B70A5D5945D5C69E88CADF1577756A432A2F9F68550D9F0F19E22A5F6A241973"
+  },
+  {
+    "path": "lib\\arena\\rig.ts",
+    "sha256": "2D55781D165A6FD93BE1062FA96CE6D1196924D8BCFC20D2855A765FC4D9B8C5"
+  },
+  {
+    "path": "lib\\arena\\simulation.ts",
+    "sha256": "C261660A613956EF0A7474C7FF1C45CA96DF21ECECCB410DE83B48F6D4589937"
+  },
+  {
+    "path": "lib\\arena\\skin-geometry.ts",
+    "sha256": "DCD47E063CB2CC29EFEED6D05C3D9235EE2196D9CB1AAB0F65C4C38E2416708E"
+  },
+  {
+    "path": "lib\\arena\\summon-motion.ts",
+    "sha256": "D80FBA6A9E414DDB204A8AFC56F88AE2D3E07738C3B7DF32C40CA4323FF09576"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\AnimationController.ts",
+    "sha256": "63C2B73B0240320942E9F1F2B48D5A5F52F23146948C0DA36B28A64EF801D39E"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\AnimationEvents.ts",
+    "sha256": "53022CFAD0EC1B36A31B07F719A29A1105457E7B77ED36AA41B061D209D066DE"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\AnimationRegistry.ts",
+    "sha256": "CC14C5420CEDB38344EF8EA603CB59199267DDF24DD244546A8B2723FBB3AC4B"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\AnimationSelector.ts",
+    "sha256": "2805D5D0A993DBD02B0D555E7381DD9AFE033480DC29A06DA05136F5C78650D0"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\AnimationTypes.ts",
+    "sha256": "2A8E1E2D4137E687DF259082964CE2C97AD85D64487466208B6AA2CA9EC52002"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\GestureLibrary.ts",
+    "sha256": "969C116C4F5FE7A13387B2084199D4E7849111F37924E1AD8D3E7C92926ECD10"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\LayerMixer.ts",
+    "sha256": "209BD2AE71CC677C60F88FCEF2E9E460E54E6F4AF15057988BB94FC8C4BBA1EA"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\LiveClips.ts",
+    "sha256": "3BD0D8EDB847584209822FE7A81D86ECA949CBECD79FA62035D95F5F3A930772"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\SplineMotion.ts",
+    "sha256": "CDD5746053062DD2F74DF0F3DB6E55F1228EAC96163A0105F0563FCBD7823EEA"
+  },
+  {
+    "path": "lib\\arena\\engine\\animation\\SportMechanics.ts",
+    "sha256": "71945E67D84B19B4FBFC42000ED535EAEBB3FBEC61CF19CEF8D21E5027F93D97"
+  },
+  {
+    "path": "lib\\arena\\engine\\audio\\AudioManager.ts",
+    "sha256": "48817553B51278F5C2A2650EAD42E150D9815F1B7237FE811A6544A3A814F7EA"
+  },
+  {
+    "path": "lib\\arena\\engine\\camera\\CameraManager.ts",
+    "sha256": "1B1E246E22F798F24DC762E858FB7DB49740C30AC94FBA0A3549C28BF6FF0A4C"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\ArenaCharacter.ts",
+    "sha256": "8999E5257CC117FA175822A8B1A7E78751383326039497017AE9EFABAEB68593"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\CharacterController.ts",
+    "sha256": "BADB60348A2A48B3FFA95B33EBCDA754C629074FF16D883109C52DA7B4610A84"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\CharacterPresentation.ts",
+    "sha256": "CD17EC5D12D605AE211581EF8109B88A4DA4AC475649E69ABF5930D1A8EDC3C9"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\CharacterProfile.ts",
+    "sha256": "35696A7860EBEF46A13FFA0DDE67E23B24E7670DD2D48789B144ACDF93938A77"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\CharacterRegistry.ts",
+    "sha256": "DEBEB0710DEBBAD9CCAB013608076766306C71BCCE0CBD2A3C82ADCCDAB72EAC"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\CharacterRig.ts",
+    "sha256": "2CBAEF8309B02F20E363154A0CFEF75C5E3195CFF15AF9505A8C0A3AC5EAFF10"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\createCharacterRig.ts",
+    "sha256": "3F897DB5360F519E770B29B81ED91886094553AF47EEB213807381B9CEE32BA5"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\FrameCharacterRig.ts",
+    "sha256": "4928E28EC19BC04CD78CAA66E9E06707F09AF842E2394E30A7C7C7D1BF2D55AD"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\JoinedSurface.ts",
+    "sha256": "0E215C2F2720F6B27185E0B8A7432E24D0EFA85111160D27C2CD850BAD275AC0"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\PaperCharacterRig.ts",
+    "sha256": "C5CDE568ED79D9E92A4BA1134F521D3EE357A3FCBF7310923E579B0B0510C95E"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\PaperMesh.ts",
+    "sha256": "9F4A3AA19A1EA0C1B6BC5250DD057D7E3D510E11CEF80C0D4469C547F906E4EF"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\PerformancePersonality.ts",
+    "sha256": "F81F00592BC7DB9086D90F46D701552104E841784AF8A7E14C3B3F6AAFA32BC2"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\SpineCharacterRig.ts",
+    "sha256": "2631CE936B6C1AA5F12C6DF316ACD6102D4CCF87E68D539C50D9E2AFB534144E"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\anatomy\\AnatomyPlan.ts",
+    "sha256": "AB0A2B20178E76DB7C9CB89DF4A48E860128C8C39443DE6C64C44CF93E904ED6"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\anatomy\\dan.ts",
+    "sha256": "65A0FDB3737D4F67246C9103C74F75377B65C600B47D0848FA67B4324CA7D9F8"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\AbilityComponent.ts",
+    "sha256": "863C47B20FBFB18220D9EC22E5DC06A3E1C643E6E7CAB1376EA0F3DC9B0B5083"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\AnimationComponent.ts",
+    "sha256": "02F33F7983CF6372DE4E49FE6447C9EE829F601CC35C24BBEE3AFF52CA766E11"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\CharacterStats.ts",
+    "sha256": "4FB0FA3EC18EEFE1BBD1641D29A82D87FE8C434BF7FD84B36555728246C97CA3"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\CombatComponent.ts",
+    "sha256": "643900607B9654276C3652E56047C38D35FF4A474948D2786CC3AF69D8C1829B"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\PersonalityComponent.ts",
+    "sha256": "FC356D44E09C2BB4DE033FDCC467DEF6945D5C807AAD498E7CD2CA02BD5367EB"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\components\\RunningComponent.ts",
+    "sha256": "1844885CA47DEBB557977E8126334A24B12AB05668E832A9EA6B89B68E40EA84"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\profiles\\dan.ts",
+    "sha256": "66244323E5FBFF6C85AA1CB1ABAB712F03B1249D8C0DA011897A3826A47D86C6"
+  },
+  {
+    "path": "lib\\arena\\engine\\characters\\profiles\\doug.ts",
+    "sha256": "C8F6E9271241BF69A54FAFDC44D48DCA5508B64C37700D804A799C6F1BD0B0C6"
+  },
+  {
+    "path": "lib\\arena\\engine\\controllers\\AIController.ts",
+    "sha256": "6D9ACD293DC5F4DB3505B342B0FC986D327D252D801708FD1DB40722915C790E"
+  },
+  {
+    "path": "lib\\arena\\engine\\controllers\\ControllableEntity.ts",
+    "sha256": "88C249C6B7562535C1F1A15A36839F4B1254154EFB493CEE9F38DB6BD3113AEB"
+  },
+  {
+    "path": "lib\\arena\\engine\\controllers\\EventActionMap.ts",
+    "sha256": "0F6921B71666F23C1ED9E8E4900C911E7CCBC374F5C1519B197C11185818CA50"
+  },
+  {
+    "path": "lib\\arena\\engine\\controllers\\PlayerController.ts",
+    "sha256": "A1A94BDEB726658EA5C800B6CE05AFA00EB12F4C75D51BC93BA71D62A795B11A"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\ArenaGame.ts",
+    "sha256": "51527BAF736BBD10995090ABF5D7B49F8D030438415061CBB2446A04859D635C"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\ArenaOptions.ts",
+    "sha256": "13CE3D734BB09D610868F3270D62F682995147B4C01E16A088EAE261BC5FD79C"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\ArenaSession.ts",
+    "sha256": "E998A060F32BCB4E780D8ACAA53209227AB5E2299593D7413B717DEED86EEF8A"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\BattleDirector.ts",
+    "sha256": "A9427988EFB97F9A0B6C83626A0F78959DB2E3F34F9A30CDD0172A34FA16173B"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\BattlePlan.ts",
+    "sha256": "54A1274D924B33FF9C68014EBDA9124DFB73F5076B3ACD22A51F922382DC3486"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\EventDirector.ts",
+    "sha256": "F78E3E65EAF057F9620AF440052C4D4520849C548CF3880920E4407A89B156CB"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\EventRegistry.ts",
+    "sha256": "7E8E189781C68149F0007B98130F17CF5CC6F4E39F8A3E46772524C6D8EC89C2"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\FrameTelemetry.ts",
+    "sha256": "3920C9DE368099197B8FC8DD95F870B5D88790A78FF3F5A1E405184DEA4A2BF6"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\LiveArenaGame.ts",
+    "sha256": "59163BBFFC133B3900471B47347D7226D61EC5E5BAD278E6E97015D0CEC56CCB"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\LiveTypes.ts",
+    "sha256": "C0C86CF8B0B0E12C33E62F6618E833B4EEC68E632048946C06E32DFD50FFB92A"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\MatchNarration.ts",
+    "sha256": "FF8B6626BD07C41FC65DB6BA92B405225D745623D8F09717B489D81B6DF1165F"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\Random.ts",
+    "sha256": "C76288AB2B3D73ADFEFEDA836F9791A1A8128B4AF2DDFFF649B7ED6070EC7DAD"
+  },
+  {
+    "path": "lib\\arena\\engine\\core\\RenderMetrics.ts",
+    "sha256": "267DE56D437B4921646DC2EF154A50A683EC53AC47FCBEED0A552B0AF586A473"
+  },
+  {
+    "path": "lib\\arena\\engine\\effects\\CameraEffects.ts",
+    "sha256": "05F4C128D9932E7A8637BD0003D72A7E8C38618DD0CAF572B5F89EE749CF5DFA"
+  },
+  {
+    "path": "lib\\arena\\engine\\effects\\EffectsManager.ts",
+    "sha256": "47DA6886950E4E33FC256C9AFC7A0030B50BB5BE542ABFF30ADB8EF9F2E8ECDE"
+  },
+  {
+    "path": "lib\\arena\\engine\\effects\\ImpactEffects.ts",
+    "sha256": "A2F8E83F91E089B3C1FF3A1771CA9361635676594E5C3544A76BC82B1E1C0551"
+  },
+  {
+    "path": "lib\\arena\\engine\\equipment\\AttachmentManager.ts",
+    "sha256": "E82EFEB2A8E080DE7D67699CE22A5285EEBE396717C1F34FE6B4C9B0FC013EBB"
+  },
+  {
+    "path": "lib\\arena\\engine\\equipment\\PropPerformance.ts",
+    "sha256": "EC4660435723858618E129E8F63F0F113B3BA53A61137666F603488DB01E1EE0"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\ArenaEvent.ts",
+    "sha256": "3CFBA12637689A499E84888F05EC4EA9D392B319BB9117DEB74D8ADD9CFD396F"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\TargetEvent.ts",
+    "sha256": "C4E464EDFC367B3DEB691410A5778BFA472A5E6553108230FE1D51D8CB945270"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\cornhole\\CornholeBoard.ts",
+    "sha256": "025C46E154956738EA0011D5C6305EEF68232BC9B3EA94254A05C5A7CFE6E765"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\cornhole\\CornholeEvent.ts",
+    "sha256": "039AD47886DAB0D4AD3178515A5CAA987F548F1706A7F8287EE8217B8F9437A0"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\cornhole\\CornholePhysics.ts",
+    "sha256": "049C2AFA19A2A00C98E5FBD0DBFCFB9C74420C409767C76C209EB9ADB6E4AD7E"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\cornhole\\ReleasedBagPhysics.ts",
+    "sha256": "B3F100B48D42716079631EDEC987B56E1B55A49F70BCBFDC5E76D7C6920E16B0"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\cornhole\\ScreenBagDynamics.ts",
+    "sha256": "47694AA5BFEDED5C06EA0433F15493E5A799577F1C705380118066522FDBF8DF"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\fighting\\CombatPhysics.ts",
+    "sha256": "B982F71CFEF223C36C875A11D3821A079E0A424161A4222B9A206B7009D86443"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\fighting\\FightingActionMap.ts",
+    "sha256": "B00932129F4C085DA4740C67AADEDB9C377AFF1D7C7E4686BF31680DB17B9FCE"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\fighting\\FightingEvent.ts",
+    "sha256": "AE95D207922E77B3C6A9E91ED445DBCA220412AE8DD5EA8460BFB9D780D1CA96"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\precision\\PrecisionActionMap.ts",
+    "sha256": "F52865AB6B3D74FBF5844F96FF844C048DA5D89B8C46F330250DD6D214DB7E93"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\precision\\PrecisionEvent.ts",
+    "sha256": "F042A4DDFDF7DA7DF269B531291CF1C80E7A6E521E61F2CF95E61B846A21B5E5"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\precision\\PrecisionPhysics.ts",
+    "sha256": "7164C4E7D105FD595F151EFAD3497B37C0D2700F9B817DDFDF320EFF4630E19A"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\running\\RunningActionMap.ts",
+    "sha256": "CB17DD470F2C7612B51E7B61DF015708662EA7FA1A9EA40BBE0A9E9F67A024FF"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\running\\RunningEvent.ts",
+    "sha256": "30BF1A1269461C1E02512201EF53EFB01EE8B5A6B2A14B3B1412EA59554BD5E5"
+  },
+  {
+    "path": "lib\\arena\\engine\\events\\running\\RunningPhysics.ts",
+    "sha256": "B8F8107BB260DB699B4D4A68EB2FF59056216AB9759CDDEC71E8B85552454896"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\GamepadDevice.ts",
+    "sha256": "E53959C487045866E6B24DF84D07D2A161242AA7184885BEBAD5D119B48A24EB"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\InputActions.ts",
+    "sha256": "FCDF802A632BA2519DB03A9ED87558F1F88FF0FC551B0A4BD691F266A68AFD02"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\InputBindings.ts",
+    "sha256": "ACEB518BC0DAD5C6D81D7F5CE1003704234407296D3C4AC190ADB153553FF97F"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\InputDevice.ts",
+    "sha256": "FE087902ECCCB00C0C6D95828893E841E9AF38B9EB4D0C325AEFC30328551AB2"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\InputGlyphs.ts",
+    "sha256": "887C4255C9F30E298D932BB5B5F11A6467E56DFA193BF54D8DF285CBD9E4E808"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\InputManager.ts",
+    "sha256": "4C4A94E9804D2D11FE5AA10C19B47F67E836953D7521DEA160EF164D21B4C90D"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\IntentTracker.ts",
+    "sha256": "CE9AE05DB6B568A75443417123E5AC3ACF40042A02BD46743C7587D45D960DF5"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\KeyboardDevice.ts",
+    "sha256": "D1B8AAEFD14129B2761A59E69E667D121E919FF153FD987852D6A749764663CA"
+  },
+  {
+    "path": "lib\\arena\\engine\\input\\TimingWindow.ts",
+    "sha256": "B2801D0675481E0B0A677949C64379AAA5CB4360D655F7AAEA1724437F9A474A"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\AnimationGraph.ts",
+    "sha256": "D5EE792251E049E637875A92A2B295627BAC90DB476F8FE3164256103B17F39D"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\BodyBalance.ts",
+    "sha256": "E85D7B596E9D360C6E833CBE460236D95E463BC58CCB4330C6F9C8B4CC9A217A"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\CharacterMotionSignature.ts",
+    "sha256": "D024BFF67F23E3EB3CDD337A5B9D8D1C028A499D30796AF7CF1AB1047FEC238A"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\DampedMotion.ts",
+    "sha256": "A04E2BF744D371098142D46592B4F67A4E9A097A85CB8BF0C83F347B3FA9DB4E"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\GaitResponse.ts",
+    "sha256": "86FA8D1D987938708E820DE84622075D882DCF79141BB9920B51934FA732CBE8"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\HumanSkeleton.ts",
+    "sha256": "10708BAAADF1E79B838A9102D8D070D0B83A23A4DF0265F12BA214CF8D1346F3"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\KineticChains.ts",
+    "sha256": "6F2F8EBB062365B48666F876CF81F868217D6B283A3099AA307D9AE906BEE9E3"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\LimbRegistration.ts",
+    "sha256": "ABD9F2E9C4E07E2F4759D4BF64DEA373D3E58458683BB1B8E0D4E8C98339BBB0"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\MotionAnalyzer.ts",
+    "sha256": "CA8D8AF4A2D97B8F0007C66ADA3963287AD081621538E0CA48A8F98AE8A7C3D9"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\MotionContacts.ts",
+    "sha256": "65DE3E0A57CFCBF2293716C87C40B54437F93D49CA65B8467832668D9AC72626"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\MotionCurves.ts",
+    "sha256": "8CA68172CA6C4E71E1E520B96C508B6538700104AED06CF0C9380795DA361CFD"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\MotionPlanner.ts",
+    "sha256": "1F998C2F4470DD554DB4FA68F3322E0CDF3E008C77CD2BDB1BC3E31247F6EF30"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\MotionTypes.ts",
+    "sha256": "94F8D10B27784DF8D52E10C62A23BDAF60DAE3BB3990D07CFB10F99BA869838C"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\OrganicMotion.ts",
+    "sha256": "C008B21D72F9270BAF37A132B980F862655C9B0FF49A12AB78FEAFA18B136577"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\PerformanceTimeline.ts",
+    "sha256": "F30429F53383246EDA66295662C4C24EFA07A266953DA2E4E3144421E34ADAC4"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\RecoveryMatcher.ts",
+    "sha256": "5AC1A8C3255F43F9761902E3BBF8351B63CD00C67F480E9142917DA1A3396D24"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\RigIntegrityValidator.ts",
+    "sha256": "AB1B021B0E41BC5296376C8D3739EC6402ABE8694CCBAADBC5060BE406A40D18"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\RootCurve.ts",
+    "sha256": "451ED975440D10FC228E486964057E4DD1FB84C0E0CD68D2ECBF8547E9490F58"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\StrideMatcher.ts",
+    "sha256": "BF03FA5DBE91E6CAF08D56578349C9EC3E562375CF9764422D2C93B37BA1DDE1"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion\\SupportAdjustment.ts",
+    "sha256": "512FA84C53EFB091AB93AB4585158C6D45648B6AF163F80B28430E0A2E5D755B"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion-tools\\ReferenceCurves.ts",
+    "sha256": "4F64D5A0E188998E86825A7EF9201708F83599446D4E0A98F5E85C3CCAEC179E"
+  },
+  {
+    "path": "lib\\arena\\engine\\motion-tools\\ReferenceMotion.ts",
+    "sha256": "9D39E1286D20A420A35A87C9E4C98AF92B7F668BB9E2C35767B55E672E47B19E"
+  },
+  {
+    "path": "lib\\arena\\engine\\movement\\CharacterMotor.ts",
+    "sha256": "32D01F2A4FF227AD0D87EC4A5BDE540D7B47562438F29DE5C0BF8F61A21EC2E1"
+  },
+  {
+    "path": "lib\\arena\\engine\\movement\\CharacterProximity.ts",
+    "sha256": "585BB0CD7FD767F5674916C4F40315FEDD42205D32EC1390E9C9713AF71521B2"
+  },
+  {
+    "path": "lib\\arena\\engine\\movement\\FootLock.ts",
+    "sha256": "DC25C2C9D66F4FB9083CF8BFEAAA64A7AE7053F49859355B5D429BD48A04F496"
+  },
+  {
+    "path": "lib\\arena\\engine\\objects\\CardPortal.ts",
+    "sha256": "9AA2BB5A17BD372FE214AF7846D36DBD7D0AC01FB75149857F2894EC62B1C2B2"
+  },
+  {
+    "path": "lib\\arena\\engine\\objects\\Equipment.ts",
+    "sha256": "5B5B082F57AE86F9EAA6E2F31CD411D4C85D96253B738146A2AEB808294603F6"
+  },
+  {
+    "path": "lib\\arena\\engine\\objects\\EquipmentSprite.ts",
+    "sha256": "CE2127AA04AE7BFA2C87EBD9F78C35DCCE6A6D99BBF5DA2E34A626E90882EEF9"
+  },
+  {
+    "path": "lib\\arena\\engine\\objects\\Projectile.ts",
+    "sha256": "CFE8DCC8ADA4080A62E84C357AD50B69761F2FFF7078E18F38EC49F8F95BEEB5"
+  },
+  {
+    "path": "lib\\arena\\engine\\objects\\VisualObjectRegistry.ts",
+    "sha256": "8DD39B080A1ED5954A74B4768431E81490674B76BA70CA849E1AF4DD04CC4E8D"
+  },
+  {
+    "path": "lib\\arena\\engine\\physics\\BasketballFlight.ts",
+    "sha256": "0B212E6BB69C6EC718A61807D6F054B03010ADF3040596634369A22C9E48695C"
+  },
+  {
+    "path": "lib\\arena\\engine\\scenes\\ArenaScene.ts",
+    "sha256": "758408BFED8275D8DDA0B0C65A6A695947B1CD9B01485AFF496176207ACC5D88"
+  },
+  {
+    "path": "lib\\arena\\engine\\scenes\\BootScene.ts",
+    "sha256": "13DB9F7214DBBDF9B39B4A62B94CFE346CCD043621E884706F2BA5A1734194A6"
+  },
+  {
+    "path": "lib\\arena\\engine\\scenes\\CharacterAssetLoader.ts",
+    "sha256": "B0556B546A542E1FFD57CCEA4179263FDC8E9BCCBB4333F2154CC5350AC62E62"
+  },
+  {
+    "path": "lib\\arena\\engine\\scenes\\LiveArenaScene.ts",
+    "sha256": "94B77B03E00BF861CE75EEBA5A2D2C063E4D8162148279B07FD8080936A07C78"
+  },
+  {
+    "path": "motion-reference\\README.md",
+    "sha256": "BD40E6249D3B7EA953DA412D02ED873C39018A317838251ABBBE77C50DC58602"
+  },
+  {
+    "path": "motion-reference\\requirements.txt",
+    "sha256": "EC3EEE98342FF227EDF8F93A2117834040388EE7113FB306F88EA3618C8073E0"
+  },
+  {
+    "path": "motion-reference\\cornhole\\measured.json",
+    "sha256": "4A1B51D2FA7BE6D4AB4D1A096441789285E76FB9FE1D691051897EB783618791"
+  },
+  {
+    "path": "motion-reference\\cornhole\\reference-throw.json",
+    "sha256": "C494391BD9D49033CA1D6CDA89CB5185A84D29C272775F252C8E21E3F8BC529E"
+  },
+  {
+    "path": "motion-reference\\cornhole\\reference.mp4",
+    "sha256": "627AC30824601EC1D346A3EC1DA647823427BDA1DE52352762DE5A1FF8A3A112"
+  },
+  {
+    "path": "motion-reference\\locomotion\\pose-demo.json",
+    "sha256": "1B8798565F6C98CA1377ED550A1F9B2A00652AD23E7407DA19A4C3C5C9ED5C0D"
+  },
+  {
+    "path": "motion-reference\\running\\measured.json",
+    "sha256": "F3767613FA5F0BE3791BD0213FBA7013C8E9D7B096E82A526351C28BF2B7208F"
+  },
+  {
+    "path": "motion-reference\\running\\README.md",
+    "sha256": "38D5AF0CE92F2109D70C19850D74E775B3471F3164CF59B0FB0278CCC2728F6A"
+  },
+  {
+    "path": "motion-reference\\running\\reference-gait.json",
+    "sha256": "96A1095DF2580C5DF14F285CBE9514D1950489BF552BE44E6618F31FC285F775"
+  },
+  {
+    "path": "motion-reference\\v31\\basketball-jump.json",
+    "sha256": "181F18B708B9CCD6FBBF821547984B20BEDB9ED90E7AA33F7452AE1AF04CC899"
+  },
+  {
+    "path": "motion-reference\\v31\\basketball.json",
+    "sha256": "4EF14D2D586AE875D6D5EE881596552F20DA778B46BD2DEDF851FD95F9118E37"
+  },
+  {
+    "path": "motion-reference\\v31\\boxing.json",
+    "sha256": "5752F02C4E345987E3B3B858D2C05E53593FAC9B1DE8BCE1A60C6CEF63C09EFF"
+  },
+  {
+    "path": "motion-reference\\v31\\celebration.json",
+    "sha256": "F7C043F9CBDA390E715E8C902B66E2CF5CBDE4DCF30A23825134F34ECA74EDCE"
+  },
+  {
+    "path": "motion-reference\\v31\\dodge.json",
+    "sha256": "14D7475747837A42CBAB3E66D0C1FEB76CCA8D112740FDAF2F42F151E01BDCCE"
+  },
+  {
+    "path": "motion-reference\\v31\\football.json",
+    "sha256": "48691817D0D67E62D449896D3F6A16C03934E57114983DAD552F1874EBCAE854"
+  },
+  {
+    "path": "motion-reference\\v31\\manifest.json",
+    "sha256": "6D8D3A4C4BAF0CC6BC1227A29CB198919C8DB805CC33CDFDA91B76BBAFFAAC35"
+  },
+  {
+    "path": "public\\favicon.svg",
+    "sha256": "E6D2E59B7B5BBB0342E0FB496DFC262DECBFE4426BBB7B047AEC8D467D1DC6F7"
+  },
+  {
+    "path": "public\\assets\\asset-bounds.json",
+    "sha256": "EF95AB7C11E900171E60E94EEE1A40106F5B14BFA07AE6088451E4CD1A0208F2"
+  },
+  {
+    "path": "public\\assets\\clubhouse.webp",
+    "sha256": "F15AAE9E7425F55EDEBFE46D8FEE8CA790F001E6584090220EEA9A1B4A0B41DD"
+  },
+  {
+    "path": "public\\assets\\paper-arena.webp",
+    "sha256": "C503CF0DAD3CCC33032292D430E626575AA982BD80B7283B3BDCD7C850D939CB"
+  },
+  {
+    "path": "public\\assets\\dan\\basketball-shot.png",
+    "sha256": "9BF80DB17F5F0D482A3F28CF81186D2BF5B781FD415EB1DFE0C1B16CC3A22467"
+  },
+  {
+    "path": "public\\assets\\dan\\card.png",
+    "sha256": "ED44457D8440EF7A2B492FFA7DC43B7D40BEB695C5DA39B2198CF1D458422F3E"
+  },
+  {
+    "path": "public\\assets\\dan\\celebrate.png",
+    "sha256": "9107FFED6012AE77FA3B0FAE557FD69C5FB92283E27C0FEA0D6FF906000BDBF0"
+  },
+  {
+    "path": "public\\assets\\dan\\character.png",
+    "sha256": "9E4F377946E971E1FAB1B453F7A1BDE4B6C5EEEC19F54537F1224C4EBB7C8CDA"
+  },
+  {
+    "path": "public\\assets\\dan\\football-cocked.png",
+    "sha256": "7A576398188C2EA1AFE98141106FDE041F15944E931FF10A975FBFED670726F4"
+  },
+  {
+    "path": "public\\assets\\dan\\head.png",
+    "sha256": "BF5500CCB40371C322245965C725DAE4EE5A2CD620A6CA084C6B93A98BD21C64"
+  },
+  {
+    "path": "public\\assets\\dan\\puppet-v1.png",
+    "sha256": "4822C9968D7200A5CB62B3E7CD65D2DCBD224DD5CE546FA7FF30A6E5368BC3BF"
+  },
+  {
+    "path": "public\\assets\\dan\\puppet-v2.png",
+    "sha256": "114D5A9A2BCE08DA487677112554E47236837EAAB845E1DEF5B37E165AB43BD5"
+  },
+  {
+    "path": "public\\assets\\dan\\puppet-v3.png",
+    "sha256": "66B3F9DB732E11F11469409745F3BF1A4FBF9F6204BC638F3F5737A51F1C87D3"
+  },
+  {
+    "path": "public\\assets\\dan\\ready.png",
+    "sha256": "9E4F377946E971E1FAB1B453F7A1BDE4B6C5EEEC19F54537F1224C4EBB7C8CDA"
+  },
+  {
+    "path": "public\\assets\\dan\\sheet.png",
+    "sha256": "9374F1C6E870AD32E0304394C1D3340AC84B20781A72281B6978BB939166BE0E"
+  },
+  {
+    "path": "public\\assets\\dan\\underarm-backswing.png",
+    "sha256": "FD0D1AB3F9A0197E13AD79E6DA34CF2BD7B105F79F8E97BB1F7B75C8FA25B1EE"
+  },
+  {
+    "path": "public\\assets\\dan\\underarm-release.png",
+    "sha256": "9AB62CD06346F93EE99AE4782A821550D328348A927ABFFC5B70163BCF26C9E0"
+  },
+  {
+    "path": "public\\assets\\doug\\basketball-shot.png",
+    "sha256": "CB55274E40179A9BDC4464F19E4BC3E508CAE5C87FF71D9F798E8B890114684D"
+  },
+  {
+    "path": "public\\assets\\doug\\card.png",
+    "sha256": "694835CF83262F0E84D46F440BFA69A754EE5FCE6F1ADB688B6BA87706B6F60E"
+  },
+  {
+    "path": "public\\assets\\doug\\celebrate.png",
+    "sha256": "02A3A663330C72CC02759F00B911C3F56855118F330166CDC779D8471FCD4C87"
+  },
+  {
+    "path": "public\\assets\\doug\\character.png",
+    "sha256": "725048791432765DD85C413A71BF30DD6AFDAAAF1F85D991484E273FD436B471"
+  },
+  {
+    "path": "public\\assets\\doug\\football-cocked.png",
+    "sha256": "DA97299C05881B3449F91F926DDF54DFA1E9C70944F13A5B1F6099A8A83CB90E"
+  },
+  {
+    "path": "public\\assets\\doug\\head.png",
+    "sha256": "C68602FCF2D3A32B61C448A9A6DC8091A0DE8F311B0CF2419EC26EE15218499E"
+  },
+  {
+    "path": "public\\assets\\doug\\puppet-v1.png",
+    "sha256": "73A04317F132EF44FF08A48B4854849FB9C03C5ADBAA8BCAFF5263FA829C48D8"
+  },
+  {
+    "path": "public\\assets\\doug\\puppet-v2.png",
+    "sha256": "DECBE6088FB8DD5813D85718A714B1BF7EFEB53D8C73F54AF15FCE3B17BC9F6B"
+  },
+  {
+    "path": "public\\assets\\doug\\puppet-v3.png",
+    "sha256": "FF6571170C59A72033C96C6EF3E7968EAE88F5AFFAD57D4BCE20E6BD69D717AC"
+  },
+  {
+    "path": "public\\assets\\doug\\ready.png",
+    "sha256": "725048791432765DD85C413A71BF30DD6AFDAAAF1F85D991484E273FD436B471"
+  },
+  {
+    "path": "public\\assets\\doug\\sheet.png",
+    "sha256": "9B2105C2D51E6DACA95F521D5F63D395F26DE5FBD11B5EB2119BD8FE45039DF7"
+  },
+  {
+    "path": "public\\assets\\doug\\underarm-backswing.png",
+    "sha256": "E7BEC0F7AC29E5766785651A7C48C3EDEFEA30A9B268207329C8338CC9999AA2"
+  },
+  {
+    "path": "public\\assets\\doug\\underarm-release.png",
+    "sha256": "FC28AD47029DDC04688EE111D519C728DD54778B73471255F3C1F27B156DA2E9"
+  },
+  {
+    "path": "public\\assets\\equipment\\bag-teal.png",
+    "sha256": "795A97BC109F97E21EF20D4DFC0F48D1DEB8694ED4A00CE94EBAADC4837613C9"
+  },
+  {
+    "path": "public\\assets\\equipment\\bag-yellow.png",
+    "sha256": "13F23436CB1FBBC8A1F2E61D75869F302A072CD1EDB5932F108C66B753AAD09E"
+  },
+  {
+    "path": "public\\assets\\equipment\\basketball.png",
+    "sha256": "72F2B25FB5B77604B055117FE5AB9EFDD48E842C0E68B376F4218CBC59E10964"
+  },
+  {
+    "path": "public\\assets\\equipment\\board.png",
+    "sha256": "946FF21C143DABA789EAC1B632E85C5F3D9B65ABAE018DCC93DDE1B23F5AB3C4"
+  },
+  {
+    "path": "public\\assets\\equipment\\cup-orange.png",
+    "sha256": "4489D8D2DA7170162338B87997EA255AA0A5B2BD282B2F52523825D7171DA1DE"
+  },
+  {
+    "path": "public\\assets\\equipment\\cup-yellow.png",
+    "sha256": "0D156BF32096217F629B9276A089778080C7AD2379FE49040262C9C411663907"
+  },
+  {
+    "path": "public\\assets\\equipment\\football.png",
+    "sha256": "22590AA9D7870B6EB08A72E22BF90DAE6E3274C5A62054AB527BD6A35D37B190"
+  },
+  {
+    "path": "public\\assets\\equipment\\hoop.png",
+    "sha256": "A2BF3970DF66D516A95A57BE817310EA2CE51E2F51A424BEC846CC2A210D6BC5"
+  },
+  {
+    "path": "public\\assets\\equipment\\ping-pong.png",
+    "sha256": "623213DC98AC11A0F57563D9E64024D6E80DBB5BC50151702A74A6CA84095777"
+  },
+  {
+    "path": "public\\assets\\equipment\\table.png",
+    "sha256": "76B6F8694C5674C9859900CD18CA46234EDA9BA853C100E7DD5B879EBFC58652"
+  },
+  {
+    "path": "public\\assets\\equipment\\target.png",
+    "sha256": "D8D16CDA45A7AD5B3A3D7721ECAACE317F2B0BFC1AB674486DC99413433C1A47"
+  },
+  {
+    "path": "public\\assets\\mack\\angry.png",
+    "sha256": "FBA4E6C63FB25EDF0A3BE6246EC2B6E20EE2E1D88555546BFC72DDADDBA172E3"
+  },
+  {
+    "path": "public\\assets\\mack\\body.png",
+    "sha256": "92F505AE4FC9843CD7D0824A0AFDE7421927392FB1957B70E17069B29241C573"
+  },
+  {
+    "path": "public\\assets\\mack\\card.png",
+    "sha256": "8829EC510CA466F890F0163559EA189CC726715D3F4E45EB94F92A52B3F49F04"
+  },
+  {
+    "path": "public\\assets\\mack\\character.png",
+    "sha256": "1EAAE90CF7606CF10D60BB25C5CA78C91F3003EF157D9C79FACAFA192DA3CBDA"
+  },
+  {
+    "path": "public\\assets\\mack\\happy.png",
+    "sha256": "B60F39E4367C5B9E6483D26EED00BA0DDFC6691B85F19910C38D934D9D4C4AA9"
+  },
+  {
+    "path": "public\\assets\\mack\\head.png",
+    "sha256": "BB859704CD320DB0737B81B7F7643D37EB0ACA436F40D72F87A8AA383BDCA2FA"
+  },
+  {
+    "path": "public\\assets\\mack\\lowerBack.png",
+    "sha256": "DA29BA15E1165C061B155D492B2C3779C09430198423D5CBBF2CF87B4E50308D"
+  },
+  {
+    "path": "public\\assets\\mack\\lowerFront.png",
+    "sha256": "651CCA9ECC69450DF89604BE025C8246BA0B2B3F71A1F321F21E704099E39797"
+  },
+  {
+    "path": "public\\assets\\mack\\sheet.png",
+    "sha256": "12C0FCAE7CFC48A26B374A7B57DE1DD20F8F45D221A16ACB0CF75F7B5C07DD7E"
+  },
+  {
+    "path": "public\\assets\\mack\\shinBack.png",
+    "sha256": "34D554E3CA45DAA9F18802395BC7105E7AFFD63E0AF958EF69A6350F79B76188"
+  },
+  {
+    "path": "public\\assets\\mack\\shinFront.png",
+    "sha256": "7DEF16267C71103E53A3CB4276311DF9D622B8A8BF3535B65C7BACCBE3E1000C"
+  },
+  {
+    "path": "public\\assets\\mack\\thighBack.png",
+    "sha256": "392ADA9805E220C4AB0844B9B0E9F1CF47D4FBB049B4E1C8EF87CD448505900E"
+  },
+  {
+    "path": "public\\assets\\mack\\thighFront.png",
+    "sha256": "3F31B749A870F66B8B21BD67E4BF6E5483BEB4F3899D44AF4B46DD4F5729D841"
+  },
+  {
+    "path": "public\\assets\\mack\\upperBack.png",
+    "sha256": "8EADD5D253959B2309B4D875F0D9A56E35C83998226382FDB5A4463B2998F1CB"
+  },
+  {
+    "path": "public\\assets\\mack\\upperFront.png",
+    "sha256": "A29D2CBEE73A1100E49A155B93A25289898C93621B75955B730900933AF6D7D3"
+  },
+  {
+    "path": "public\\assets\\marmalade\\angry.png",
+    "sha256": "639A23DA400DC8ADFC125D94EC2BFF105B649FDCF8FD7AEE754BC18A75BEF22B"
+  },
+  {
+    "path": "public\\assets\\marmalade\\body.png",
+    "sha256": "D3B52E081AD72E24EBB6E758203C740D0EAEDEC266EF035CBA3CE825A88F765C"
+  },
+  {
+    "path": "public\\assets\\marmalade\\card.png",
+    "sha256": "6A0CA9885C6A462A5451B12B02922BFDF6A3E30AA47CD71CF5C50B358601EE1C"
+  },
+  {
+    "path": "public\\assets\\marmalade\\character.png",
+    "sha256": "D804E4462F80AA0BAB86E709E9A222BA48558AF77940A5C1480CC5A4414B5B9D"
+  },
+  {
+    "path": "public\\assets\\marmalade\\focused.png",
+    "sha256": "B0F741914F3970DDBB1DA16EFCB4CDA01DF92D3DC8C224AB553D9712535DDFA2"
+  },
+  {
+    "path": "public\\assets\\marmalade\\happy.png",
+    "sha256": "5D184C308FFBBC3A359442E0405F86FED4B73502B3DCA4E43330DCBDBFE4DA6E"
+  },
+  {
+    "path": "public\\assets\\marmalade\\head.png",
+    "sha256": "94F1EF1E396627C58E8AEFB5F887DAB6B0AC0166E5807617F75E05397C635BA6"
+  },
+  {
+    "path": "public\\assets\\marmalade\\hindBack.png",
+    "sha256": "7D879EC4DA2F6EA263ADEDAA2530ECA89FD1F4FA67EC8665E2F9A60316D5A2F7"
+  },
+  {
+    "path": "public\\assets\\marmalade\\hindFront.png",
+    "sha256": "A575B5474AD9186ACD979F1FF1742E94AEAE5A3918E1CDA547C16943A0D62AA9"
+  },
+  {
+    "path": "public\\assets\\marmalade\\lowerBack.png",
+    "sha256": "1A64B66F6CAF17C0EAB1143800CE65393210837EFB15748F15503C75D99EEB6B"
+  },
+  {
+    "path": "public\\assets\\marmalade\\lowerFront.png",
+    "sha256": "219BE90BB5FC8EF4ABB2B3DF70AC84E8510EB1D1C918820E40DC0532849DF7B8"
+  },
+  {
+    "path": "public\\assets\\marmalade\\sheet.png",
+    "sha256": "22907BD49BD9BF0882230AB92E65737E150695E68DB971507CD906FB4C71E6F8"
+  },
+  {
+    "path": "public\\assets\\marmalade\\tail.png",
+    "sha256": "C0F08E29CB890140DC36FC23456F05A1E1DC8B62F5083BB09844E54A16B4CE80"
+  },
+  {
+    "path": "public\\assets\\marmalade\\upperBack.png",
+    "sha256": "BABC14EE8BFB255EEBB198197C4F46DA7559A450218251FD3FA713F17DE465FF"
+  },
+  {
+    "path": "public\\assets\\marmalade\\upperFront.png",
+    "sha256": "7FB508559184C3F30EDA084A30BF161BA9A0E1671DA1A010C53752F79B5B8FE0"
+  },
+  {
+    "path": "public\\assets\\props\\basketball.png",
+    "sha256": "4973E8A5C6B175BCA2D0B0CA5C2EAFA6131EF527EFD9E76672C63DA3142F8ECF"
+  },
+  {
+    "path": "public\\assets\\props\\board-top-before.png",
+    "sha256": "961FB73677ECE285EA0BCA05836AAE0E75B292116118E5AF998A2D356D0761FA"
+  },
+  {
+    "path": "public\\assets\\props\\board-top.png",
+    "sha256": "C5155FAB097CF74361AA11E69C3E940D0ECA7A8F02319BFE26A0FC2C994E063C"
+  },
+  {
+    "path": "public\\assets\\props\\cornhole.png",
+    "sha256": "3C586C65F2F26698B9619BCB082EEADAF19F630B9CD614FDC7AC2E6E5D661801"
+  },
+  {
+    "path": "public\\assets\\props\\football.png",
+    "sha256": "FA89B0EADC5E99E6A906BD2DD54FCE3322F42B58349B01D31BCC3604D4A4DC37"
+  },
+  {
+    "path": "public\\assets\\props\\paper-board.webp",
+    "sha256": "0C0F3172565FC8FF20DCF332E739F43C91F771631E45B7922B24F60E84A402B7"
+  },
+  {
+    "path": "public\\assets\\props\\pong.png",
+    "sha256": "12B54527A04F458BE1777BC59AB58656295BBE580BCDB37642A71E3BA2CF2E3E"
+  },
+  {
+    "path": "review\\actors.html",
+    "sha256": "85494B2953A39BBB57D67423EE8F05B722CBBC421F46BAD196159ADB6DE91935"
+  },
+  {
+    "path": "review\\actors.ts",
+    "sha256": "C526D378DC2B8FD42A152159379AB67007635B63000EA34FB0E2DC67733AF539"
+  },
+  {
+    "path": "review\\engine.html",
+    "sha256": "081BEC5938109E24FC54B7C5FF6BA77C8D3F26169C7DB1EEE7A825F50CC37F21"
+  },
+  {
+    "path": "review\\engine.ts",
+    "sha256": "54BC30F2501E571E60A29B876BE3E88CB7DAB7F40ED08A321BB3AB3ED9007C55"
+  },
+  {
+    "path": "review\\index.html",
+    "sha256": "C333EE620D5784BAE2AC1758E7B9926AF3DC6FCFF231048EC48817AE62E3D713"
+  },
+  {
+    "path": "review\\main.ts",
+    "sha256": "7871CD0E231BB53BF9F7362C2C875B0F9D767308F754CB5DDA38645E9E4CEF7A"
+  },
+  {
+    "path": "review\\playable.html",
+    "sha256": "2A0FB5E396AB94445EE584A84D438643CEC7FBB78886615890E9EDCD66EF0EC0"
+  },
+  {
+    "path": "review\\playable.ts",
+    "sha256": "565454E3F2D6AA1E95FFF34AD91827978EFB796E767E5C64E529390E211160FB"
+  },
+  {
+    "path": "review\\vite.config.ts",
+    "sha256": "47FFD622FA5E359C733D4FCC4A61A230A95E35CBA83F1F8D63BC8B806FD702E1"
+  },
+  {
+    "path": "scripts\\audit-character-continuity.mjs",
+    "sha256": "9489B0949470156D3AC73F18C6F34E414ADD909BC29F1E91C0DF9F2BB2088BAE"
+  },
+  {
+    "path": "scripts\\audit-cornhole-motion.mjs",
+    "sha256": "F55F266C5D47B4A3F4294D330B869642514A4A47392DBF1EACA4B177B47B1638"
+  },
+  {
+    "path": "scripts\\audit-dan-editor-export.mjs",
+    "sha256": "B2BA74925E786E19A6EA55661307D1F65CC628BA7EA0904542415C19D552078D"
+  },
+  {
+    "path": "scripts\\audit-reference-throw.mjs",
+    "sha256": "2592068547ED95778B85BE2248D50D882C58499F0FDDA88A45ED86215054E540"
+  },
+  {
+    "path": "scripts\\browser-tests.mjs",
+    "sha256": "D748F6E62F03B2B0E70DFE7F5B1D93E1F251345BF21175EE1FDD574665C6B137"
+  },
+  {
+    "path": "scripts\\build-cornhole-motion.mjs",
+    "sha256": "D8FBBBBCD9B2A972815B181386AF9D770D2593535BBF6581185B93A0F4F3D89F"
+  },
+  {
+    "path": "scripts\\build-cornhole-side.mjs",
+    "sha256": "65FAB8801794CAFBD86241C9EC8512C37F203E649F9DB748C0B23BB428737751"
+  },
+  {
+    "path": "scripts\\build-dan-rig.mjs",
+    "sha256": "C25ACB7E3FDB603C5930E8E6CF0296CA52D64AD95495D1A17FE2A9F75574B366"
+  },
+  {
+    "path": "scripts\\build-doug-rig.mjs",
+    "sha256": "A565BFE349C13D3B321D3FC30C3FC530C0419B17B63AFCFC3F37E0880B0B5D59"
+  },
+  {
+    "path": "scripts\\build.mjs",
+    "sha256": "2861B234CC84E4883C27A42FFA146A2728F4D5525AA9EF7509781F0806FBB684"
+  },
+  {
+    "path": "scripts\\capture-biomechanics.mjs",
+    "sha256": "DBF3CB5D56B16728035B90DD90FEF13AFF147AE3C84F2859C85968C8F6C58BEC"
+  },
+  {
+    "path": "scripts\\capture-cornhole-motion.mjs",
+    "sha256": "A3F883EE8F484596AD61CB52F8EAB50D2BC514F99D1378AA5B1EA1130BD700EA"
+  },
+  {
+    "path": "scripts\\capture-dan-rig.mjs",
+    "sha256": "9E1138235791BA594E5B0A78E2BA0460377A8E1D8FEA922CA747D8412B331CE7"
+  },
+  {
+    "path": "scripts\\capture-doug-rig.mjs",
+    "sha256": "289FE5FCA16D74FD2901337F4CC507D6142E4E704DF5C32A082C7A0EE7381E57"
+  },
+  {
+    "path": "scripts\\capture-human-motion.mjs",
+    "sha256": "C2B17F90813F1DFECFAFDA16C76F218CBF3609289E1B130F075EBAF3B9908032"
+  },
+  {
+    "path": "scripts\\capture-loongbones-proof.mjs",
+    "sha256": "6AF2AA2A8CAFA640881DA639A8CD0A8427FAC507E0D82FB59662869827C52539"
+  },
+  {
+    "path": "scripts\\capture-motion-v31.mjs",
+    "sha256": "C0463F2D7210F5BCA66C652F8CE47E3E53A18D668630883BB351D3854EFE7DDF"
+  },
+  {
+    "path": "scripts\\capture-sport-mechanics.mjs",
+    "sha256": "B834CDE30688731F89D9E2B172F63C1959D97039564F6C8CA66D259B641BA1B7"
+  },
+  {
+    "path": "scripts\\compare-dan-roundtrip.mjs",
+    "sha256": "9963CB2B3B3CFBD917BAE76E55A44D9A911FA230CBF833FBD423A875A00C107C"
+  },
+  {
+    "path": "scripts\\decode-motion.mjs",
+    "sha256": "B3A0F4BB77D17E1E621B8A7887C152ADE90505DECC8C89195C7725AFBC2B53E8"
+  },
+  {
+    "path": "scripts\\inspect-cornhole-side.mjs",
+    "sha256": "B977A727DEF61FD3169355C4B8E45A8A44641E73E24B68273CA68D747D0039F6"
+  },
+  {
+    "path": "scripts\\inspect-human-motion.mjs",
+    "sha256": "9A4DD58A780FCC18AE1823D4945049CAC60BEDB7B6FF97B64854C50F1E7D0C04"
+  },
+  {
+    "path": "scripts\\inspect-motion-frame.mjs",
+    "sha256": "48E1130F13BC2C99AF001D7433E16C2E00E2A3ECCD79ED88766DEA030FD6089E"
+  },
+  {
+    "path": "scripts\\inspect-skin.mjs",
+    "sha256": "A79FA62CCFC5E73CBA8A88C54F0E7D60C973786D78946221459E554EB0614021"
+  },
+  {
+    "path": "scripts\\package-cornhole-motion.ps1",
+    "sha256": "1DBC84F27A3BD8AC0772963D63E2C5B83CA008FCC1484D6F6A811D3934295F38"
+  },
+  {
+    "path": "scripts\\package-cornhole-side.ps1",
+    "sha256": "1D6A6839870B00ED40F7848875E209A8213E180E2A1DA9FD14C04B1365FAB0B8"
+  },
+  {
+    "path": "scripts\\package-dan-rig.ps1",
+    "sha256": "5B058FD7559065105A14F1339BE9BB782AD460160672A0FF26C7B96C46895D01"
+  },
+  {
+    "path": "scripts\\package-doug-rig.ps1",
+    "sha256": "66872CCC5B2F74722BE6ECCB5FF2C20EEE2F0F7F11EC0F173F7C88DE933FA91F"
+  },
+  {
+    "path": "scripts\\package-organic-review.mjs",
+    "sha256": "E19020637982173B736D1EECF65D0B5C132AAE0BD84153409F46C88D8578F6ED"
+  },
+  {
+    "path": "scripts\\performance-human-motion.mjs",
+    "sha256": "B4D3740AA7B480DBC0FF4D95193088914791A1F61D592C931BBBB2085964AA16"
+  },
+  {
+    "path": "scripts\\prepare-loongbones-proof.mjs",
+    "sha256": "016CF95C03B264CF0D18504B92F055DBD3DE9647CBAFE1AFFFFE1DFCB5B27493"
+  },
+  {
+    "path": "scripts\\probe-contact-motion.mjs",
+    "sha256": "663E966C0AB7AFF037BBE73B8C9800AE03F71B5118EA7DEDFEEEF20A5799B5C1"
+  },
+  {
+    "path": "scripts\\probe-human-motion.mjs",
+    "sha256": "E2458D386C8AE71FC9657A31959F4DF9447B58AB04E72A902C0841DDA9B64F2B"
+  },
+  {
+    "path": "scripts\\probe-organic-stop.mjs",
+    "sha256": "08FD7D7D1E2D61D00BBE862E9906048B6F963110E4EBBBAD3E272974FA40D983"
+  },
+  {
+    "path": "scripts\\probe-running-motion.mjs",
+    "sha256": "BF267AB05DCC3A948A1A0AE1421A5A848579B313AB84821EA269EA6A84880C54"
+  },
+  {
+    "path": "scripts\\probe-v3-drift.mjs",
+    "sha256": "2549475DE4CD212FA1CFCA072B1EE622B9F94BAEA63D4885168A2E84A234287D"
+  },
+  {
+    "path": "scripts\\probe-v3-motion.mjs",
+    "sha256": "8F0DBCF43D23E37F7DF1FD42D52DA71B3E28D084492E2E9AF492759A29F36D7F"
+  },
+  {
+    "path": "scripts\\production-smoke.mjs",
+    "sha256": "3363C816E05D249E9E979F15E322B6B9DBE1E86912D632DA71B978884B213D31"
+  },
+  {
+    "path": "scripts\\qa-server.mjs",
+    "sha256": "B7E93387FDB4A50507078B8E0AC801E28ED6A3A0368271623302698635EC6933"
+  },
+  {
+    "path": "scripts\\regression.mjs",
+    "sha256": "7B0B52E2BA4AFDABD8494EE725552B8843860D59C23D7F8006618AD93C56B9E0"
+  },
+  {
+    "path": "scripts\\review-human-motion.mjs",
+    "sha256": "27C83A66EA4E39242948184B820AA79E8025378C10E001B00C70A49DD40EFCE5"
+  },
+  {
+    "path": "scripts\\review-organic-motion.mjs",
+    "sha256": "214F20A9E12EA9804E9E8E058074F906A501BA2FD8291B7450AD91EE42CC159F"
+  },
+  {
+    "path": "scripts\\review-performance.mjs",
+    "sha256": "79825DCBC1C2C1FA17AE0F8532418FDE9E33E46E8097B707727BBFFC4B93F0FB"
+  },
+  {
+    "path": "scripts\\review-reference-throw.mjs",
+    "sha256": "8140A88D8B7A5D24BE7845406F195A0A6E427F99D4C26397A8AD66D1DF218D9D"
+  },
+  {
+    "path": "scripts\\serve.mjs",
+    "sha256": "DF98C021F6387912D8E7F5E56C51BB41E14B7014087323E2116A69EE4FD6D4C0"
+  },
+  {
+    "path": "scripts\\motion-reference\\compare_throw.py",
+    "sha256": "5826CBA699CE6ED4A90A08D59CD04BEDC927E85BBF7196C7B3E87CDE88317B67"
+  },
+  {
+    "path": "scripts\\motion-reference\\compare.py",
+    "sha256": "0C70A8F97752E29503486F7003A2198F21708D3A2C64FB344F641236D84966EC"
+  },
+  {
+    "path": "scripts\\motion-reference\\compile_cornhole.py",
+    "sha256": "1CAC008004F02286A196EDA4EC0FD5C947A7D48DFA18677E338CCAE11B37EB4C"
+  },
+  {
+    "path": "scripts\\motion-reference\\compile_running.py",
+    "sha256": "90631650A35D061106C28E5D7EF142853EDCA3BE0C6CAF24B96CE845E3FBCCFB"
+  },
+  {
+    "path": "scripts\\motion-reference\\extract.py",
+    "sha256": "C0CA941DC1B05F258A9494D85CC7D8B39E6AF5544CD9D041288DB1C8242D4A3C"
+  },
+  {
+    "path": "scripts\\motion-reference\\package_personality_review.py",
+    "sha256": "1DB556C63463CEEE3500373FCBAD77463DF76E74BA1104112196AA4712481277"
+  },
+  {
+    "path": "scripts\\motion-reference\\package_throw_review.py",
+    "sha256": "2F5C8CB23E6339C96335E9291AEC3B2F27A77C32649C3041AC1411EB021AF8AB"
+  },
+  {
+    "path": "scripts\\motion-reference\\package_v3_review.py",
+    "sha256": "BE7C3364395F853BCB6FD03137D9D16196798BD0A919F7F26E90D4C687E4B156"
+  },
+  {
+    "path": "scripts\\motion-reference\\prepare-v31.py",
+    "sha256": "F57C2F6FE1E3B510D538691FD0BE12DA4B7AD406199DCB2EEEE0FFFC04CAF8C9"
+  },
+  {
+    "path": "scripts\\motion-reference\\report_personality_review.py",
+    "sha256": "E8D7AB40D87A9B7FD1C72AAE0AED75EFC669E21DD212DA075E51B153AA920030"
+  },
+  {
+    "path": "scripts\\motion-reference\\review_capture.py",
+    "sha256": "744B73C21CB227E4EC41BD1B841AF2B28F43CBCDF13BC76A812CC629D3420DCF"
+  },
+  {
+    "path": "scripts\\motion-reference\\review_videos.py",
+    "sha256": "F097C88F10DF3CD68F1018C0CD646A1488441428C243D64F0CC9AB5F58E63D1E"
+  },
+  {
+    "path": "scripts\\motion-reference\\review-video.py",
+    "sha256": "22BD2EC6460A3FEF2E67AA3462BDC18BC075A9A3A2D757B3EE4A6698E96494AE"
+  },
+  {
+    "path": "scripts\\motion-reference\\__pycache__\\compare.cpython-312.pyc",
+    "sha256": "6835AF87DEE88DE3513D6249E2FBBA4D2E38465177C83A0DE76390C914F764B4"
+  },
+  {
+    "path": "scripts\\motion-reference\\__pycache__\\review_videos.cpython-312.pyc",
+    "sha256": "D672C9616EA49F1C84D824AB03A9B29DABF4DF14607A6057C4320A477543FD63"
+  },
+  {
+    "path": "tests\\anatomy-tests.mjs",
+    "sha256": "810632D567AB7532725F135DD90D25D55AFD04B40C6B9C539C9DFF1782F685E0"
+  },
+  {
+    "path": "tests\\animation-tests.mjs",
+    "sha256": "C5DF4A13A196D252C8E0F88C7939D9FEFCE3462AB0A5B0924A64CD3A6DE68B16"
+  },
+  {
+    "path": "tests\\engine-tests.mjs",
+    "sha256": "429B87E6502D4A0406EE82B2E8AE8ECD9226408792F0A2ACBC65397BAA820DB2"
+  },
+  {
+    "path": "tests\\human-motion-tests.mjs",
+    "sha256": "469DD3B9C91E0F01E9DCB897BBE5502A28925379F2195D5081EE07320D91C2BD"
+  },
+  {
+    "path": "tests\\live-tests.mjs",
+    "sha256": "9491B47FB5F761E9679BF18881955E5E239148F29A5958EEDF825E80265FCD5B"
+  },
+  {
+    "path": "tests\\motion-v3-tests.mjs",
+    "sha256": "2DFDE017400BE01EB522210C09ABF82BBBEF78DFFB04A4058C7278326EB95F51"
+  },
+  {
+    "path": "tests\\motion-v31-tests.mjs",
+    "sha256": "A0EEE8714FA4F4D6F9CB1CBB1DA9AF94D30EE8A98C6E8695912A1E91AF8A818D"
+  },
+  {
+    "path": "tests\\observability-tests.mjs",
+    "sha256": "21D540D39E10055D7D266F598BB82A68D51DC99A949271032C78E5140136EF46"
+  },
+  {
+    "path": "tests\\organic-motion-tests.mjs",
+    "sha256": "AFCBDCDE22EDBD9F7D040C27BD2A24CC440B2FD62B3A32D6ABAE06CE2AAB0C4C"
+  },
+  {
+    "path": "tests\\performance-timeline-tests.mjs",
+    "sha256": "DF6CFAB58776E0FA43E66DAA807F91A62ACB238BEA5166B35917FCDF692327EB"
+  },
+  {
+    "path": "tests\\personality-tests.mjs",
+    "sha256": "9BE08E7530780901F6BC1681F98E1C5A4042E5132D8D6AEA11EA608DA5071053"
+  },
+  {
+    "path": "tests\\puppet-tests.mjs",
+    "sha256": "E1F8F750D2D16CEC620BB425D3CEB20EAF9F177AEF2F9798692D521BC67C07CD"
+  },
+  {
+    "path": "tests\\reference-throw-tests.mjs",
+    "sha256": "8B5BE92F6BA053C9171564F540231B2466D16450C4B3C3CB96EE33FEAFB3824F"
+  },
+  {
+    "path": "tests\\run-tests.mjs",
+    "sha256": "0A9CE248437F159BA48D43E1B92FCB2C8DF82B9E5FB1983F08E7C0F3034645CE"
+  },
+  {
+    "path": "tests\\sport-mechanics-tests.mjs",
+    "sha256": "C27A2E39E1240203FDC9EB2D9FF36C7031BD560864E84B3BCDEBB96AE74508B4"
+  },
+  {
+    "path": "tests\\browser\\animation-polish.spec.ts",
+    "sha256": "EFAF53647ADEBFD923E622D6FF3E6732B5A4048B82EA86EA4CB9FC854B18B00B"
+  },
+  {
+    "path": "tests\\browser\\api.spec.ts",
+    "sha256": "8EAA2AF5AF64ACFAD89737A802CB7C962DB2714BAAB2985A1807C6B8EFBB48EB"
+  },
+  {
+    "path": "tests\\browser\\biomechanics.spec.ts",
+    "sha256": "7F7BCFCC40CBB282B011820AADE4D6BE4F4B8C1946F969962449442406C431D0"
+  },
+  {
+    "path": "tests\\browser\\cornhole-motion.spec.ts",
+    "sha256": "F7F678BE254AA8870928CF5AAECEA59FC8CACD6550034947D791EA6014E066C1"
+  },
+  {
+    "path": "tests\\browser\\cornhole-side.spec.ts",
+    "sha256": "46FF0E68B3743EE39F21038507C7EF148C741679747407D89B9E1FC2D2A4DA04"
+  },
+  {
+    "path": "tests\\browser\\dan-main-lab.spec.ts",
+    "sha256": "37CA5AC79B870CB7044903A9C620D56864706D08D3A830625263605E7A366ADB"
+  },
+  {
+    "path": "tests\\browser\\dan-roundtrip.spec.ts",
+    "sha256": "DEC7FEA7CBD3B9FF209CDD1B7B0D8B4FE7870B9D34ED50601D1413F7EEB40DC0"
+  },
+  {
+    "path": "tests\\browser\\dan-weighted.spec.ts",
+    "sha256": "7DDE0DDDEDFD82D7B79AEA72C9F77965C0122E65B544122413E64D7FC0456ABA"
+  },
+  {
+    "path": "tests\\browser\\doug-weighted.spec.ts",
+    "sha256": "14963E39E1CC57A067550067FA56F58329B40D8F57266AFF33B473D198D35696"
+  },
+  {
+    "path": "tests\\browser\\editor-export.spec.ts",
+    "sha256": "DC36702ABBC8B7486EDDDA2EDF1DDD2ED8AD0D9FD1CBDA301573E0EEB4440279"
+  },
+  {
+    "path": "tests\\browser\\helpers.ts",
+    "sha256": "8094ADA2C97232B637A8E8D45687C6640C926CEEE3CC5CDCBB06BCC34ED919C6"
+  },
+  {
+    "path": "tests\\browser\\human-motion.spec.ts",
+    "sha256": "322AAA96ACF732EA63000BBF75ABED5C1BD8568055643705A145F5B200EB9195"
+  },
+  {
+    "path": "tests\\browser\\input.spec.ts",
+    "sha256": "46E376406FB983DA7CADFD9FDA7D9D2BEFA26849D0F47D3B42318A3E29E5D84E"
+  },
+  {
+    "path": "tests\\browser\\loongbones.spec.ts",
+    "sha256": "FB7B588172AD836BE7A0D35132DF482AA8639CC9C4D28C14EE3617CD247EACA2"
+  },
+  {
+    "path": "tests\\browser\\material-contour.spec.ts",
+    "sha256": "9884EBD2C0BD9FA4EE536CC4097E88E27C38A753E82F1E1705973DDE90E6781A"
+  },
+  {
+    "path": "tests\\browser\\motion-v3.spec.ts",
+    "sha256": "F6BA5E2A44B6EC28ABAB701CBA946C8872E4D85B3BBABD9CC17FEA53AD01F448"
+  },
+  {
+    "path": "tests\\browser\\motion-v31.spec.ts",
+    "sha256": "13A54826CD03A7EC755F7BF12CF2845A2F91673E8674946F398CE42A327FFDD1"
+  },
+  {
+    "path": "tests\\browser\\organic-motion.spec.ts",
+    "sha256": "C437FF7FCA543815279C641EE62F26725338ABC5E29C2C2C09149E3C06A96A46"
+  },
+  {
+    "path": "tests\\browser\\performance-personality.spec.ts",
+    "sha256": "89B1E0CB8857D43DBC8C010EB4EBD1D7ABACC43FF17B7D127B783A2224BB5B26"
+  },
+  {
+    "path": "tests\\browser\\README.md",
+    "sha256": "4F77DF4714D1BF9BCE11B6CD21C13061CFB5683925F9CBE59B3C8C7CBDF8FDDD"
+  },
+  {
+    "path": "tests\\browser\\reference-throw.spec.ts",
+    "sha256": "2AC8A5057B263409D50CF57DE5C18EEEE1D35D0E057D23D9C2322CCBBE6EBD1B"
+  },
+  {
+    "path": "tests\\browser\\rig-qa.spec.ts",
+    "sha256": "90F9F0779051DE41B30909486FF91FAA95C6E8ED3A28023CBCFADED5DFDB03EC"
+  },
+  {
+    "path": "tests\\browser\\scenarios.spec.ts",
+    "sha256": "0BB3B5BE9422A9CFFC19D7E294B2C4F2157CA8AE7E2238FB89D8A62FBCAC1A5D"
+  },
+  {
+    "path": "tests\\browser\\shirt-back.spec.ts",
+    "sha256": "A80899B8B74FDF0F6F01FCCEFBAE92B555A5539F9578BC0D67C77EDF0881955D"
+  },
+  {
+    "path": "tests\\browser\\sleeve-contact.spec.ts",
+    "sha256": "C628359509F48568A6C27C1A3805AD59F246703032627E6D848D1E21EC2E5C6D"
+  },
+  {
+    "path": "tests\\browser\\source-fit.spec.ts",
+    "sha256": "64010F51A215C6E3202E34529DE17293ED3D0A0A6DE5C2C675A9D3EC459B0E7E"
+  },
+  {
+    "path": "tests\\browser\\sport-mechanics.spec.ts",
+    "sha256": "810341572BC1ED46E1DA2649ABBECE1EE86F152E11096E65186EC26B5E6CA563"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\basketball-recorded-flight.png",
+    "sha256": "8CE2FC2949403EA828C2CBD2B2CB102B88A7B8D07E097C3CAE2B25AD0CEC6D20"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\beer-pong-recorded-result.png",
+    "sha256": "CA26E3D0815D478638E5C64DF38CEF4EDFC6C457C168E232186CA2851795CF46"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\character-dan-gesture.png",
+    "sha256": "E123E2585532EE2F5E58AED3D08CB5139F83655115B2C8C8459CE51CFC13153B"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\character-doug-gesture.png",
+    "sha256": "973942C712DF2910ADD439016A56D258FD50E41917C9B8BDD31789681AE4803B"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\cornhole-recorded-release.png",
+    "sha256": "87BF1A83130AFD905A037F28786865DFCE52BAF45B18823B7D6E4A28A2DCDC38"
+  },
+  {
+    "path": "tests\\browser\\baselines\\desktop-chromium\\scenarios.spec.ts\\football-recorded-landing.png",
+    "sha256": "9325833231B894993136E3CFC7510E6B4B7E4F975AC7A9CBC44955FB93484C58"
+  },
+  {
+    "path": "tests\\fixtures\\paper-arcade-2.0.1.json",
+    "sha256": "14E1902E7CB6230BE8C77C7F87B71C52116B2EBA4644EB1FF5244FACACE7B8A3"
+  },
+  {
+    "path": "tests\\fixtures\\score-stats-2.0.1.json",
+    "sha256": "97937D9FBBA2B25C343C80D713A16E42C69AEAA2CDB289957D1C8621607F3021"
+  }
+]

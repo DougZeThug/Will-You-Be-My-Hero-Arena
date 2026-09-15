@@ -1,0 +1,524 @@
+{
+  "capturedAt": "2026-09-12T20:06:37.2261772Z",
+  "scenario": "cornhole-recorded",
+  "seed": "arena-lab:cornhole-recorded:v1",
+  "mode": "internal recorded Lab; production rigs unchanged",
+  "currentAssets": {
+    "dan": {
+      "source": "lab/loongbones/assets/dan-editor-r2/dan-arena-restored_ske.json",
+      "sourceSHA256": "49a52acf424412ba6a10bf1429982d7d2782687f1a8683fc438db87db2bac489",
+      "assetsSha256": {
+        "dan_ske.json": "de7e65d87b3738f8c3430aef27f6cf53a0e178033b7f1a55354d3b5f22a3500b",
+        "dan_tex.json": "b6f8527ed6f17e6499ca0025695c66ce08da10f5f7f58340b6ae26753ca81f06",
+        "dan_tex.png": "2940cbc720af00265fe0240164f3115579f23a72688cff1022ee0c04c513a745"
+      },
+      "motionRevision": 2,
+      "clips": {
+        "cornhole_throw_flat_R_dan": {
+          "duration": 2.216666666666667,
+          "release": 1.0166666666666666
+        },
+        "cornhole_throw_slide_R_dan": {
+          "duration": 2.216666666666667,
+          "release": 1.0166666666666666
+        },
+        "cornhole_throw_airmail_R_dan": {
+          "duration": 2.3333333333333335,
+          "release": 1.1333333333333333
+        },
+        "cornhole_throw_roll_R_dan": {
+          "duration": 2.216666666666667,
+          "release": 1.0166666666666666
+        },
+        "cornhole_throw_blocker_R_dan": {
+          "duration": 2.2666666666666666,
+          "release": 1.0666666666666667
+        }
+      },
+      "derivedMotion": true,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false,
+      "changes": [
+        "Anatomical right hand is image L; socket association corrected without mirroring art",
+        "Five sparse curved full-body throw tracks with bagRelease inside accelerating swing",
+        "Material-aware near-arm overlap; local clothing/hand weight boundaries and fabric underlap; original PNG bytes retained"
+      ]
+    },
+    "doug": {
+      "source": "lab/loongbones/assets/doug-weighted-v1/doug_ske.json",
+      "sourceSHA256": "04fa653c83f3de4addd626b4c027ec28120a47ba68ea1423c099708349a6cf39",
+      "assetsSha256": {
+        "doug_ske.json": "8b4cc9907bb41b7ee46a1efdeb1d7f20b2011c8082452e318a83ddfa4cf947f1",
+        "doug_tex.json": "482fbd613363e2c022fdbc54cd44b35a082efa4e347c19f0a42fa04d18acd93f",
+        "doug_tex.png": "725048791432765dd85c413a71bf30dd6afdaaaf1f85d991484e273fd436b471"
+      },
+      "motionRevision": 2,
+      "clips": {
+        "cornhole_throw_flat_R_doug": {
+          "duration": 1.9833333333333334,
+          "release": 0.9166666666666666
+        },
+        "cornhole_throw_slide_R_doug": {
+          "duration": 1.9833333333333334,
+          "release": 0.9166666666666666
+        },
+        "cornhole_throw_airmail_R_doug": {
+          "duration": 2.1,
+          "release": 1.0333333333333334
+        },
+        "cornhole_throw_roll_R_doug": {
+          "duration": 1.9833333333333334,
+          "release": 0.9166666666666666
+        },
+        "cornhole_throw_blocker_R_doug": {
+          "duration": 2.033333333333333,
+          "release": 0.9666666666666667
+        }
+      },
+      "derivedMotion": true,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false,
+      "changes": [
+        "Anatomical right hand is image L; socket association corrected without mirroring art",
+        "Five sparse curved full-body throw tracks with bagRelease inside accelerating swing",
+        "Material-aware near-arm overlap; local clothing/hand weight boundaries and fabric underlap; original PNG bytes retained"
+      ]
+    }
+  },
+  "aggregateRegression": {
+    "started": "2026-09-12T19:45:45.477Z",
+    "completed": "2026-09-12T19:51:51.084Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 4.988
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 27.491
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 298.112
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 18.095
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 16.916
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "postSkinCorrection": {
+    "packs": "Both ZIPs verified against current manifest",
+    "typecheck": "passed",
+    "focusedBrowserTests": "8 passed"
+  },
+  "danVideo": {
+    "segments": [
+      {
+        "clip": "idle_breathe",
+        "start": 0.003,
+        "duration": 3.15,
+        "marker": null
+      },
+      {
+        "clip": "weight_shift",
+        "start": 3.1578999999761583,
+        "duration": 3.15,
+        "marker": null
+      },
+      {
+        "clip": "cornhole_throw_flat_R_dan",
+        "start": 6.314299999952317,
+        "duration": 2.3666666666666667,
+        "marker": 1.0166666666666666
+      },
+      {
+        "clip": "cornhole_throw_airmail_R_dan",
+        "start": 8.691799999952316,
+        "duration": 2.4833333333333334,
+        "marker": 1.1333333333333333
+      },
+      {
+        "clip": "quiet_nod",
+        "start": 11.180899999976159,
+        "duration": 1.65,
+        "marker": null
+      }
+    ],
+    "frames": [
+      {
+        "time": 1.5779999999999998,
+        "decodedTime": 1.611
+      },
+      {
+        "time": 4.7328999999761585,
+        "decodedTime": 4.731
+      },
+      {
+        "time": 7.090966666618983,
+        "decodedTime": 7.083
+      },
+      {
+        "time": 7.210966666618983,
+        "decodedTime": 7.234
+      },
+      {
+        "time": 7.330966666618983,
+        "decodedTime": 7.35
+      },
+      {
+        "time": 7.450966666618983,
+        "decodedTime": 7.466
+      },
+      {
+        "time": 7.630966666618983,
+        "decodedTime": 7.651
+      },
+      {
+        "time": 7.980966666618984,
+        "decodedTime": 8.001
+      },
+      {
+        "time": 9.585133333285649,
+        "decodedTime": 9.619
+      },
+      {
+        "time": 9.70513333328565,
+        "decodedTime": 9.702
+      },
+      {
+        "time": 9.825133333285649,
+        "decodedTime": 9.819
+      },
+      {
+        "time": 9.945133333285648,
+        "decodedTime": 9.988
+      },
+      {
+        "time": 10.12513333328565,
+        "decodedTime": 10.12
+      },
+      {
+        "time": 10.47513333328565,
+        "decodedTime": 10.47
+      },
+      {
+        "time": 12.005899999976158,
+        "decodedTime": 12.006
+      }
+    ],
+    "errors": []
+  },
+  "dougVideo": {
+    "segments": [
+      {
+        "clip": "idle_breathe",
+        "start": 0.0345,
+        "duration": 3.15,
+        "marker": null
+      },
+      {
+        "clip": "weight_shift",
+        "start": 3.195800000011921,
+        "duration": 2.9499999999999997,
+        "marker": null
+      },
+      {
+        "clip": "cornhole_throw_flat_R_doug",
+        "start": 6.1525,
+        "duration": 2.1333333333333333,
+        "marker": 0.9166666666666666
+      },
+      {
+        "clip": "cornhole_throw_airmail_R_doug",
+        "start": 8.30069999998808,
+        "duration": 2.25,
+        "marker": 1.0333333333333334
+      },
+      {
+        "clip": "celebrate_open_hand",
+        "start": 10.567100000023842,
+        "duration": 2.25,
+        "marker": null
+      }
+    ],
+    "frames": [
+      {
+        "time": 1.6095,
+        "decodedTime": 1.629
+      },
+      {
+        "time": 4.670800000011921,
+        "decodedTime": 4.696
+      },
+      {
+        "time": 6.829166666666667,
+        "decodedTime": 6.835
+      },
+      {
+        "time": 6.949166666666667,
+        "decodedTime": 6.949
+      },
+      {
+        "time": 7.069166666666667,
+        "decodedTime": 7.099
+      },
+      {
+        "time": 7.189166666666667,
+        "decodedTime": 7.216
+      },
+      {
+        "time": 7.369166666666667,
+        "decodedTime": 7.399
+      },
+      {
+        "time": 7.719166666666667,
+        "decodedTime": 7.718
+      },
+      {
+        "time": 9.094033333321413,
+        "decodedTime": 9.087
+      },
+      {
+        "time": 9.214033333321414,
+        "decodedTime": 9.238
+      },
+      {
+        "time": 9.334033333321413,
+        "decodedTime": 9.351
+      },
+      {
+        "time": 9.454033333321412,
+        "decodedTime": 9.468
+      },
+      {
+        "time": 9.634033333321414,
+        "decodedTime": 9.657
+      },
+      {
+        "time": 9.984033333321413,
+        "decodedTime": 10.019
+      },
+      {
+        "time": 11.692100000023842,
+        "decodedTime": 11.686
+      }
+    ],
+    "errors": []
+  },
+  "inspection": "Selected decoded video frames plus exact-clock release/follow-through images; not every video frame manually inspected",
+  "pending": [
+    "New LoongBones editor round-trip verification",
+    "Alternate palm/finger views and complete hidden artwork",
+    "Production installation"
+  ],
+  "mainMatchVideo": {
+    "finalRecordedTime": 9.472133333369092,
+    "errors": [],
+    "maxDecodeDiscrepancySeconds": 0.039,
+    "currentRigMetadata": [
+      {
+        "sample": "motion-v2",
+        "skeletonSHA256": "de7e65d87b3738f8c3430aef27f6cf53a0e178033b7f1a55354d3b5f22a3500b",
+        "textureSHA256": "2940cbc720af00265fe0240164f3115579f23a72688cff1022ee0c04c513a745",
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "derivedMotion": true,
+        "motionRevision": 2,
+        "sourceSkeleton": "lab/loongbones/assets/dan-editor-r2/dan-arena-restored_ske.json",
+        "sourceSkeletonSHA256": "49a52acf424412ba6a10bf1429982d7d2782687f1a8683fc438db87db2bac489",
+        "handedness": "right",
+        "imageSide": "L",
+        "armature": "dan_weighted_v1",
+        "assetIdentityVerified": true,
+        "skeleton": "/loongbones/assets/cornhole-motion-v2/dan_ske.json",
+        "requestedClip": "throw_blocker",
+        "resolvedClip": "cornhole_throw_blocker_R_dan",
+        "clipTime": 0.3588000000357585,
+        "authoredClips": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "quiet_nod",
+          "weight_shift",
+          "cornhole_throw_flat_R_dan",
+          "cornhole_throw_slide_R_dan",
+          "cornhole_throw_airmail_R_dan",
+          "cornhole_throw_roll_R_dan",
+          "cornhole_throw_blocker_R_dan"
+        ],
+        "releaseMarker": 1.0666666666666667,
+        "releaseBone": "throwing_hand",
+        "releaseParent": "hand_L",
+        "limitation": "Derived right-handed cornhole motion; original art retained. Fixed single-view fingers/palm, hidden art and full locomotion remain limits. New motion is not yet editor round-trip verified; production app and live play retain their existing rigs.",
+        "bones": 30,
+        "meshes": 1,
+        "vertices": 8535,
+        "triangles": 14488,
+        "feet": {
+          "heel_L": {
+            "x": -29.289501727568837,
+            "y": -0.585798633817809
+          },
+          "toe_L": {
+            "x": -13.668436758846427,
+            "y": -0.5857753691519423
+          },
+          "heel_R": {
+            "x": 12.106307587525203,
+            "y": -13.863689237206314
+          },
+          "toe_R": {
+            "x": 60.922091904384615,
+            "y": -9.763119602715186
+          }
+        }
+      },
+      {
+        "sample": "motion-v2",
+        "skeletonSHA256": "8b4cc9907bb41b7ee46a1efdeb1d7f20b2011c8082452e318a83ddfa4cf947f1",
+        "textureSHA256": "725048791432765dd85c413a71bf30dd6afdaaaf1f85d991484e273fd436b471",
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "derivedMotion": true,
+        "motionRevision": 2,
+        "sourceSkeleton": "lab/loongbones/assets/doug-weighted-v1/doug_ske.json",
+        "sourceSkeletonSHA256": "04fa653c83f3de4addd626b4c027ec28120a47ba68ea1423c099708349a6cf39",
+        "handedness": "right",
+        "imageSide": "L",
+        "armature": "doug_weighted_v1",
+        "assetIdentityVerified": true,
+        "skeleton": "/loongbones/assets/cornhole-motion-v2/doug_ske.json",
+        "requestedClip": "idle_heelTap",
+        "resolvedClip": "idle_breathe",
+        "clipTime": 0.47213333336909225,
+        "authoredClips": [
+          "neutral",
+          "idle_breathe",
+          "idle_scan",
+          "weight_shift",
+          "enter_lockin",
+          "bag_squeeze",
+          "celebrate_open_hand",
+          "inspect_hand",
+          "reset_nod",
+          "cornhole_throw_flat_R_doug",
+          "cornhole_throw_slide_R_doug",
+          "cornhole_throw_airmail_R_doug",
+          "cornhole_throw_roll_R_doug",
+          "cornhole_throw_blocker_R_doug"
+        ],
+        "releaseMarker": 0.9166666666666666,
+        "releaseBone": "throwing_hand",
+        "releaseParent": "hand_L",
+        "limitation": "Derived right-handed cornhole motion; original art retained. Fixed single-view fingers/palm, hidden art and full locomotion remain limits. New motion is not yet editor round-trip verified; production app and live play retain their existing rigs.",
+        "bones": 30,
+        "meshes": 1,
+        "vertices": 6640,
+        "triangles": 12052,
+        "feet": {
+          "heel_L": {
+            "x": -10.874137931034497,
+            "y": -24.306896551724137
+          },
+          "toe_L": {
+            "x": -57.568965517241395,
+            "y": -14.712068965517236
+          },
+          "heel_R": {
+            "x": 44.7758620689655,
+            "y": -9.594827586206891
+          },
+          "toe_R": {
+            "x": 71.6413793103448,
+            "y": -2.5586206896551587
+          }
+        }
+      }
+    ],
+    "frames": [
+      {
+        "time": 3.637,
+        "decodedTime": 3.671
+      },
+      {
+        "time": 3.737,
+        "decodedTime": 3.755
+      },
+      {
+        "time": 3.837,
+        "decodedTime": 3.855
+      },
+      {
+        "time": 3.937,
+        "decodedTime": 3.973
+      },
+      {
+        "time": 4.037,
+        "decodedTime": 4.056
+      },
+      {
+        "time": 4.237,
+        "decodedTime": 4.256
+      },
+      {
+        "time": 4.487,
+        "decodedTime": 4.508
+      },
+      {
+        "time": 5.087,
+        "decodedTime": 5.106
+      },
+      {
+        "time": 5.2,
+        "decodedTime": 5.239
+      },
+      {
+        "time": 6.6,
+        "decodedTime": 6.593
+      },
+      {
+        "time": 6.8,
+        "decodedTime": 6.827
+      },
+      {
+        "time": 7,
+        "decodedTime": 6.992
+      },
+      {
+        "time": 7.2,
+        "decodedTime": 7.208
+      },
+      {
+        "time": 7.4,
+        "decodedTime": 7.393
+      },
+      {
+        "time": 8.2,
+        "decodedTime": 8.193
+      }
+    ]
+  }
+}

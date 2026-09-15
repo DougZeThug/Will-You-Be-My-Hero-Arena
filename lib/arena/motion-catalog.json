@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "moves": {
+    "entrance": {
+      "grounded": "Planted arrival",
+      "pop": "Fist-first pop",
+      "ricochet": "Wobbly burst",
+      "glide": "Easy glide",
+      "stomp": "Heavy landing",
+      "slide": "Side slide",
+      "spiral": "Paper twist",
+      "spring": "Spring-loaded hop"
+    },
+    "idle": {
+      "breathe": "Quiet breathing",
+      "heel-tap": "Heel tap",
+      "shuffle": "Restless shuffle",
+      "sway": "Slow sway",
+      "scan": "Watchful lean",
+      "bob": "Rhythmic bob",
+      "rock": "Weight shift",
+      "lean": "Relaxed lean"
+    },
+    "throw": {
+      "measured": "Measured setup",
+      "snap": "Quick snap",
+      "offbeat": "Offbeat wind-up",
+      "silky": "Smooth release",
+      "drive": "Power drive",
+      "pendulum": "Pendulum rock",
+      "hesitate": "Hesitation beat",
+      "whip": "Whip release"
+    },
+    "celebration": {
+      "fist": "Quiet fist raise",
+      "flourish": "Showy flourish",
+      "jig": "Victory jig",
+      "smirk": "Knowing lean",
+      "salute": "Raised-arm salute",
+      "strut": "Victory strut",
+      "pop": "Excited pop",
+      "bow": "Crowd bow"
+    },
+    "frustration": {
+      "bow": "Head-down reset",
+      "stamp": "Annoyed stamp",
+      "wobble": "Disbelief wobble",
+      "shrug": "Small shrug",
+      "recoil": "Surprised recoil",
+      "pace": "Impatient shuffle",
+      "freeze": "Deadpan hold",
+      "slump": "Deflated slump"
+    }
+  },
+  "presets": {
+    "focused": {
+      "label": "The quiet operator",
+      "description": "A measured setup, a quiet fist raise, and a deliberate reset.",
+      "moves": {
+        "entrance": "grounded",
+        "idle": "breathe",
+        "throw": "measured",
+        "celebration": "fist",
+        "frustration": "bow"
+      }
+    },
+    "showboat": {
+      "label": "The lock-in showman",
+      "description": "A bold entrance, a quick release, and a celebration worth watching.",
+      "moves": {
+        "entrance": "pop",
+        "idle": "heel-tap",
+        "throw": "snap",
+        "celebration": "flourish",
+        "frustration": "stamp"
+      }
+    },
+    "goofball": {
+      "label": "The wildcard",
+      "description": "Restless feet, an offbeat wind-up, and no poker face.",
+      "moves": {
+        "entrance": "ricochet",
+        "idle": "shuffle",
+        "throw": "offbeat",
+        "celebration": "jig",
+        "frustration": "wobble"
+      }
+    },
+    "cool": {
+      "label": "The ice-cold closer",
+      "description": "An easy sway, an unhurried release, and a knowing lean after a make.",
+      "moves": {
+        "entrance": "glide",
+        "idle": "sway",
+        "throw": "silky",
+        "celebration": "smirk",
+        "frustration": "shrug"
+      }
+    },
+    "powerhouse": {
+      "label": "The powerhouse",
+      "description": "A weighty landing and forceful setup, followed by a proud salute.",
+      "moves": {
+        "entrance": "stomp",
+        "idle": "rock",
+        "throw": "drive",
+        "celebration": "salute",
+        "frustration": "recoil"
+      }
+    },
+    "sharpshooter": {
+      "label": "The sharpshooter",
+      "description": "Watchful stillness, a clean snap, and a tiny acknowledgment.",
+      "moves": {
+        "entrance": "grounded",
+        "idle": "scan",
+        "throw": "snap",
+        "celebration": "fist",
+        "frustration": "freeze"
+      }
+    },
+    "hothead": {
+      "label": "The hothead",
+      "description": "Fast feet, hard releases, and impatient pacing when it goes wrong.",
+      "moves": {
+        "entrance": "stomp",
+        "idle": "shuffle",
+        "throw": "whip",
+        "celebration": "pop",
+        "frustration": "pace"
+      }
+    },
+    "trickster": {
+      "label": "The trickster",
+      "description": "A twisting entrance, deceptive pause, and a cheeky bow.",
+      "moves": {
+        "entrance": "spiral",
+        "idle": "heel-tap",
+        "throw": "hesitate",
+        "celebration": "bow",
+        "frustration": "wobble"
+      }
+    },
+    "veteran": {
+      "label": "The old hand",
+      "description": "A grounded arrival, familiar rhythm, and a knowing reaction.",
+      "moves": {
+        "entrance": "grounded",
+        "idle": "lean",
+        "throw": "pendulum",
+        "celebration": "smirk",
+        "frustration": "shrug"
+      }
+    },
+    "rookie": {
+      "label": "The eager rookie",
+      "description": "An eager hop, nervous bob, and a surprised recoil after a miss.",
+      "moves": {
+        "entrance": "spring",
+        "idle": "bob",
+        "throw": "hesitate",
+        "celebration": "pop",
+        "frustration": "recoil"
+      }
+    },
+    "showman": {
+      "label": "The headliner",
+      "description": "A paper twist, an expansive release, and a salute to the crowd.",
+      "moves": {
+        "entrance": "spiral",
+        "idle": "sway",
+        "throw": "whip",
+        "celebration": "salute",
+        "frustration": "stamp"
+      }
+    },
+    "stoic": {
+      "label": "The stone face",
+      "description": "A planted stance, deliberate power, and almost no outward disappointment.",
+      "moves": {
+        "entrance": "grounded",
+        "idle": "breathe",
+        "throw": "drive",
+        "celebration": "fist",
+        "frustration": "freeze"
+      }
+    },
+    "hype": {
+      "label": "The hype machine",
+      "description": "A springing entrance and rhythmic energy from first throw to last.",
+      "moves": {
+        "entrance": "spring",
+        "idle": "bob",
+        "throw": "snap",
+        "celebration": "jig",
+        "frustration": "stamp"
+      }
+    },
+    "underdog": {
+      "label": "The scrappy underdog",
+      "description": "A side-step arrival, a rocking wind-up, and a hard-earned fist raise.",
+      "moves": {
+        "entrance": "slide",
+        "idle": "rock",
+        "throw": "pendulum",
+        "celebration": "fist",
+        "frustration": "slump"
+      }
+    },
+    "perfectionist": {
+      "label": "The perfectionist",
+      "description": "A watchful setup, exact timing, and a visibly deflated miss.",
+      "moves": {
+        "entrance": "grounded",
+        "idle": "scan",
+        "throw": "measured",
+        "celebration": "salute",
+        "frustration": "slump"
+      }
+    },
+    "swagger": {
+      "label": "The swagger king",
+      "description": "A sliding entrance, a loose stance, and a slow victory strut.",
+      "moves": {
+        "entrance": "slide",
+        "idle": "lean",
+        "throw": "silky",
+        "celebration": "strut",
+        "frustration": "shrug"
+      }
+    },
+    "party-starter": {
+      "label": "The party starter",
+      "description": "A big pop, shuffling feet, and a celebration with its own beat.",
+      "moves": {
+        "entrance": "pop",
+        "idle": "shuffle",
+        "throw": "offbeat",
+        "celebration": "jig",
+        "frustration": "pace"
+      }
+    },
+    "comeback": {
+      "label": "The comeback kid",
+      "description": "A springy arrival, a forceful release, and a grin-in-motion strut.",
+      "moves": {
+        "entrance": "spring",
+        "idle": "rock",
+        "throw": "drive",
+        "celebration": "strut",
+        "frustration": "bow"
+      }
+    },
+    "slow-burn": {
+      "label": "The slow burn",
+      "description": "A quiet glide and a long wind-up, then a sudden celebratory pop.",
+      "moves": {
+        "entrance": "glide",
+        "idle": "breathe",
+        "throw": "hesitate",
+        "celebration": "pop",
+        "frustration": "freeze"
+      }
+    },
+    "live-wire": {
+      "label": "The live wire",
+      "description": "A ricochet entrance, tapping feet, and a whip-fast release.",
+      "moves": {
+        "entrance": "ricochet",
+        "idle": "heel-tap",
+        "throw": "whip",
+        "celebration": "flourish",
+        "frustration": "recoil"
+      }
+    },
+    "zen": {
+      "label": "The zen master",
+      "description": "A gentle glide, pendulum rhythm, and a small gracious bow.",
+      "moves": {
+        "entrance": "glide",
+        "idle": "sway",
+        "throw": "pendulum",
+        "celebration": "bow",
+        "frustration": "bow"
+      }
+    },
+    "grinder": {
+      "label": "The relentless grinder",
+      "description": "A heavy arrival and measured rhythm, with an impatient miss reset.",
+      "moves": {
+        "entrance": "stomp",
+        "idle": "rock",
+        "throw": "measured",
+        "celebration": "fist",
+        "frustration": "pace"
+      }
+    },
+    "wildcard": {
+      "label": "The chaos merchant",
+      "description": "A twisting entry and offbeat body rhythm with an exaggerated finish.",
+      "moves": {
+        "entrance": "spiral",
+        "idle": "shuffle",
+        "throw": "offbeat",
+        "celebration": "flourish",
+        "frustration": "wobble"
+      }
+    },
+    "captain": {
+      "label": "The clubhouse captain",
+      "description": "A confident landing, watchful stance, and a salute after a make.",
+      "moves": {
+        "entrance": "pop",
+        "idle": "scan",
+        "throw": "drive",
+        "celebration": "salute",
+        "frustration": "shrug"
+      }
+    }
+  }
+}

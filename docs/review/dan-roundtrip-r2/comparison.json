@@ -1,0 +1,3001 @@
+{
+  "authored": {
+    "errors": [],
+    "states": [
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0,
+        "playing": false,
+        "clip": "neutral",
+        "clipTime": 0,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "neutral",
+            "time": 0,
+            "completed": false,
+            "playTimes": 0,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4999991655351,
+            "y": 427.6315815448761
+          },
+          "off_hand": {
+            "x": 839.6710533499717,
+            "y": 427.6315815448761
+          },
+          "heel_L": {
+            "x": 865.657895207405,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301223,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4999991655351,
+          "y": 427.6315815448761,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 3.9999999999999885,
+        "playing": false,
+        "clip": "idle_breathe",
+        "clipTime": 3.9999999999999885,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "idle_breathe",
+            "time": 0.9999999999999885,
+            "completed": false,
+            "playTimes": 0,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4534655809208,
+            "y": 426.62450243167524
+          },
+          "off_hand": {
+            "x": 840.4549508672725,
+            "y": 427.3990596513805
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4534655809208,
+          "y": 426.62450243167524,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.3999999999999975,
+        "playing": false,
+        "clip": "weight_shift",
+        "clipTime": 1.3999999999999975,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "weight_shift",
+            "time": 1.3999999999999975,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1001.1820548318078,
+            "y": 429.25089349301754
+          },
+          "off_hand": {
+            "x": 838.3531090162444,
+            "y": 429.2508934171945
+          },
+          "heel_L": {
+            "x": 865.657895207405,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301223,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476058,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685973,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1001.1820548318078,
+          "y": 429.25089349301754,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7999999999999996,
+        "playing": false,
+        "clip": "arm_check",
+        "clipTime": 0.7999999999999996,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "arm_check",
+            "time": 0.7999999999999996,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1096.8363295976487,
+            "y": 365.319622018988
+          },
+          "off_hand": {
+            "x": 839.6710533499717,
+            "y": 427.6315815448761
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1096.8363295976487,
+          "y": 365.319622018988,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.5199999999999999,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.5199999999999999,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.5199999999999999,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 996.1697027235347,
+            "y": 429.4458884961092
+          },
+          "off_hand": {
+            "x": 838.8489062195898,
+            "y": 427.22694994248184
+          },
+          "heel_L": {
+            "x": 865.6578952074052,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301225,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 996.1697027235347,
+          "y": 429.4458884961092,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7166666666666666,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.7166666666666666,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.7166666666666666,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1111.4248024360206,
+            "y": 351.3472154615214
+          },
+          "off_hand": {
+            "x": 841.6987890672499,
+            "y": 428.6049299942851
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 1111.4248024360206,
+          "y": 351.3472154615214,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.0499999999999987,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 1.0499999999999987,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 1.0499999999999987,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1117.978992059172,
+            "y": 347.10620861454106
+          },
+          "off_hand": {
+            "x": 842.4626641448034,
+            "y": 428.96262219372005
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          }
+        ],
+        "release": {
+          "x": 1111.4404759981169,
+          "y": 351.3393372230319,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1176.4404759981167,
+          "y": 298.93308722303203,
+          "visible": true,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 2.5999999999999934,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 2.5999999999999934,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 2.500001,
+            "completed": true,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4999991655351,
+            "y": 427.6315815448761
+          },
+          "off_hand": {
+            "x": 839.6710533499717,
+            "y": 427.6315815448761
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          },
+          {
+            "name": "recovery",
+            "clip": "throw_low",
+            "time": 1.6666666666666667,
+            "observedAt": 1.6749999999999965
+          },
+          {
+            "name": "animationComplete",
+            "clip": "throw_low",
+            "time": 2.5,
+            "observedAt": 2.508333333333327
+          }
+        ],
+        "release": {
+          "x": 1111.4404759981169,
+          "y": 351.3393372230319,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1486.4404759981155,
+          "y": 484.93308722302964,
+          "visible": false,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "authored",
+        "assetIdentityVerified": false,
+        "editorExportReceived": false,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.35,
+        "playing": false,
+        "clip": "quiet_nod",
+        "clipTime": 0.35,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "quiet_nod",
+            "time": 0.35,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4999991655351,
+            "y": 427.6315815448761
+          },
+          "off_hand": {
+            "x": 839.6710533499717,
+            "y": 427.6315815448761
+          },
+          "heel_L": {
+            "x": 865.6578952074051,
+            "y": 699.0131579041481
+          },
+          "toe_L": {
+            "x": 891.9736844301224,
+            "y": 699.0131579041481
+          },
+          "heel_R": {
+            "x": 935.3947366476059,
+            "y": 676.6447370648384
+          },
+          "toe_R": {
+            "x": 1017.6315779685974,
+            "y": 683.5526317358017
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4999991655351,
+          "y": 427.6315815448761,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      }
+    ]
+  },
+  "editor": {
+    "errors": [],
+    "states": [
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0,
+        "playing": false,
+        "clip": "neutral",
+        "clipTime": 0,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "neutral",
+            "time": 0,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.6578479645509,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708655,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303075,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639258,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4998783546133,
+          "y": 427.63160940749407,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 3.9999999999999885,
+        "playing": false,
+        "clip": "idle_breathe",
+        "clipTime": 3.9999999999999885,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "idle_breathe",
+            "time": 3.000001,
+            "completed": true,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4998783546133,
+          "y": 427.63160940749407,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.3999999999999975,
+        "playing": false,
+        "clip": "weight_shift",
+        "clipTime": 1.3999999999999975,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "weight_shift",
+            "time": 1.3999999999999975,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1001.1819340840958,
+            "y": 429.2509215589998
+          },
+          "off_hand": {
+            "x": 838.3531834702177,
+            "y": 429.25098731169805
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726565
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651525
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1001.1819340840958,
+          "y": 429.2509215589998,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7999999999999996,
+        "playing": false,
+        "clip": "arm_check",
+        "clipTime": 0.7999999999999996,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "arm_check",
+            "time": 0.7999999999999996,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1096.8362451350847,
+            "y": 365.31967196915343
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1096.8362451350847,
+          "y": 365.31967196915343,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.5199999999999999,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.5199999999999999,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.5199999999999999,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1015.3917748306035,
+            "y": 424.7195747555961
+          },
+          "off_hand": {
+            "x": 839.2375452046751,
+            "y": 427.41900582604205
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 1015.3917748306035,
+          "y": 424.7195747555961,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7166666666666666,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.7166666666666666,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.7166666666666666,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1111.424719467143,
+            "y": 351.3472635345892
+          },
+          "off_hand": {
+            "x": 841.6988646376315,
+            "y": 428.60502211655313
+          },
+          "heel_L": {
+            "x": 865.6578479645511,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 1111.424719467143,
+          "y": 351.3472635345892,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.0499999999999987,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 1.0499999999999987,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 1.0499999999999987,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1117.9789033727586,
+            "y": 347.1062552844453
+          },
+          "off_hand": {
+            "x": 842.4627401518771,
+            "y": 428.962713723438
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          }
+        ],
+        "release": {
+          "x": 1111.602514362571,
+          "y": 351.25735287278343,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1176.6025143625707,
+          "y": 298.85110287278354,
+          "visible": true,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 2.5999999999999934,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 2.5999999999999934,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 2.500001,
+            "completed": true,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          },
+          {
+            "name": "recovery",
+            "clip": "throw_low",
+            "time": 1.6666666666666667,
+            "observedAt": 1.6749999999999965
+          },
+          {
+            "name": "animationComplete",
+            "clip": "throw_low",
+            "time": 2.5,
+            "observedAt": 2.508333333333327
+          }
+        ],
+        "release": {
+          "x": 1111.602514362571,
+          "y": 351.25735287278343,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1486.6025143625695,
+          "y": 484.8511028727811,
+          "visible": false,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "editor",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": false,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.35,
+        "playing": false,
+        "clip": "quiet_nod",
+        "clipTime": 0.35,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "quiet_nod",
+            "time": 0.35,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4998783546133,
+          "y": 427.63160940749407,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      }
+    ]
+  },
+  "restored": {
+    "errors": [],
+    "states": [
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0,
+        "playing": false,
+        "clip": "neutral",
+        "clipTime": 0,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "neutral",
+            "time": 0,
+            "completed": false,
+            "playTimes": 0,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.657847964551,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708656,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303075,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639258,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4998783546133,
+          "y": 427.63160940749407,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 3.9999999999999885,
+        "playing": false,
+        "clip": "idle_breathe",
+        "clipTime": 3.9999999999999885,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "idle_breathe",
+            "time": 0.9999999999999885,
+            "completed": false,
+            "playTimes": 0,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4533447364738,
+            "y": 426.6245309788916
+          },
+          "off_hand": {
+            "x": 840.4550254650202,
+            "y": 427.3991527351565
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4533447364738,
+          "y": 426.6245309788916,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.3999999999999975,
+        "playing": false,
+        "clip": "weight_shift",
+        "clipTime": 1.3999999999999975,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "weight_shift",
+            "time": 1.3999999999999975,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1001.1819340840958,
+            "y": 429.2509215589998
+          },
+          "off_hand": {
+            "x": 838.3531834702177,
+            "y": 429.25098731169805
+          },
+          "heel_L": {
+            "x": 865.6578479645509,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708655,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1001.1819340840958,
+          "y": 429.2509215589998,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7999999999999996,
+        "playing": false,
+        "clip": "arm_check",
+        "clipTime": 0.7999999999999996,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "arm_check",
+            "time": 0.7999999999999996,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1096.8362451350847,
+            "y": 365.31967196915343
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1096.8362451350847,
+          "y": 365.31967196915343,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.5199999999999999,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.5199999999999999,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.5199999999999999,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 996.1695814861932,
+            "y": 429.445914352144
+          },
+          "off_hand": {
+            "x": 838.84898012353,
+            "y": 427.2270442680142
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 996.1695814861932,
+          "y": 429.445914352144,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.7166666666666666,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 0.7166666666666666,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 0.7166666666666666,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1111.424719467143,
+            "y": 351.3472635345892
+          },
+          "off_hand": {
+            "x": 841.6988646376315,
+            "y": 428.60502211655313
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          }
+        ],
+        "release": null,
+        "bag": {
+          "x": 1111.424719467143,
+          "y": 351.3472635345892,
+          "visible": true,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 1.0499999999999987,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 1.0499999999999987,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 1.0499999999999987,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1117.9789033727586,
+            "y": 347.1062552844451
+          },
+          "off_hand": {
+            "x": 842.4627401518771,
+            "y": 428.962713723438
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          }
+        ],
+        "release": {
+          "x": 1111.440393016962,
+          "y": 351.3393852928567,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1176.4403930169617,
+          "y": 298.9331352928569,
+          "visible": true,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 2.5999999999999934,
+        "playing": false,
+        "clip": "throw_low",
+        "clipTime": 2.5999999999999934,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "throw_low",
+            "time": 2.500001,
+            "completed": true,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [
+          {
+            "name": "grab",
+            "clip": "throw_low",
+            "time": 0,
+            "observedAt": 0.008333333333333333
+          },
+          {
+            "name": "release",
+            "clip": "throw_low",
+            "time": 0.7166666666666667,
+            "observedAt": 0.7249999999999999
+          },
+          {
+            "name": "recovery",
+            "clip": "throw_low",
+            "time": 1.6666666666666667,
+            "observedAt": 1.6749999999999965
+          },
+          {
+            "name": "animationComplete",
+            "clip": "throw_low",
+            "time": 2.5,
+            "observedAt": 2.508333333333327
+          }
+        ],
+        "release": {
+          "x": 1111.440393016962,
+          "y": 351.3393852928567,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        },
+        "bag": {
+          "x": 1486.4403930169606,
+          "y": 484.93313529285444,
+          "visible": false,
+          "attached": false
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      },
+      {
+        "ready": true,
+        "character": "dan",
+        "rig": "dan_weighted_v1",
+        "runtime": "DragonBones 5.7.000",
+        "phaser": "3.90.0",
+        "authoredBy": "Astra; editor sample exported by LoongBones 1.2.3",
+        "sample": "restored",
+        "assetIdentityVerified": true,
+        "editorExportReceived": true,
+        "compatibilityRestored": true,
+        "editorRoundTripVerified": false,
+        "productionInstalled": false,
+        "seconds": 0.35,
+        "playing": false,
+        "clip": "quiet_nod",
+        "clipTime": 0.35,
+        "view": {
+          "overlay": false,
+          "silhouette": false,
+          "mirrored": false,
+          "court": false
+        },
+        "root": {
+          "x": 915,
+          "y": 700,
+          "scaleX": 0.32894736842105265,
+          "scaleY": 0.32894736842105265
+        },
+        "animations": [
+          "neutral",
+          "idle_breathe",
+          "look_target",
+          "arm_check",
+          "throw_low",
+          "quiet_nod",
+          "weight_shift"
+        ],
+        "tracks": [
+          {
+            "name": "quiet_nod",
+            "time": 0.35,
+            "completed": false,
+            "playTimes": 1,
+            "weight": 1
+          }
+        ],
+        "sockets": {
+          "throwing_hand": {
+            "x": 1002.4998783546133,
+            "y": 427.63160940749407
+          },
+          "off_hand": {
+            "x": 839.6711277407352,
+            "y": 427.63167523601567
+          },
+          "heel_L": {
+            "x": 865.6578479645513,
+            "y": 699.0131424726563
+          },
+          "toe_L": {
+            "x": 891.9736579708658,
+            "y": 699.0131816651524
+          },
+          "heel_R": {
+            "x": 935.3947228303074,
+            "y": 676.6447285967118
+          },
+          "toe_R": {
+            "x": 1017.6315554639257,
+            "y": 683.5526962439238
+          },
+          "foot_target_L": {
+            "x": 874.2105267047882,
+            "y": 651.315789937973
+          },
+          "foot_target_R": {
+            "x": 950.5263154506683,
+            "y": 641.447368979454
+          }
+        },
+        "markers": [],
+        "release": null,
+        "bag": {
+          "x": 1002.4998783546133,
+          "y": 427.63160940749407,
+          "visible": false,
+          "attached": true
+        },
+        "performance": {
+          "samples": 0,
+          "p95Ms": null,
+          "meshes": 1,
+          "vertices": 7758,
+          "triangles": 14482,
+          "textures": 5
+        }
+      }
+    ]
+  },
+  "differences": {
+    "editor": [
+      {
+        "clip": "neutral",
+        "seconds": 0,
+        "maxBoneScreenPx": 3.1618807637124906,
+        "maxVertexSourcePx": 9.777321391743492,
+        "release": null
+      },
+      {
+        "clip": "idle_breathe",
+        "seconds": 4,
+        "maxBoneScreenPx": 3.1618807637124955,
+        "maxVertexSourcePx": 9.777321391743461,
+        "release": null
+      },
+      {
+        "clip": "weight_shift",
+        "seconds": 1.4,
+        "maxBoneScreenPx": 24.93269567777662,
+        "maxVertexSourcePx": 77.10189815723085,
+        "release": null
+      },
+      {
+        "clip": "arm_check",
+        "seconds": 0.8,
+        "maxBoneScreenPx": 3.1618807637124955,
+        "maxVertexSourcePx": 9.777321391743461,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 0.52,
+        "maxBoneScreenPx": 19.79459768884217,
+        "maxVertexSourcePx": 67.15459193891448,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 0.7166666666666667,
+        "maxBoneScreenPx": 3.161880763711471,
+        "maxVertexSourcePx": 9.777321391740415,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 1.05,
+        "maxBoneScreenPx": 3.1618807637124955,
+        "maxVertexSourcePx": 9.777321391743461,
+        "release": {
+          "x": 1111.602514362571,
+          "y": 351.25735287278343,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        }
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 2.6,
+        "maxBoneScreenPx": 3.1618807637124955,
+        "maxVertexSourcePx": 9.777321391743461,
+        "release": {
+          "x": 1111.602514362571,
+          "y": 351.25735287278343,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        }
+      },
+      {
+        "clip": "quiet_nod",
+        "seconds": 0.35,
+        "maxBoneScreenPx": 3.1618807637124955,
+        "maxVertexSourcePx": 9.777321391743461,
+        "release": null
+      }
+    ],
+    "restored": [
+      {
+        "clip": "neutral",
+        "seconds": 0,
+        "maxBoneScreenPx": 0.0001239822741336807,
+        "maxVertexSourcePx": 0.015777203498590422,
+        "release": null
+      },
+      {
+        "clip": "idle_breathe",
+        "seconds": 4,
+        "maxBoneScreenPx": 0.0001241705437332349,
+        "maxVertexSourcePx": 0.01580124002364386,
+        "release": null
+      },
+      {
+        "clip": "weight_shift",
+        "seconds": 1.4,
+        "maxBoneScreenPx": 0.0001239665653023459,
+        "maxVertexSourcePx": 0.015725094826524913,
+        "release": null
+      },
+      {
+        "clip": "arm_check",
+        "seconds": 0.8,
+        "maxBoneScreenPx": 0.00011963283550992573,
+        "maxVertexSourcePx": 0.015783350204582654,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 0.52,
+        "maxBoneScreenPx": 0.0001239638152501204,
+        "maxVertexSourcePx": 0.015771458779459884,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 0.7166666666666667,
+        "maxBoneScreenPx": 0.00011915282135649872,
+        "maxVertexSourcePx": 0.01579095860860004,
+        "release": null
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 1.05,
+        "maxBoneScreenPx": 0.00011897379765968017,
+        "maxVertexSourcePx": 0.01579598972605312,
+        "release": {
+          "x": 1111.440393016962,
+          "y": 351.3393852928567,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        }
+      },
+      {
+        "clip": "throw_low",
+        "seconds": 2.6,
+        "maxBoneScreenPx": 0.0001239822741336807,
+        "maxVertexSourcePx": 0.015777203498590422,
+        "release": {
+          "x": 1111.440393016962,
+          "y": 351.3393852928567,
+          "time": 0.7249999999999999,
+          "markerTime": 0.7166666666666667
+        }
+      },
+      {
+        "clip": "quiet_nod",
+        "seconds": 0.35,
+        "maxBoneScreenPx": 0.0001239822741336807,
+        "maxVertexSourcePx": 0.015777203498590422,
+        "release": null
+      }
+    ]
+  }
+}

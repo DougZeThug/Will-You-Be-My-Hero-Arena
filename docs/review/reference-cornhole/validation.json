@@ -1,0 +1,321 @@
+{
+  "reviewedAt": "2026-09-13T23:00:49.118664+00:00",
+  "status": "Lab reference candidate; ready for user motion review",
+  "productionInstalled": false,
+  "editorRoundTripVerified": false,
+  "protectedArtIdentity": {
+    "dan": {
+      "dan_ske.json": true,
+      "dan_tex.json": true,
+      "dan_tex.png": true
+    },
+    "doug": {
+      "doug_ske.json": true,
+      "doug_tex.json": true,
+      "doug_tex.png": true
+    }
+  },
+  "regression": {
+    "started": "2026-09-13T22:45:58.859Z",
+    "completed": "2026-09-13T22:55:58.215Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 4.54
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 30.476
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 526.255
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 21.903
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 16.179
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "browser": {
+    "passed": 93,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Optional approved pixel-baseline comparison is a separate opt-in suite; baseline images were not rewritten."
+  },
+  "simulationAnimationChecks": 170222,
+  "referenceThrowTests": {
+    "characters": 2,
+    "stylesPerCharacter": 5,
+    "allPassed": true,
+    "soleSampleCounts": {
+      "dan": 131,
+      "doug": 173
+    },
+    "maxActualSoleDriftPixels": 3.046977826670627e-05
+  },
+  "shotResults": [
+    {
+      "character": "dan",
+      "shot": "airmail",
+      "result": "miss",
+      "maxSoleDriftPixels": 1.526986790167939e-05
+    },
+    {
+      "character": "dan",
+      "shot": "blocker",
+      "result": "board",
+      "maxSoleDriftPixels": 1.5162157836812185e-05
+    },
+    {
+      "character": "dan",
+      "shot": "flat",
+      "result": "hole",
+      "maxSoleDriftPixels": 1.5261271698818746e-05
+    },
+    {
+      "character": "dan",
+      "shot": "roll",
+      "result": "miss",
+      "maxSoleDriftPixels": 1.5261271641975327e-05
+    },
+    {
+      "character": "dan",
+      "shot": "slide",
+      "result": "hole",
+      "maxSoleDriftPixels": 1.5167317940267822e-05
+    },
+    {
+      "character": "doug",
+      "shot": "airmail",
+      "result": "miss",
+      "maxSoleDriftPixels": 3.0311476280076022e-05
+    },
+    {
+      "character": "doug",
+      "shot": "blocker",
+      "result": "board",
+      "maxSoleDriftPixels": 3.041556169591786e-05
+    },
+    {
+      "character": "doug",
+      "shot": "flat",
+      "result": "hole",
+      "maxSoleDriftPixels": 3.0422581971834006e-05
+    },
+    {
+      "character": "doug",
+      "shot": "roll",
+      "result": "hole",
+      "maxSoleDriftPixels": 3.042258174446033e-05
+    },
+    {
+      "character": "doug",
+      "shot": "slide",
+      "result": "hole",
+      "maxSoleDriftPixels": 3.046977826670627e-05
+    }
+  ],
+  "motionReview": {
+    "phasesPerCharacter": 18,
+    "silhouette": true,
+    "closeView": true,
+    "arenaScale": true,
+    "normalAndQuarterSpeed": true,
+    "liveLabControlsExercised": true,
+    "continuousCaptureChecks": [
+      {
+        "take": "arena/cornhole-1x",
+        "browserErrors": [],
+        "decodedFrameChecks": 8,
+        "maximumDecodedCheckpointGapSeconds": 0.022226315777553074
+      },
+      {
+        "take": "dan/cornhole-1x",
+        "browserErrors": [],
+        "decodedFrameChecks": 8,
+        "maximumDecodedCheckpointGapSeconds": 0.015740000021458034
+      },
+      {
+        "take": "dan/cornhole-0.25x",
+        "browserErrors": [],
+        "decodedFrameChecks": 8,
+        "maximumDecodedCheckpointGapSeconds": 0.05816666668654591
+      },
+      {
+        "take": "doug/cornhole-1x",
+        "browserErrors": [],
+        "decodedFrameChecks": 8,
+        "maximumDecodedCheckpointGapSeconds": 0.017563636367971647
+      },
+      {
+        "take": "doug/cornhole-0.25x",
+        "browserErrors": [],
+        "decodedFrameChecks": 8,
+        "maximumDecodedCheckpointGapSeconds": 0.01640000003576425
+      }
+    ]
+  },
+  "performance": {
+    "method": "12-second real-time unrecorded cornhole run after browser regression finished; bounded 240-frame window, desktop headless Chromium; CPU estimates, not GPU timings.",
+    "data": {
+      "mode": "realtime",
+      "capacity": 240,
+      "realtime": {
+        "frames": 691,
+        "windowFrames": 240,
+        "frameTiming": {
+          "samples": 240,
+          "meanMs": 17.697,
+          "p95Ms": 18.2,
+          "worstMs": 19.1
+        },
+        "updateWork": {
+          "samples": 240,
+          "meanMs": 5.576,
+          "p95Ms": 8.3,
+          "worstMs": 11.7
+        },
+        "renderWork": {
+          "samples": 240,
+          "meanMs": 1.979,
+          "p95Ms": 2.7,
+          "worstMs": 4.3
+        },
+        "slowFrames": 5,
+        "fps": 56.507
+      },
+      "manual": {
+        "frames": 0,
+        "windowFrames": 0,
+        "frameTiming": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "updateWork": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "renderWork": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "slowFrames": 0,
+        "fps": null
+      },
+      "drawCalls": 8,
+      "counters": {
+        "scenes": 1,
+        "objects": 49,
+        "visibleObjects": 24,
+        "meshes": 32,
+        "meshVertices": 11728,
+        "meshTriangles": 20551,
+        "textures": 18,
+        "textureSources": 18,
+        "textureMBEstimate": 31.706
+      },
+      "notes": [
+        "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+        "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+        "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+        "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+      ]
+    }
+  },
+  "video": {
+    "output": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Cornhole-Human-Motion-Review.mp4",
+    "codec": "H.264",
+    "pixelFormat": "yuv420p",
+    "width": 1280,
+    "height": 760,
+    "fps": 30.0,
+    "frames": 1258,
+    "durationSeconds": 41.93333333333333,
+    "bytes": 19167373,
+    "fullDecodeErrors": [],
+    "segments": [
+      {
+        "source": "work\\qa\\reference-throw\\review-videos\\arena\\cornhole-1x.webm",
+        "label": "ARENA / NORMAL SPEED",
+        "frames": 169,
+        "fps": 30.0,
+        "mp4": "work\\qa\\reference-throw\\review-videos\\encoded\\00.mp4"
+      },
+      {
+        "source": "work\\qa\\reference-throw\\review-videos\\dan\\cornhole-1x.webm",
+        "label": "DAN / NORMAL SPEED",
+        "frames": 127,
+        "fps": 30.0,
+        "mp4": "work\\qa\\reference-throw\\review-videos\\encoded\\01.mp4"
+      },
+      {
+        "source": "work\\qa\\reference-throw\\review-videos\\dan\\cornhole-0.25x.webm",
+        "label": "DAN / QUARTER SPEED",
+        "frames": 419,
+        "fps": 30.0,
+        "mp4": "work\\qa\\reference-throw\\review-videos\\encoded\\02.mp4"
+      },
+      {
+        "source": "work\\qa\\reference-throw\\review-videos\\doug\\cornhole-1x.webm",
+        "label": "DOUG / NORMAL SPEED",
+        "frames": 125,
+        "fps": 30.0,
+        "mp4": "work\\qa\\reference-throw\\review-videos\\encoded\\03.mp4"
+      },
+      {
+        "source": "work\\qa\\reference-throw\\review-videos\\doug\\cornhole-0.25x.webm",
+        "label": "DOUG / QUARTER SPEED",
+        "frames": 418,
+        "fps": 30.0,
+        "mp4": "work\\qa\\reference-throw\\review-videos\\encoded\\04.mp4"
+      }
+    ],
+    "source": "Continuous forward MediaRecorder captures of the current Lab, not still-frame reconstruction."
+  },
+  "reference": {
+    "url": "https://www.youtube.com/watch?v=i1OqktIH0Uw&t=1484s",
+    "excerpt": "24:44\u201324:57",
+    "measuredFrames": 388,
+    "referenceTimebase": "Edited slow-motion media seconds, not calibrated execution time",
+    "comparison": "Manual semantic phase alignment, no claimed mocap or exact velocity matching."
+  },
+  "reviewFindings": [
+    "Previous fixed motor root and synchronized channel timing corrected in opt-in native clips.",
+    "Forward hip/torso loading revised after first rendered comparison remained too upright.",
+    "Actual soles, sleeves, shirt backs, palm exposures, release tangent and independent recovery checked.",
+    "No current actionable regression found in the changed runtime scope."
+  ],
+  "limitations": [
+    "This is reference-informed, authored planted motion; the video reference steps forward.",
+    "Naturalness remains a visual judgment; numerical tests cannot certify equivalence to filmed human motion.",
+    "The compact screen-space bag solver has no cloth simulation or bag-to-bag collision yet.",
+    "Existing opaque hand variants are used; no new finger skeleton or cloth/hair simulation.",
+    "The reference candidate remains separate from production recordings and unchanged editor exports.",
+    "Synthetic gamepad tests passed; physical controller hardware was not used in this pass."
+  ],
+  "evidenceRoot": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\arena\\work\\qa\\reference-throw"
+}

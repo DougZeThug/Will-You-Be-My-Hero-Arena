@@ -1,20 +1,23 @@
 # Character production and mapping
 
-Every competitor has a collectible card face and an independent animated arena rig. The initial showcase has Mack (human) and Captain Marmalade (quadruped cat). Additional humanoids, the second pet, and a Secret character are deliberately held for the requested user review of this first pair.
+The revised pair is Dan and Doug Weidensaul, based on their supplied collectible cards. Danielo's card supplied additional print/style direction. The original card images are displayed without repainting or text replacement.
 
-Production completed for the pair:
+## Completed production
 
-1. Generated separate illustrated component sheets with three expression heads and torso/limb pieces. Original PNGs retain alpha even though some image viewers expose hidden RGB background colors.
-2. Inspected the sheets, detected grid drift, cropped by actual alpha components, removed neighboring fragments, and added transparent padding. Do not blindly slice equal cells: row-three parts started above the nominal grid line.
-3. Closed selected visible cat joint caps with adjacent fur patches. Prepared assets are under `public/assets/mack` and `public/assets/marmalade`. Original sheets are kept alongside the parts.
-4. Authored separate human and feline rigs. Two-bone arm/paw chains drive event-specific release sockets; body, head, legs and tail animate independently. Expression swaps provide happy and disappointed faces. All supported views are shallow right-facing three-quarter views. Camera motion stays in the illustration plane.
-5. Created 2:3 collectible demo card faces from the same prepared artwork, while keeping the arena figure independent. Future original cards should retain their original artwork and aspect ratio.
-6. Connected prepare, sport-specific release, follow-through, reactions, recovery, summon, walk and victory poses to the shared playback clock.
+1. Generated separate full-body six-pose illustrations for each person, referencing their card. Adult proportions, identity cues, clothing and black-ink shading stay visible at game scale.
+2. Inspected the actual sheets. Their apparent checkerboard was baked into RGB, so it was removed as background rather than treated as real transparency. Mask cleanup preserved shirt shading and the printed cream contour. Pose crops were inspected on contrasting backgrounds.
+3. Prepared six transparent frames: ready, underarm backswing, underarm release, football cocked, basketball shot and celebrate. The aligned atlas uses 640×768 tiles with a common foot origin. Cropped frame PNGs and original card art are in `public/assets/dan` and `doug`.
+4. Authored a foot origin and palm socket for every frame. `paper.ts` supplies their geometry; `rig.ts` swaps whole drawings at intentional beats. Animation includes entrance, a restrained paper step, anticipation, release, held follow-through, a celebration pose and recovery. Faces and body proportions are not continuously warped.
+5. Rendered held props at the active palm socket. The simulation records release coordinates from the same geometry, including imported frame scale. A snapshot of prepared manifests travels with each new recording, so later mapping edits do not alter its playback geometry. Replacing a file at the same asset URL can still change its pixels; production assets should have content-versioned URLs.
 
-For an imported card, provide the card plus optional clear reference photographs and a short personality description. Recreate obscured full-body anatomy, isolate movable layers, paint overlap areas, normalize proportions, align the feet/ground anchor, bind joints, and author appropriate sports poses. A single uploaded card is not an automatically finished rig.
+## Current limitations
 
-The Collection → Asset mapping screen validates JSON and asset loading, attaches prepared assets to an existing catalog ID, and previews the supported family’s motion. It is a mapping and preview workflow, not a full visual skeleton editor or automatic retargeter. An imported rig must conform to the authored family’s normalized dimensions and release sockets. Custom proportions, unusual anatomy and new skeleton families require authored rig/action mappings in `rig.ts` before they can be selected. The `scale` and `groundAnchor` manifest fields describe the normalized contract; arbitrary retargeting of those fields is not implemented.
+Six drawings provide limited 2D animation, connected by foot-aligned fades and a shared match state timeline. Palm markers drive held props through those transitions and coincide with the saved release position. Walking is a small whole-paper step, disappointment is a modest tilt, and football transitions from a cocked pose to the shared extended-arm drawing. Unique dense in-between frames, face reactions, expressive finger/edge contact and distinct per-person entrances remain a later animation pass. The generated likenesses are interpretations of the illustrated cards, not scans of the people.
 
-Review every expression and clip for identity drift, visible caps, gaps, floating feet, detached props, silhouette overlap, and release-point agreement. The first prototype still needs the user’s motion/style review before these conventions are expanded across the roster. No licensed runtime or paid external animator is required to run the current pair. More complex Secret anatomy may benefit from manual animation polish, but no external service is currently blocking this showcase.
+## Prepared imports
 
-Signature moves are cosmetic. Blacklight Bloom is a recorded preselected cosmetic stage effect and adds no score. Actual scoring always comes from the shot/contact record.
+The collection → Asset mapping validates a prepared JSON manifest, checks asset loading, attaches it to an existing catalog ID and previews motion. It accepts this authored human paper-frame family, with six required poses, frame dimensions, finite foot/palm coordinates, a frame scale and all four event actions. New pets or unusual anatomy need their own reviewed drawings and action mapping. It is not a skeleton editor or arbitrary image retargeter.
+
+Keep original collectible artwork separate from arena frames. For each new person, prepare consistent right-facing drawings, verify likeness in all poses, remove background contamination, align feet, locate the palm, and inspect prop registration and contact timing in the running game. Prompts and generation provenance are in `docs/art-prompts/`.
+
+The Heat check effect is cosmetic; results always come from the saved shot/contact record.

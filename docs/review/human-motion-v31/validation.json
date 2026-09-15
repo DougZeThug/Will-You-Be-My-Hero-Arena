@@ -1,0 +1,490 @@
+{
+  "reviewedAt": "2026-09-14T20:55:15.846367+00:00",
+  "scope": "V2 runtime extended in opt-in Human Motion Lab. Production Play/Watch not migrated.",
+  "initialRegression": {
+    "started": "2026-09-14T20:37:09.867Z",
+    "completed": "2026-09-14T20:50:19.767Z",
+    "passed": false,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 4.681
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 26.739
+      },
+      {
+        "name": "browser",
+        "passed": false,
+        "exitCode": 1,
+        "seconds": 722.159
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 19.266
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 17.051
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "resolvedRegressionFailure": {
+    "test": "Human Motion V2: measured reference import and retarget keep target proportions",
+    "cause": "Obsolete Load measured reference demo button expectation after event-specific reference selector replaced it.",
+    "change": "Test clicks Load selected reference curves and verifies 158 cornhole frames; explicit 125-frame demo import and read-only target-proportion checks remain.",
+    "rerunPassed": true,
+    "rerunCommand": "node scripts/browser-tests.mjs tests/browser/human-motion.spec.ts --grep \"measured reference import\" --output=work/qa/v31-review/reference-rerun --reporter=line",
+    "runtimeChangesAfterFullSuite": false
+  },
+  "browserFinalCoverage": {
+    "passed": 114,
+    "skipped": 1,
+    "failed": 0,
+    "method": "113 passes in full suite plus corrected stale-selector test rerun. No runtime edits after the full suite.",
+    "skip": "Optional @visual baseline comparison; no baseline updated."
+  },
+  "pureChecks": 170642,
+  "seededContests": 2000,
+  "protectedSourceHashes": {
+    "dan_ske.json": true,
+    "dan_tex.json": true,
+    "dan_tex.png": true,
+    "doug_ske.json": true,
+    "doug_tex.json": true,
+    "doug_tex.png": true
+  },
+  "rigIntegrity": [
+    {
+      "test": "motion-v31-V3-1-Doug-limb-volume-stays-stable-in-basketball-desktop-chromium",
+      "samples": 90,
+      "warnings": 0,
+      "maxLengthRatioError": 8.881784197001252e-16,
+      "maxScaleError": 4.440892098500626e-16,
+      "maxWidthRatioError": 1.9984014443252818e-15
+    },
+    {
+      "test": "motion-v31-V3-1-Doug-limb-volume-stays-stable-in-cornhole-desktop-chromium",
+      "samples": 90,
+      "warnings": 0,
+      "maxLengthRatioError": 8.881784197001252e-16,
+      "maxScaleError": 4.440892098500626e-16,
+      "maxWidthRatioError": 1.7763568394002505e-15
+    },
+    {
+      "test": "motion-v31-V3-1-Doug-limb-volume-stays-stable-in-fighting-desktop-chromium",
+      "samples": 90,
+      "warnings": 0,
+      "maxLengthRatioError": 8.881784197001252e-16,
+      "maxScaleError": 4.440892098500626e-16,
+      "maxWidthRatioError": 1.6653345369377348e-15
+    },
+    {
+      "test": "motion-v31-V3-1-Doug-limb-volume-stays-stable-in-running-desktop-chromium",
+      "samples": 90,
+      "warnings": 0,
+      "maxLengthRatioError": 8.881784197001252e-16,
+      "maxScaleError": 6.661338147750939e-16,
+      "maxWidthRatioError": 1.9984014443252818e-15
+    }
+  ],
+  "motionMetrics": {
+    "running": [
+      {
+        "test": "motion-v3-V3-dan-measured--9ece3-port-soles-and-limb-lengths-desktop-chromium",
+        "maxSole": 2.5372952904945123e-05,
+        "maxAnkle": 1.5064988399250834e-05,
+        "maxLength": 1.5631940186722204e-13,
+        "maxSpeed": 215,
+        "maxFit": 2.842170943040401e-14,
+        "maxStep": 8.999215464031,
+        "plantSamples": 37089
+      },
+      {
+        "test": "motion-v3-V3-doug-measured-6880f-port-soles-and-limb-lengths-desktop-chromium",
+        "maxSole": 2.422537454549456e-05,
+        "maxAnkle": 2.5500368896423926e-05,
+        "maxLength": 1.1368683772161603e-13,
+        "maxSpeed": 225,
+        "maxFit": 2.842170943040401e-14,
+        "maxStep": 8.986706970947646,
+        "plantSamples": 50022
+      }
+    ],
+    "basketball": [
+      {
+        "test": "motion-v3-V3-dan-basketbal-b4771-andoff-and-physical-landing-desktop-chromium",
+        "launchError": 0,
+        "handoffError": 2.4077718884061555e-14,
+        "maxHeight": 60.5,
+        "compression": 10.081369451003633,
+        "guide": 7.2034361571020655,
+        "heldFrames": 67
+      },
+      {
+        "test": "motion-v3-V3-doug-basketba-574b5-andoff-and-physical-landing-desktop-chromium",
+        "launchError": 0,
+        "handoffError": 1.870966686202562e-14,
+        "maxHeight": 42.349999999999994,
+        "compression": 7.056958615702545,
+        "guide": 5.2921031694605585,
+        "heldFrames": 67
+      }
+    ],
+    "oppositeRunning": [
+      {
+        "test": "motion-v31-V3-1-dan-revers-1cf7e--planted-opposite-view-feet-desktop-chromium",
+        "start": 296.35208333333304,
+        "slide": 2.0361429733384284e-05,
+        "samples": 7912
+      },
+      {
+        "test": "motion-v31-V3-1-doug-rever-7ce15--planted-opposite-view-feet-desktop-chromium",
+        "start": 374.07986111111114,
+        "slide": 2.4358790199130453e-05,
+        "samples": 11185
+      }
+    ]
+  },
+  "performance": {
+    "method": "One headless Chrome page at a time; 12 seconds real-time per event, except running at 4.2 seconds before finish. No video recorder or manual stepping. Last bounded 240-frame timing window. Other user apps may remain open.",
+    "results": [
+      {
+        "event": "cornhole",
+        "realtime": {
+          "frames": 730,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.683,
+            "p95Ms": 16.9,
+            "worstMs": 17.7
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 7.204,
+            "p95Ms": 10.1,
+            "worstMs": 12.2
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.694,
+            "p95Ms": 2,
+            "worstMs": 2.5
+          },
+          "slowFrames": 6,
+          "fps": 59.941
+        },
+        "errors": []
+      },
+      {
+        "event": "running",
+        "realtime": {
+          "frames": 264,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.684,
+            "p95Ms": 16.9,
+            "worstMs": 19.1
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 6.771,
+            "p95Ms": 8.9,
+            "worstMs": 10.8
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.405,
+            "p95Ms": 1.7,
+            "worstMs": 1.9
+          },
+          "slowFrames": 8,
+          "fps": 59.938
+        },
+        "errors": []
+      },
+      {
+        "event": "basketball",
+        "realtime": {
+          "frames": 730,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.684,
+            "p95Ms": 16.9,
+            "worstMs": 18.2
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 6.168,
+            "p95Ms": 8.8,
+            "worstMs": 11.1
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.466,
+            "p95Ms": 1.8,
+            "worstMs": 2.7
+          },
+          "slowFrames": 5,
+          "fps": 59.938
+        },
+        "errors": []
+      },
+      {
+        "event": "fighting",
+        "realtime": {
+          "frames": 730,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.683,
+            "p95Ms": 16.9,
+            "worstMs": 18
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 5.82,
+            "p95Ms": 8.8,
+            "worstMs": 9.5
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.515,
+            "p95Ms": 1.8,
+            "worstMs": 2.9
+          },
+          "slowFrames": 6,
+          "fps": 59.941
+        },
+        "errors": []
+      }
+    ]
+  },
+  "captures": [
+    {
+      "file": "work\\qa\\v31-review\\bagFlip\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\bagFlip\\cornhole-0.5x.json",
+      "event": "cornhole",
+      "rate": 0.5,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\bagFlip\\cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\chestTap\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\chestTap\\cornhole-0.5x.json",
+      "event": "cornhole",
+      "rate": 0.5,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\chestTap\\cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\combat\\fighting-0.25x.json",
+      "event": "fighting",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\combat\\fighting-1x.json",
+      "event": "fighting",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\basketball-0.25x.json",
+      "event": "basketball",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\basketball-1x.json",
+      "event": "basketball",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\fighting-0.25x.json",
+      "event": "fighting",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\fighting-1x.json",
+      "event": "fighting",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\running-0.25x.json",
+      "event": "running",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\dan\\running-1x.json",
+      "event": "running",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\basketball-0.25x.json",
+      "event": "basketball",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\basketball-1x.json",
+      "event": "basketball",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\fighting-0.25x.json",
+      "event": "fighting",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\fighting-1x.json",
+      "event": "fighting",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\running-0.25x.json",
+      "event": "running",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\doug\\running-1x.json",
+      "event": "running",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\fistPump\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\fistPump\\cornhole-0.5x.json",
+      "event": "cornhole",
+      "rate": 0.5,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\fistPump\\cornhole-1x.json",
+      "event": "cornhole",
+      "rate": 1,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\silhouette\\basketball-0.25x.json",
+      "event": "basketball",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\silhouette\\cornhole-0.25x.json",
+      "event": "cornhole",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\silhouette\\fighting-0.25x.json",
+      "event": "fighting",
+      "rate": 0.25,
+      "errors": []
+    },
+    {
+      "file": "work\\qa\\v31-review\\silhouette\\running-0.25x.json",
+      "event": "running",
+      "rate": 0.25,
+      "errors": []
+    }
+  ],
+  "video": {
+    "file": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Human-Motion-V3.1-Review.mp4",
+    "width": 1280,
+    "height": 760,
+    "fps": 30,
+    "codec": "H.264",
+    "pixelFormat": "yuv420p",
+    "duration": 153.19999999999996,
+    "bytes": 52598350,
+    "fullDecodeErrors": [],
+    "method": "Continuous forward runtime recording; no interpolation between stills.",
+    "sha256": "d9c1ff8bfff3a084d0c6416b75bc6420fa38253b384f8a5288843f2028f224cd",
+    "decodedFrames": 4596,
+    "visualObservationsReviewed": 307,
+    "contactSheetsReviewed": 26,
+    "visualReview": "VISUAL-REVIEW.md"
+  },
+  "remainingAuthoringLimits": [
+    "Far arm needs hidden surfaces for a raised two-arm combat guard.",
+    "Available grip drawing is not a fully articulated fist; lead-jab/rear-cross and clothing-secondary clips remain future authoring.",
+    "Reference tracks are confidence-qualified development evidence, not calibrated full-body mocap.",
+    "New derived rigs/materials are not verified editor round trips."
+  ],
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

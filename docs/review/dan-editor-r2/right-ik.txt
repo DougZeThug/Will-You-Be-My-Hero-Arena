@@ -1,0 +1,286 @@
+Browser tab: 3, Title: "LoongBones web", URL: "https://www.loongbones.app/editor/?workId=NfiK5sO1".
+0 AXWebArea LoongBones web, URL: loongbones.app/editor/?workId=NfiK5sO1
+	1 container
+		2 container root
+			3 container toolbar
+				4 container
+					5 image logo
+					6 text 1.2.3
+				7 text field (settable) Arena Compatibility Test
+			8 container container
+				9 container
+					10 container top-left
+						11 container
+							12 image
+							13 text Properties
+						286 container
+							287 image
+							288 image
+							289 image
+							290 image
+							291 image
+							292 image
+							293 button (expanded) right Display, Secondary Actions: Collapse
+								294 image right
+								295 text Display
+							296 text Name
+							297 text field (settable) shin_R
+							298 text Type Bone Length
+							299 text field (settable) 392
+							300 text Inherit
+							301 image
+							302 text Scale
+							303 image
+							304 text Rotation Bone Color
+							305 image
+							306 text Parent thigh_R
+							307 button (expanded) right Transform, Secondary Actions: Collapse
+								308 image right
+								309 text Transform
+							310 text Position
+							311 text field (settable) 187.9381
+							312 text Y
+							313 text field (settable) -221.9587
+							314 text X Scale
+							315 text field (settable) 1
+							316 text Y
+							317 text field (settable) 1
+							318 text X Rotation
+							319 text field (settable) 21.04
+							320 text field (settable) 0
+							321 text x
+							322 image
+							323 text Auto
+							324 button (expanded) right IK Constraint, Secondary Actions: Collapse
+								325 image right
+								326 text IK Constraint
+							327 text Name
+							328 text field (settable) plant_R
+							329 text Bones thigh_R → shin_R Target foot_target_R Bend
+							330 image
+							331 text Positive Weight
+							332 slider 1
+							333 text field (settable) 1.00
+							334 text Actions
+							335 image
+					67 container
+						68 text 100
+						69 image
+							336 text 0
+							337 text 100
+							338 text 200
+							339 text 300
+							340 text -100
+							341 text -200
+							342 text -300
+							77 text -300
+						78 image
+							343 text 0
+							344 text 100
+							345 text 200
+							346 text -100
+							347 text -200
+							84 text -300
+							85 text -700
+							86 text -800
+							87 text -900
+							88 text -1000
+							89 text -1100
+							90 text -1200
+							91 text -1300
+							92 text -1400
+							93 text -1500
+							94 text -1600
+							95 text -1700
+							96 text -1800
+							97 text -1900
+							98 text -2000
+						99 image icon
+						100 image icon
+						101 image icon
+						102 image icon
+						103 image
+						104 image
+						105 image
+						106 image
+						107 image
+						108 image
+						109 text Bone: shin_R
+					110 container propertyPanel
+						111 container
+							112 image
+							113 text Outline
+						114 container
+							115 image
+							116 text Order
+						117 container
+							118 image
+							119 text Agent
+						120 container
+							121 text field (settable)
+							122 text Search
+							123 image icon
+							124 image
+							125 text dan_weighted_v1
+							126 image
+							127 image
+							128 container 4048
+								129 image 4048
+								130 image
+								131 text root
+							132 container 4078
+								133 image
+								134 text body_surface
+							135 container 4049
+								136 image 4049
+								137 image
+								138 text pelvis
+							139 container 4050
+								140 image 4050
+								141 image
+								142 text spine_lower
+							143 container 4051
+								144 image 4051
+								145 image
+								146 text spine_mid
+							147 container 4052
+								148 image 4052
+								149 image
+								150 text chest
+							151 container 4053
+								152 image 4053
+								153 image
+								154 text neck
+							155 container 4054
+								156 image 4054
+								157 image
+								158 text head
+							159 container 4055
+								160 image
+								161 text skull_center
+							162 container 4056
+								163 image 4056
+								164 image
+								165 text clavicle_L
+							166 container 4057
+								167 image 4057
+								168 image
+								169 text upper_arm_L
+							170 container 4058
+								171 image 4058
+								172 image
+								173 text forearm_L
+							174 container 4059
+								175 image 4059
+								176 image
+								177 text hand_L
+							178 container 4060
+								179 image
+								180 text off_hand
+							181 container 4061
+								182 image 4061
+								183 image
+								184 text clavicle_R
+							185 container 4062
+								186 image 4062
+								187 image
+								188 text upper_arm_R
+							189 container 4063
+								190 image 4063
+								191 image
+								192 text forearm_R
+							193 container 4064
+								194 image 4064
+								195 image
+								196 text hand_R
+							197 container 4065
+								198 image
+								199 text throwing_hand
+							200 container 4066
+								201 image 4066
+								202 image
+								203 text thigh_L
+							204 container 4067
+								205 image 4067
+								206 image
+								207 text shin_L
+							208 container 4068
+								209 image 4068
+								210 image
+								211 text foot_L
+							212 container 4069
+								213 image
+								214 text heel_L
+							215 container 4070
+								216 image
+								217 text toe_L
+							218 container 4071
+								219 image 4071
+								220 image
+								221 text thigh_R
+							222 container 4072
+								223 image 4072
+								224 image
+								225 text shin_R
+							226 container 4073
+								227 image 4073
+								228 image
+								229 text foot_R
+							230 container 4074
+								231 image
+								232 text heel_R
+							233 container 4075
+								234 image
+								235 text toe_R
+							236 container 4076
+								237 image
+								238 text foot_target_L
+							239 container 4077
+								240 image
+								241 text foot_target_R
+					242 container bottom-left
+						243 container
+							244 image
+							245 text Dopesheet
+						246 container
+							247 image icon
+							248 image icon
+							249 image icon
+							250 image icon
+							251 image icon
+							252 image icon
+							253 image icon
+							254 slider (settable, integer) 3
+							255 text x 1 Time: 0.00s FPS:
+							256 text field (settable) 60
+					257 container bottom-right
+						258 container
+							259 image
+							260 text Animation
+						261 container
+							262 image
+							263 text Curve
+						264 container
+							265 image
+							266 text Animation Proxy
+						267 container
+							268 text field (settable)
+							269 text Search
+							270 image icon
+							271 image icon
+							272 image
+							273 text neutral
+							274 image
+							275 text idle_breathe
+							276 image
+							277 text look_target
+							278 image
+							279 text arm_check
+							280 image
+							281 text throw_low
+							282 image
+							283 text quiet_nod
+							284 image
+							285 text weight_shift
+
+The focused UI element is 0 AXWebArea LoongBones web, URL: loongbones.app/editor/?workId=NfiK5sO1

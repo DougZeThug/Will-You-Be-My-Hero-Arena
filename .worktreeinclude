@@ -1,0 +1,12 @@
+# Only ignored, non-secret reference inputs for a local Codex-managed worktree.
+# Game source, rig exports, textures and measured JSON are versioned in Git.
+# No dependency directories, caches, environment files, credentials or captures.
+work/qa/v31-reference/review/basketball.mp4
+work/qa/v31-reference/review/basketball-jump.mp4
+work/qa/v31-reference/review/boxing.mp4
+work/qa/v31-reference/review/dodge.mp4
+work/qa/v31-reference/review/football.mp4
+work/qa/v31-reference/review/celebration.mp4
+work/qa/v31-reference/review/running.mp4
+# Public MediaPipe reference model, used only by the optional Python extractor.
+work/motion-models/pose_landmarker_lite.task

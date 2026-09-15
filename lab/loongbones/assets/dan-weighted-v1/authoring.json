@@ -1,0 +1,345 @@
+{
+  "revision": 2,
+  "source": "lab/assets/dan-source/full-body-v2.png",
+  "sourceDimensions": [
+    808,
+    1947
+  ],
+  "editorExport": false,
+  "productionInstalled": false,
+  "origin": {
+    "x": 404,
+    "y": 1918
+  },
+  "joints": [
+    {
+      "name": "root",
+      "point": {
+        "x": 404,
+        "y": 1918
+      }
+    },
+    {
+      "name": "pelvis",
+      "parent": "root",
+      "point": {
+        "x": 407,
+        "y": 1080
+      },
+      "end": {
+        "x": 394,
+        "y": 927
+      }
+    },
+    {
+      "name": "spine_lower",
+      "parent": "pelvis",
+      "point": {
+        "x": 394,
+        "y": 927
+      },
+      "end": {
+        "x": 391,
+        "y": 791
+      }
+    },
+    {
+      "name": "spine_mid",
+      "parent": "spine_lower",
+      "point": {
+        "x": 391,
+        "y": 791
+      },
+      "end": {
+        "x": 390,
+        "y": 650
+      }
+    },
+    {
+      "name": "chest",
+      "parent": "spine_mid",
+      "point": {
+        "x": 390,
+        "y": 650
+      },
+      "end": {
+        "x": 391,
+        "y": 398
+      }
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "point": {
+        "x": 391,
+        "y": 398
+      },
+      "end": {
+        "x": 390,
+        "y": 348
+      }
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "point": {
+        "x": 390,
+        "y": 348
+      },
+      "end": {
+        "x": 389,
+        "y": 194
+      }
+    },
+    {
+      "name": "skull_center",
+      "parent": "head",
+      "point": {
+        "x": 389,
+        "y": 194
+      }
+    },
+    {
+      "name": "clavicle_L",
+      "parent": "chest",
+      "point": {
+        "x": 332,
+        "y": 418
+      },
+      "end": {
+        "x": 170,
+        "y": 493
+      }
+    },
+    {
+      "name": "upper_arm_L",
+      "parent": "clavicle_L",
+      "point": {
+        "x": 170,
+        "y": 493
+      },
+      "end": {
+        "x": 150,
+        "y": 778
+      }
+    },
+    {
+      "name": "forearm_L",
+      "parent": "upper_arm_L",
+      "point": {
+        "x": 150,
+        "y": 778
+      },
+      "end": {
+        "x": 157,
+        "y": 1000
+      }
+    },
+    {
+      "name": "hand_L",
+      "parent": "forearm_L",
+      "point": {
+        "x": 157,
+        "y": 1000
+      },
+      "end": {
+        "x": 175,
+        "y": 1090
+      }
+    },
+    {
+      "name": "off_hand",
+      "parent": "hand_L",
+      "point": {
+        "x": 175,
+        "y": 1090
+      }
+    },
+    {
+      "name": "clavicle_R",
+      "parent": "chest",
+      "point": {
+        "x": 441,
+        "y": 425
+      },
+      "end": {
+        "x": 557,
+        "y": 515
+      }
+    },
+    {
+      "name": "upper_arm_R",
+      "parent": "clavicle_R",
+      "point": {
+        "x": 557,
+        "y": 515
+      },
+      "end": {
+        "x": 593,
+        "y": 785
+      }
+    },
+    {
+      "name": "forearm_R",
+      "parent": "upper_arm_R",
+      "point": {
+        "x": 593,
+        "y": 785
+      },
+      "end": {
+        "x": 660,
+        "y": 1000
+      }
+    },
+    {
+      "name": "hand_R",
+      "parent": "forearm_R",
+      "point": {
+        "x": 660,
+        "y": 1000
+      },
+      "end": {
+        "x": 670,
+        "y": 1090
+      }
+    },
+    {
+      "name": "throwing_hand",
+      "parent": "hand_R",
+      "point": {
+        "x": 670,
+        "y": 1090
+      }
+    },
+    {
+      "name": "thigh_L",
+      "parent": "pelvis",
+      "point": {
+        "x": 313,
+        "y": 1085
+      },
+      "end": {
+        "x": 296,
+        "y": 1338
+      }
+    },
+    {
+      "name": "shin_L",
+      "parent": "thigh_L",
+      "point": {
+        "x": 296,
+        "y": 1338
+      },
+      "end": {
+        "x": 280,
+        "y": 1770
+      }
+    },
+    {
+      "name": "foot_L",
+      "parent": "shin_L",
+      "point": {
+        "x": 280,
+        "y": 1770
+      },
+      "end": {
+        "x": 295,
+        "y": 1915
+      }
+    },
+    {
+      "name": "heel_L",
+      "parent": "foot_L",
+      "point": {
+        "x": 254,
+        "y": 1915
+      }
+    },
+    {
+      "name": "toe_L",
+      "parent": "foot_L",
+      "point": {
+        "x": 334,
+        "y": 1915
+      }
+    },
+    {
+      "name": "thigh_R",
+      "parent": "pelvis",
+      "point": {
+        "x": 477,
+        "y": 1080
+      },
+      "end": {
+        "x": 551,
+        "y": 1350
+      }
+    },
+    {
+      "name": "shin_R",
+      "parent": "thigh_R",
+      "point": {
+        "x": 551,
+        "y": 1350
+      },
+      "end": {
+        "x": 512,
+        "y": 1740
+      }
+    },
+    {
+      "name": "foot_R",
+      "parent": "shin_R",
+      "point": {
+        "x": 512,
+        "y": 1740
+      },
+      "end": {
+        "x": 622,
+        "y": 1860
+      }
+    },
+    {
+      "name": "heel_R",
+      "parent": "foot_R",
+      "point": {
+        "x": 466,
+        "y": 1847
+      }
+    },
+    {
+      "name": "toe_R",
+      "parent": "foot_R",
+      "point": {
+        "x": 716,
+        "y": 1868
+      }
+    },
+    {
+      "name": "foot_target_L",
+      "parent": "root",
+      "point": {
+        "x": 280,
+        "y": 1770
+      }
+    },
+    {
+      "name": "foot_target_R",
+      "parent": "root",
+      "point": {
+        "x": 512,
+        "y": 1740
+      }
+    }
+  ],
+  "metrics": {
+    "vertices": 7758,
+    "triangles": 14482,
+    "blendedVertices": 3029
+  },
+  "scope": "Astra-authored weighted foundation; revision 2 adds editor mesh outlines/dimensions; corrected editor import and round-trip review required",
+  "limitations": [
+    "Single source view; hidden artwork and alternate hand orientations are not authored",
+    "Large crossing-limb motions and full locomotion remain outside this first rig pass"
+  ]
+}

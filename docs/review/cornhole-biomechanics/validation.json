@@ -1,0 +1,245 @@
+{
+  "date": "2026-09-13T15:07:12.535913+00:00",
+  "scope": "Current Lab-only side-view cornhole rigs; no production migration",
+  "accepted": true,
+  "checks": {
+    "pureChecks": 169248,
+    "fullBrowserRun": {
+      "startTime": "2026-09-13T14:46:46.592Z",
+      "duration": 493871.773,
+      "expected": 67,
+      "skipped": 1,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "targetedCorrectionRetest": {
+      "startTime": "2026-09-13T14:56:46.278Z",
+      "duration": 22800.264,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "uniqueBrowserTestsPassed": 69,
+    "optInVisualSkipped": 1,
+    "initialFailures": "Two new assertions wrongly required curled relaxed fingers to have the projected reach of extended fingers. Corrected per-pose lower bound, reviewed artwork and retested both; no runtime change after full suite.",
+    "typecheck": "passed, including final retest revision",
+    "productionBuild": "passed",
+    "productionPlayWatchIsolation": "passed"
+  },
+  "preserved": {
+    "dan": {
+      "bodySource": true,
+      "limbSource": true,
+      "atlasPixels": true,
+      "bindSkeleton": true
+    },
+    "doug": {
+      "bodySource": true,
+      "limbSource": true,
+      "atlasPixels": true,
+      "bindSkeleton": true
+    }
+  },
+  "measurements": {
+    "dan": {
+      "releaseSeconds": 0.8166666666666667,
+      "peakHandSpeedSeconds": 0.7916666666666666,
+      "releaseToPeakSpeedRatio": 0.9388604620903694,
+      "wristAngleRangeDegrees": [
+        -38.60362260212517,
+        11.272116019316595
+      ],
+      "handReachToForearmRatios": [
+        0.6652574817266903,
+        0.779592869583265,
+        0.5882853911497611
+      ],
+      "recoveryElbowPathDifferenceDegrees": 18.971094170343708,
+      "forwardPelvisPixels": 8.85514403292181,
+      "maximumHeadAngleDegrees": 0.9000002064716739
+    },
+    "doug": {
+      "releaseSeconds": 0.7166666666666667,
+      "peakHandSpeedSeconds": 0.6916666666666667,
+      "releaseToPeakSpeedRatio": 0.9315959361957648,
+      "wristAngleRangeDegrees": [
+        -38.81885400925887,
+        11.181146243753389
+      ],
+      "handReachToForearmRatios": [
+        0.6608315323244716,
+        0.7611456524956617,
+        0.575378133573261
+      ],
+      "recoveryElbowPathDifferenceDegrees": 19.93920056046377,
+      "forwardPelvisPixels": 9.033585222502099,
+      "maximumHeadAngleDegrees": 1.0999999914789953
+    }
+  },
+  "motionReview": [
+    {
+      "character": "dan",
+      "view": "art",
+      "rates": [
+        1,
+        0.5,
+        0.25
+      ],
+      "decodedFrames": 51,
+      "verified": true,
+      "maximumTimestampErrorSeconds": 0.01365476379912911,
+      "errors": [],
+      "video": "work/qa/biomechanics/accepted-motion/dan-art.webm"
+    },
+    {
+      "character": "dan",
+      "view": "silhouette",
+      "rates": [
+        1,
+        0.5,
+        0.25
+      ],
+      "decodedFrames": 51,
+      "verified": true,
+      "maximumTimestampErrorSeconds": 0.015699999988079583,
+      "errors": [],
+      "video": "work/qa/biomechanics/accepted-motion/dan-silhouette.webm"
+    },
+    {
+      "character": "doug",
+      "view": "art",
+      "rates": [
+        1,
+        0.5,
+        0.25
+      ],
+      "decodedFrames": 51,
+      "verified": true,
+      "maximumTimestampErrorSeconds": 0.01647362377450845,
+      "errors": [],
+      "video": "work/qa/biomechanics/accepted-motion/doug-art.webm"
+    },
+    {
+      "character": "doug",
+      "view": "silhouette",
+      "rates": [
+        1,
+        0.5,
+        0.25
+      ],
+      "decodedFrames": 51,
+      "verified": true,
+      "maximumTimestampErrorSeconds": 0.016086356563933535,
+      "errors": [],
+      "video": "work/qa/biomechanics/accepted-motion/doug-silhouette.webm"
+    }
+  ],
+  "courtVideo": "work/qa/biomechanics/court/cornhole.webm",
+  "courtDecodedFrames": 15,
+  "realtimeWithoutRecorder": {
+    "viewport": {
+      "width": 1600,
+      "height": 1100
+    },
+    "seconds": 14.50479333330951,
+    "scenario": {
+      "id": "cornhole-recorded",
+      "version": 1,
+      "label": "Cornhole \u00c2\u00b7 side-view Dan + Doug",
+      "kind": "recorded",
+      "sport": "cornhole",
+      "description": "Board-facing layered Dan and Doug, palm-up release, three hand poses and planted-foot underhand swings. New authored LoongBones import rigs; editor round trips pending. Original exports remain in their comparison pages.",
+      "seed": "arena-lab:cornhole-recorded:v1"
+    },
+    "performance": {
+      "mode": "realtime",
+      "capacity": 240,
+      "realtime": {
+        "frames": 870,
+        "windowFrames": 240,
+        "frameTiming": {
+          "samples": 240,
+          "meanMs": 16.682,
+          "p95Ms": 17.3,
+          "worstMs": 17.8
+        },
+        "updateWork": {
+          "samples": 240,
+          "meanMs": 2.421,
+          "p95Ms": 3.4,
+          "worstMs": 3.8
+        },
+        "renderWork": {
+          "samples": 240,
+          "meanMs": 3.931,
+          "p95Ms": 4.9,
+          "worstMs": 5.8
+        },
+        "slowFrames": 0,
+        "fps": 59.945
+      },
+      "manual": {
+        "frames": 1,
+        "windowFrames": 1,
+        "frameTiming": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "updateWork": {
+          "samples": 1,
+          "meanMs": 0.2,
+          "p95Ms": 0.2,
+          "worstMs": 0.2
+        },
+        "renderWork": {
+          "samples": 1,
+          "meanMs": 1,
+          "p95Ms": 1,
+          "worstMs": 1
+        },
+        "slowFrames": 0,
+        "fps": null
+      },
+      "drawCalls": 8,
+      "counters": {
+        "scenes": 1,
+        "objects": 62,
+        "visibleObjects": 36,
+        "meshes": 32,
+        "meshVertices": 11728,
+        "meshTriangles": 20551,
+        "textures": 23,
+        "textureSources": 23,
+        "textureMBEstimate": 72.664
+      },
+      "notes": [
+        "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+        "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+        "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+        "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+      ]
+    },
+    "errors": []
+  },
+  "recorderCadenceNote": "Cropped character movies capture at maximum 30 FPS. Review-page delta is Phaser-smoothed; actual unrecorded court cadence is reported separately. Recording overhead increases frame times.",
+  "continuity": {
+    "transitions": 24,
+    "maximumTransitionHandStepPixels": 1.0840667119124214,
+    "maximumTransitionHeadStepPixels": 1.2265962007515094,
+    "recordingHash": "c9390ff8",
+    "finalScores": [
+      5,
+      3
+    ],
+    "errors": []
+  },
+  "limits": [
+    "Reference-informed, not measured motion capture",
+    "Three opaque hand drawings, not separate finger bones",
+    "Approved planted stance retained; no stepping approach or additional art views",
+    "LoongBones editor round trip and production installation remain unverified"
+  ]
+}

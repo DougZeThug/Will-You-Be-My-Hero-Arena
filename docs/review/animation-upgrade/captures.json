@@ -1,0 +1,926 @@
+[
+  {
+    "name": "doug-basketball-primaryAction-1x",
+    "event": "basketball",
+    "take": "primaryAction",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-basketball-primaryAction-1x",
+    "version": "before",
+    "url": "clips/before/doug-basketball-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "takeoff": 0.6230769230769228,
+      "footRelease": 0.6230769230769228,
+      "equipmentRelease": 0.7641025641025628,
+      "land": 1.358333333333331,
+      "motionComplete": 2.4666666666666606
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-running-run-stop-1x",
+    "event": "running",
+    "take": "run-stop",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-running-run-stop-1x",
+    "version": "before",
+    "url": "clips/before/doug-running-run-stop-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.4165765068061278
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-primaryAction-1x",
+    "event": "cornhole",
+    "take": "primaryAction",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-cornhole-primaryAction-1x",
+    "version": "before",
+    "url": "clips/before/doug-cornhole-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "equipmentRelease": 1.1166666666666658
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-chestTap-1x",
+    "event": "cornhole",
+    "take": "chestTap",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-cornhole-chestTap-1x",
+    "version": "before",
+    "url": "clips/before/doug-cornhole-chestTap-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "chestTapContact": 0.6999999999999993,
+      "chestTapContact2": 1.016666666666666,
+      "chestTapRelease": 1.1166666666666658,
+      "motionComplete": 1.7333333333333296
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-bagFlip-1x",
+    "event": "cornhole",
+    "take": "bagFlip",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-cornhole-bagFlip-1x",
+    "version": "before",
+    "url": "clips/before/doug-cornhole-bagFlip-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "propToss": 0.5999999999999999,
+      "propCatch": 0.8999999999999992,
+      "motionComplete": 1.2333333333333314
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-fistPump-1x",
+    "event": "cornhole",
+    "take": "fistPump",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-cornhole-fistPump-1x",
+    "version": "before",
+    "url": "clips/before/doug-cornhole-fistPump-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "motionComplete": 1.4333333333333307
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-fighting-matchup-1x",
+    "event": "fighting",
+    "take": "matchup",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 120,
+    "fps": 30,
+    "seconds": 4,
+    "directory": "work/qa/animation-upgrade/sequences/before/doug-fighting-matchup-1x",
+    "version": "before",
+    "url": "clips/before/doug-fighting-matchup-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.16657650680612734,
+      "hitboxOn": 0.9349999999999987,
+      "hitContact": 0.9499999999999991,
+      "motionComplete": 1.6416666666666633
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-basketball-primaryAction-1x",
+    "event": "basketball",
+    "take": "primaryAction",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-basketball-primaryAction-1x",
+    "version": "before",
+    "url": "clips/before/dan-basketball-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "takeoff": 0.6230769230769228,
+      "footRelease": 0.6230769230769228,
+      "equipmentRelease": 0.7641025641025628,
+      "land": 1.358333333333331
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-running-run-stop-1x",
+    "event": "running",
+    "take": "run-stop",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-running-run-stop-1x",
+    "version": "before",
+    "url": "clips/before/dan-running-run-stop-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.4332879818594109
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-primaryAction-1x",
+    "event": "cornhole",
+    "take": "primaryAction",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-cornhole-primaryAction-1x",
+    "version": "before",
+    "url": "clips/before/dan-cornhole-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "equipmentRelease": 1.0499999999999994,
+      "motionComplete": 2.4333333333333274
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-chestTap-1x",
+    "event": "cornhole",
+    "take": "chestTap",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-cornhole-chestTap-1x",
+    "version": "before",
+    "url": "clips/before/dan-cornhole-chestTap-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "chestTapContact": 0.6999999999999993,
+      "chestTapContact2": 1.016666666666666,
+      "chestTapRelease": 1.1166666666666658,
+      "motionComplete": 1.7333333333333296
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-bagFlip-1x",
+    "event": "cornhole",
+    "take": "bagFlip",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-cornhole-bagFlip-1x",
+    "version": "before",
+    "url": "clips/before/dan-cornhole-bagFlip-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "propToss": 0.5999999999999999,
+      "propCatch": 0.8999999999999992,
+      "motionComplete": 1.2333333333333314
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-fistPump-1x",
+    "event": "cornhole",
+    "take": "fistPump",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-cornhole-fistPump-1x",
+    "version": "before",
+    "url": "clips/before/dan-cornhole-fistPump-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "motionComplete": 1.4333333333333307
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-fighting-matchup-1x",
+    "event": "fighting",
+    "take": "matchup",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 120,
+    "fps": 30,
+    "seconds": 4,
+    "directory": "work/qa/animation-upgrade/sequences/before/dan-fighting-matchup-1x",
+    "version": "before",
+    "url": "clips/before/dan-fighting-matchup-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.1832879818594104,
+      "hitboxOn": 0.9349999999999987,
+      "hitboxOff": 1.0099999999999982,
+      "cancelWindow": 1.2419999999999978,
+      "motionComplete": 2.1333333333333284
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "a00e21aa1033e73ce40a41b8d0569f8171ee099cccef5fe5245b7d47ecd46211",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-basketball-primaryAction-1x",
+    "event": "basketball",
+    "take": "primaryAction",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-basketball-primaryAction-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-basketball-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "takeoff": 0.7799999999999992,
+      "footRelease": 0.7799999999999992,
+      "equipmentRelease": 0.966666666666666,
+      "land": 1.5166666666666637,
+      "motionComplete": 2.699999999999993
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-basketball-primaryAction-0.25x",
+    "event": "basketball",
+    "take": "primaryAction",
+    "actor": "doug",
+    "rate": 0.25,
+    "frames": 360,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-basketball-primaryAction-0.25x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-basketball-primaryAction-0.25x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "takeoff": 0.7799999999999992,
+      "footRelease": 0.7799999999999992,
+      "equipmentRelease": 0.966666666666666,
+      "land": 1.5166666666666637,
+      "motionComplete": 2.699999999999993
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.008333333333333333
+  },
+  {
+    "name": "doug-running-run-stop-1x",
+    "event": "running",
+    "take": "run-stop",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-running-run-stop-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-running-run-stop-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.4165765068061278
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-running-run-stop-0.25x",
+    "event": "running",
+    "take": "run-stop",
+    "actor": "doug",
+    "rate": 0.25,
+    "frames": 360,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-running-run-stop-0.25x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-running-run-stop-0.25x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.4165765068061278
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.008333333333333333
+  },
+  {
+    "name": "doug-cornhole-primaryAction-1x",
+    "event": "cornhole",
+    "take": "primaryAction",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-cornhole-primaryAction-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-cornhole-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "equipmentRelease": 1.1166666666666658
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-chestTap-1x",
+    "event": "cornhole",
+    "take": "chestTap",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-cornhole-chestTap-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-cornhole-chestTap-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "chestTapContact": 0.6999999999999993,
+      "chestTapContact2": 1.0166666666666666,
+      "chestTapRelease": 1.1166666666666667,
+      "motionComplete": 1.7333333333333296
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-bagFlip-1x",
+    "event": "cornhole",
+    "take": "bagFlip",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-cornhole-bagFlip-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-cornhole-bagFlip-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "propToss": 0.6,
+      "propCatch": 0.8999999999999996,
+      "motionComplete": 1.2333333333333314
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-cornhole-fistPump-1x",
+    "event": "cornhole",
+    "take": "fistPump",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-cornhole-fistPump-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-cornhole-fistPump-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "motionComplete": 1.4333333333333307
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "doug-fighting-matchup-1x",
+    "event": "fighting",
+    "take": "matchup",
+    "actor": "doug",
+    "rate": 1,
+    "frames": 120,
+    "fps": 30,
+    "seconds": 4,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/doug-fighting-matchup-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/doug-fighting-matchup-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.16657650680612734,
+      "hitboxOn": 0.9349999999999988,
+      "hitContact": 0.9416666666666658,
+      "motionComplete": 1.6349999999999962
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-basketball-primaryAction-1x",
+    "event": "basketball",
+    "take": "primaryAction",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-basketball-primaryAction-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-basketball-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "takeoff": 0.7799999999999992,
+      "footRelease": 0.7799999999999992,
+      "equipmentRelease": 0.966666666666666,
+      "land": 1.5166666666666637
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-running-run-stop-1x",
+    "event": "running",
+    "take": "run-stop",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-running-run-stop-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-running-run-stop-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.4332879818594109
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-primaryAction-1x",
+    "event": "cornhole",
+    "take": "primaryAction",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-cornhole-primaryAction-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-cornhole-primaryAction-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "equipmentRelease": 1.0499999999999994,
+      "motionComplete": 2.4333333333333274
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-chestTap-1x",
+    "event": "cornhole",
+    "take": "chestTap",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-cornhole-chestTap-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-cornhole-chestTap-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "chestTapContact": 0.6999999999999993,
+      "chestTapContact2": 1.0166666666666666,
+      "chestTapRelease": 1.1166666666666667,
+      "motionComplete": 1.7333333333333296
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-bagFlip-1x",
+    "event": "cornhole",
+    "take": "bagFlip",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-cornhole-bagFlip-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-cornhole-bagFlip-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "propToss": 0.6,
+      "propCatch": 0.8999999999999996,
+      "motionComplete": 1.2333333333333314
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-cornhole-fistPump-1x",
+    "event": "cornhole",
+    "take": "fistPump",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 90,
+    "fps": 30,
+    "seconds": 3,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-cornhole-fistPump-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-cornhole-fistPump-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "motionComplete": 1.4333333333333307
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  },
+  {
+    "name": "dan-fighting-matchup-1x",
+    "event": "fighting",
+    "take": "matchup",
+    "actor": "dan",
+    "rate": 1,
+    "frames": 120,
+    "fps": 30,
+    "seconds": 4,
+    "directory": "work/qa/animation-upgrade/sequences/after-final-v2/dan-fighting-matchup-1x",
+    "version": "after",
+    "url": "clips/after-final-v2/dan-fighting-matchup-1x.mp4",
+    "markers": {
+      "footPlant": 0,
+      "footRelease": 0.1832879818594104,
+      "hitboxOn": 0.9349999999999988,
+      "hitboxOff": 1.0099999999999985,
+      "cancelWindow": 1.2419999999999978,
+      "motionComplete": 2.133333333333328
+    },
+    "viewport": [
+      1440,
+      1080
+    ],
+    "canvas": [
+      1280,
+      760
+    ],
+    "seed": null,
+    "inputSource": "Deterministic scripted controller intents; no random seed",
+    "sourceManifestSha256": "dd8db13c45f725b88f41327fe33b8dc35cab7e6ec9f70536376320eead845bf0",
+    "firstFrameSimulationTime": 0.03333333333333333
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "path": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\cornhole-side-art\\dan-side-sheet-chroma.png",
+    "width": 1254,
+    "character": "dan",
+    "height": 1254,
+    "pixelFormat": "Format24bppRgb",
+    "corner": "Color [A=255, R=238, G=13, B=239]",
+    "bounds": [
+      {
+        "width": 435,
+        "y": 12,
+        "height": 1223,
+        "name": "body",
+        "x": 312,
+        "pixels": 217105
+      },
+      {
+        "width": 153,
+        "y": 212,
+        "height": 391,
+        "name": "arm",
+        "x": 862,
+        "pixels": 29133
+      },
+      {
+        "width": 182,
+        "y": 701,
+        "height": 80,
+        "name": "grip",
+        "x": 900,
+        "pixels": 9597
+      },
+      {
+        "width": 203,
+        "y": 829,
+        "height": 93,
+        "name": "release",
+        "x": 898,
+        "pixels": 11154
+      },
+      {
+        "width": 146,
+        "y": 974,
+        "height": 110,
+        "name": "recovery",
+        "x": 902,
+        "pixels": 10059
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\cornhole-side-art\\doug-side-sheet-chroma.png",
+    "width": 1254,
+    "character": "doug",
+    "height": 1254,
+    "pixelFormat": "Format24bppRgb",
+    "corner": "Color [A=255, R=236, G=13, B=237]",
+    "bounds": [
+      {
+        "width": 426,
+        "y": 19,
+        "height": 1202,
+        "name": "body",
+        "x": 325,
+        "pixels": 228848
+      },
+      {
+        "width": 156,
+        "y": 171,
+        "height": 438,
+        "name": "arm",
+        "x": 872,
+        "pixels": 35448
+      },
+      {
+        "width": 211,
+        "y": 686,
+        "height": 98,
+        "name": "grip",
+        "x": 889,
+        "pixels": 13153
+      },
+      {
+        "width": 232,
+        "y": 820,
+        "height": 109,
+        "name": "release",
+        "x": 886,
+        "pixels": 14755
+      },
+      {
+        "width": 166,
+        "y": 975,
+        "height": 126,
+        "name": "recovery",
+        "x": 889,
+        "pixels": 13188
+      }
+    ]
+  }
+]

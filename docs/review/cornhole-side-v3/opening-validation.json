@@ -1,0 +1,97 @@
+{
+  "date": "2026-09-13",
+  "scope": "Side-v3 LoongBones cornhole Lab sleeve-opening occlusion",
+  "rootCause": "Opaque painted empty sleeve interior was drawn in front of inserted arm. Lower-edge contact test missed it.",
+  "fix": "Body/back cuff behind arm, convex source-space interior cutout in front cloth mesh",
+  "preservation": [
+    {
+      "character": "dan",
+      "sourceUnchanged": true,
+      "limbSourceUnchanged": true,
+      "atlasUnchanged": true,
+      "clipMetadataUnchanged": true,
+      "fiveMatchedEvaluatedBonePosesUnchanged": true,
+      "skeletonSHA256": "b7e06b03a8d25c5564ecb3420bc732e51c1d022e13322bdcc6560e09bf742546",
+      "attachmentRevision": 3,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false
+    },
+    {
+      "character": "doug",
+      "sourceUnchanged": true,
+      "limbSourceUnchanged": true,
+      "atlasUnchanged": true,
+      "clipMetadataUnchanged": true,
+      "fiveMatchedEvaluatedBonePosesUnchanged": true,
+      "skeletonSHA256": "e7c82462bf8f5b27a4096e344bb2f7a570de283034e7dceb212910adbd2959aa",
+      "attachmentRevision": 3,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false
+    }
+  ],
+  "tests": {
+    "sleevePoses": 50,
+    "interiorSkinProbes": 200,
+    "contourAreaCases": 7,
+    "browserPassed": 64,
+    "optionalVisualBaselineSkipped": 1,
+    "pureChecksPassed": 169248,
+    "aggregate": {
+      "started": "2026-09-13T10:45:08.729Z",
+      "completed": "2026-09-13T10:51:08.834Z",
+      "passed": true,
+      "checks": [
+        {
+          "name": "typecheck",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 7.57
+        },
+        {
+          "name": "simulation-and-animation",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 31.169
+        },
+        {
+          "name": "browser",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 290.233
+        },
+        {
+          "name": "production-build",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 15.755
+        },
+        {
+          "name": "production-isolation",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 15.371
+        }
+      ],
+      "deployment": "Not performed",
+      "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+    }
+  },
+  "recordings": [
+    {
+      "path": "work/qa/sleeve-opening/motion/dan-motion.json",
+      "decodedFrames": 15,
+      "errors": []
+    },
+    {
+      "path": "work/qa/sleeve-opening/motion/doug-motion.json",
+      "decodedFrames": 15,
+      "errors": []
+    },
+    {
+      "path": "work/qa/sleeve-opening/match/cornhole-motion.json",
+      "decodedFrames": 15,
+      "errors": []
+    }
+  ],
+  "review": "Matched before/after stills, decoded real-time backswing/release/follow-through/recovery frames, main court and live user Lab. Pixel checks supplement visual inspection; they do not certify human realism."
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "height": 1254,
+    "character": "dan",
+    "pixelFormat": "Format24bppRgb",
+    "path": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\cornhole-side-art\\dan-side-sheet-chroma_wrist-clean.png",
+    "bounds": [
+      {
+        "name": "body",
+        "height": 1223,
+        "foregroundPixelsChangedOver20": 18372,
+        "silhouetteIoU": 0.996227,
+        "width": 435,
+        "meanRgbDelta": 6.685,
+        "pixels": 216789,
+        "x": 312,
+        "y": 12
+      },
+      {
+        "name": "arm",
+        "height": 391,
+        "foregroundPixelsChangedOver20": 1702,
+        "silhouetteIoU": 0.992899,
+        "width": 152,
+        "meanRgbDelta": 7.097,
+        "pixels": 28964,
+        "x": 862,
+        "y": 211
+      },
+      {
+        "name": "grip",
+        "height": 80,
+        "foregroundPixelsChangedOver20": 1627,
+        "silhouetteIoU": 0.988863,
+        "width": 182,
+        "meanRgbDelta": 11.292,
+        "pixels": 9512,
+        "x": 900,
+        "y": 701
+      },
+      {
+        "name": "release",
+        "height": 93,
+        "foregroundPixelsChangedOver20": 1531,
+        "silhouetteIoU": 0.991217,
+        "width": 202,
+        "meanRgbDelta": 10.21,
+        "pixels": 11064,
+        "x": 899,
+        "y": 829
+      },
+      {
+        "name": "recovery",
+        "height": 110,
+        "foregroundPixelsChangedOver20": 1496,
+        "silhouetteIoU": 0.989671,
+        "width": 145,
+        "meanRgbDelta": 10.877,
+        "pixels": 9975,
+        "x": 903,
+        "y": 974
+      }
+    ],
+    "width": 1254
+  },
+  {
+    "height": 1254,
+    "character": "doug",
+    "pixelFormat": "Format24bppRgb",
+    "path": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\cornhole-side-art\\doug-side-sheet-chroma_wrist-clean.png",
+    "bounds": [
+      {
+        "name": "body",
+        "height": 1203,
+        "foregroundPixelsChangedOver20": 43790,
+        "silhouetteIoU": 0.99698,
+        "width": 426,
+        "meanRgbDelta": 13.168,
+        "pixels": 228686,
+        "x": 325,
+        "y": 18
+      },
+      {
+        "name": "arm",
+        "height": 434,
+        "foregroundPixelsChangedOver20": 1953,
+        "silhouetteIoU": 0.989597,
+        "width": 156,
+        "meanRgbDelta": 6.375,
+        "pixels": 35123,
+        "x": 872,
+        "y": 171
+      },
+      {
+        "name": "grip",
+        "height": 98,
+        "foregroundPixelsChangedOver20": 984,
+        "silhouetteIoU": 0.988535,
+        "width": 210,
+        "meanRgbDelta": 7.191,
+        "pixels": 13036,
+        "x": 890,
+        "y": 686
+      },
+      {
+        "name": "release",
+        "height": 109,
+        "foregroundPixelsChangedOver20": 934,
+        "silhouetteIoU": 0.988148,
+        "width": 230,
+        "meanRgbDelta": 6.46,
+        "pixels": 14600,
+        "x": 888,
+        "y": 820
+      },
+      {
+        "name": "recovery",
+        "height": 126,
+        "foregroundPixelsChangedOver20": 1123,
+        "silhouetteIoU": 0.988339,
+        "width": 165,
+        "meanRgbDelta": 7.482,
+        "pixels": 13070,
+        "x": 890,
+        "y": 975
+      }
+    ],
+    "width": 1254
+  }
+]

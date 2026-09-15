@@ -1,0 +1,32 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "reference": "C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/public/assets/equipment/board.png",
+  "attempts": [
+    {
+      "intent": "precise-object-edit",
+      "original_generated_path": "C:/Users/Doug/.codex/generated_images/01a08828-e8e1-7a42-b33b-2eb830c9c533/exec-49bdf46e-9211-4fdf-8049-fca1fb5a181f.png",
+      "saved_original": "board-horizontal-original.png",
+      "prompt_file": "prompt.txt",
+      "width": 2206,
+      "height": 713,
+      "mode": "RGB",
+      "alpha": false,
+      "visual_review": "Desired horizontal side-three-quarter composition achieved, single board, low left throwing end and raised right hole end, wide silhouette and retained reference materials. Opaque checkerboard backdrop remains."
+    },
+    {
+      "intent": "background-extraction",
+      "original_generated_path": "C:/Users/Doug/.codex/generated_images/01a08828-e8e1-7a42-b33b-2eb830c9c533/exec-0d28b780-79a5-4bf2-9cd9-60842401e1f5.png",
+      "saved_original": "board-horizontal-transparency-attempt.png",
+      "prompt_file": "transparency-edit-prompt.txt",
+      "width": 2170,
+      "height": 725,
+      "mode": "RGB",
+      "alpha": false,
+      "visual_review": "Targeted transparency edit also failed: opaque checkerboard retained, drawing slightly regenerated."
+    }
+  ],
+  "status": "Integrated the first generated RGB image unchanged. A measured paper-outline polygon clips the sprite in Pixi; the opaque checkerboard is never displayed. No transparent bitmap was produced or claimed.",
+  "coordinate_metadata": "coordinates-original.json",
+  "reference_original_preserved": "work/equipment-refresh/board.png",
+  "render_mask": "outline.json"
+}

@@ -1,0 +1,629 @@
+{
+  "stats": {
+    "startTime": "2026-09-12T16:25:07.083Z",
+    "duration": 208473.934,
+    "expected": 43,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "tests": [
+    {
+      "title": "API inputs are detached and clock operations are serialized",
+      "file": "api.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6247,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "API scenario changes refresh controls and invalid input preserves the provider",
+      "file": "api.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4397,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "graphics context loss is visible in diagnostic errors",
+      "file": "api.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3000,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character throw inspection retains production release and full recovery timing",
+      "file": "api.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4219,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan editor round trip: modified valid bytes cannot retain the verified identity",
+      "file": "dan-roundtrip.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1213,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan editor round trip: received bytes, original drawing and honest provenance",
+      "file": "dan-roundtrip.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2364,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan editor round trip: raw loss stays visible; restoration preserves authored motion",
+      "file": "dan-roundtrip.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10362,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan editor round trip: restored foot planting, release, replay, mirror and real pause",
+      "file": "dan-roundtrip.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5725,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan weighted rig: approved bind geometry, anatomical hierarchy and real skin weights",
+      "file": "dan-weighted.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2303,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan weighted rig: IK preserves actual foot vertices while pelvis and knees move",
+      "file": "dan-weighted.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3112,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan weighted rig: authored release detaches once at the evaluated hand and replays",
+      "file": "dan-weighted.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4138,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan weighted rig: all clips, silhouette, mirror, court scale, pause and storage isolation",
+      "file": "dan-weighted.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6739,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Editor export: genuine supplied files load the authored first pose with correct occlusion",
+      "file": "editor-export.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1668,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Editor export: actual FFD vertices match exported keyframe offsets, independently of bone motion",
+      "file": "editor-export.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1547,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Editor export: every original clip advances with finite geometry and restores deterministically",
+      "file": "editor-export.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2435,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Editor export: mirror, blend, pause and changed-file provenance remain truthful",
+      "file": "editor-export.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3033,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keyboard: focused physical keys charge and release through the controller",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6627,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "keyboard: editable fields and focus loss do not leave stuck actions",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5598,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: xbox raw Gamepad API reaches semantic input",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5925,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: playstation raw Gamepad API reaches semantic input",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5845,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: generic raw Gamepad API reaches semantic input",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5896,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: disconnect pauses, held trigger waits for neutral on resume",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5448,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "controller: named checkpoint ignores current held hardware during fixture replay",
+      "file": "input.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7210,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: exact Phaser runtime plays an authored character and transitions continuously",
+      "file": "loongbones.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2188,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: weighted mesh, FFD and authored marker drive the handoff",
+      "file": "loongbones.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1916,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: real file import is local and rejects unsupported exports without replacing the character",
+      "file": "loongbones.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1612,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "LoongBones proof: pause, deterministic replay and bounded realtime diagnostics",
+      "file": "loongbones.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2704,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "dan: rig inspection shows actual joints and restores original rendering",
+      "file": "rig-qa.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5042,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "doug: rig inspection shows actual joints and restores original rendering",
+      "file": "rig-qa.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5051,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan setup and idle proposals remain separate from production art",
+      "file": "rig-qa.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3387,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "rig QA rejects unsupported views without mutating the scenario",
+      "file": "rig-qa.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4259,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "gait inspection loops without inserting the action settling pause",
+      "file": "rig-qa.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5628,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "cornhole-recorded: release, landing, score and reproducible replay",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5819,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "basketball-recorded: release, landing, score and reproducible replay",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5925,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "football-recorded: release, landing, score and reproducible replay",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5776,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "beer-pong-recorded: release, landing, score and reproducible replay",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5964,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character-doug: clip selection, deterministic pose and screenshot",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3319,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "character-dan: clip selection, deterministic pose and screenshot",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3260,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "running-live: real event update and stable pause",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5534,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "fighting-live: real event update and stable pause",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5436,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "scenario lifecycle: one canvas, detached snapshots and no save writes",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10276,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "live performance publishes finite frame timing and render counters",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4657,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "@visual fixed-clock approved reference images",
+      "file": "scenarios.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "skipped",
+      "status": "skipped",
+      "results": [
+        {
+          "status": "skipped",
+          "duration": 329,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "Dan revised source loads through the Lab UI, survives reload and stays distinct from animated production art",
+      "file": "source-fit.spec.ts",
+      "project": "desktop-chromium",
+      "expectedStatus": "passed",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11702,
+          "errors": []
+        }
+      ]
+    }
+  ]
+}

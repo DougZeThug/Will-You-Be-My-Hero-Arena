@@ -1,0 +1,2403 @@
+{
+  "schema": "arena-loongbones-motion-upgrade-v1",
+  "character": "doug",
+  "metadata": [
+    {
+      "id": "alternateIdle",
+      "native": "idle_breathe",
+      "duration": 3,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          2.34,
+          3
+        ]
+      ],
+      "moveControl": 1
+    },
+    {
+      "id": "idle",
+      "native": "weight_shift",
+      "duration": 3.5,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          2.73,
+          3.5
+        ]
+      ],
+      "moveControl": 1
+    },
+    {
+      "id": "throw.flat",
+      "native": "v2_reference_flat_doug",
+      "duration": 2.4,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "phase": "load",
+          "at": 0.5333333333333333
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.7333333333333333
+        },
+        {
+          "phase": "release",
+          "at": 0.9166666666666666
+        },
+        {
+          "phase": "followThrough",
+          "at": 1.0166666666666666
+        },
+        {
+          "phase": "recovery",
+          "at": 1.3
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 0.9166666666666666
+        }
+      ],
+      "cancel": [
+        [
+          1.8666666666666667,
+          2.4
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "underhand",
+      "performanceGain": 0.22,
+      "landmarks": [
+        {
+          "name": "ready",
+          "at": 0
+        },
+        {
+          "name": "targetAcquisition",
+          "at": 0.1
+        },
+        {
+          "name": "weightSettle",
+          "at": 0.18333333333333332
+        },
+        {
+          "name": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "name": "earlyBackswing",
+          "at": 0.38333333333333336
+        },
+        {
+          "name": "middleBackswing",
+          "at": 0.48333333333333334
+        },
+        {
+          "name": "maximumBackswing",
+          "at": 0.6166666666666667
+        },
+        {
+          "name": "transitionLoad",
+          "at": 0.7
+        },
+        {
+          "name": "earlyForwardSwing",
+          "at": 0.7666666666666667
+        },
+        {
+          "name": "acceleration",
+          "at": 0.85
+        },
+        {
+          "name": "preRelease",
+          "at": 0.9
+        },
+        {
+          "name": "release",
+          "at": 0.9166666666666666
+        },
+        {
+          "name": "immediateFollowThrough",
+          "at": 1
+        },
+        {
+          "name": "maximumFollowThrough",
+          "at": 1.15
+        },
+        {
+          "name": "momentumSettling",
+          "at": 1.35
+        },
+        {
+          "name": "armRecovery",
+          "at": 1.7166666666666666
+        },
+        {
+          "name": "weightRecovery",
+          "at": 2.0833333333333335
+        },
+        {
+          "name": "idle",
+          "at": 2.4
+        }
+      ],
+      "rootInterpolation": "continuous",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.45,
+          "x": -2.8000000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.55,
+          "x": -3.3600000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.65,
+          "x": -0.8960000000000001,
+          "y": 0
+        },
+        {
+          "at": 0.8333333333333334,
+          "x": 4.48,
+          "y": 0
+        },
+        {
+          "at": 1.0666666666666667,
+          "x": 7.840000000000001,
+          "y": 0
+        },
+        {
+          "at": 1.3333333333333333,
+          "x": 8.4,
+          "y": 0
+        },
+        {
+          "at": 1.5666666666666667,
+          "x": 2.24,
+          "y": 0
+        },
+        {
+          "at": 1.8666666666666667,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.0833333333333335,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.4,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "throw.slide",
+      "native": "v2_reference_slide_doug",
+      "duration": 2.4833333333333334,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "phase": "load",
+          "at": 0.55
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.7666666666666667
+        },
+        {
+          "phase": "release",
+          "at": 0.95
+        },
+        {
+          "phase": "followThrough",
+          "at": 1.05
+        },
+        {
+          "phase": "recovery",
+          "at": 1.35
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 0.95
+        }
+      ],
+      "cancel": [
+        [
+          1.9333333333333333,
+          2.4833333333333334
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "underhand",
+      "performanceGain": 0.22,
+      "landmarks": [
+        {
+          "name": "ready",
+          "at": 0
+        },
+        {
+          "name": "targetAcquisition",
+          "at": 0.11666666666666667
+        },
+        {
+          "name": "weightSettle",
+          "at": 0.18333333333333332
+        },
+        {
+          "name": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "name": "earlyBackswing",
+          "at": 0.38333333333333336
+        },
+        {
+          "name": "middleBackswing",
+          "at": 0.5
+        },
+        {
+          "name": "maximumBackswing",
+          "at": 0.6333333333333333
+        },
+        {
+          "name": "transitionLoad",
+          "at": 0.7166666666666667
+        },
+        {
+          "name": "earlyForwardSwing",
+          "at": 0.8
+        },
+        {
+          "name": "acceleration",
+          "at": 0.8666666666666667
+        },
+        {
+          "name": "preRelease",
+          "at": 0.9333333333333333
+        },
+        {
+          "name": "release",
+          "at": 0.95
+        },
+        {
+          "name": "immediateFollowThrough",
+          "at": 1.0333333333333334
+        },
+        {
+          "name": "maximumFollowThrough",
+          "at": 1.1833333333333333
+        },
+        {
+          "name": "momentumSettling",
+          "at": 1.3833333333333333
+        },
+        {
+          "name": "armRecovery",
+          "at": 1.7833333333333334
+        },
+        {
+          "name": "weightRecovery",
+          "at": 2.15
+        },
+        {
+          "name": "idle",
+          "at": 2.4833333333333334
+        }
+      ],
+      "rootInterpolation": "continuous",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.4666666666666667,
+          "x": -2.8000000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.5666666666666667,
+          "x": -3.3600000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.6833333333333333,
+          "x": -0.8960000000000001,
+          "y": 0
+        },
+        {
+          "at": 0.8666666666666667,
+          "x": 4.48,
+          "y": 0
+        },
+        {
+          "at": 1.1,
+          "x": 7.840000000000001,
+          "y": 0
+        },
+        {
+          "at": 1.3833333333333333,
+          "x": 8.4,
+          "y": 0
+        },
+        {
+          "at": 1.6166666666666667,
+          "x": 2.24,
+          "y": 0
+        },
+        {
+          "at": 1.9333333333333333,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.1666666666666665,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.4833333333333334,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "throw.blocker",
+      "native": "v2_reference_blocker_doug",
+      "duration": 2.6166666666666667,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "anticipation",
+          "at": 0.23333333333333334
+        },
+        {
+          "phase": "load",
+          "at": 0.5833333333333334
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.8
+        },
+        {
+          "phase": "release",
+          "at": 1
+        },
+        {
+          "phase": "followThrough",
+          "at": 1.1166666666666667
+        },
+        {
+          "phase": "recovery",
+          "at": 1.4333333333333333
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 1
+        }
+      ],
+      "cancel": [
+        [
+          2.033333333333333,
+          2.6166666666666667
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "underhand",
+      "performanceGain": 0.22,
+      "landmarks": [
+        {
+          "name": "ready",
+          "at": 0
+        },
+        {
+          "name": "targetAcquisition",
+          "at": 0.11666666666666667
+        },
+        {
+          "name": "weightSettle",
+          "at": 0.2
+        },
+        {
+          "name": "anticipation",
+          "at": 0.23333333333333334
+        },
+        {
+          "name": "earlyBackswing",
+          "at": 0.4166666666666667
+        },
+        {
+          "name": "middleBackswing",
+          "at": 0.5333333333333333
+        },
+        {
+          "name": "maximumBackswing",
+          "at": 0.6666666666666666
+        },
+        {
+          "name": "transitionLoad",
+          "at": 0.7666666666666667
+        },
+        {
+          "name": "earlyForwardSwing",
+          "at": 0.8333333333333334
+        },
+        {
+          "name": "acceleration",
+          "at": 0.9166666666666666
+        },
+        {
+          "name": "preRelease",
+          "at": 0.9833333333333333
+        },
+        {
+          "name": "release",
+          "at": 1
+        },
+        {
+          "name": "immediateFollowThrough",
+          "at": 1.1
+        },
+        {
+          "name": "maximumFollowThrough",
+          "at": 1.25
+        },
+        {
+          "name": "momentumSettling",
+          "at": 1.4666666666666666
+        },
+        {
+          "name": "armRecovery",
+          "at": 1.8666666666666667
+        },
+        {
+          "name": "weightRecovery",
+          "at": 2.2666666666666666
+        },
+        {
+          "name": "idle",
+          "at": 2.6166666666666667
+        }
+      ],
+      "rootInterpolation": "continuous",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.48333333333333334,
+          "x": -2.8000000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.5833333333333334,
+          "x": -3.3600000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.7166666666666667,
+          "x": -0.8960000000000001,
+          "y": 0
+        },
+        {
+          "at": 0.9166666666666666,
+          "x": 4.48,
+          "y": 0
+        },
+        {
+          "at": 1.1666666666666667,
+          "x": 7.840000000000001,
+          "y": 0
+        },
+        {
+          "at": 1.45,
+          "x": 8.4,
+          "y": 0
+        },
+        {
+          "at": 1.7,
+          "x": 2.24,
+          "y": 0
+        },
+        {
+          "at": 2.05,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.283333333333333,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.6166666666666667,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "throw.airmail",
+      "native": "v2_reference_airmail_doug",
+      "duration": 2.5,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "phase": "load",
+          "at": 0.5666666666666667
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.7666666666666667
+        },
+        {
+          "phase": "release",
+          "at": 0.95
+        },
+        {
+          "phase": "followThrough",
+          "at": 1.0666666666666667
+        },
+        {
+          "phase": "recovery",
+          "at": 1.3666666666666667
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 0.95
+        }
+      ],
+      "cancel": [
+        [
+          1.9333333333333333,
+          2.5
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "underhand",
+      "performanceGain": 0.22,
+      "landmarks": [
+        {
+          "name": "ready",
+          "at": 0
+        },
+        {
+          "name": "targetAcquisition",
+          "at": 0.11666666666666667
+        },
+        {
+          "name": "weightSettle",
+          "at": 0.18333333333333332
+        },
+        {
+          "name": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "name": "earlyBackswing",
+          "at": 0.38333333333333336
+        },
+        {
+          "name": "middleBackswing",
+          "at": 0.5
+        },
+        {
+          "name": "maximumBackswing",
+          "at": 0.6333333333333333
+        },
+        {
+          "name": "transitionLoad",
+          "at": 0.7333333333333333
+        },
+        {
+          "name": "earlyForwardSwing",
+          "at": 0.8
+        },
+        {
+          "name": "acceleration",
+          "at": 0.8833333333333333
+        },
+        {
+          "name": "preRelease",
+          "at": 0.9333333333333333
+        },
+        {
+          "name": "release",
+          "at": 0.95
+        },
+        {
+          "name": "immediateFollowThrough",
+          "at": 1.05
+        },
+        {
+          "name": "maximumFollowThrough",
+          "at": 1.2
+        },
+        {
+          "name": "momentumSettling",
+          "at": 1.4
+        },
+        {
+          "name": "armRecovery",
+          "at": 1.7833333333333334
+        },
+        {
+          "name": "weightRecovery",
+          "at": 2.1666666666666665
+        },
+        {
+          "name": "idle",
+          "at": 2.5
+        }
+      ],
+      "rootInterpolation": "continuous",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.4666666666666667,
+          "x": -2.8000000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.5666666666666667,
+          "x": -3.3600000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.6833333333333333,
+          "x": -0.8960000000000001,
+          "y": 0
+        },
+        {
+          "at": 0.8666666666666667,
+          "x": 4.48,
+          "y": 0
+        },
+        {
+          "at": 1.1166666666666667,
+          "x": 7.840000000000001,
+          "y": 0
+        },
+        {
+          "at": 1.3833333333333333,
+          "x": 8.4,
+          "y": 0
+        },
+        {
+          "at": 1.6166666666666667,
+          "x": 2.24,
+          "y": 0
+        },
+        {
+          "at": 1.95,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.1666666666666665,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.5,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "throw.roll",
+      "native": "v2_reference_roll_doug",
+      "duration": 2.433333333333333,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "phase": "load",
+          "at": 0.55
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.75
+        },
+        {
+          "phase": "release",
+          "at": 0.9333333333333333
+        },
+        {
+          "phase": "followThrough",
+          "at": 1.0333333333333334
+        },
+        {
+          "phase": "recovery",
+          "at": 1.3333333333333333
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 0.9333333333333333
+        }
+      ],
+      "cancel": [
+        [
+          1.8833333333333333,
+          2.433333333333333
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "underhand",
+      "performanceGain": 0.22,
+      "landmarks": [
+        {
+          "name": "ready",
+          "at": 0
+        },
+        {
+          "name": "targetAcquisition",
+          "at": 0.11666666666666667
+        },
+        {
+          "name": "weightSettle",
+          "at": 0.18333333333333332
+        },
+        {
+          "name": "anticipation",
+          "at": 0.21666666666666667
+        },
+        {
+          "name": "earlyBackswing",
+          "at": 0.38333333333333336
+        },
+        {
+          "name": "middleBackswing",
+          "at": 0.48333333333333334
+        },
+        {
+          "name": "maximumBackswing",
+          "at": 0.6166666666666667
+        },
+        {
+          "name": "transitionLoad",
+          "at": 0.7166666666666667
+        },
+        {
+          "name": "earlyForwardSwing",
+          "at": 0.7833333333333333
+        },
+        {
+          "name": "acceleration",
+          "at": 0.85
+        },
+        {
+          "name": "preRelease",
+          "at": 0.9166666666666666
+        },
+        {
+          "name": "release",
+          "at": 0.9333333333333333
+        },
+        {
+          "name": "immediateFollowThrough",
+          "at": 1.0166666666666666
+        },
+        {
+          "name": "maximumFollowThrough",
+          "at": 1.1666666666666667
+        },
+        {
+          "name": "momentumSettling",
+          "at": 1.3666666666666667
+        },
+        {
+          "name": "armRecovery",
+          "at": 1.75
+        },
+        {
+          "name": "weightRecovery",
+          "at": 2.1166666666666667
+        },
+        {
+          "name": "idle",
+          "at": 2.433333333333333
+        }
+      ],
+      "rootInterpolation": "continuous",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.45,
+          "x": -2.8000000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.55,
+          "x": -3.3600000000000003,
+          "y": 0
+        },
+        {
+          "at": 0.6666666666666666,
+          "x": -0.8960000000000001,
+          "y": 0
+        },
+        {
+          "at": 0.85,
+          "x": 4.48,
+          "y": 0
+        },
+        {
+          "at": 1.0833333333333333,
+          "x": 7.840000000000001,
+          "y": 0
+        },
+        {
+          "at": 1.35,
+          "x": 8.4,
+          "y": 0
+        },
+        {
+          "at": 1.5833333333333333,
+          "x": 2.24,
+          "y": 0
+        },
+        {
+          "at": 1.9,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.1166666666666667,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 2.433333333333333,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "walk",
+      "native": "v2_walk",
+      "duration": 1.1,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.18,
+      "phases": [
+        {
+          "phase": "contact",
+          "at": 0
+        },
+        {
+          "phase": "load",
+          "at": 0.08800000000000001
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.28600000000000003
+        },
+        {
+          "phase": "airborne",
+          "at": 0.539
+        },
+        {
+          "phase": "contact",
+          "at": 0.55
+        },
+        {
+          "phase": "load",
+          "at": 0.638
+        },
+        {
+          "phase": "recovery",
+          "at": 0.913
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.10999999999999999
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.66
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.55
+        }
+      ],
+      "cancel": [
+        [
+          0.8580000000000001,
+          1.1
+        ]
+      ],
+      "moveControl": 1,
+      "stride": 76,
+      "gait": {
+        "stance": 0.6,
+        "referenceScale": 0.31150293870696893,
+        "lift": 24
+      },
+      "technique": "stride",
+      "performanceGain": 0.2
+    },
+    {
+      "id": "jog",
+      "native": "v2_jog",
+      "duration": 0.8833333333333333,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.18,
+      "phases": [
+        {
+          "phase": "contact",
+          "at": 0
+        },
+        {
+          "phase": "load",
+          "at": 0.07066666666666667
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.22966666666666666
+        },
+        {
+          "phase": "airborne",
+          "at": 0.4063333333333333
+        },
+        {
+          "phase": "contact",
+          "at": 0.44166666666666665
+        },
+        {
+          "phase": "load",
+          "at": 0.5123333333333333
+        },
+        {
+          "phase": "recovery",
+          "at": 0.7331666666666666
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.4063333333333333
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.44166666666666665
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.848
+        }
+      ],
+      "cancel": [
+        [
+          0.689,
+          0.8833333333333333
+        ]
+      ],
+      "moveControl": 1,
+      "stride": 112,
+      "gait": {
+        "stance": 0.46,
+        "referenceScale": 0.31150293870696893,
+        "lift": 44
+      },
+      "technique": "stride",
+      "performanceGain": 0.2
+    },
+    {
+      "id": "run",
+      "native": "v2_run",
+      "duration": 0.7666666666666667,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.18,
+      "phases": [
+        {
+          "phase": "contact",
+          "at": 0
+        },
+        {
+          "phase": "load",
+          "at": 0.06133333333333334
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.19933333333333336
+        },
+        {
+          "phase": "airborne",
+          "at": 0.32966666666666666
+        },
+        {
+          "phase": "contact",
+          "at": 0.38333333333333336
+        },
+        {
+          "phase": "load",
+          "at": 0.44466666666666665
+        },
+        {
+          "phase": "recovery",
+          "at": 0.6363333333333333
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.32966666666666666
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.38333333333333336
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.713
+        }
+      ],
+      "cancel": [
+        [
+          0.5980000000000001,
+          0.7666666666666667
+        ]
+      ],
+      "moveControl": 1,
+      "stride": 143,
+      "gait": {
+        "stance": 0.43,
+        "referenceScale": 0.31150293870696893,
+        "lift": 58
+      },
+      "technique": "stride",
+      "performanceGain": 0.2
+    },
+    {
+      "id": "sprint",
+      "native": "v2_sprint",
+      "duration": 0.6833333333333333,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.18,
+      "phases": [
+        {
+          "phase": "contact",
+          "at": 0
+        },
+        {
+          "phase": "load",
+          "at": 0.05466666666666667
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.17766666666666667
+        },
+        {
+          "phase": "airborne",
+          "at": 0.2665
+        },
+        {
+          "phase": "contact",
+          "at": 0.3416666666666667
+        },
+        {
+          "phase": "load",
+          "at": 0.3963333333333333
+        },
+        {
+          "phase": "recovery",
+          "at": 0.5671666666666666
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.2665
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.3416666666666667
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.6081666666666667
+        }
+      ],
+      "cancel": [
+        [
+          0.533,
+          0.6833333333333333
+        ]
+      ],
+      "moveControl": 1,
+      "stride": 170,
+      "gait": {
+        "stance": 0.39,
+        "referenceScale": 0.31150293870696893,
+        "lift": 69
+      },
+      "technique": "stride",
+      "performanceGain": 0.2
+    },
+    {
+      "id": "pivot",
+      "native": "v2_pivot",
+      "duration": 0.6,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "plant",
+          "at": 0
+        },
+        {
+          "phase": "recovery",
+          "at": 0.35
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          0.46799999999999997,
+          0.6
+        ]
+      ],
+      "moveControl": 1
+    },
+    {
+      "id": "airborne",
+      "native": "v2_airborne",
+      "duration": 0.8,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "airborne",
+          "at": 0
+        }
+      ],
+      "markers": [],
+      "cancel": [
+        [
+          0.6240000000000001,
+          0.8
+        ]
+      ],
+      "moveControl": 1
+    },
+    {
+      "id": "jump",
+      "native": "v2_jump",
+      "duration": 1.0833333333333333,
+      "loop": false,
+      "layer": "action",
+      "priority": 2,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "load",
+          "at": 0
+        },
+        {
+          "phase": "plant",
+          "at": 0.18
+        },
+        {
+          "phase": "airborne",
+          "at": 0.28
+        },
+        {
+          "phase": "recovery",
+          "at": 0.95
+        }
+      ],
+      "markers": [
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0.18
+        },
+        {
+          "name": "takeoff",
+          "at": 0.28
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.28
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.28
+        }
+      ],
+      "cancel": [
+        [
+          0.845,
+          1.0833333333333333
+        ]
+      ],
+      "moveControl": 1,
+      "technique": "jump"
+    },
+    {
+      "id": "shoot",
+      "native": "v2_shoot",
+      "duration": 2.1333333333333333,
+      "loop": false,
+      "layer": "action",
+      "priority": 3,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "gather",
+          "at": 0
+        },
+        {
+          "phase": "load",
+          "at": 0.23
+        },
+        {
+          "phase": "rise",
+          "at": 0.47
+        },
+        {
+          "phase": "airborne",
+          "at": 0.58
+        },
+        {
+          "phase": "release",
+          "at": 0.7666666666666667
+        },
+        {
+          "phase": "followThrough",
+          "at": 0.84
+        },
+        {
+          "phase": "absorb",
+          "at": 1.3
+        },
+        {
+          "phase": "recovery",
+          "at": 1.72
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "takeoff",
+          "at": 0.58
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0.58
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0.58
+        },
+        {
+          "name": "equipmentRelease",
+          "at": 0.7666666666666667
+        }
+      ],
+      "cancel": [
+        [
+          1.664,
+          2.1333333333333333
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "overhead",
+      "performanceGain": 0.14
+    },
+    {
+      "id": "combatNeutral",
+      "native": "v2_combatNeutral",
+      "duration": 1.5,
+      "loop": true,
+      "layer": "base",
+      "priority": 0,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "plant",
+          "at": 0
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          1.17,
+          1.5
+        ]
+      ],
+      "moveControl": 1,
+      "performanceGain": 0
+    },
+    {
+      "id": "jab",
+      "native": "v2_jab",
+      "duration": 0.6333333333333333,
+      "loop": false,
+      "layer": "action",
+      "priority": 2,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "startup",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.19
+        },
+        {
+          "phase": "recovery",
+          "at": 0.265
+        }
+      ],
+      "markers": [
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.19
+        },
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0.19
+        },
+        {
+          "name": "hitboxOn",
+          "at": 0.19
+        },
+        {
+          "name": "hitboxOff",
+          "at": 0.265
+        },
+        {
+          "name": "cancelWindow",
+          "at": 0.43699999999999994
+        }
+      ],
+      "cancel": [
+        [
+          0.43699999999999994,
+          0.6333333333333333
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "strike",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.19,
+          "x": 17,
+          "y": 0
+        },
+        {
+          "at": 0.6333333333333333,
+          "x": 21,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "heavy",
+      "native": "v2_heavy",
+      "duration": 0.9666666666666667,
+      "loop": false,
+      "layer": "action",
+      "priority": 2,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "startup",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.36
+        },
+        {
+          "phase": "recovery",
+          "at": 0.435
+        }
+      ],
+      "markers": [
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.36
+        },
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0.36
+        },
+        {
+          "name": "hitboxOn",
+          "at": 0.36
+        },
+        {
+          "name": "hitboxOff",
+          "at": 0.435
+        },
+        {
+          "name": "cancelWindow",
+          "at": 0.6669999999999999
+        }
+      ],
+      "cancel": [
+        [
+          0.6669999999999999,
+          0.9666666666666667
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "strike",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.36,
+          "x": 35,
+          "y": 0
+        },
+        {
+          "at": 0.9666666666666667,
+          "x": 39,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "dodge",
+      "native": "v2_dodge",
+      "duration": 0.8,
+      "loop": false,
+      "layer": "action",
+      "priority": 2,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "acceleration",
+          "at": 0.12
+        },
+        {
+          "phase": "recovery",
+          "at": 0.5
+        }
+      ],
+      "markers": [
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "dodgeOn",
+          "at": 0.1
+        },
+        {
+          "name": "dodgeOff",
+          "at": 0.48
+        },
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0.6
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.6
+        }
+      ],
+      "cancel": [
+        [
+          0.6240000000000001,
+          0.8
+        ]
+      ],
+      "moveControl": 0,
+      "technique": "evade",
+      "root": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "at": 0.12,
+          "x": -3,
+          "y": 0
+        },
+        {
+          "at": 0.48,
+          "x": -80,
+          "y": 0
+        },
+        {
+          "at": 0.8,
+          "x": -86,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "id": "hit",
+      "native": "v2_hit",
+      "duration": 0.7,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 10,
+      "fade": 0.08,
+      "phases": [
+        {
+          "phase": "impact",
+          "at": 0
+        },
+        {
+          "phase": "recovery",
+          "at": 0.27
+        }
+      ],
+      "markers": [
+        {
+          "name": "footRelease",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "footRelease",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0.5
+        },
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0.5
+        }
+      ],
+      "cancel": [
+        [
+          0.5459999999999999,
+          0.7
+        ]
+      ],
+      "moveControl": 0.25,
+      "technique": "impact"
+    },
+    {
+      "id": "block",
+      "native": "v2_block",
+      "duration": 0.6,
+      "loop": true,
+      "layer": "action",
+      "priority": 4,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "plant",
+          "at": 0
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          0,
+          1000
+        ]
+      ],
+      "moveControl": 0.25
+    },
+    {
+      "id": "gesture.chestTap",
+      "native": "v2_gesture.chestTap",
+      "duration": 1.5333333333333334,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 1.104
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "chestTapContact",
+          "at": 0.5
+        },
+        {
+          "name": "chestTapContact2",
+          "at": 0.8166666666666667
+        },
+        {
+          "name": "chestTapRelease",
+          "at": 0.9166666666666666
+        }
+      ],
+      "cancel": [
+        [
+          1.5333333333333334,
+          1.5333333333333334
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.bagFlip",
+      "native": "v2_gesture.bagFlip",
+      "duration": 1.0333333333333334,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.744
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        },
+        {
+          "name": "propToss",
+          "at": 0.4
+        },
+        {
+          "name": "propCatch",
+          "at": 0.7
+        }
+      ],
+      "cancel": [
+        [
+          1.0333333333333334,
+          1.0333333333333334
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.fistPump",
+      "native": "v2_gesture.fistPump",
+      "duration": 1.2333333333333334,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.888
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          1.2333333333333334,
+          1.2333333333333334
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.subtleNod",
+      "native": "v2_gesture.subtleNod",
+      "duration": 0.8333333333333334,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.6
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          0.8333333333333334,
+          0.8333333333333334
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.headShake",
+      "native": "v2_gesture.headShake",
+      "duration": 1.0666666666666667,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.768
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          1.0666666666666667,
+          1.0666666666666667
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.shrug",
+      "native": "v2_gesture.shrug",
+      "duration": 1.2,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.864
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          1.2,
+          1.2
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.breathReset",
+      "native": "v2_gesture.breathReset",
+      "duration": 0.7,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.504
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          0.7,
+          0.7
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "gesture.shoulderRoll",
+      "native": "v2_gesture.shoulderRoll",
+      "duration": 0.7666666666666667,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.16,
+      "phases": [
+        {
+          "phase": "anticipation",
+          "at": 0
+        },
+        {
+          "phase": "active",
+          "at": 0.2
+        },
+        {
+          "phase": "recovery",
+          "at": 0.552
+        }
+      ],
+      "markers": [
+        {
+          "name": "footPlant",
+          "foot": "right",
+          "at": 0
+        },
+        {
+          "name": "footPlant",
+          "foot": "left",
+          "at": 0
+        }
+      ],
+      "cancel": [
+        [
+          0.7666666666666667,
+          0.7666666666666667
+        ]
+      ],
+      "moveControl": 0,
+      "performanceGain": 0
+    },
+    {
+      "id": "success",
+      "native": "celebrate_open_hand",
+      "duration": 1.2666666666666666,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "recovery",
+          "at": 0.7599999999999999
+        }
+      ],
+      "markers": [],
+      "cancel": [
+        [
+          0.988,
+          1.2666666666666666
+        ]
+      ],
+      "moveControl": 0.1
+    },
+    {
+      "id": "failure",
+      "native": "inspect_hand",
+      "duration": 1.2666666666666666,
+      "loop": false,
+      "layer": "reaction",
+      "priority": 5,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "recovery",
+          "at": 0.7599999999999999
+        }
+      ],
+      "markers": [],
+      "cancel": [
+        [
+          0.988,
+          1.2666666666666666
+        ]
+      ],
+      "moveControl": 0.1
+    },
+    {
+      "id": "personality",
+      "native": "look_target",
+      "duration": 1.2666666666666666,
+      "loop": false,
+      "layer": "personality",
+      "priority": 1,
+      "fade": 0.14,
+      "phases": [
+        {
+          "phase": "settle",
+          "at": 0
+        },
+        {
+          "phase": "recovery",
+          "at": 0.7599999999999999
+        }
+      ],
+      "markers": [],
+      "cancel": [
+        [
+          0.988,
+          1.2666666666666666
+        ]
+      ],
+      "moveControl": 0.1,
+      "mask": [
+        "head",
+        "neck"
+      ]
+    }
+  ],
+  "textureSources": [
+    "lab-doug-side-v3-texture",
+    "/human-motion/assets/hands/hand-sheet-v1.png"
+  ],
+  "provenance": "Derived Arena authoring; preserved source atlas; complete far arm registered from original isolated arm; ImageGen hand sheet v1.",
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

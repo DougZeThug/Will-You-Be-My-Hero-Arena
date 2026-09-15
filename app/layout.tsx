@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import './live-arena.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Will You Be My Hero? — Arena',
-  description: 'The after hours athletic club. Pick your cards and watch an automatic backyard sports showdown.',
+  description:
+    'Illustrated paper cutouts. Automatic backyard sports. Pick your cards and settle it on the court.',
 };
 
 export default function RootLayout({
@@ -24,6 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="/assets/arena-interface.css" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

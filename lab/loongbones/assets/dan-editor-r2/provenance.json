@@ -1,0 +1,93 @@
+{
+  "source": "User-supplied dan-editor-r2.zip, LoongBones 1.2.3, 2026-09-12",
+  "originalFiles": {
+    "original-export.zip": "1dece09a15c63f59ec0e7d4c2405cd979e2bb3a803b3196ad1bba094d0bd1372",
+    "dan-editor-r2_ske.json": "309a78f9d26da2a44ebb5a7202fdd43b942a67145d9066e68acb7df4cd2f5be3",
+    "dan-editor-r2_tex.json": "f26087630aa7d5685aeb9d0f9ab95464fde2883a713e7696b0e79274dc5cab6f",
+    "dan-editor-r2_tex.png": "2940cbc720af00265fe0240164f3115579f23a72688cff1022ee0c04c513a745"
+  },
+  "authoredInput": {
+    "path": "lab/loongbones/assets/dan-weighted-v1/dan_ske.json",
+    "sha256": "5336a11ed113bfce20c72960701181fc2809cbb6991bf7222e90f9c165ea1862"
+  },
+  "derived": {
+    "file": "dan-arena-restored_ske.json",
+    "sha256": "49a52acf424412ba6a10bf1429982d7d2782687f1a8683fc438db87db2bac489",
+    "kind": "Explicit Arena compatibility restoration; not unchanged editor output"
+  },
+  "rawRoundTripFaithful": false,
+  "productionInstalled": false,
+  "geometry": {
+    "bones": 30,
+    "vertices": 7758,
+    "triangles": 14482,
+    "topologyIdentical": true,
+    "uvRounding": 0.000004966615305579403
+  },
+  "weights": {
+    "positive": 11137,
+    "exportedZeros": 221603,
+    "maxRounding": 0.000005000000000032756,
+    "maxSumError": 0.000010000000000065512
+  },
+  "corrections": [
+    {
+      "field": "ik.plant_L.bendPositive",
+      "received": true,
+      "restored": false
+    },
+    {
+      "field": "neutral.playTimes",
+      "received": 1,
+      "restored": 0
+    },
+    {
+      "field": "idle_breathe.playTimes",
+      "received": 1,
+      "restored": 0
+    },
+    {
+      "field": "throw_low.event.release.bone",
+      "received": null,
+      "restored": "throwing_hand"
+    }
+  ],
+  "curvesRestored": 261,
+  "frameEvents": {
+    "neutral": [],
+    "idle_breathe": [],
+    "look_target": [],
+    "arm_check": [],
+    "throw_low": [
+      {
+        "name": "grab",
+        "frame": 0,
+        "bone": null
+      },
+      {
+        "name": "release",
+        "frame": 43,
+        "bone": null
+      },
+      {
+        "name": "recovery",
+        "frame": 100,
+        "bone": null
+      },
+      {
+        "name": "animationComplete",
+        "frame": 150,
+        "bone": null
+      }
+    ],
+    "quiet_nod": [
+      {
+        "name": "animationComplete",
+        "frame": 90,
+        "bone": null
+      }
+    ],
+    "weight_shift": []
+  },
+  "note": "Guarded recovery only for unchanged source key values/topology. Unexpected edited art, transforms, tracks or event times fail instead of silently replacing artist edits. Raw export remains available for comparison. Runtime and pixel validation are separate."
+}

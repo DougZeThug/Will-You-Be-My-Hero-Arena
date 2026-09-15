@@ -1,0 +1,133 @@
+{
+  "scope": "Captured samples; world-space foot-lock diagnostics and bind-normal mesh-width ratios, not a proof of all possible inputs.",
+  "captures": [
+    {
+      "capture": "dan-basketball-primaryAction-1x",
+      "samples": 15,
+      "maxFootLockSlide": 2.3443731535018889e-07,
+      "minArmWidthRatio": 0.999999999999998,
+      "maxArmWidthRatio": 1.0000000000000009,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-cornhole-bagFlip-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.3340554514980445e-07,
+      "minArmWidthRatio": 0.9999999999999993,
+      "maxArmWidthRatio": 1.0000000000000007,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-cornhole-chestTap-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.3340554514980445e-07,
+      "minArmWidthRatio": 0.9999999999999988,
+      "maxArmWidthRatio": 1.0000000000000004,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-cornhole-fistPump-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.3340554514980445e-07,
+      "minArmWidthRatio": 0.9999999999999989,
+      "maxArmWidthRatio": 1.0000000000000004,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-cornhole-primaryAction-1x",
+      "samples": 15,
+      "maxFootLockSlide": 1.4787384777817412e-05,
+      "minArmWidthRatio": 0.9999999999999991,
+      "maxArmWidthRatio": 1.0000000000000009,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-fighting-matchup-1x",
+      "samples": 20,
+      "maxFootLockSlide": 3.05290547551917e-05,
+      "minArmWidthRatio": 0.9999999999999986,
+      "maxArmWidthRatio": 1.0000000000000007,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "dan-running-run-stop-1x",
+      "samples": 15,
+      "maxFootLockSlide": 1.5005046606465297e-05,
+      "minArmWidthRatio": 0.9999999999999988,
+      "maxArmWidthRatio": 1.0000000000000007,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-basketball-primaryAction-0.25x",
+      "samples": 60,
+      "maxFootLockSlide": 2.741071368682517e-07,
+      "minArmWidthRatio": 0.9999999999999982,
+      "maxArmWidthRatio": 1.0000000000000016,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-basketball-primaryAction-1x",
+      "samples": 15,
+      "maxFootLockSlide": 2.741071368682517e-07,
+      "minArmWidthRatio": 0.9999999999999986,
+      "maxArmWidthRatio": 1.0000000000000009,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-cornhole-bagFlip-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.164437181522878e-07,
+      "minArmWidthRatio": 0.999999999999999,
+      "maxArmWidthRatio": 1.0000000000000009,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-cornhole-chestTap-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.164437181522878e-07,
+      "minArmWidthRatio": 0.9999999999999989,
+      "maxArmWidthRatio": 1.0000000000000007,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-cornhole-fistPump-1x",
+      "samples": 15,
+      "maxFootLockSlide": 4.164437181522878e-07,
+      "minArmWidthRatio": 0.9999999999999992,
+      "maxArmWidthRatio": 1.0000000000000004,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-cornhole-primaryAction-1x",
+      "samples": 15,
+      "maxFootLockSlide": 3.0763755321836215e-05,
+      "minArmWidthRatio": 0.9999999999999988,
+      "maxArmWidthRatio": 1.000000000000001,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-fighting-matchup-1x",
+      "samples": 20,
+      "maxFootLockSlide": 0.5459353270694418,
+      "minArmWidthRatio": 0.9999999999999983,
+      "maxArmWidthRatio": 1.0000000000000016,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-running-run-stop-0.25x",
+      "samples": 60,
+      "maxFootLockSlide": 2.5834258700971026e-05,
+      "minArmWidthRatio": 0.9999999999999983,
+      "maxArmWidthRatio": 1.000000000000001,
+      "integrityWarnings": 0
+    },
+    {
+      "capture": "doug-running-run-stop-1x",
+      "samples": 15,
+      "maxFootLockSlide": 2.5157586705747008e-05,
+      "minArmWidthRatio": 0.9999999999999987,
+      "maxArmWidthRatio": 1.000000000000001,
+      "integrityWarnings": 0
+    }
+  ]
+}

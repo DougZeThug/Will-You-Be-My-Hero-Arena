@@ -1,0 +1,22 @@
+{
+  "mode": "built-in image_gen",
+  "results": {
+    "dan": {
+      "original_path": "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-05cc2365-e139-4ee3-9dc5-1285963c0cd2.png"
+    },
+    "doug": {
+      "original_path": "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-dd7c7fae-5e8e-4614-b972-62e926f1e431.png"
+    },
+    "arena": {
+      "original_path": "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-aed27b4e-db2a-410b-b7ab-d593e48f5d9c.png"
+    },
+    "board": {
+      "original_path": "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-ec764090-d46d-4f24-a255-0090b448506e.png"
+    }
+  },
+  "prompt_files": [
+    "prompts.json",
+    "board-prompt.txt"
+  ],
+  "source_images_preserved": true
+}

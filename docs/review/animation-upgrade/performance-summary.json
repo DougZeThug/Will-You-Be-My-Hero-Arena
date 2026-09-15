@@ -1,0 +1,101 @@
+{
+  "device": "Intel Core i5-9500 @ 3 GHz, 6 cores; 31.79 GiB RAM; Windows 10.0.26200; headless Chrome",
+  "target": "60 FPS / 16.67 ms, advisory review target",
+  "scope": "Two characters, 1440x1080 browser viewport, 1280x760 canvas; overlays/trails disabled; other user apps may be open. Fresh active-playback samples after assets/actors are ready. This is a local observation, not an FPS guarantee.",
+  "rows": [
+    {
+      "event": "cornhole",
+      "before": {
+        "samples": 712,
+        "meanMs": 16.917696629213452,
+        "fps": 59.10970162883767,
+        "p95Ms": 16.80000000000109,
+        "worstMs": 100.10000000000036
+      },
+      "after": {
+        "samples": 704,
+        "meanMs": 17.086079545454513,
+        "fps": 58.527176895066866,
+        "p95Ms": 16.80000000000109,
+        "worstMs": 66.79999999999927
+      },
+      "textureMBBefore": 31.706,
+      "textureMBAfter": 37.704,
+      "drawCallsBefore": 8,
+      "drawCallsAfter": 8,
+      "errors": []
+    },
+    {
+      "event": "running",
+      "before": {
+        "samples": 246,
+        "meanMs": 17.15813008130081,
+        "fps": 58.28140917813737,
+        "p95Ms": 16.899999999999636,
+        "worstMs": 83.39999999999964
+      },
+      "after": {
+        "samples": 235,
+        "meanMs": 18.03191489361702,
+        "fps": 55.45722713864307,
+        "p95Ms": 33.30000000000018,
+        "worstMs": 100
+      },
+      "textureMBBefore": 55.7,
+      "textureMBAfter": 61.699,
+      "drawCallsBefore": 3,
+      "drawCallsAfter": 3,
+      "errors": []
+    },
+    {
+      "event": "basketball",
+      "before": {
+        "samples": 698,
+        "meanMs": 17.185243553008547,
+        "fps": 58.1894575375357,
+        "p95Ms": 16.899999999999636,
+        "worstMs": 50.099999999999454
+      },
+      "after": {
+        "samples": 692,
+        "meanMs": 17.35809248554909,
+        "fps": 57.61001681679696,
+        "p95Ms": 16.899999999999636,
+        "worstMs": 116.59999999999991
+      },
+      "textureMBBefore": 31.706,
+      "textureMBAfter": 37.704,
+      "drawCallsBefore": 3,
+      "drawCallsAfter": 3,
+      "errors": []
+    },
+    {
+      "event": "fighting",
+      "before": {
+        "samples": 713,
+        "meanMs": 16.8705469845722,
+        "fps": 59.2749008621049,
+        "p95Ms": 16.80000000000109,
+        "worstMs": 100.19999999999982
+      },
+      "after": {
+        "samples": 684,
+        "meanMs": 17.610087719298225,
+        "fps": 56.785634230778875,
+        "p95Ms": 17,
+        "worstMs": 66.80000000000018
+      },
+      "textureMBBefore": 55.7,
+      "textureMBAfter": 61.699,
+      "drawCallsBefore": 3,
+      "drawCallsAfter": 3,
+      "errors": []
+    }
+  ],
+  "handAsset": {
+    "pngBytes": 934130,
+    "sharedRGBABytes": 6290112
+  },
+  "limitations": "Occasional 100\u2013117 ms long frames remain in the 12-second samples. Running p95 is 33.3 ms. The strict 60 FPS target is not met consistently. Legacy initialization-inclusive samples are preserved in performance-before/after/optimized.json.",
+  "finalSourceReport": "performance-final-shoulder.json"
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "arena-checkpoint-local-inputs-v1",
+  "secretFilesIncluded": false,
+  "files": [
+    {
+      "path": "work/qa/v31-reference/review/basketball.mp4",
+      "bytes": 656799,
+      "sha256": "e851914d9f6e4d27997ed4775e24141a03adf12dd1fb9bb565682245e77d9431",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/basketball-jump.mp4",
+      "bytes": 234598,
+      "sha256": "de4ba95039c486196b4ab19a1948bb8ea5a4a0773c041d9558c32182598244ff",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/boxing.mp4",
+      "bytes": 852387,
+      "sha256": "fa39a5d0fa3611566893c0e71c54bd6fcb95b4352940a4b0b9f1ce5cb0e0ad53",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/dodge.mp4",
+      "bytes": 201529,
+      "sha256": "01c545ef95a1b938bdca65d8a281ac9a1f2e99129a50fa5906dd14deb32c1523",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/football.mp4",
+      "bytes": 589223,
+      "sha256": "38d5437e139c57c81a0dc566c09c3ca85c9445a7fd17c3a6f2f8d69a036984f1",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/celebration.mp4",
+      "bytes": 1105533,
+      "sha256": "c0b653d16ce1a60e59a55ef52b60a39093cb331c09852e5b42c8bcd54960c348",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/qa/v31-reference/review/running.mp4",
+      "bytes": 2670099,
+      "sha256": "c7479c3aa9f898977e1bbc22085889c47bccf47052f567e5bedf4bafab5a89ec",
+      "role": "Lab motion-reference video"
+    },
+    {
+      "path": "work/motion-models/pose_landmarker_lite.task",
+      "bytes": 5777746,
+      "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "role": "optional pose-extraction model"
+    }
+  ],
+  "localBackup": {
+    "filename": "Arena-Checkpoint-Local-Inputs.zip",
+    "bytes": 11256355,
+    "sha256": "e09da8f456c6e3e641c2f7f794e21021395a642b49f92b7d7d507095f333db06"
+  },
+  "note": "Game assets and measured tracks are versioned. These non-secret inputs are optional for game playback, required for the existing Lab video-comparison/extraction tools. Local Codex worktrees copy them via .worktreeinclude; a GitHub clone alone does not."
+}

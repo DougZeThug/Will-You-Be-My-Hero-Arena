@@ -1,0 +1,32 @@
+{
+  "file": "arena-background-refined.png",
+  "size": [
+    1672,
+    941
+  ],
+  "mode": "RGB",
+  "tool": "built-in image_gen",
+  "edit_target": "arena-background.png",
+  "prompts": [
+    "arena-refinement-prompt.txt",
+    "arena-refinement-prompt-pass2.txt"
+  ],
+  "original_generated_paths": [
+    "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-e9db4ed3-1ea8-4f1b-9351-a02d77a97a61.png",
+    "C:\\Users\\Doug\\.codex\\generated_images\\01a0835a-5fd1-7053-8057-7086c8db2c98\\exec-28c52689-00d0-4f38-86dc-bd7817eaf727.png"
+  ],
+  "empty_scoreboard_inner_bounds_pixels": [
+    637,
+    87,
+    1035,
+    203
+  ],
+  "empty_scoreboard_inner_bounds_normalized": [
+    0.381,
+    0.0925,
+    0.619,
+    0.216
+  ],
+  "playing_floor_y": 0.585,
+  "qa": "Inspected both passes. Final keeps native dimensions and composition. Center scoreboard approximately 20% smaller and higher; crowd lower contrast. Dense gravel removed in favor of a flatter low-contrast printed asphalt plane with sparse ink grit; lower-left has calm negative space for character. No props/text added. Upper illustrated fence/bleachers/sky palette preserved."
+}

@@ -1,0 +1,3 @@
+Browser tab: 3, Title: "LoongBones web", URL: "https://www.loongbones.app/editor/?workId=NfiK5sO1".
+There has been no change in the accessibility tree.
+The focused UI element is 0 AXWebArea LoongBones web, URL: loongbones.app/editor/?workId=NfiK5sO1

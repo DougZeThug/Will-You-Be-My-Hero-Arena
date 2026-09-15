@@ -1,0 +1,230 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\Doug\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\arena\\node_modules\\playwright\\cli.js",
+      "test",
+      "--grep",
+      "LoongBones proof"
+    ],
+    "configFile": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\arena\\playwright.config.ts",
+    "rootDir": "C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/work/qa/browser/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop-chromium",
+        "name": "desktop-chromium",
+        "testDir": "C:/Users/Doug/Documents/Codex/2026-09-08/files-pasted-by-the-user-you/outputs/arena/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "work/qa/browser/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "work/qa/browser/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "none",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "loongbones.spec.ts",
+      "file": "loongbones.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "LoongBones proof: exact Phaser runtime plays an authored character and transitions continuously",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chromium",
+              "projectName": "desktop-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2380,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-11T23:23:58.769Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c853f42197e25ec9ea4d-24152350fe73b4aef091",
+          "file": "loongbones.spec.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "LoongBones proof: weighted mesh, FFD and authored marker drive the handoff",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chromium",
+              "projectName": "desktop-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1927,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-11T23:24:01.771Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c853f42197e25ec9ea4d-f36e3741ab8ea617cac2",
+          "file": "loongbones.spec.ts",
+          "line": 64,
+          "column": 1
+        },
+        {
+          "title": "LoongBones proof: real file import is local and rejects unsupported exports without replacing the character",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chromium",
+              "projectName": "desktop-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1698,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-11T23:24:03.714Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c853f42197e25ec9ea4d-eabe682947a51f8fdd07",
+          "file": "loongbones.spec.ts",
+          "line": 127,
+          "column": 1
+        },
+        {
+          "title": "LoongBones proof: pause, deterministic replay and bounded realtime diagnostics",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-chromium",
+              "projectName": "desktop-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2752,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-11T23:24:05.432Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c853f42197e25ec9ea4d-3911e840ae0be6a55820",
+          "file": "loongbones.spec.ts",
+          "line": 176,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-11T23:23:57.966Z",
+    "duration": 10517.873,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "started": "2026-09-11T23:14:32.953Z",
+  "completed": "2026-09-11T23:17:52.780Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "typecheck",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 4.396
+    },
+    {
+      "name": "simulation-and-animation",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 22.098
+    },
+    {
+      "name": "browser",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 140.236
+    },
+    {
+      "name": "production-build",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 16.629
+    },
+    {
+      "name": "production-isolation",
+      "passed": true,
+      "exitCode": 0,
+      "seconds": 16.464
+    }
+  ],
+  "deployment": "Not performed",
+  "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+}

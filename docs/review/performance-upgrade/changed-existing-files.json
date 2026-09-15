@@ -1,0 +1,16 @@
+[
+  "lab\\human-motion\\HandAttachments.ts",
+  "lab\\human-motion\\MotionActor.ts",
+  "lab\\human-motion\\MotionReview.ts",
+  "lab\\human-motion\\MotionScene.ts",
+  "lab\\human-motion\\NativeAnimator.ts",
+  "lab\\human-motion\\ReviewTake.ts",
+  "lab\\human-motion\\authoring\\basketball.ts",
+  "lab\\human-motion\\authoring\\builder.ts",
+  "lab\\human-motion\\authoring\\combat.ts",
+  "lab\\human-motion\\authoring\\cornhole.ts",
+  "lab\\human-motion\\authoring\\gait.ts",
+  "lab\\human-motion\\events\\CombatProof.ts",
+  "lib\\arena\\engine\\motion\\MotionPlanner.ts",
+  "lib\\arena\\engine\\motion\\MotionTypes.ts"
+]

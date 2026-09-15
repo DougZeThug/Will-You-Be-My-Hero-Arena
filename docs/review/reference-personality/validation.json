@@ -1,0 +1,796 @@
+{
+  "reviewedAt": "2026-09-14T15:56:02.894397+00:00",
+  "status": "V2 Lab candidate for user performance review",
+  "productionInstalled": false,
+  "editorRoundTripVerified": false,
+  "protectedArtIdentity": {
+    "dan": {
+      "dan_ske.json": true,
+      "dan_tex.json": true,
+      "dan_tex.png": true
+    },
+    "doug": {
+      "doug_ske.json": true,
+      "doug_tex.json": true,
+      "doug_tex.png": true
+    }
+  },
+  "regression": {
+    "started": "2026-09-14T15:31:44.971Z",
+    "completed": "2026-09-14T15:41:47.828Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 5.265
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 26.316
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 538.712
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 17.332
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 15.227
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "browser": {
+    "startTime": "2026-09-14T15:32:17.535Z",
+    "duration": 537101.288,
+    "expected": 96,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "simulationAnimationChecks": 170340,
+  "measuredReference": {
+    "source": {
+      "file": "three-steps.mp4",
+      "sha256": "52a0372cbdbbc409b9d7a12e23a5ad3156439eeb5343ea392cdf5698899828c1",
+      "url": "https://www.youtube.com/watch?v=MQFTtLG3Vxo&t=330s",
+      "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "mediapipe": "0.10.32",
+      "opencv": "4.13.0",
+      "fps": 29.967222428174235,
+      "width": 425,
+      "height": 480,
+      "crop": [
+        0,
+        0,
+        425,
+        480
+      ],
+      "start": 330.0,
+      "normalization": "fixed median torso length in aspect-correct image pixels",
+      "torsoPixels": 106.37907840081789,
+      "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+      "timestampFallbacks": 0
+    },
+    "samples": 158,
+    "occludedFarSideIsAuthored": true,
+    "derivatives": "Source media time; runtime editorial time warp declared separately",
+    "compileReproducedFromVersionedSamples": true
+  },
+  "extensionComparison": {
+    "initial": {
+      "release": 2.1333333333333284,
+      "upperArmPeakAfterRelease": 0.35833333333333206,
+      "timeWithinFiveDegreesOfPeak": 0.35833333333333334,
+      "elbowBend": {
+        "min": -50.621487312497436,
+        "max": -9.239074592573456,
+        "range": 41.38241271992398
+      },
+      "kneeBends": {
+        "rightKnee": {
+          "min": 20.188879355519845,
+          "max": 46.6872895161406,
+          "range": 26.498410160620757
+        },
+        "leftKnee": {
+          "min": -42.981860039785154,
+          "max": -20.202165061681683,
+          "range": 22.77969497810347
+        }
+      },
+      "pelvisTravel": {
+        "x": {
+          "min": 626.2836712162757,
+          "max": 648.8066359315098,
+          "range": 22.52296471523414
+        },
+        "y": {
+          "min": 364.65162695055596,
+          "max": 369.68851163925956,
+          "range": 5.036884688703594
+        }
+      },
+      "releaseVelocity": {
+        "x": 431.55772819044427,
+        "y": -302.2920851504369
+      },
+      "maxAnkleDrift": 1.2710574864626038e-13
+    },
+    "release-timed": {
+      "release": 2.149999999999995,
+      "upperArmPeakAfterRelease": 0.29999999999999893,
+      "timeWithinFiveDegreesOfPeak": 0.15833333333333333,
+      "elbowBend": {
+        "min": -63.5158234306888,
+        "max": -12.072447354675958,
+        "range": 51.44337607601284
+      },
+      "kneeBends": {
+        "rightKnee": {
+          "min": 20.18887935551958,
+          "max": 43.78493402727088,
+          "range": 23.5960546717513
+        },
+        "leftKnee": {
+          "min": -43.82144534635696,
+          "max": -20.202165061681747,
+          "range": 23.619280284675213
+        }
+      },
+      "pelvisTravel": {
+        "x": {
+          "min": 628.7480811220902,
+          "max": 649.9968629773804,
+          "range": 21.24878185529019
+        },
+        "y": {
+          "min": 364.64968246182866,
+          "max": 369.57187844464124,
+          "range": 4.922195982812582
+        }
+      },
+      "releaseVelocity": {
+        "x": 522.1774312200014,
+        "y": -250.3265760277096
+      },
+      "maxAnkleDrift": 1.2710574864626038e-13
+    }
+  },
+  "renderedSoles": {
+    "reference-throw-Reference--1daac-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 173,
+      "maxSoleDriftPx": 3.0509200655615132e-05
+    },
+    "reference-throw-Reference--297ee-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 173,
+      "maxSoleDriftPx": 3.0106715712463483e-05
+    },
+    "reference-throw-Reference--38e88-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 173,
+      "maxSoleDriftPx": 3.048180133191636e-05
+    },
+    "reference-throw-Reference--6bddc-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 131,
+      "maxSoleDriftPx": 1.5261271727240455e-05
+    },
+    "reference-throw-Reference--9fd98-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 131,
+      "maxSoleDriftPx": 1.4481958373835369e-05
+    },
+    "reference-throw-Reference--ac25c-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 173,
+      "maxSoleDriftPx": 3.053201112379611e-05
+    },
+    "reference-throw-Reference--d6c9c-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 131,
+      "maxSoleDriftPx": 1.4565444018899143e-05
+    },
+    "reference-throw-Reference--ede84-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 131,
+      "maxSoleDriftPx": 1.496532934197603e-05
+    },
+    "reference-throw-Reference--edf81-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 131,
+      "maxSoleDriftPx": 1.5203071285441183e-05
+    },
+    "reference-throw-Reference--ff557-contact-launch-and-recovery-desktop-chromium": {
+      "samples": 173,
+      "maxSoleDriftPx": 3.053201112379611e-05
+    }
+  },
+  "captures": [
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\arena\\cornhole-1x.json",
+      "rate": 1,
+      "event": "cornhole",
+      "character": "doug",
+      "score": 3,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "PRE_ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "bagFlip"
+          },
+          {
+            "phase": "ACTION",
+            "time": 1.2416666666666647,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 2.149999999999996,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 3.1999999999999913,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 3.3416666666666575,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 4.875000000000032,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 5.000000000000038,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": 0.38010362976098727,
+        "tosses": 1,
+        "catches": 1
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 163,
+      "activeFrameGapP95ms": 36.99999999999992,
+      "activeFrameGapMaxMs": 52.00000000000004,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-0.25x.json",
+      "rate": 0.25,
+      "event": "cornhole",
+      "character": "doug",
+      "score": 3,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "PRE_ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "bagFlip"
+          },
+          {
+            "phase": "ACTION",
+            "time": 1.2416666666666647,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 2.149999999999996,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 3.1999999999999913,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 3.3416666666666575,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 4.875000000000032,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 5.000000000000038,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": 0.38010362976098727,
+        "tosses": 1,
+        "catches": 1
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 648,
+      "activeFrameGapP95ms": 36.999999999999034,
+      "activeFrameGapMaxMs": 45.00000000000015,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-0.5x.json",
+      "rate": 0.5,
+      "event": "cornhole",
+      "character": "doug",
+      "score": 3,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "PRE_ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "bagFlip"
+          },
+          {
+            "phase": "ACTION",
+            "time": 1.2416666666666647,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 2.149999999999996,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 3.1999999999999913,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 3.3416666666666575,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 4.875000000000032,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 5.000000000000038,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": 0.38010362976098727,
+        "tosses": 1,
+        "catches": 1
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 324,
+      "activeFrameGapP95ms": 36.99999999999983,
+      "activeFrameGapMaxMs": 42.000000000000036,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-1x.json",
+      "rate": 1,
+      "event": "cornhole",
+      "character": "doug",
+      "score": 3,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "PRE_ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "bagFlip"
+          },
+          {
+            "phase": "ACTION",
+            "time": 1.2416666666666647,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 2.149999999999996,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 3.1999999999999913,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 3.3416666666666575,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 4.875000000000032,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 5.000000000000038,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": 0.38010362976098727,
+        "tosses": 1,
+        "catches": 1
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 162,
+      "activeFrameGapP95ms": 37.00000000000081,
+      "activeFrameGapMaxMs": 58.00000000000005,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\dan\\cornhole-1x.json",
+      "rate": 1,
+      "event": "cornhole",
+      "character": "dan",
+      "score": 3,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "REACTION",
+        "gesture": "fistPump",
+        "mode": "athletic-only",
+        "result": null,
+        "recent": [
+          "fistPump"
+        ],
+        "history": [
+          {
+            "phase": "ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 1.0499999999999994,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 2.316666666666661,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 2.5416666666666603,
+            "gesture": "fistPump"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": null,
+        "tosses": 0,
+        "catches": 0
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 107,
+      "activeFrameGapP95ms": 36.000000000000476,
+      "activeFrameGapMaxMs": 42.99999999999993,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\basketball-arena\\basketball-1x.json",
+      "rate": 1,
+      "event": "basketball",
+      "character": "doug",
+      "score": 2,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 0.816666666666666,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 2.016666666666662,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 2.1583333333333283,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 3.691666666666656,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 3.8166666666666558,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": null,
+        "tosses": 0,
+        "catches": 0
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 134,
+      "activeFrameGapP95ms": 36.40000000000025,
+      "activeFrameGapMaxMs": 60.99999999999994,
+      "blankActiveFrames": 0
+    },
+    {
+      "capture": "work\\qa\\fidelity-personality\\videos\\basketball\\basketball-1x.json",
+      "rate": 1,
+      "event": "basketball",
+      "character": "doug",
+      "score": 2,
+      "releaseCount": 1,
+      "personality": {
+        "phase": "IDLE",
+        "gesture": "none",
+        "mode": "showcase",
+        "result": null,
+        "recent": [
+          "chestTap"
+        ],
+        "history": [
+          {
+            "phase": "ACTION",
+            "time": 0.20833333333333331,
+            "gesture": "none"
+          },
+          {
+            "phase": "WATCHING",
+            "time": 0.816666666666666,
+            "gesture": "none"
+          },
+          {
+            "phase": "RESULT",
+            "time": 2.016666666666662,
+            "gesture": "none"
+          },
+          {
+            "phase": "REACTION",
+            "time": 2.1583333333333283,
+            "gesture": "chestTap"
+          },
+          {
+            "phase": "RECOVERY",
+            "time": 3.691666666666656,
+            "gesture": "none"
+          },
+          {
+            "phase": "IDLE",
+            "time": 3.8166666666666558,
+            "gesture": "none"
+          }
+        ]
+      },
+      "prop": {
+        "flight": null,
+        "catchError": null,
+        "tosses": 0,
+        "catches": 0
+      },
+      "decodeErrors": [],
+      "activeVideoFrames": 138,
+      "activeFrameGapP95ms": 37.99999999999986,
+      "activeFrameGapMaxMs": 51.99999999999982,
+      "blankActiveFrames": 0
+    }
+  ],
+  "mp4": {
+    "file": "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\Arena-Reference-and-Personality-Review.mp4",
+    "width": 1280,
+    "height": 760,
+    "fps": 30,
+    "codec": "H.264",
+    "pixelFormat": "yuv420p",
+    "duration": 56.3,
+    "bytes": 20959459,
+    "fullDecodeErrors": [],
+    "segments": [
+      {
+        "label": "ARENA / DOUG PERFORMANCE / NORMAL SPEED",
+        "start": 0,
+        "duration": 5.466666666666667,
+        "frames": 164,
+        "source": "work\\qa\\fidelity-personality\\videos\\arena\\cornhole-1x.webm",
+        "captureLeadTrimSeconds": 0.9005999999642372
+      },
+      {
+        "label": "DOUG / BAG FLIP - THROW - CHEST TAP / NORMAL SPEED",
+        "start": 5.466666666666667,
+        "duration": 5.466666666666667,
+        "frames": 164,
+        "source": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-1x.webm",
+        "captureLeadTrimSeconds": 0.9093999999761582
+      },
+      {
+        "label": "DOUG / HALF SPEED",
+        "start": 10.933333333333334,
+        "duration": 10.833333333333334,
+        "frames": 325,
+        "source": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-0.5x.webm",
+        "captureLeadTrimSeconds": 0.9093000000119209
+      },
+      {
+        "label": "DOUG / QUARTER SPEED",
+        "start": 21.766666666666666,
+        "duration": 21.633333333333333,
+        "frames": 649,
+        "source": "work\\qa\\fidelity-personality\\videos\\doug\\cornhole-0.25x.webm",
+        "captureLeadTrimSeconds": 0.904800000011921
+      },
+      {
+        "label": "DAN / MEASURED THROW / NORMAL SPEED",
+        "start": 43.4,
+        "duration": 3.6,
+        "frames": 108,
+        "source": "work\\qa\\fidelity-personality\\videos\\dan\\cornhole-1x.webm",
+        "captureLeadTrimSeconds": 0.9053000000119209
+      },
+      {
+        "label": "BASKETBALL / MAKE - WATCH - REACT",
+        "start": 47.0,
+        "duration": 4.666666666666667,
+        "frames": 140,
+        "source": "work\\qa\\fidelity-personality\\videos\\basketball-arena\\basketball-1x.webm",
+        "captureLeadTrimSeconds": 0.9021000000238418
+      },
+      {
+        "label": "BASKETBALL MAKE / SAME DOUG CHEST TAP",
+        "start": 51.666666666666664,
+        "duration": 4.633333333333334,
+        "frames": 139,
+        "source": "work\\qa\\fidelity-personality\\videos\\basketball\\basketball-1x.webm",
+        "captureLeadTrimSeconds": 0.901
+      }
+    ],
+    "method": "Continuous forward runtime recording; no interpolation between stills."
+  },
+  "performance": {
+    "mode": "realtime",
+    "capacity": 240,
+    "realtime": {
+      "frames": 736,
+      "windowFrames": 240,
+      "frameTiming": {
+        "samples": 240,
+        "meanMs": 16.684,
+        "p95Ms": 17.7,
+        "worstMs": 18.8
+      },
+      "updateWork": {
+        "samples": 240,
+        "meanMs": 7.063,
+        "p95Ms": 9.7,
+        "worstMs": 10.3
+      },
+      "renderWork": {
+        "samples": 240,
+        "meanMs": 1.819,
+        "p95Ms": 2.2,
+        "worstMs": 2.8
+      },
+      "slowFrames": 4,
+      "fps": 59.938
+    },
+    "manual": {
+      "frames": 0,
+      "windowFrames": 0,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "renderWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "drawCalls": 8,
+    "counters": {
+      "scenes": 1,
+      "objects": 49,
+      "visibleObjects": 23,
+      "meshes": 32,
+      "meshVertices": 11728,
+      "meshTriangles": 20551,
+      "textures": 18,
+      "textureSources": 18,
+      "textureMBEstimate": 31.706
+    },
+    "notes": [
+      "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+      "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+      "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+      "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+    ]
+  },
+  "reviewNotes": [
+    "All 18 named poses for both characters; silhouettes at ready, backswing, release, maximum follow-through and recovery.",
+    "Continuous recordings decoded at 1x, 0.5x and 0.25x; both chest contacts and real bag catch inspected.",
+    "Source/character comparison checked against actual displayed pixels and shared clock.",
+    "Recorder warm-up trimmed; action is not reconstructed from screenshots.",
+    "No new art, joints, mesh weights, cloth or finger rig. Character identity and source sizes preserved.",
+    "One optional approved pixel-baseline test skipped; no baselines rewritten. Physical controller testing not performed."
+  ]
+}

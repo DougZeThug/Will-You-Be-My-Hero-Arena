@@ -10,6 +10,11 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+# Browser traces, screenshots, local profiles and reports stay in work/qa.
+# Reviewed visual baselines under tests/browser/baselines are intentionally tracked.
 
 # next.js
 /.next/
@@ -39,4 +44,11 @@ next-env.d.ts
 
 .test-build/
 *.tsbuildinfo
+
+# Python development bytecode is regenerated, never a character source asset.
+__pycache__/
+*.py[cod]
+
+# Historical raw browser dump (36 MB); concise reviewed evidence stays tracked.
+/docs/review/loongbones-proof/browser-results.json
 

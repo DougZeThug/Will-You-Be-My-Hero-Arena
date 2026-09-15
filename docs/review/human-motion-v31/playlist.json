@@ -1,0 +1,19 @@
+[
+ ["doug/cornhole-1x.webm", "V3.1 / DOUG / CORRECTED ARM GEOMETRY / NORMAL"],
+ ["doug/cornhole-0.25x.webm", "DOUG / LOAD - SWING - RELEASE - SETTLE / QUARTER"],
+ ["dan/cornhole-1x.webm", "DAN / CORNHOLE / NORMAL ARENA SCALE"],
+ ["dan/running-1x.webm", "DAN / START - RUN - STOP / NORMAL"],
+ ["doug/running-1x.webm", "DOUG / CONTACT-DRIVEN GAIT / NORMAL"],
+ ["doug/running-0.25x.webm", "DOUG / FOOT SUPPORT AND RECOVERY / QUARTER"],
+ ["dan/basketball-1x.webm", "DAN / LOAD - TAKEOFF - RELEASE - LAND / NORMAL"],
+ ["doug/basketball-1x.webm", "DOUG / BASKETBALL / NORMAL"],
+ ["doug/basketball-0.25x.webm", "DOUG / SHOOTING POCKET AND LANDING / QUARTER"],
+ ["combat/fighting-1x.webm", "COMBAT / OPPONENT FACING AND PERSONAL SPACE / NORMAL"],
+ ["combat/fighting-0.25x.webm", "COMBAT / GUARD - CONTACT - RECOVERY / QUARTER"],
+ ["chestTap/cornhole-1x.webm", "DOUG / CHEST TAP / NORMAL"],
+ ["chestTap/cornhole-0.25x.webm", "DOUG / CHEST CONTACT HOLD / QUARTER"],
+ ["bagFlip/cornhole-1x.webm", "DOUG / BAG FLIP / NORMAL"],
+ ["fistPump/cornhole-1x.webm", "DOUG / FIST PUMP / NORMAL"],
+ ["silhouette/cornhole-0.25x.webm", "SILHOUETTE / CORNHOLE / QUARTER"],
+ ["silhouette/running-0.25x.webm", "SILHOUETTE / RUNNING / QUARTER"]
+]

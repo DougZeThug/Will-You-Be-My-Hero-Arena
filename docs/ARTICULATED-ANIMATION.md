@@ -1,0 +1,19 @@
+# Continuous 2D paper animation
+
+Dan and Doug now use a single joined chest/shoulder/sleeve/arm surface in their `puppet-v3.png` atlases. The previous continuous-arm repair still had separately outlined torso armholes and sleeve caps; joining those drawings was necessary to fix the shoulder silhouette. Original head and complete leg artwork are reused. PixiJS curves the connected upper body with a 97×65 mesh, torso-to-arm bind weights and smooth elbow curves. Deforming shorts overlap the leg roots. Faces, clothing identity, cards, six compatibility poses, court, equipment and UI are retained.
+
+GSAP continues to sample authored gestures from the match playback clock. Dan has a planted, single upward arm pump and controlled head-down reaction; Doug taps his chest, opens both arms and steps out, with a separate lifted-foot frustration gesture. The 32 starter clips and eight throwing approaches remain available, and packs can author additional tracks rather than repeating those recipes.
+
+Shoulder and neck sockets come from pixel landmarks in each joined source. Wrist transitions follow arcs around the shoulder instead of interpolating through it. The elbow plane turns smoothly as hands rise, keeping chest-tap elbows below their hands and overhead elbows outward. Feet remain anchored, and hidden leg overlap prevents gaps beneath the shorts. A shared release velocity joins throw and follow-through; the projectile still starts at the recorded palm.
+
+The later reference-posture pass adds optional `joined.posture` calibration: width, torso height, shoulder drop and hip lift. Both the mesh and its neck/shoulder sockets use `joinedBodyPoint`, so body-proportion corrections cannot detach the arms. Dan and Doug have lower shoulder slopes, slimmer torsos, longer legs, a slightly narrower stance and quieter neutral hand positions. The image files themselves are unchanged in this pass. Old packs without posture retain their uncalibrated source proportions.
+
+New matches use `paper-arcade-2.0.4`. Scores resolve within about 2.3 seconds of activation. Complete turns take up to 3.7 seconds so reactions have time to finish naturally. Historical recordings retain their exact outcomes, flight paths, checksums and timing; built-in character artwork upgrades when they replay. A previously saved short reaction window remains short. Custom version 1 packs remain readable and require new continuous artwork to gain the repaired format.
+
+New portable packs add one `puppet.png` plus version 2 `manifest.puppet.skin` and optional `joined` registration. `joined` supplies an atlas rectangle, scale, hip, neck and two shoulder/elbow/palm landmark sets. Older version 1 and version 2 packs still render through their existing paths. Optional custom choreography is bounded JSON with 2–24 ordered keys, approved easing names and no executable code. The saved card-to-character workflow contains the matching packer and authoring reference.
+
+`review/` is a separate local developer harness, excluded from the production UI. It renders the same PuppetRenderer at enlarged scale, supports exact frame seeking and exports lossless 60 fps sequences. Review includes alpha connectivity, closeups and normal/half-speed video analysis. See `CONNECTED-ANIMATION-REVIEW.md` for the actual findings and verification record.
+
+This remains illustrated 2D animation, with fixed facial expressions and fingers. It is not motion capture or a complete character turn-around. The custom asset still needs visual review; schema validity alone does not establish believable anatomy.
+
+Official implementation references: [PixiJS meshes](https://pixijs.com/8.x/guides/components/scene-objects/mesh), [MeshPlane](https://pixijs.download/v8.10.1/docs/scene.MeshPlane.html), [GSAP timelines](https://gsap.com/docs/v3/GSAP/Timeline/).

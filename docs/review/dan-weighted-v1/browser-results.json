@@ -1,0 +1,17 @@
+{
+  "evidence": "Summary transcribed from this completed regression runner terminal output. The later visual-only run replaced Playwright results.json; the old standard-results.json is not this run.",
+  "regressionStarted": "2026-09-12T14:50:44.811Z",
+  "passed": 39,
+  "skipped": 1,
+  "failed": 0,
+  "skippedTest": "@visual fixed-clock approved reference images; subsequently passed in a separate run",
+  "dedicatedDanTestsPassed": 4,
+  "coverage": [
+    "Dan weighted anatomy, IK and release",
+    "LoongBones native bridge and actual editor sample",
+    "four recorded sports",
+    "keyboard and synthetic Xbox/PlayStation/generic input",
+    "running and fighting",
+    "Lab lifecycle and source-fit isolation"
+  ]
+}

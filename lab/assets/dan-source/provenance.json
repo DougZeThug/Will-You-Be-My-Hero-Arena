@@ -1,0 +1,22 @@
+{
+  "revision": 2,
+  "status": "User-selected full-body source displayed in Arena Lab at uniform scale; static, not installed in production or authored as a LoongBones rig",
+  "sourceReference": "lab/assets/dan-source/proportion-reference.png",
+  "source": "lab/assets/dan-source/full-body-v2.png",
+  "generatedFile": "exec-f77b408f-98fe-45a0-8afc-6c0c5e5bf6fe.png",
+  "tool": "Built-in Codex image_gen edit",
+  "prompt": "docs/art-prompts/dan-reference-background-v2.txt",
+  "width": 808,
+  "height": 1947,
+  "background": "intentional magenta chroma key; removed once by existing texture loader",
+  "scope": "Background cleanup of the user's preferred full-body illustration. Full figure retained; uniform scale only in the Lab.",
+  "fit": "lab/source-fit/dan-registration.ts",
+  "preview": "/?scenario=character-dan&animation=idle_breathe&rigView=source-fit",
+  "previous": {
+    "source": "lab/assets/dan-source/body-v1.png",
+    "generatedFile": "exec-c090a9c5-1b5e-4597-988f-d3e9a7401ef8.png",
+    "prompt": "docs/art-prompts/dan-connected-source-v1.txt",
+    "status": "Headless body panel retained as history. Its full-body assembly was rejected by the user as too lanky."
+  },
+  "remaining": "Authored editor-compatible weighted rig, joint deformation and full motion QA. The LoongBones editor-export gate is still open."
+}

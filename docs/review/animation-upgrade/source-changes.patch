@@ -1,0 +1,4132 @@
+--- a/lab/human-motion/DirectionalSkin.ts
++++ b/lab/human-motion/DirectionalSkin.ts
+@@ -85,6 +85,12 @@
+     this.facing = facing < 0 ? -1 : 1;
+     for (const mesh of actor.list)
+       if (mesh instanceof NativeMesh) {
++        if (
++          ['fist', 'support', 'chest', 'farFist', 'farSupport'].includes(
++            mesh.name,
++          )
++        )
++          continue;
+         const key =
+           this.facing < 0 && ['body', 'torso_back'].includes(mesh.name)
+             ? this.leftKey
+--- a/lab/human-motion/FarArmMaterial.ts
++++ b/lab/human-motion/FarArmMaterial.ts
+@@ -0,0 +1,148 @@
++import { anatomy } from '../loongbones/side-rig/anatomy';
++import { registerLimbPoint } from '../../lib/arena/engine/motion/LimbRegistration';
++
++/** The side-view source exposes only a narrow far-arm edge. It cannot unfold
++ * into an overhead arm. Reuse the complete isolated arm drawing in its own
++ * bind space, behind the body; no runtime stretching or fabricated pixels. */
++export function restoreFarArm(id: 'dan' | 'doug', arm: any) {
++  const rig = anatomy(id);
++  const index = (name: string) =>
++    arm.bone.findIndex((b: any) => b.name === name);
++  const joint = (name: string) =>
++    rig.joints.find((j) => j.name === name)!.point;
++  const farBones = new Set(['upper_arm_R', 'forearm_R', 'hand_R'].map(index));
++  const body = arm.skin[0].slot.find((s: any) => s.name === 'body').display[0];
++  const far: boolean[] = [];
++  for (let i = 0; i < body.weights.length;) {
++    const count = body.weights[i++];
++    let owned = false;
++    for (let j = 0; j < count; j++) {
++      const bone = body.weights[i++],
++        weight = body.weights[i++];
++      owned ||= farBones.has(bone) && weight > 0;
++    }
++    far.push(owned);
++  }
++  const before = body.triangles.length;
++  body.triangles = body.triangles.filter(
++    (_: number, i: number, all: number[]) => {
++      const start = i - (i % 3);
++      return !all.slice(start, start + 3).some((v) => far[v]);
++    },
++  );
++  const copy = (
++    source: string,
++    name: string,
++    map: (x: number, y: number) => { x: number; y: number },
++    bones: Record<string, string>,
++  ) => {
++    const display = structuredClone(
++      arm.skin[0].slot.find((s: any) => s.name === source).display[0],
++    );
++    display.name = name;
++    for (let i = 0; i < display.vertices.length; i += 2) {
++      const p = map(
++        display.vertices[i] + rig.origin.x,
++        display.vertices[i + 1] + rig.origin.y,
++      );
++      display.vertices[i] = p.x - rig.origin.x;
++      display.vertices[i + 1] = p.y - rig.origin.y;
++    }
++    for (let i = 0; i < display.weights.length;) {
++      const count = display.weights[i++];
++      for (let j = 0; j < count; j++) {
++        const old = arm.bone[display.weights[i]].name;
++        if (!bones[old]) throw Error('Unexpected limb material owner: ' + old);
++        display.weights[i] = index(bones[old]);
++        i += 2;
++      }
++    }
++    return { name, display: [display] };
++  };
++  const farArm = copy(
++    'arm',
++    'farArm',
++    (x, y) => {
++      const shoulder = joint('upper_arm_R'),
++        elbow = joint('forearm_R');
++      const p = registerLimbPoint(
++        { x, y },
++        [rig.shoulder, rig.elbow, rig.wrist],
++        [shoulder, elbow, joint('hand_R')],
++        25,
++      );
++      const dx = elbow.x - shoulder.x,
++        dy = elbow.y - shoulder.y;
++      const u =
++        ((p.x - shoulder.x) * dx + (p.y - shoulder.y) * dy) /
++        (dx * dx + dy * dy);
++      // The near sleeve cropped the upper cap 35px below the socket. The far
++      // surface needs hidden overlap up to that socket when its shoulder rises.
++      const extend = u < 1 ? (u - 0.22) / 0.78 - u : 0;
++      return { x: p.x + dx * extend, y: p.y + dy * extend };
++    },
++    { upper_arm_L: 'upper_arm_R', forearm_L: 'forearm_R' },
++  );
++  const wrist = joint('hand_R'),
++    angle = (58 * Math.PI) / 180;
++  const farHand = copy(
++    'relaxed',
++    'farHand',
++    (x, y) => ({
++      x:
++        wrist.x +
++        (x - rig.wrist.x) * Math.cos(angle) -
++        (y - rig.wrist.y) * Math.sin(angle),
++      y:
++        wrist.y +
++        (x - rig.wrist.x) * Math.sin(angle) +
++        (y - rig.wrist.y) * Math.cos(angle),
++    }),
++    { hand_L: 'hand_R' },
++  );
++  arm.slot.unshift(
++    { name: 'farArm', parent: 'root' },
++    { name: 'farHand', parent: 'root' },
++  );
++  arm.skin[0].slot.unshift(farArm, farHand);
++  // The articulated sleeve exposes a narrow torso seam at an overhead reach.
++  // Keep a small piece of the existing shirt drawing on the chest underneath
++  // both surfaces. This fills the armhole without stretching the moving cuff.
++  const seam = structuredClone(
++    arm.skin[0].slot.find((s: any) => s.name === 'sleeve_back').display[0],
++  );
++  seam.name = 'shoulderUnderlay';
++  seam.triangles = seam.triangles.filter(
++    (_: number, i: number, all: number[]) => {
++      const start = i - (i % 3),
++        vertices = all.slice(start, start + 3);
++      const x =
++        vertices.reduce(
++          (n: number, v: number) => n + seam.vertices[v * 2] + rig.origin.x,
++          0,
++        ) / 3;
++      const y =
++        vertices.reduce(
++          (n: number, v: number) => n + seam.vertices[v * 2 + 1] + rig.origin.y,
++          0,
++        ) / 3;
++      return (
++        x >= rig.shoulder.x - 20 &&
++        x <= rig.shoulder.x + 75 &&
++        y >= rig.shoulder.y - 10 &&
++        y <= rig.shoulder.y + 75
++      );
++    },
++  );
++  seam.weights = Array.from({ length: seam.vertices.length / 2 }, () => [
++    1,
++    index('chest'),
++    1,
++  ]).flat();
++  arm.slot.unshift({ name: 'shoulderUnderlay', parent: 'root' });
++  arm.skin[0].slot.unshift({ name: 'shoulderUnderlay', display: [seam] });
++  return {
++    removedEdgeTriangles: (before - body.triangles.length) / 3,
++    vertices: farArm.display[0].vertices.length / 2,
++  };
++}
+--- a/lab/human-motion/HandAttachments.ts
++++ b/lab/human-motion/HandAttachments.ts
+@@ -0,0 +1,185 @@
++import { anatomy } from '../loongbones/side-rig/anatomy';
++import type { GraphState } from '../../lib/arena/engine/motion/AnimationGraph';
++import { dragonBones as db } from '../loongbones/vendor/dragonBones';
++import type { LibraryBuilder } from './authoring/builder';
++
++export const handAtlas = {
++  name: 'arena-hands-v1',
++  width: 2172,
++  height: 724,
++  SubTexture: ['fist', 'support', 'chest'].map((name, i) => ({
++    name: 'hand-' + name,
++    x: i * 724,
++    y: 0,
++    width: 724,
++    height: 724,
++  })),
++};
++export const newHandSlots = [
++  'fist',
++  'support',
++  'chest',
++  'farFist',
++  'farSupport',
++];
++const art = {
++  fist: { x: 375, y: 525, scale: 0.175, flip: true },
++  support: { x: 1067 - 724, y: 505, scale: 0.175, flip: false },
++  chest: { x: 1841 - 1448, y: 540, scale: 0.145, flip: false },
++};
++/** Wrist-crease pivots, opaque exposures, no finger deformation. These are
++ * derived attachments; the original character atlas remains byte-identical. */
++export function addHandAttachments(id: 'dan' | 'doug', arm: any) {
++  const rig = anatomy(id);
++  const template = arm.skin[0].slot.find((s: any) => s.name === 'relaxed')
++    .display[0];
++  for (const name of newHandSlots) {
++    const far = name.startsWith('far');
++    const kind = (far ? name.slice(3).toLowerCase() : name) as keyof typeof art;
++    const a = art[kind],
++      wrist = far
++        ? rig.joints.find((j) => j.name === 'hand_R')!.point
++        : rig.wrist;
++    const theta = ((90 + (far ? 58 : 0)) * Math.PI) / 180;
++    const points = [
++      [0, 0],
++      [724, 0],
++      [724, 724],
++      [0, 724],
++    ];
++    const vertices = points.flatMap(([x, y]) => {
++      const dx = (x - a.x) * a.scale * (a.flip ? -1 : 1),
++        dy = (y - a.y) * a.scale;
++      return [
++        wrist.x + dx * Math.cos(theta) - dy * Math.sin(theta) - rig.origin.x,
++        wrist.y + dx * Math.sin(theta) + dy * Math.cos(theta) - rig.origin.y,
++      ];
++    });
++    const bone = arm.bone.findIndex(
++      (b: any) => b.name === (far ? 'hand_R' : 'hand_L'),
++    );
++    const display = {
++      ...structuredClone(template),
++      name,
++      path: 'hand-' + kind,
++      width: 724,
++      height: 724,
++      vertices,
++      uvs: [0, 0, 1, 0, 1, 1, 0, 1],
++      triangles: a.flip ? [0, 2, 1, 0, 3, 2] : [0, 1, 2, 0, 2, 3],
++      weights: [1, bone, 1, 1, bone, 1, 1, bone, 1, 1, bone, 1],
++      edges: [0, 1, 1, 2, 2, 3, 3, 0],
++      userEdges: [],
++    };
++    const slot = { name, parent: 'root', color: { aM: 0 } },
++      skin = { name, display: [display] };
++    if (far) {
++      arm.slot.unshift(slot);
++      arm.skin[0].slot.unshift(skin);
++    } else {
++      arm.slot.push(slot);
++      arm.skin[0].slot.push(skin);
++    }
++  }
++}
++
++export function handExposure(state: GraphState | undefined, hasBall: boolean) {
++  const id = state?.clip.id ?? '',
++    t = (state?.time ?? 0) + 1e-9;
++  if (id === 'gesture.fistPump' && t > 0.13 && t < 1.04)
++    return { near: 'fist', far: 'farHand' };
++  if (['combatNeutral', 'jab', 'heavy', 'dodge', 'hit', 'block'].includes(id))
++    return { near: 'fist', far: 'farFist' };
++  if (id === 'gesture.chestTap' && t > 0.22 && t < 1.05)
++    return { near: 'chest', far: 'farHand' };
++  if (id === 'shoot' && hasBall) return { near: 'support', far: 'farSupport' };
++  if (id === 'gesture.bagFlip' && t >= 0.35 && t < 0.7)
++    return { near: 'support', far: 'farHand' };
++  if (id === 'gesture.bagFlip')
++    return { near: t < 0.4 || t >= 0.7 ? 'grip' : 'open', far: 'farHand' };
++  const release = state?.clip.markers.find(
++    (m) => m.name === 'equipmentRelease',
++  )?.at;
++  if (release !== undefined)
++    return {
++      near:
++        t < 4 / 60
++          ? 'relaxed'
++          : t < release
++            ? 'grip'
++            : t < state!.clip.duration - 0.45
++              ? 'open'
++              : 'relaxed',
++      far: 'farHand',
++    };
++  return { near: 'relaxed', far: 'farHand' };
++}
++/** Export the same discrete exposure schedule that the runtime applies after
++ * crossfade. Editor playback can inspect every hand change without our code. */
++export function compileHandExposures(
++  library: Pick<LibraryBuilder, 'native' | 'metadata'>,
++) {
++  for (const clip of library.metadata) {
++    const native = library.native.find((c) => c.name === clip.native)!;
++    const all = ['grip', 'open', 'relaxed', ...newHandSlots, 'farHand'];
++    const frames = Array.from({ length: native.duration + 1 }, (_, f) =>
++      handExposure(
++        {
++          clip,
++          time: f / 60,
++          rate: 1,
++          revision: 0,
++          started: true,
++          completed: false,
++        },
++        clip.id === 'shoot' &&
++          f / 60 <
++            (clip.markers.find((m) => m.name === 'equipmentRelease')?.at ?? 0),
++      ),
++    );
++    native.slot = [
++      ...(native.slot ?? []).filter((s: any) => !all.includes(s.name)),
++      ...all.map((name) => ({
++        name,
++        colorFrame: frames
++          .flatMap((p, f) => {
++            const alpha = p.near === name || p.far === name ? 100 : 0;
++            const previous = f ? frames[f - 1] : null;
++            if (
++              previous &&
++              alpha ===
++                (previous.near === name || previous.far === name ? 100 : 0)
++            )
++              return [];
++            return [{ frame: f, duration: 0, value: { aM: alpha } }];
++          })
++          .map((k, i, keys) => ({
++            ...k,
++            duration: (keys[i + 1]?.frame ?? native.duration) - k.frame,
++          })),
++      })),
++    ];
++  }
++}
++export function applyHandExposure(
++  arm: db.Armature,
++  state: GraphState | undefined,
++  hasBall: boolean,
++) {
++  const choice = handExposure(state, hasBall);
++  let changed = false;
++  for (const name of ['grip', 'open', 'relaxed', ...newHandSlots, 'farHand']) {
++    const slot = arm.getSlot(name)!;
++    const alpha = name === choice.near || name === choice.far ? 1 : 0;
++    if (slot._colorTransform.alphaMultiplier === alpha) continue;
++    const color = new db.ColorTransform();
++    color.copyFrom(slot._colorTransform);
++    color.alphaMultiplier = alpha;
++    slot._setColor(color);
++    changed = true;
++  }
++  // Native pose evaluation already updated unchanged hands. Only flush an
++  // actual exposure correction; avoid a second full mesh pass every tick.
++  if (changed) arm.advanceTime(0);
++  return choice;
++}
+--- a/lab/human-motion/index.html
++++ b/lab/human-motion/index.html
+@@ -3,7 +3,7 @@
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width,initial-scale=1" />
+-    <title>Arena · Human Motion V3.1 review</title>
++    <title>Arena · Animation workshop</title>
+     <style>
+       body {
+         margin: 0;
+@@ -68,7 +68,7 @@
+   </head>
+   <body>
+     <header>
+-      <a href="/">← Arena Lab</a><strong>HUMAN MOTION V3.1 · V2 RUNTIME</strong
++      <a href="/">← Arena Lab</a><strong>ANIMATION WORKSHOP</strong
+       ><select id="event" aria-label="Motion event">
+         <option value="cornhole">Cornhole</option>
+         <option value="running">Running</option>
+@@ -104,6 +104,38 @@
+       ><span id="clock">0.000s</span
+       ><button id="download">Download state</button>
+     </header>
++    <header>
++      <label><input id="loop-enabled" type="checkbox" /> Loop selection</label>
++      <label
++        >From
++        <input
++          id="loop-from"
++          aria-label="Loop from seconds"
++          type="number"
++          min="0"
++          max="11.9"
++          step="0.1"
++          value="0"
++          style="width: 65px"
++      /></label>
++      <label
++        >To
++        <input
++          id="loop-to"
++          aria-label="Loop to seconds"
++          type="number"
++          min="0.1"
++          max="12"
++          step="0.1"
++          value="3"
++          style="width: 65px"
++      /></label>
++      <label
++        ><input id="neutral-background" type="checkbox" /> Neutral
++        background</label
++      >
++      <label><input id="sound" type="checkbox" /> Event sounds</label>
++    </header>
+     <section id="help">
+       WASD move · arrows aim · J primary · K secondary · L dodge/roll · E high
+       arc · Space charge/sprint · Shift block. Click the court before keyboard
+@@ -122,13 +154,15 @@
+         <option value="">AI matchup</option>
+       </select>
+       <button id="load-take">Load take</button>
++      <button id="save-review">Save review preset</button>
++      <button id="export-rig">Export editable rig</button>
+       <select id="review-focus" aria-label="Camera framing">
+         <option value="arena">Arena scale</option>
+         <option value="dan">Dan close view</option>
+         <option value="doug">Doug close view</option>
+       </select>
+-      <select id="review-landmark" aria-label="Throw breakdown pose">
+-        <option value="">Throw breakdown pose…</option>
++      <select id="review-landmark" aria-label="Action breakdown pose">
++        <option value="">Action breakdown pose…</option>
+       </select>
+       <label
+         ><input id="balance-view" type="checkbox" /> Balance / foot locks</label
+--- a/lab/human-motion/main.ts
++++ b/lab/human-motion/main.ts
+@@ -12,6 +12,7 @@
+ import { installReviewTake } from './ReviewTake';
+ import { referenceComparison } from './ReferenceComparison';
+ import { defaultReference, referenceCatalog } from './ReferenceCatalog';
++import { workshopControls } from './WorkshopControls';
+ const get = <T = HTMLElement>(id: string) =>
+   document.getElementById(id) as unknown as T;
+ const params = new URLSearchParams(location.search),
+@@ -35,13 +36,38 @@
+ const telemetry = new FrameTelemetry(game);
+ const review = motionReview(scene);
+ const comparison = referenceComparison(scene, game);
++let pendingSeek: number | null = null,
++  pendingResume = false;
++const replay = (time: number, playing = false) => {
++  if (!Number.isFinite(time) || time < 0 || time > 12)
++    throw Error('Review seek accepts 0–12 seconds');
++  pendingSeek = time;
++  pendingResume = playing;
++  scene.ready = false;
++  scene.scene.restart();
++};
++const workshop = workshopControls(scene, replay);
++scene.onAdvance = workshop.tick;
++let lastDetailedReport = -Infinity;
+ const report = () => {
+   if (!scene.ready) return;
+-  get('clock').textContent = scene.session.time.toFixed(3) + 's';
++  const selected = scene.session.actors.find(
++    (a) => a.id === get<HTMLSelectElement>('review-character').value,
++  );
++  const clipTime =
++    selected?.planner.graph.get('action')?.time ??
++    selected?.planner.graph.get('base')?.time ??
++    0;
++  get('clock').textContent =
++    `Scene ${scene.session.time.toFixed(3)}s · Clip ${clipTime.toFixed(3)}s · ${scene.rate}×`;
+   get('reference-status').textContent = scene.reference
+     ? `${scene.reference.samples.length} measured frames loaded`
+     : 'No reference loaded';
+   get<HTMLInputElement>('timeline').value = String(scene.session.time);
++  // Keep the clock responsive while expensive diagnostic tables refresh at
++  // 2 Hz during playback. Paused inspection and manual stepping stay exact.
++  if (!scene.session.paused && performance.now() - lastDetailedReport < 500) return;
++  lastDetailedReport = performance.now();
+   const s = scene.session.snapshot();
+   get('summary').textContent = s.actors
+     .map(
+@@ -60,6 +86,7 @@
+ get('event').onchange = reset;
+ get('reset').onclick = reset;
+ const resume = () => {
++  workshop.ready();
+   scene.session.pause(false);
+   telemetry.setMode('realtime');
+   stage.focus();
+@@ -79,6 +106,11 @@
+ get('speed').onchange = () => {
+   scene.rate = Number(get<HTMLSelectElement>('speed').value);
+ };
++const initialRate = Number(params.get('rate') ?? 1);
++if ([0.25, 0.5, 1].includes(initialRate)) {
++  scene.rate = initialRate;
++  get<HTMLSelectElement>('speed').value = String(initialRate);
++}
+ get('device').onchange = () => {
+   scene.device(
+     get<HTMLSelectElement>('device').value as 'ai' | 'keyboard' | 'gamepad',
+@@ -101,9 +133,7 @@
+ // Seeking replays a fresh AI baseline, not an untracked hardware history. Never runs live side effects twice.
+ get('timeline').onchange = () => {
+   const t = Number(get<HTMLInputElement>('timeline').value);
+-  params.set('seek', String(t));
+-  params.set('focus', scene.focus);
+-  location.href = './?' + params;
++  replay(t);
+ };
+ const download = () => {
+   const blob = new Blob([JSON.stringify(scene.session.snapshot(), null, 2)], {
+@@ -196,7 +226,14 @@
+     return structuredClone(a.animator.library.metadata);
+   },
+   getState: () => (scene.ready ? scene.session.snapshot() : { ready: false }),
++  exportRig: (character: string) => {
++    const actor = scene.session.actors.find((a) => a.id === character);
++    if (!actor) throw Error('Unknown character');
++    return actor.animator.exportAuthoring();
++  },
+   getPerformance: () => telemetry.snapshot(),
++  workshop: () => workshop.snapshot(),
++  seek: (time: number) => replay(time),
+   comparison: () => comparison.snapshot(),
+   curves: (character: string) => {
+     const a = scene.session.actors.find((a) => a.id === character);
+@@ -277,8 +314,12 @@
+       params.get('actor') === 'doug' ? 'doug' : 'dan',
+       take,
+     );
+-  const seek = Number(params.get('seek') ?? 0);
++  const seek = pendingSeek ?? Number(params.get('seek') ?? 0);
+   if (seek > 0 && seek <= 12) scene.session.step(seek);
++  workshop.ready();
++  if (pendingResume) scene.session.pause(false);
++  pendingSeek = null;
++  pendingResume = false;
+   scene.renderState();
+   report();
+ };
+--- a/lab/human-motion/MotionActor.ts
++++ b/lab/human-motion/MotionActor.ts
+@@ -65,6 +65,7 @@
+   shot = 'flat';
+   releaseCount = 0;
+   private activeRevision = -1;
++  private activeClip = '';
+   private hitContactPending = false;
+   constructor(
+     readonly id: 'dan' | 'doug',
+@@ -169,6 +170,10 @@
+       !active &&
+       Math.hypot(this.motor.velocity.x, this.motor.velocity.y) > 6;
+     if (this.activeRevision !== (active?.revision ?? -1)) {
++      if (this.activeClip === 'gesture.bagFlip') this.prop.cancel();
++      if (this.activeClip === 'gesture.chestTap')
++        this.contacts.signal('chestTapRelease', time, 'chest', false);
++      this.activeClip = active?.clip.id ?? '';
+       this.activeRevision = active?.revision ?? -1;
+       this.hitbox = false;
+       this.dodging = false;
+--- a/lab/human-motion/MotionReview.ts
++++ b/lab/human-motion/MotionReview.ts
+@@ -18,22 +18,30 @@
+   focus.value = params.get('focus') ?? 'arena';
+   scene.focus = focus.value as typeof scene.focus;
+   const organic = el<HTMLInputElement>('organic');
+-  organic.checked = params.get('organic') !== '0';
++  organic.checked =
++    params.get('organic') !== '0' &&
++    !matchMedia('(prefers-reduced-motion: reduce)').matches;
+   const take = el<HTMLSelectElement>('review-take');
+   const landmarks = el<HTMLSelectElement>('review-landmark');
+   const refreshLandmarks = () => {
+-    landmarks.replaceChildren(new Option('Throw breakdown pose…', ''));
++    landmarks.replaceChildren(new Option('Action breakdown pose…', ''));
+     const a = scene.session.actors.find((a) => a.id === actor.value)!;
+     const command = scene.session.event.controls.actions.find(
+       (c) => c.intent === (take.value || 'primaryAction'),
+     )?.command;
+-    const clip = a.planner.clips.get('throw.' + command);
+-    for (const l of clip?.landmarks ?? [])
++    const clip =
++      a.planner.clips.get('gesture.' + take.value) ??
++      a.planner.clips.get('throw.' + command) ??
++      a.planner.clips.get(
++        scene.proof === 'basketball' ? 'shoot' : (command ?? 'run'),
++      );
++    for (const l of clip?.landmarks ??
++      clip?.phases.map((p) => ({ name: p.phase, at: p.at })) ??
++      [])
+       landmarks.add(
+         new Option(l.name.replace(/([A-Z])/g, ' $1'), String(l.at)),
+       );
+-    landmarks.hidden =
+-      scene.proof !== 'cornhole' || take.value === 'personality';
++    landmarks.hidden = !clip || take.value === 'personality';
+   };
+   const initialize = () => {
+     take.replaceChildren(new Option('AI matchup', ''));
+@@ -66,6 +74,53 @@
+     location.href = './?' + q;
+   };
+   take.onchange = refreshLandmarks;
++  const save = (name: string, data: unknown) => {
++    const url = URL.createObjectURL(
++      new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
++    );
++    const a = document.createElement('a');
++    a.href = url;
++    a.download = name;
++    a.click();
++    URL.revokeObjectURL(url);
++  };
++  el('save-review').onclick = () =>
++    save('arena-review-preset.json', {
++      schema: 'arena-review-preset-v1',
++      event: scene.proof,
++      actor: actor.value,
++      take: take.value,
++      focus: focus.value,
++      time: scene.session.time,
++      rate: scene.rate,
++      organic: organic.checked,
++      url:
++        location.origin +
++        location.pathname +
++        '?' +
++        new URLSearchParams({
++          event: scene.proof,
++          actor: actor.value,
++          take: take.value,
++          focus: focus.value,
++          seek: String(scene.session.time),
++          organic: organic.checked ? '1' : '0',
++          rate: String(scene.rate),
++          neutral: el<HTMLInputElement>('neutral-background').checked
++            ? '1'
++            : '0',
++          loop: el<HTMLInputElement>('loop-enabled').checked ? '1' : '0',
++          loopFrom: el<HTMLInputElement>('loop-from').value,
++          loopTo: el<HTMLInputElement>('loop-to').value,
++        }),
++    });
++  el('export-rig').onclick = () =>
++    save(
++      actor.value + '-loongbones-authoring.json',
++      scene.session.actors
++        .find((a) => a.id === actor.value)!
++        .animator.exportAuthoring(),
++    );
+   el('load-take').onclick = () => {
+     const q = new URLSearchParams({
+       event: scene.proof,
+--- a/lab/human-motion/MotionScene.ts
++++ b/lab/human-motion/MotionScene.ts
+@@ -34,10 +34,12 @@
+   private props!: Phaser.GameObjects.Graphics;
+   private shadows!: Phaser.GameObjects.Graphics;
+   private equipment?: Equipment;
++  private background?: Phaser.GameObjects.Image;
+   private projectiles = new Map<number, Phaser.GameObjects.Image>();
+   private held = new Map<string, Phaser.GameObjects.Image>();
+   onReady = () => {};
+   onState = () => {};
++  onAdvance = () => {};
+   private reported = 0;
+   constructor(
+     readonly proof: ProofEvent,
+@@ -46,6 +48,10 @@
+     super('HumanMotionV2');
+   }
+   preload() {
++    this.load.image(
++      'arena-hands-v1',
++      '/human-motion/assets/hands/hand-sheet-v1.png',
++    );
+     sideDefinitions.forEach((d) => queueRig(this, d));
+     if (this.proof === 'fighting' || this.proof === 'running')
+       for (const id of ['dan', 'doug'])
+@@ -56,7 +62,9 @@
+     queueArenaAssets(this);
+   }
+   create() {
+-    this.add.image(640, 380, 'arena-background').setDisplaySize(1280, 760);
++    this.background = this.add
++      .image(640, 380, 'arena-background')
++      .setDisplaySize(1280, 760);
+     this.shadows = this.add.graphics().setDepth(20);
+     this.props = this.add.graphics().setDepth(25);
+     const animators = sideDefinitions.map(
+@@ -77,13 +85,18 @@
+             forwardKnees: this.proof !== 'cornhole',
+             ...(this.proof === 'basketball'
+               ? { stance: { right: -30, left: 35 } }
+-              : {}),
++              : this.proof === 'cornhole'
++                ? { stance: { right: -140, left: 110 } }
++                : {}),
+             directional: this.proof === 'fighting' || this.proof === 'running',
+           },
+         ),
+     );
+     this.session = new MotionSession(this.proof, animators);
+-    if (new URLSearchParams(location.search).get('organic') === '0')
++    if (
++      new URLSearchParams(location.search).get('organic') === '0' ||
++      matchMedia('(prefers-reduced-motion: reduce)').matches
++    )
+       animators.forEach((a) => {
+         a.organicEnabled = false;
+       });
+@@ -97,9 +110,16 @@
+     this.onReady();
+     this.renderState();
+     this.events.once('shutdown', () => {
++      this.ready = false;
+       this.session.destroy();
+       this.equipment?.destroy();
++      this.projectiles.clear();
++      this.held.clear();
+     });
++  }
++  setNeutral(enabled: boolean) {
++    this.background?.setVisible(!enabled);
++    this.cameras.main.setBackgroundColor(enabled ? '#d8d6cd' : '#282820');
+   }
+   device(kind: 'ai' | 'keyboard' | 'gamepad') {
+     for (let i = 0; i < this.session.actors.length; i++) {
+@@ -122,6 +142,8 @@
+     if (!this.ready || this.session.paused) return;
+     this.session.advance((delta / 1000) * this.rate);
+     this.renderState();
++    this.onAdvance();
++    if (!this.ready) return;
+     if (_time - this.reported > 150) {
+       this.reported = _time;
+       this.onState();
+@@ -148,7 +170,7 @@
+     this.drawing.clear();
+     this.props.clear();
+     for (const a of this.session.actors) {
+-      const state = a.analyzer.snapshot(),
++      const state = a.analyzer.snapshot(this.trails),
+         pose = state.latest ?? a.animator.pose(this.session.time, a.motor);
+       for (const foot of ['left', 'right']) {
+         const floor = a.animator.floorPoint(foot, a.motor);
+--- a/lab/human-motion/MotionSession.ts
++++ b/lab/human-motion/MotionSession.ts
+@@ -38,6 +38,7 @@
+   paused = true;
+   recent: { player: string; name: string; time: number; clip: string }[] = [];
+   private accumulator = 0;
++  private manualRemainder = 0;
+   readonly proximity = new CharacterProximity();
+   bodies() {
+     return (this.actors ?? []).map((a) => ({
+@@ -173,8 +174,11 @@
+   step(seconds: number) {
+     if (!Number.isFinite(seconds) || seconds < 0 || seconds > 30)
+       throw Error('Step accepts 0–30 seconds');
+-    const n = Math.round(seconds * 120);
+-    for (let i = 0; i < n; i++) this.tick();
++    this.manualRemainder += seconds;
++    while (this.manualRemainder + 1e-10 >= 1 / 120) {
++      this.manualRemainder -= 1 / 120;
++      this.tick();
++    }
+   }
+   private tick() {
+     this.time += 1 / 120;
+@@ -195,19 +199,28 @@
+       }
+       c.update(frame, this.time);
+     }
+-    for (const a of this.actors) {
+-      const events = a.update(1 / 120, this.time);
+-      for (const event of events) {
+-        this.event.marker(a, event);
+-        this.recent.push({
+-          player: a.id,
+-          name: event.name,
+-          time: event.time,
+-          clip: event.clip,
+-        });
++    let remaining = 1 / 120;
++    while (remaining > 1e-9) {
++      const dt = this.actors.reduce(
++        (n, a) => Math.min(n, a.planner.graph.untilNextMarker(n)),
++        remaining,
++      );
++      const time = this.time - remaining + dt;
++      for (const a of this.actors) {
++        const events = a.update(dt, time);
++        for (const event of events) {
++          this.event.marker(a, event);
++          this.recent.push({
++            player: a.id,
++            name: event.name,
++            time: event.time,
++            clip: event.clip,
++          });
++        }
+       }
+-    }
+-    this.event.update(1 / 120, this.time);
++      this.event.update(dt, time);
++      remaining -= dt;
++    }
+     this.recent = this.recent.slice(-100);
+   }
+   snapshot() {
+--- a/lab/human-motion/NativeAnimator.ts
++++ b/lab/human-motion/NativeAnimator.ts
+@@ -22,6 +22,16 @@
+ import { InertialPose } from './InertialPose';
+ import { repairFootMaterial } from './FootMaterialRepair';
+ import { registerArmMaterial } from './ArmMaterialRegistration';
++import { restoreFarArm } from './FarArmMaterial';
++import {
++  addHandAttachments,
++  applyHandExposure,
++  compileHandExposures,
++  handAtlas,
++  newHandSlots,
++} from './HandAttachments';
++import { chestContactWeight } from '../../lib/arena/engine/motion/ContactEnvelope';
++import { assertInterchangeBudget } from '../loongbones/side-rig/limits';
+ import { NativeRigIntegrity } from './NativeRigIntegrity';
+ import { DirectionalSkin } from './DirectionalSkin';
+ import {
+@@ -40,6 +50,7 @@
+   readonly actor: NativeArmature;
+   readonly factory: NativeFactory;
+   readonly library: ReturnType<typeof buildMotionLibrary>;
++  private readonly authoringData: object;
+   readonly feet = new FootLock();
+   readonly validation: ReturnType<typeof validateHumanRig>;
+   private states = new Map<
+@@ -86,6 +97,8 @@
+     const arm = data.armature[0];
+     this.repairedFootWeights = repairFootMaterial(definition.id, arm);
+     this.registeredArmVertices = registerArmMaterial(definition.id, arm);
++    restoreFarArm(definition.id as 'dan' | 'doug', arm);
++    addHandAttachments(definition.id as 'dan' | 'doug', arm);
+     const body = arm.skin[0].slot.find(
+       (s: { name: string }) => s.name === 'body',
+     ).display[0];
+@@ -112,6 +125,7 @@
+       definition.id as 'dan' | 'doug',
+       arm.animation,
+     );
++    compileHandExposures(this.library);
+     // Event stance places effectors relative to the pelvis. Skin bind matrices,
+     // anatomical bones and limb lengths remain unchanged.
+     if (options.stance) {
+@@ -153,11 +167,30 @@
+       bendPositive: false,
+       weight: 0,
+     });
++    arm.bone.push(
++      { name: 'chest_contact', parent: 'chest', transform: { x: -37, y: 34 } },
++      { name: 'chest_target', parent: 'root', transform: { x: 0, y: -300 } },
++    );
++    arm.ik.push({
++      name: 'chest_hand',
++      bone: 'forearm_L',
++      target: 'chest_target',
++      chain: 1,
++      bendPositive: false,
++      weight: 0,
++    });
++    this.authoringData = structuredClone(data);
++    assertInterchangeBudget(arm.skin[0].slot.map((s: any) => s.display[0]));
+     this.factory = new NativeFactory(scene);
+     this.factory.parseDragonBonesData(data, definition.key + '-human-v2');
+     this.factory.parseTextureAtlasData(
+       scene.cache.json.get(definition.key + '-atlas'),
+       definition.key + '-texture',
++      definition.key + '-human-v2',
++    );
++    this.factory.parseTextureAtlasData(
++      handAtlas,
++      'arena-hands-v1',
+       definition.key + '-human-v2',
+     );
+     this.actor = this.factory.build(
+@@ -344,6 +377,7 @@
+       b.invalidUpdate();
+     }
+     this.constraintWeight('equipment_hand', 0);
++    this.constraintWeight('chest_hand', 0);
+     this.factory.runtime.advanceTime(dt);
+     this.ticks++;
+     const gait = planner.graph.get('base');
+@@ -579,8 +613,38 @@
+       const p = this.joint('leftHand');
+       this.twoHandError = Math.hypot(p.x - desired.x, p.y - desired.y);
+     }
++    const gesture = planner.graph.get('reaction');
++    if (gesture?.clip.id === 'gesture.chestTap') {
++      const influence = chestContactWeight(gesture.time);
++      if (influence > 0) {
++        const contact = this.joint('chest_contact');
++        this.constraintWeight('chest_hand', influence);
++        let wrist = this.joint('rightWrist');
++        let palm = this.actor.socket('hand_L', 20, 0);
++        let desired = {
++          x: contact.x - palm.x + wrist.x,
++          y: contact.y - palm.y + wrist.y,
++        };
++        for (let i = 0; i < 4; i++) {
++          this.offsetTarget('chest_target', desired);
++          this.actor.armature.advanceTime(0);
++          palm = this.actor.socket('hand_L', 20, 0);
++          desired = {
++            x: desired.x + (contact.x - palm.x) * 0.7,
++            y: desired.y + (contact.y - palm.y) * 0.7,
++          };
++        }
++      }
++    }
+     if (events.some((e) => e.name === 'equipmentRelease'))
+       this.releaseExposure();
++    applyHandExposure(
++      this.actor.armature,
++      planner.graph.get('reaction') ??
++        planner.graph.get('action') ??
++        planner.graph.get('base'),
++      twoHand && !events.some((e) => e.name === 'equipmentRelease'),
++    );
+     this.tint();
+     this.directional?.apply(this.actor, motor.facing);
+     for (const side of ['right', 'left']) {
+@@ -651,7 +715,7 @@
+       handInfluence: this.handInfluence,
+       supportLowering: this.supportLowering,
+       handExposure: Object.fromEntries(
+-        ['grip', 'open', 'relaxed'].map((name) => [
++        ['grip', 'open', 'relaxed', ...newHandSlots, 'farHand'].map((name) => [
+           name,
+           this.actor.armature.getSlot(name)?._colorTransform.alphaMultiplier ??
+             0,
+@@ -699,4 +763,21 @@
+     this.factory.runtime.advanceTime(0);
+     this.factory.clear(true);
+   }
++  exportAuthoring() {
++    return structuredClone({
++      schema: 'arena-loongbones-motion-upgrade-v1',
++      character: this.definition.id,
++      skeleton: this.authoringData,
++      handAtlas,
++      metadata: this.library.metadata,
++      textureSources: [
++        this.definition.key + '-texture',
++        '/human-motion/assets/hands/hand-sheet-v1.png',
++      ],
++      provenance:
++        'Derived Arena authoring; preserved source atlas; complete far arm registered from original isolated arm; ImageGen hand sheet v1.',
++      editorRoundTripVerified: false,
++      productionInstalled: false,
++    });
++  }
+ }
+--- a/lab/human-motion/NativeRigIntegrity.ts
++++ b/lab/human-motion/NativeRigIntegrity.ts
+@@ -15,7 +15,10 @@
+ /** Samples actual rendered mesh edge pairs selected in bind space; no AABB width under rotation. */
+ export class NativeRigIntegrity {
+   private validator = new RigIntegrityValidator();
+-  private samples = new Map<string, { indices: number[]; width: number }>();
++  private samples = new Map<
++    string,
++    { indices: number[]; width: number; mesh: string }
++  >();
+   readonly setup = new Map<string, number>();
+   readonly armWeights: { bone: string; weight: number }[][] = [];
+   constructor(
+@@ -38,19 +41,16 @@
+       this.armWeights.push(influences);
+     }
+     actor.armature.advanceTime(0);
+-    const arm = actor.list.find((m) => m.name === 'arm') as NativeMesh;
+     for (const [id, first, second] of segments) {
++      const meshName = id.startsWith('left') ? 'farArm' : 'arm';
++      const arm = actor.list.find((m) => m.name === meshName) as NativeMesh;
+       const a = actor.armature.getBone(first)!,
+         b = actor.armature.getBone(second)!;
+       const x = b.globalTransformMatrix.tx - a.globalTransformMatrix.tx,
+         y = b.globalTransformMatrix.ty - a.globalTransformMatrix.ty;
+       const length = Math.hypot(x, y);
+       this.setup.set(id, length);
+-      if (
+-        !id.startsWith('right') ||
+-        (!id.includes('Arm') && id !== 'rightForearm')
+-      )
+-        continue;
++      if (!id.includes('Arm') && !id.includes('Forearm')) continue;
+       const candidates = arm.vertices
+         .map((v, index) => ({
+           index,
+@@ -68,13 +68,13 @@
+       if (candidates.length < 2) throw Error('No arm cross-section geometry');
+       const edge = [candidates[0], candidates[candidates.length - 1]];
+       this.samples.set(id, {
++        mesh: meshName,
+         indices: edge.map((p) => p.index),
+         width: edge[1].side - edge[0].side,
+       });
+     }
+   }
+   snapshot() {
+-    const arm = this.actor.list.find((m) => m.name === 'arm') as NativeMesh;
+     const limbs = segments.map(([id, first, second]) => {
+       const a = this.actor.armature.getBone(first)!,
+         b = this.actor.armature.getBone(second)!;
+@@ -83,8 +83,11 @@
+         x = n.tx - m.tx,
+         y = n.ty - m.ty,
+         length = Math.hypot(x, y);
+-      const sample = this.samples.get(id),
+-        pair = sample?.indices.map((i) => arm.vertices[i]);
++      const sample = this.samples.get(id);
++      const mesh = this.actor.list.find((m) => m.name === sample?.mesh) as
++        | NativeMesh
++        | undefined;
++      const pair = sample?.indices.map((i) => mesh!.vertices[i]);
+       const width = pair
+         ? Math.abs(
+             -(pair[1].vx - pair[0].vx) * y + (pair[1].vy - pair[0].vy) * x,
+--- a/lab/human-motion/WorkshopControls.ts
++++ b/lab/human-motion/WorkshopControls.ts
+@@ -0,0 +1,102 @@
++import type { MotionScene } from './MotionScene';
++import { AudioManager } from '../../lib/arena/engine/audio/AudioManager';
++
++/** Optional review presentation. Reconstruction never emits sounds or live results. */
++export function workshopControls(
++  scene: MotionScene,
++  replay: (time: number, resume: boolean) => void,
++) {
++  const el = <T extends HTMLElement>(id: string) =>
++    document.getElementById(id) as T;
++  const audio = new AudioManager();
++  const loop = el<HTMLInputElement>('loop-enabled'),
++    from = el<HTMLInputElement>('loop-from'),
++    to = el<HTMLInputElement>('loop-to');
++  const neutral = el<HTMLInputElement>('neutral-background'),
++    sound = el<HTMLInputElement>('sound');
++  let lastTime = 0,
++    loopCount = 0;
++  const propBeats = new Map<number, { impacts: number; landed: boolean }>();
++  const params = new URLSearchParams(location.search);
++  neutral.checked = params.get('neutral') === '1';
++  from.value = params.get('loopFrom') ?? '0';
++  to.value = params.get('loopTo') ?? '3';
++  loop.checked = params.get('loop') === '1';
++  neutral.onchange = () => {
++    scene.setNeutral(neutral.checked);
++    scene.renderState();
++  };
++  sound.onchange = () => {
++    lastTime = scene.session.time;
++    audio.setEnabled(sound.checked);
++  };
++  const emit = (name: string) => audio.cue({ kind: 'audio', name });
++  const sampleProps = (audible: boolean) => {
++    const state = scene.session.event.snapshot() as {
++      projectiles?: {
++        id: number;
++        landed: boolean;
++        scored: boolean;
++        contact?: { impacts: number };
++      }[];
++    };
++    for (const p of state.projectiles ?? []) {
++      const old = propBeats.get(p.id) ?? { impacts: 0, landed: false },
++        impacts = p.contact?.impacts ?? 0;
++      if (audible && impacts > old.impacts) emit('boardImpact');
++      if (audible && p.landed && !old.landed && p.scored) emit('hole');
++      propBeats.set(p.id, { impacts, landed: p.landed });
++    }
++  };
++  function tick() {
++    const time = scene.session.time;
++    if (time < lastTime) lastTime = time;
++    if (audio.enabled) {
++      for (const m of scene.session.recent)
++        if (m.time > lastTime + 1e-8 && m.time <= time + 1e-8) {
++          if (m.name === 'equipmentRelease') emit('release');
++          if (m.name === 'footPlant') emit('footstep');
++        }
++      for (const a of scene.session.actors)
++        for (const c of a.contacts.snapshot().history)
++          if (c.time > lastTime + 1e-8 && c.time <= time + 1e-8) {
++            if (c.name === 'landingContact') emit('boardImpact');
++            if (c.name === 'hitContact') emit(a.blocking ? 'block' : 'punch');
++          }
++    }
++    lastTime = time;
++    if (audio.enabled) sampleProps(true);
++    const start = Number(from.value),
++      end = Number(to.value);
++    if (
++      loop.checked &&
++      start >= 0 &&
++      end <= 12 &&
++      end - start >= 0.1 &&
++      time >= end
++    ) {
++      loopCount++;
++      replay(start, true);
++    }
++  }
++  window.addEventListener('pagehide', () => audio.destroy(), { once: true });
++  return {
++    tick,
++    ready() {
++      lastTime = scene.session.time;
++      propBeats.clear();
++      sampleProps(false);
++      scene.setNeutral(neutral.checked);
++    },
++    snapshot() {
++      return {
++        loop: loop.checked,
++        from: Number(from.value),
++        to: Number(to.value),
++        loopCount,
++        neutral: neutral.checked,
++        sound: sound.checked,
++      };
++    },
++  };
++}
+--- a/lab/human-motion/authoring/basketball.ts
++++ b/lab/human-motion/authoring/basketball.ts
+@@ -1,189 +1,191 @@
+ import { translate, type LibraryBuilder } from './builder';
+ import { handSurfaces } from '../../loongbones/side-rig/hand-surfaces';
+-import { motionSignatures } from '../../../lib/arena/engine/motion/CharacterMotionSignature';
+ import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
++
++/** One time domain for gather, extension, exposure and release. The former
++ * post-pass moved bone keys without moving the release marker. */
+ export function addBasketball(
+   library: LibraryBuilder,
+   id: 'dan' | 'doug',
+   plants: MotionMarker[],
+ ) {
+-  const { athletic, native } = library;
+-  const shotEnd = id === 'dan' ? 122 : 116,
+-    release = 44 / 60;
+-  athletic(
++  const end = id === 'dan' ? 136 : 128,
++    release = 46;
++  library.athletic(
+     'shoot',
+-    shotEnd,
++    end,
+     {
+       pelvis: [
+         [0, 0],
+-        [15, -1],
+-        [25, -1.8],
+-        [33, 1],
+-        [46, 0.7],
+-        [70, 0],
+-        [shotEnd, 0],
++        [17, -2],
++        [27, -3],
++        [39, 1],
++        [50, 1],
++        [85, 0],
++        [end, 0],
+       ],
+       spine_lower: [
+         [0, 0],
+-        [18, 1.4],
+-        [26, 2.3],
+-        [36, -0.6],
+-        [48, -0.3],
+-        [shotEnd, 0],
++        [22, 2.5],
++        [31, 3],
++        [42, -1],
++        [76, -0.5],
++        [end, 0],
+       ],
+       spine_mid: [
+         [0, 0],
+-        [20, 1.2],
+-        [28, 1.7],
+-        [38, -0.8],
+-        [55, -0.4],
+-        [shotEnd, 0],
++        [25, 2],
++        [34, 1],
++        [46, -1.5],
++        [82, -0.5],
++        [end, 0],
++      ],
++      chest: [
++        [0, 0],
++        [22, 3],
++        [35, 1],
++        [48, -2],
++        [78, -2],
++        [103, 1],
++        [end, 0],
++      ],
++      neck: [
++        [0, 0],
++        [25, -2],
++        [47, 2],
++        [80, 2],
++        [end, 0],
++      ],
++      head: [
++        [0, 0],
++        [26, -2],
++        [48, -1],
++        [83, -1],
++        [end, 0],
+       ],
+       clavicle_L: [
+         [0, 0],
+-        [22, -0.5],
+-        [32, -2],
+-        [44, -3],
+-        [60, -1],
+-        [shotEnd, 0],
+-      ],
+-      chest: [
+-        [0, 0],
+-        [14, 2],
+-        [30, -2],
+-        [45, -3],
+-        [70, -1],
+-        [shotEnd, 0],
+-      ],
+-      neck: [
+-        [0, 0],
+-        [30, 2],
+-        [65, 1],
+-        [shotEnd, 0],
+-      ],
+-      head: [
+-        [0, 0],
+-        [38, -1],
+-        [70, 0],
+-        [shotEnd, 0],
++        [26, -1],
++        [43, -4],
++        [72, -4],
++        [94, -1],
++        [end, 0],
+       ],
+       upper_arm_L: [
+         [0, 0],
+-        [13, -35],
+-        [27, -110],
+-        [34, -122],
+-        [44, -106],
+-        [60, -98],
+-        [82, -65],
+-        [shotEnd, 0],
++        [17, -42],
++        [30, -107],
++        [40, -130],
++        [48, -136],
++        [76, -136],
++        [90, -125],
++        [108, -58],
++        [end, 0],
+       ],
+       forearm_L: [
+         [0, 0],
+-        [15, -66],
+-        [29, -76],
+-        [34, -55],
+-        [44, 5],
+-        [65, 8],
+-        [84, -54],
+-        [shotEnd, 0],
++        [18, -68],
++        [31, -83],
++        [41, -86],
++        [49, -10],
++        [76, -10],
++        [91, -18],
++        [110, -55],
++        [end, 0],
+       ],
+       hand_L: [
+         [0, 58],
+-        [30, 68],
+-        [43, 76],
+-        [49, 108],
+-        [65, 104],
+-        [84, 82],
+-        [shotEnd, 58],
++        [22, 92],
++        [40, 125],
++        [47, 141],
++        [52, 155],
++        [78, 153],
++        [95, 142],
++        [115, 100],
++        [end, 58],
+       ],
+       upper_arm_R: [
+         [0, 0],
+-        [18, -60],
+-        [35, -97],
+-        [48, -85],
+-        [72, -24],
+-        [shotEnd, 0],
++        [20, -54],
++        [34, -98],
++        [48, -115],
++        [60, -104],
++        [76, -78],
++        [96, -32],
++        [end, 0],
+       ],
+       forearm_R: [
+         [0, 0],
+-        [20, -40],
+-        [35, -38],
++        [21, -48],
++        [37, -44],
+         [48, -20],
+-        [shotEnd, 0],
++        [63, -32],
++        [84, -48],
++        [end, 0],
++      ],
++      foot_L: [
++        [0, 0],
++        [32, 0],
++        [39, 16],
++        [49, 19],
++        [64, 6],
++        [79, 0],
++        [end, 0],
++      ],
++      foot_R: [
++        [0, 0],
++        [32, 0],
++        [41, 14],
++        [52, 17],
++        [66, 5],
++        [79, 0],
++        [end, 0],
+       ],
+     },
+     [
+       ['gather', 0],
+-      ['load', 0.22],
+-      ['rise', 0.42],
+-      ['airborne', 0.55],
+-      ['release', release],
+-      ['followThrough', release + 0.05],
+-      ['recovery', 1.3],
++      ['load', 0.23],
++      ['rise', 0.47],
++      ['airborne', 0.58],
++      ['release', release / 60],
++      ['followThrough', 0.84],
++      ['absorb', 1.3],
++      ['recovery', 1.72],
+     ],
+     [
+       ...plants,
+-      { name: 'takeoff', at: 0.55 },
+-      { name: 'footRelease', foot: 'right', at: 0.55 },
+-      { name: 'footRelease', foot: 'left', at: 0.55 },
+-      { name: 'equipmentRelease', at: release },
++      { name: 'takeoff', at: 0.58 },
++      { name: 'footRelease', foot: 'right', at: 0.58 },
++      { name: 'footRelease', foot: 'left', at: 0.58 },
++      { name: 'equipmentRelease', at: release / 60 },
+     ],
+     {
+       priority: 3,
+       moveControl: 0,
+       technique: 'overhead',
+-      performanceGain: 0.2,
++      performanceGain: 0.14,
+     },
+     [
+       translate(
+         'pelvis',
+         [
+           [0, 0, 0],
+-          [12, -2, 22],
+-          [24, -8, 78],
+-          [28, -4, 60],
+-          [33, 0, 0],
+-          [69, 0, 0],
+-          [shotEnd, 0, 0],
++          [13, -3, 22],
++          [26, -9, 91],
++          [31, -5, 62],
++          [37, 1, 0],
++          [65, 1, 0],
++          [79, 0, 12],
++          [91, -3, 34],
++          [107, -1, 12],
++          [end, 0, 0],
+         ],
+-        shotEnd,
++        end,
+       ),
+     ],
+   );
+-
+-  const shot = native.find((c) => c.name === 'v2_shoot')!;
+-  const mapTime = (frame: number) =>
+-    frame <= 13
+-      ? (frame * 18) / 13
+-      : frame <= 34
+-        ? 18 + ((frame - 13) * 24) / 21
+-        : frame <= 65
+-          ? 42 + (frame - 34)
+-          : frame + 8;
+-  for (const b of shot.bone ?? [])
+-    if (b.rotateFrame) {
+-      let cursor = 0;
+-      const keys = (
+-        b.rotateFrame as { duration: number; rotate: number }[]
+-      ).map((k) => {
+-        const f = cursor;
+-        cursor += k.duration;
+-        return { ...k, frame: Math.min(shotEnd, Math.round(mapTime(f))) };
+-      });
+-      b.rotateFrame = keys.map((k, i) => ({
+-        ...k,
+-        duration: (keys[i + 1]?.frame ?? shotEnd) - k.frame,
+-      }));
+-    }
+-  // Grip/open timing stays opaque; ball-hand alignment is a separate runtime constraint.
+-  native.find((c) => c.name === 'v2_shoot')!.slot = handSurfaces(
+-    shotEnd,
+-    Math.round(release * 60),
++  library.native.find((c) => c.name === 'v2_shoot')!.slot = handSurfaces(
++    end,
++    release,
+   );
+-  // The same identity scale used by throws/gestures affects athletic torso participation.
+-  const chest = native
+-    .find((c) => c.name === 'v2_shoot')!
+-    .bone!.find((b) => b.name === 'chest');
+-  for (const key of (chest?.rotateFrame ?? []) as { rotate: number }[])
+-    key.rotate *= motionSignatures[id].bodyLean;
+ }
+--- a/lab/human-motion/authoring/combat.ts
++++ b/lab/human-motion/authoring/combat.ts
+@@ -8,9 +8,7 @@
+ ) {
+   const { athletic } = library;
+   const signature = motionSignatures[id];
+-  // The far arm is partly occluded in this source. Keep its upper segment
+-  // beside the ribs and use restrained counterbalance; a raised two-arm guard
+-  // needs authored hidden arm material, not stretched source-edge triangles.
++  // The complete far-arm material now supports a two-hand guard.
+   athletic(
+     'combatNeutral',
+     90,
+@@ -26,14 +24,14 @@
+         [90, -110],
+       ],
+       upper_arm_R: [
+-        [0, 0],
+-        [45, 1],
+-        [90, 0],
++        [0, -32],
++        [45, -33],
++        [90, -32],
+       ],
+       forearm_R: [
+-        [0, -8],
+-        [45, -9],
+-        [90, -8],
++        [0, -92],
++        [45, -94],
++        [90, -92],
+       ],
+       hand_L: [
+         [0, 58],
+@@ -99,10 +97,13 @@
+           [0, 58],
+           [end, 58],
+         ],
+-        upper_arm_R: contactPulse(2, end, active, 0.05).map(([t, v]) => [t, v]),
++        upper_arm_R: contactPulse(2, end, active, 0.05).map(([t, v]) => [
++          t,
++          v - 32,
++        ]),
+         forearm_R: contactPulse(-2, end, active, 0.075).map(([t, v]) => [
+           t,
+-          v - 8,
++          v - 92,
+         ]),
+       },
+       [
+@@ -203,9 +204,29 @@
+     'hit',
+     42,
+     {
+-      pelvis: pulse(-2, 42),
+-      chest: pulse(-5, 42),
+-      head: pulse(-4, 42),
++      pelvis: [
++        [0, 0],
++        [3, -2],
++        [8, -3],
++        [17, -1],
++        [42, 0],
++      ],
++      chest: [
++        [0, 0],
++        [3, -8],
++        [7, -11],
++        [16, -4],
++        [29, 1],
++        [42, 0],
++      ],
++      head: [
++        [0, 0],
++        [5, -5],
++        [9, -8],
++        [18, -3],
++        [30, 1],
++        [42, 0],
++      ],
+       upper_arm_L: pulse(10, 42).map(([t, v]) => [t, v - 50]),
+       forearm_L: pulse(-18, 42).map(([t, v]) => [t, v - 110]),
+       upper_arm_R: [
+--- a/lab/human-motion/authoring/cornhole.ts
++++ b/lab/human-motion/authoring/cornhole.ts
+@@ -26,7 +26,8 @@
+   plants: MotionMarker[],
+ ) {
+   for (const [style, technique] of Object.entries(styleTraits)) {
+-    const signature = motionSignatures[id], loose = signature.looseness > .5,
++    const signature = motionSignatures[id],
++      loose = signature.looseness > 0.5,
+       tempo = technique.tempo * signature.rhythm;
+     const frame = (f: number) => Math.round(f * tempo),
+       end = frame(reference.endFrame),
+@@ -46,7 +47,7 @@
+           if (name === 'hand_L') v += technique.wrist * action;
+           if (['spine_mid', 'chest', 'upper_arm_R'].includes(name) && loose)
+             v *= signature.bodyLean;
+-          return [frame(f * reference.endFrame / 146), v] as Knot;
++          return [frame((f * reference.endFrame) / 146), v] as Knot;
+         }),
+       ]),
+     );
+@@ -56,22 +57,52 @@
+         (n, b) => n + at(b, f),
+         0,
+       );
+-    const measured = (name: keyof typeof reference.channels, f: number, lag = 0) =>
+-      sampleScalar(reference.channels[name].map(([t,v])=>[t,v] as Knot), Math.max(0,f/tempo-lag));
+-    const sampled = (get:(f:number)=>number):Knot[] => Array.from({length:end+1},(_,f)=>[f,get(f)]);
++    const measured = (
++      name: keyof typeof reference.channels,
++      f: number,
++      lag = 0,
++    ) =>
++      sampleScalar(
++        reference.channels[name].map(([t, v]) => [t, v] as Knot),
++        Math.max(0, f / tempo - lag),
++      );
++    const sampled = (get: (f: number) => number): Knot[] =>
++      Array.from({ length: end + 1 }, (_, f) => [f, get(f)]);
+     // Compiled measurements drive runtime channels. The authored fallback remains
+     // only for occluded far-side motion, palm variants and anatomical corrections.
+-    for (const [name,share,delay] of [['pelvis',.18,0],['spine_lower',.23,1],['spine_mid',.25,2],['chest',.34,3]] as const)
+-      channels[name]=sampled(f=>measured('torsoPitch',f,delay)*share*signature.bodyLean);
+-    channels.upper_arm_L=sampled(f=>{
+-      const progress=Math.max(0,Math.min(1,(f/tempo-34)/72));
+-      return measured('upperRight',f)*technique.sweep*signature.backswingSize-body(f)-at('clavicle_L',f)+technique.lift*Math.sin(Math.PI*progress);
++    for (const [name, share, delay] of [
++      ['pelvis', 0.18, 0],
++      ['spine_lower', 0.23, 1],
++      ['spine_mid', 0.25, 2],
++      ['chest', 0.34, 3],
++    ] as const)
++      channels[name] = sampled(
++        (f) =>
++          measured('torsoPitch', f, delay) *
++          share *
++          signature.bodyLean *
++          (loose ? 1.22 : 1.1),
++      );
++    channels.upper_arm_L = sampled((f) => {
++      const progress = Math.max(0, Math.min(1, (f / tempo - 34) / 72));
++      return (
++        measured('upperRight', f) * technique.sweep * signature.backswingSize -
++        body(f) -
++        at('clavicle_L', f) +
++        technique.lift * Math.sin(Math.PI * progress)
++      );
+     });
+-    channels.forearm_L=sampled(f=>measured('elbowRight',f)*(loose?1.08:1));
++    channels.forearm_L = sampled(
++      (f) => measured('elbowRight', f) * (loose ? 1.08 : 1),
++    );
+     // The far arm is hidden in the source. Bounded authored counterbalance follows
+     // the observed trunk load; it is explicitly not labeled extracted motion.
+-    channels.upper_arm_R=sampled(f=>-measured('upperRight',f,4)*.12*signature.bodyLean);
+-    channels.forearm_R=sampled(f=>-Math.max(0,measured('torsoPitch',f,5))*.4);
++    channels.upper_arm_R = sampled(
++      (f) => -measured('upperRight', f, 4) * 0.12 * signature.bodyLean,
++    );
++    channels.forearm_R = sampled(
++      (f) => -Math.max(0, measured('torsoPitch', f, 5)) * 0.4,
++    );
+     // Compensate the actual authored ancestors, not a guessed one-piece torso.
+     channels.neck = Array.from(
+       { length: end + 1 },
+@@ -82,7 +113,8 @@
+       (_, f) =>
+         [f, -body(f) * 0.28 + 0.6 * Math.sin((Math.PI * f) / end)] as Knot,
+     );
+-    const shift = (keys: Knot[], f: number) => sampleScalar(keys, f / tempo * 146/reference.endFrame);
++    const shift = (keys: Knot[], f: number) =>
++      sampleScalar(keys, ((f / tempo) * 146) / reference.endFrame);
+     const translated = (
+       name: string,
+       get: (f: number) => { x: number; y: number },
+@@ -103,8 +135,12 @@
+           rotation(name, keys, end),
+         ),
+         translated('pelvis', (f) => ({
+-          x: shift(pelvisX, f)*.65 + measured('pelvisForward',f)*52,
+-          y: shift(pelvisY, f)*.65 + measured('pelvisLoad',f)*70,
++          x:
++            shift(pelvisX, f) * 0.65 +
++            measured('pelvisForward', f) * (loose ? 75 : 65),
++          y:
++            shift(pelvisY, f) * 0.65 +
++            measured('pelvisLoad', f) * (loose ? 92 : 82),
+         })),
+         translated('clavicle_L', (f) => {
+           // Chest bind axis (520,390)->(493,244). Translate through its local frame.
+@@ -138,9 +174,15 @@
+         priority: 3,
+         technique: 'underhand',
+         performanceGain: 0.22,
+-        landmarks: THROW_LANDMARKS.map(([name],i) => ({
++        landmarks: THROW_LANDMARKS.map(([name], i) => ({
+           name,
+-          at: frame([0,6,10,12,21,27,34,39,43,47,50,51,56,64,75,96,116,134][i]) / 60,
++          at:
++            frame(
++              [
++                0, 6, 10, 12, 21, 27, 34, 39, 43, 47, 50, 51, 56, 64, 75, 96,
++                116, 134,
++              ][i],
++            ) / 60,
+         })),
+         rootInterpolation: 'continuous',
+         root: [
+@@ -156,7 +198,7 @@
+           [127, 0],
+           [146, 0],
+         ].map(([f, x]) => ({
+-          at: frame(f * reference.endFrame/146) / 60,
++          at: frame((f * reference.endFrame) / 146) / 60,
+           x: x * (loose ? 1.12 : 1),
+           y: 0,
+         })),
+--- a/lab/human-motion/authoring/gait.ts
++++ b/lab/human-motion/authoring/gait.ts
+@@ -83,12 +83,20 @@
+             Math.min(1, swing / 0.1, (1 - swing) / 0.12);
+         points.push([f, hip.point.x - ankle.point.x + x, y]);
+         const arm = channel('arm', observed);
++        // Source channel is an absolute shoulder angle. Remove its forward
++        // bias before retargeting; both hands previously remained ahead of
++        // the torso despite opposite phases. The complete far-arm surface
++        // now supports the backward swing.
+         const compact =
+-          name === 'walk' ? 0.28 : 0.58 + signature.looseness * 0.12;
+-        arms.push([f, (-arm - 18) * compact]);
++          name === 'walk' ? 0.65 : 1.45 + signature.looseness * 0.15;
++        const shoulder = -(arm + 20) * compact + (name === 'walk' ? 0 : 10);
++        arms.push([f, shoulder]);
+         elbows.push([
+           f,
+-          -(name === 'walk' ? 22 : channel('elbow', observed) * 0.75),
++          -(name === 'walk'
++            ? 24
++            : Math.min(100, channel('elbow', observed) * 0.88) -
++              Math.max(0, shoulder) * 0.55),
+         ]);
+         // Stance stays locked. After toe-off the ankle plantar-flexes, then
+         // recovers dorsiflexion before the next contact; never rotate a planted sole.
+--- a/lab/human-motion/authoring/gestures.ts
++++ b/lab/human-motion/authoring/gestures.ts
+@@ -47,11 +47,11 @@
+         [12, 6],
+         [24, 36],
+         [30, 45],
+-        [36, 45],
+-        [41, 35],
++        [33, 42],
++        [39, 25],
+         [49, 45],
+-        [54, 45],
+-        [57, 35],
++        [52, 42],
++        [57, 25],
+         [66, 7],
+         [82, 0],
+         [92, 0],
+@@ -61,11 +61,11 @@
+         [12, -30],
+         [24, -104],
+         [30, -115],
+-        [36, -115],
+-        [41, -100],
++        [33, -109],
++        [39, -83],
+         [49, -115],
+-        [54, -115],
+-        [57, -100],
++        [52, -109],
++        [57, -83],
+         [66, -50],
+         [82, -5],
+         [92, 0],
+@@ -106,10 +106,12 @@
+       chest: [
+         [0, 0],
+         [24, -1],
+-        [30, -2.1],
+-        [35, -0.7],
+-        [49, -2.1],
+-        [54, -0.7],
++        [30, -1],
++        [33, 2.5],
++        [40, -0.8],
++        [49, -1],
++        [52, 2.5],
++        [61, -0.6],
+         [76, 0],
+         [92, 0],
+       ],
+@@ -157,7 +159,8 @@
+         [18, -8],
+         [24, -8],
+         [42, -8],
+-        [49, -4],
++        [46, -2],
++        [51, -5],
+         [62, 0],
+       ],
+       forearm_L: [
+@@ -166,7 +169,8 @@
+         [18, -27],
+         [24, -27],
+         [42, -27],
+-        [49, -18],
++        [46, -16],
++        [51, -22],
+         [62, 0],
+       ],
+       hand_L: [
+@@ -229,8 +233,9 @@
+       [0, 0],
+       [14, -14],
+       [27, -55 * energy],
+-      [34, -50 * energy],
+-      [45, -35],
++      [33, -59 * energy],
++      [42, -22],
++      [48, -30],
+       [63, -5],
+       [74, 0],
+     ],
+@@ -238,8 +243,9 @@
+       [0, 0],
+       [14, -40],
+       [27, -90],
+-      [34, -80],
+-      [45, -70],
++      [33, -98],
++      [42, -60],
++      [48, -68],
+       [63, -20],
+       [74, 0],
+     ],
+--- a/lab/human-motion/events/PrecisionProof.ts
++++ b/lab/human-motion/events/PrecisionProof.ts
+@@ -133,8 +133,7 @@
+         // Power changes the actual authored hand speed before launch, never the detached bag.
+         if (state)
+           state.rate =
+-            (this.id === 'basketball' ? 1.3 : 1) *
+-            Math.max(0.87, Math.min(1.12, 1 + (a.power - 0.65) * 0.28));
++            1 * Math.max(0.87, Math.min(1.12, 1 + (a.power - 0.65) * 0.28));
+       }
+       a.equipment.attach(
+         this.id === 'cornhole' ? 'bag' : 'basketball',
+@@ -197,9 +196,14 @@
+     });
+     for (const p of this.projectiles) {
+       if (p.landed) continue;
+-      p.age += dt;
++      const flightStep = Math.min(
++        dt,
++        Math.max(0, _time - p.release.time - p.age),
++      );
++      if (flightStep < 1e-10) continue;
++      p.age += flightStep;
+       if (p.contact) {
+-        advanceBag(p as typeof p & { contact: BagContact }, dt);
++        advanceBag(p as typeof p & { contact: BagContact }, flightStep);
+         if (p.landed) {
+           const a = this.actors.find((a) => a.id === p.owner)!;
+           a.score +=
+@@ -225,11 +229,11 @@
+       const anchor = placement(this.id, this.actors.indexOf(a)).anchor;
+       const result = advanceBasketball(
+         p,
+-        dt,
++        flightStep,
+         anchor,
+         17 * (a.id === 'doug' ? 0.7 : 1),
+       );
+-      p.angle += dt * 1.6;
++      p.angle += flightStep * 1.6;
+       if (result === 'score' || result === 'miss') {
+         p.landed = true;
+         p.scored = result === 'score';
+--- a/lib/arena/engine/equipment/PropPerformance.ts
++++ b/lib/arena/engine/equipment/PropPerformance.ts
+@@ -13,6 +13,11 @@
+   catchError: number | null = null;
+   tosses = 0;
+   catches = 0;
++  cancellations = 0;
++  cancel() {
++    if (this.flight) this.cancellations++;
++    this.flight = null;
++  }
+   toss(hand: Vec2 & { angle: number }, duration: number, scale: number) {
+     if (this.flight) return;
+     this.flight = {
+@@ -53,6 +58,7 @@
+       catchError: this.catchError,
+       tosses: this.tosses,
+       catches: this.catches,
++      cancellations: this.cancellations,
+     });
+   }
+ }
+--- a/lib/arena/engine/motion/AnimationGraph.ts
++++ b/lib/arena/engine/motion/AnimationGraph.ts
+@@ -68,6 +68,8 @@
+     );
+   }
+   advance(dt: number, time: number): MotionEvent[] {
++    if (!Number.isFinite(dt) || dt < 0)
++      throw Error('Animation time must advance; seek by reset/replay');
+     const events: MotionEvent[] = [];
+     for (const state of this.active()) {
+       if (state.completed) continue;
+@@ -80,7 +82,7 @@
+         cycle++
+       ) {
+         if (!state.clip.loop && cycle > 0) break;
+-        for (const marker of state.clip.markers) {
++        for (const [markerIndex, marker] of state.clip.markers.entries()) {
+           const at = cycle * duration + marker.at;
+           if (
+             (at > from + 1e-10 || (!state.started && at === 0 && from === 0)) &&
+@@ -88,6 +90,8 @@
+           )
+             events.push({
+               ...marker,
++              actionId: state.revision,
++              eventId: `${state.revision}:${cycle}:${markerIndex}`,
+               clip: state.clip.id,
+               cycle,
+               time: time - (to - at) / state.rate,
+@@ -100,6 +104,8 @@
+         state.completed = true;
+         events.push({
+           name: 'motionComplete',
++          actionId: state.revision,
++          eventId: `${state.revision}:complete`,
+           at: duration,
+           clip: state.clip.id,
+           cycle: 0,
+@@ -108,6 +114,24 @@
+       }
+     }
+     return events.sort((a, b) => a.time - b.time);
++  }
++  /** End a presentation interval exactly at a marker before reading sockets. */
++  untilNextMarker(maximum: number) {
++    let next = maximum;
++    for (const s of this.active()) {
++      if (s.completed || s.rate <= 0) continue;
++      const completion = (s.clip.duration - s.time) / s.rate;
++      if (!s.clip.loop && completion > 1e-9) next = Math.min(next, completion);
++      const cycle = Math.floor(s.time / s.clip.duration);
++      for (const loop of [cycle, cycle + 1]) {
++        if (!s.clip.loop && loop > 0) continue;
++        for (const m of s.clip.markers) {
++          const delta = (loop * s.clip.duration + m.at - s.time) / s.rate;
++          if (delta > 1e-9) next = Math.min(next, delta);
++        }
++      }
++    }
++    return next;
+   }
+   phase(
+     state = this.states.get('reaction') ??
+--- a/lib/arena/engine/motion/ContactEnvelope.ts
++++ b/lib/arena/engine/motion/ContactEnvelope.ts
+@@ -0,0 +1,11 @@
++import { clamp } from './MotionTypes';
++/** Short contact beats with independent approach/rebound, never a half-second lock. */
++export function chestContactWeight(seconds: number) {
++  const pulse = (center: number) => {
++    const d = seconds - center;
++    const t = d < 0 ? 1 + d / 0.105 : 1 - d / 0.085;
++    const x = clamp(t, 0, 1);
++    return x * x * (3 - 2 * x);
++  };
++  return Math.max(pulse(0.5), pulse(49 / 60));
++}
+--- a/lib/arena/engine/motion/MotionAnalyzer.ts
++++ b/lib/arena/engine/motion/MotionAnalyzer.ts
+@@ -118,7 +118,7 @@
+     this.restLengths.clear();
+     this.lengthErrors = {};
+   }
+-  snapshot() {
++  snapshot(includeTrails = true) {
+     return structuredClone({
+       units: 'world pixels / seconds',
+       sampleCount: this.poses.length,
+@@ -133,7 +133,7 @@
+       maxRootAcceleration: this.maxRootAcceleration,
+       limbLengthError: this.lengthErrors,
+       curveSampleCount: this.curves.count,
+-      trails: this.poses
++        trails: (includeTrails ? this.poses : [])
+         .filter((_, i) => i % 3 === 0)
+         .map((p) => ({
+           time: p.time,
+--- a/lib/arena/engine/motion/MotionTypes.ts
++++ b/lib/arena/engine/motion/MotionTypes.ts
+@@ -61,6 +61,8 @@
+     | 'impact';
+ }
+ export interface MotionEvent extends MotionMarker {
++  actionId?: number;
++  eventId?: string;
+   clip: string;
+   time: number;
+   cycle: number;
+--- a/lib/arena/engine/events/cornhole/ScreenBagDynamics.ts
++++ b/lib/arena/engine/events/cornhole/ScreenBagDynamics.ts
+@@ -13,6 +13,7 @@
+     scale: number;
+   };
+   age: number;
++  impacts: number;
+   tangentSpeed: number;
+   bounce: number;
+   bounceSpeed: number;
+@@ -47,6 +48,7 @@
+       scale: actor === 1 ? 0.7 : 1,
+     },
+     age: 0,
++    impacts: 0,
+     tangentSpeed: 0,
+     bounce: 0,
+     bounceSpeed: 0,
+@@ -90,6 +92,7 @@
+     v.y += g * travel;
+     p.angle += c.spin * travel;
+     if (valid) {
++      c.impacts++;
+       const norm = Math.hypot(1, b.slope);
+       c.tangentSpeed =
+         ((v.x + v.y * b.slope) / norm) *
+@@ -108,6 +111,7 @@
+       }
+       if (dt > travel) advanceBag(p, dt - travel);
+     } else if (p.position.y >= b.floor - r && v.y > 0) {
++      c.impacts++;
+       // Ground catch is outside the board and cannot award a board score.
+       p.position.y = b.floor - r;
+       c.phase = 'ground';
+--- a/scripts/capture-animation-upgrade.mjs
++++ b/scripts/capture-animation-upgrade.mjs
+@@ -0,0 +1,78 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const label = process.argv[2] ?? 'baseline';
++const root = `work/qa/animation-upgrade/${label}`;
++await fs.mkdir(root, { recursive: true });
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1080 } });
++const errors = [];
++page.on('pageerror', (e) => errors.push(String(e)));
++const takes = [
++  [
++    'basketball',
++    'primaryAction',
++    [0.5, 0.7, 0.85, 0.95, 0.967, 1, 1.1, 1.3, 1.5],
++  ],
++  ['running', 'run-stop', [0.5, 0.7, 0.85, 1, 1.2, 1.45, 1.65, 1.9]],
++  ['cornhole', 'primaryAction', [0.5, 0.9, 1.15, 1.3, 1.5, 1.8, 2.1]],
++  ['cornhole', 'chestTap', [0.5, 0.7, 0.8, 0.95, 1.05, 1.25]],
++  ['cornhole', 'bagFlip', [0.5, 0.6, 0.75, 0.9, 1, 1.1]],
++  ['cornhole', 'fistPump', [0.5, 0.65, 0.75, 0.9, 1.15]],
++  ['fighting', 'primaryAction', [0.4, 0.6, 0.8, 1]],
++];
++try {
++  for (const actor of ['doug', 'dan'])
++    for (const [event, take, times] of takes) {
++      if (
++        process.argv[3] &&
++        !`${actor}-${event}-${take}`.includes(process.argv[3])
++      )
++        continue;
++      const name = `${actor}-${event}-${take}`;
++      await page.goto(
++        `http://127.0.0.1:3015/human-motion/?event=${event}&take=${take}&actor=${actor}`,
++      );
++      await page.waitForFunction(
++        () => window.__HERO_MOTION__?.getState().actors,
++      );
++      await page.evaluate(
++        (actor) =>
++          window.__HERO_MOTION__.view({
++            focus: actor,
++            skeleton: false,
++            trails: false,
++          }),
++        actor,
++      );
++      const states = [];
++      let previous = 0;
++      for (const t of times) {
++        await page.evaluate(
++          (dt) => window.__HERO_MOTION__.step(dt),
++          t - previous,
++        );
++        previous = t;
++        await page.evaluate(
++          () =>
++            new Promise((r) =>
++              requestAnimationFrame(() => requestAnimationFrame(r)),
++            ),
++        );
++        await page
++          .locator('canvas')
++          .screenshot({ path: `${root}/${name}-${t.toFixed(3)}.png` });
++        states.push(
++          await page.evaluate(() => window.__HERO_MOTION__.getState()),
++        );
++      }
++      await fs.writeFile(`${root}/${name}.json`, JSON.stringify(states));
++      console.log(name);
++    }
++  if (errors.length) throw Error(errors.join('\n'));
++} finally {
++  await browser.close();
++}
+--- a/scripts/capture-human-motion.mjs
++++ b/scripts/capture-human-motion.mjs
+@@ -36,74 +36,85 @@
+           ? `&actor=${actor}&take=${arg('action', event === 'running' ? 'run-stop' : 'primaryAction')}`
+           : '';
+       await page.goto(
+-        `http://127.0.0.1:3010/human-motion/?event=${event}${take}${query ? '&' + query : ''}`,
++        `${arg('url', 'http://127.0.0.1:3010')}/human-motion/?event=${event}${take}${query ? '&' + query : ''}`,
+       );
+       await page.waitForFunction(
+         () => window.__HERO_MOTION__?.getState().actors,
+       );
+-      const capture = await page.evaluate(async ({rate,seconds,silhouette}) => {
+-        const api = window.__HERO_MOTION__;
+-        api.view({ skeleton: false, trails: false, silhouette });
+-        api.setRate(rate);
+-        const source = document.querySelector('canvas'),
+-          canvas = document.createElement('canvas');
+-        canvas.width = 1280;
+-        canvas.height = 760;
+-        const context = canvas.getContext('2d'),
+-          stream = canvas.captureStream(0),
+-          track = stream.getVideoTracks()[0],
+-          chunks = [];
+-        let raf = 0,
+-          last = -Infinity;
+-        const copy = (now = 0) => {
+-          if (now - last >= 30) {
+-            context.drawImage(source, 0, 0);
+-            track.requestFrame();
+-            last = now;
++      const capture = await page.evaluate(
++        async ({ rate, seconds, silhouette }) => {
++          const api = window.__HERO_MOTION__;
++          api.view({ skeleton: false, trails: false, silhouette });
++          api.setRate(rate);
++          const source = document.querySelector('canvas'),
++            canvas = document.createElement('canvas');
++          canvas.width = 1280;
++          canvas.height = 760;
++          const context = canvas.getContext('2d'),
++            stream = canvas.captureStream(0),
++            track = stream.getVideoTracks()[0],
++            chunks = [];
++          let raf = 0,
++            last = -Infinity;
++          const copy = (now = 0) => {
++            if (now - last >= 30) {
++              context.drawImage(source, 0, 0);
++              track.requestFrame();
++              last = now;
++            }
++            raf = requestAnimationFrame(copy);
++          };
++          const recorder = new MediaRecorder(stream, {
++            mimeType: 'video/webm;codecs=vp8',
++            videoBitsPerSecond: 3500000,
++          });
++          recorder.ondataavailable = (e) => {
++            if (e.data.size) chunks.push(e.data);
++          };
++          recorder.start();
++          const start = performance.now();
++          copy();
++          await new Promise((r) => setTimeout(r, 900));
++          const samples = [
++            { wall: (performance.now() - start) / 1000, game: 0 },
++          ];
++          api.resume();
++          while (api.getState().time < seconds) {
++            await new Promise((r) => setTimeout(r, 70));
++            samples.push({
++              wall: (performance.now() - start) / 1000,
++              game: api.getState().time,
++            });
++            if (performance.now() - start > 60000)
++              throw Error('Motion proof stalled');
+           }
+-          raf = requestAnimationFrame(copy);
+-        };
+-        const recorder = new MediaRecorder(stream, {
+-          mimeType: 'video/webm;codecs=vp8',
+-          videoBitsPerSecond: 3500000,
+-        });
+-        recorder.ondataavailable = (e) => {
+-          if (e.data.size) chunks.push(e.data);
+-        };
+-        recorder.start();
+-        const start = performance.now();
+-        copy();
+-        await new Promise((r) => setTimeout(r, 900));
+-        const samples = [{ wall: (performance.now() - start) / 1000, game: 0 }];
+-        api.resume();
+-        while (api.getState().time < seconds) {
+-          await new Promise((r) => setTimeout(r, 70));
+-          samples.push({
+-            wall: (performance.now() - start) / 1000,
+-            game: api.getState().time,
++          api.pause();
++          await new Promise((r) => {
++            recorder.onstop = r;
++            recorder.stop();
+           });
+-          if (performance.now() - start > 60000)
+-            throw Error('Motion proof stalled');
+-        }
+-        api.pause();
+-        await new Promise((r) => {
+-          recorder.onstop = r;
+-          recorder.stop();
+-        });
+-        cancelAnimationFrame(raf);
+-        stream.getTracks().forEach((t) => t.stop());
+-        return {
+-          bytes: Array.from(
+-            new Uint8Array(await new Blob(chunks).arrayBuffer()),
+-          ),
+-          samples,
+-          state: api.getState(),
+-          performance: api.getPerformance(),
+-        };
+-      }, {rate,seconds:Number(arg('seconds','4')),silhouette:arg('silhouette','0')==='1'});
++          cancelAnimationFrame(raf);
++          stream.getTracks().forEach((t) => t.stop());
++          return {
++            bytes: Array.from(
++              new Uint8Array(await new Blob(chunks).arrayBuffer()),
++            ),
++            samples,
++            state: api.getState(),
++            performance: api.getPerformance(),
++          };
++        },
++        {
++          rate,
++          seconds: Number(arg('seconds', '4')),
++          silhouette: arg('silhouette', '0') === '1',
++        },
++      );
+       const name = `${event}-${rate}x`;
+       await fs.writeFile(`${out}/${name}.webm`, Buffer.from(capture.bytes));
+-      const gameTimes = arg('checkpoints','0.2,0.4,0.6,0.8,1.1,1.5,2.2,3.2').split(',').map(Number);
++      const gameTimes = arg('checkpoints', '0.2,0.4,0.6,0.8,1.1,1.5,2.2,3.2')
++        .split(',')
++        .map(Number);
+       const times = gameTimes.map((t) => {
+         const b = capture.samples.findIndex((s) => s.game >= t),
+           p = capture.samples[Math.max(0, b - 1)],
+@@ -113,7 +124,9 @@
+           ((q.wall - p.wall) * (t - p.game)) / Math.max(0.0001, q.game - p.game)
+         );
+       });
+-      await page.goto('http://127.0.0.1:3010/__motion_decode__');
++      await page.goto(
++        arg('url', 'http://127.0.0.1:3010') + '/__motion_decode__',
++      );
+       const frames = await page.evaluate(decodeMotion, {
+         bytes: capture.bytes,
+         times,
+@@ -168,7 +181,10 @@
+       console.log('Reviewed capture ready:', name, 'errors:', errors.length);
+     }
+   // Unrecorded real-time telemetry, separate from capture overhead and manual stepping.
+-  await page.goto('http://127.0.0.1:3010/human-motion/?event='+arg('perf-event','basketball'));
++  await page.goto(
++    'http://127.0.0.1:3010/human-motion/?event=' +
++      arg('perf-event', 'basketball'),
++  );
+   await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+   await page.evaluate(() => {
+     window.__HERO_MOTION__.view({ skeleton: false, trails: false });
+--- a/scripts/capture-upgrade-sequences.mjs
++++ b/scripts/capture-upgrade-sequences.mjs
+@@ -0,0 +1,106 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const base = process.argv[2] ?? 'after';
++const before = base.startsWith('before');
++const url = before ? 'http://127.0.0.1:3017' : 'http://127.0.0.1:3015';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++const page = await browser.newPage({ viewport: { width: 1440, height: 1080 } });
++const out = `work/qa/animation-upgrade/sequences/${base}`;
++await fs.mkdir(out, { recursive: true });
++let manifest = [];
++try {
++  manifest = JSON.parse(await fs.readFile(`${out}/manifest.json`, 'utf8'));
++} catch {}
++const actions = [
++  ['basketball', 'primaryAction'],
++  ['running', 'run-stop'],
++  ['cornhole', 'primaryAction'],
++  ['cornhole', 'chestTap'],
++  ['cornhole', 'bagFlip'],
++  ['cornhole', 'fistPump'],
++  ['fighting', 'matchup'],
++];
++try {
++  for (const actor of ['doug', 'dan']) {
++    for (const [event, take] of actions) {
++      for (const rate of !before &&
++      actor === 'doug' &&
++      ['basketball', 'running'].includes(event)
++        ? [1, 0.25]
++        : [1]) {
++        const name = `${actor}-${event}-${take}-${rate}x`;
++        if (manifest.some((m) => m.name === name)) continue;
++        const directory = `${out}/${name}`;
++        await fs.mkdir(directory, { recursive: true });
++        await page.goto(
++          `${url}/human-motion/?event=${event}&actor=${actor}${take === 'matchup' ? '' : '&take=' + take}`,
++        );
++        await page.waitForFunction(
++          () => window.__HERO_MOTION__?.getState().actors,
++        );
++        await page.evaluate(
++          ({ actor, rate }) =>
++            window.__HERO_MOTION__.view({
++              focus: rate === 1 ? 'arena' : actor,
++              skeleton: false,
++              trails: false,
++            }),
++          { actor, rate },
++        );
++        const seconds = take === 'matchup' ? 4 : 3,
++          frames = Math.ceil((seconds / rate) * 30);
++        const samples = [];
++        for (let f = 0; f < frames; f++) {
++          const frame = await page.evaluate(
++            async ({ dt, sample }) => {
++              const api = window.__HERO_MOTION__;
++              api.step(dt);
++              await new Promise((r) =>
++                requestAnimationFrame(() => requestAnimationFrame(r)),
++              );
++              return {
++                image: document
++                  .querySelector('canvas')
++                  .toDataURL('image/jpeg', 0.9)
++                  .split(',')[1],
++                state: sample ? api.getState() : null,
++              };
++            },
++            { dt: rate / 30, sample: f % 6 === 0 },
++          );
++          await fs.writeFile(
++            `${directory}/${String(f).padStart(4, '0')}.jpg`,
++            Buffer.from(frame.image, 'base64'),
++          );
++          if (f % 6 === 0) samples.push(frame.state);
++        }
++        await fs.writeFile(
++          `${directory}/samples.json`,
++          JSON.stringify(samples),
++        );
++        manifest.push({
++          name,
++          event,
++          take,
++          actor,
++          rate,
++          frames,
++          fps: 30,
++          seconds,
++          directory,
++        });
++        await fs.writeFile(
++          `${out}/manifest.json`,
++          JSON.stringify(manifest, null, 2),
++        );
++        console.log(`${base}: ${name} (${frames} frames)`);
++      }
++    }
++  }
++} finally {
++  await browser.close();
++}
+--- a/scripts/capture-upgrade-silhouettes.mjs
++++ b/scripts/capture-upgrade-silhouettes.mjs
+@@ -0,0 +1,46 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const dir = 'docs/review/animation-upgrade/silhouettes';
++await fs.mkdir(dir, { recursive: true });
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++try {
++  const page = await browser.newPage({
++    viewport: { width: 1440, height: 1080 },
++  });
++  for (const actor of ['doug', 'dan'])
++    for (const [event, take, time] of [
++      ['basketball', 'primaryAction', 1.3],
++      ['cornhole', 'fistPump', 0.75],
++      ['cornhole', 'chestTap', 0.7],
++      ['running', 'run-stop', 0.85],
++    ]) {
++      await page.goto(
++        `http://127.0.0.1:3015/human-motion/?event=${event}&take=${take}&actor=${actor}&neutral=1`,
++      );
++      await page.waitForFunction(
++        () => window.__HERO_MOTION__?.getState().actors,
++      );
++      await page.evaluate(
++        ({ actor, time }) => {
++          const api = window.__HERO_MOTION__;
++          api.step(time);
++          api.view({
++            focus: actor,
++            silhouette: true,
++            skeleton: false,
++            trails: false,
++          });
++        },
++        { actor, time },
++      );
++      await page
++        .locator('canvas')
++        .screenshot({ path: `${dir}/${actor}-${event}-${take}.png` });
++    }
++} finally {
++  await browser.close();
++}
+--- a/scripts/export-animation-upgrade.mjs
++++ b/scripts/export-animation-upgrade.mjs
+@@ -0,0 +1,70 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++try {
++  const page = await browser.newPage();
++  await page.goto('http://127.0.0.1:3015/human-motion/');
++  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++  for (const id of ['doug', 'dan']) {
++    const result = await page.evaluate(async (id) => {
++      const bundle = window.__HERO_MOTION__.exportRig(id);
++      const canvas = document.createElement('canvas');
++      canvas.width = 2172;
++      canvas.height = 1978;
++      const ctx = canvas.getContext('2d');
++      for (const [url, y] of [
++        [`/loongbones/assets/cornhole-side-v3/${id}_tex.png`, 0],
++        ['/human-motion/assets/hands/hand-sheet-v1.png', 1254],
++      ]) {
++        const image = new Image();
++        image.src = url;
++        await image.decode();
++        ctx.drawImage(image, 0, y);
++      }
++      return { bundle, png: canvas.toDataURL('image/png').split(',')[1] };
++    }, id);
++    const dir = `lab/human-motion/assets/upgrade-v1/${id}`;
++    await fs.mkdir(dir, { recursive: true });
++    const atlas = {
++      name: id + '_motion_upgrade',
++      imagePath: id + '_tex.png',
++      width: 2172,
++      height: 1978,
++      SubTexture: [
++        { name: 'sheet', x: 0, y: 0, width: 1254, height: 1254 },
++        ...result.bundle.handAtlas.SubTexture.map((s) => ({
++          ...s,
++          y: s.y + 1254,
++        })),
++      ],
++    };
++    await fs.writeFile(
++      `${dir}/${id}_ske.json`,
++      JSON.stringify(result.bundle.skeleton),
++    );
++    await fs.writeFile(`${dir}/${id}_tex.json`, JSON.stringify(atlas, null, 2));
++    await fs.writeFile(
++      `${dir}/${id}_tex.png`,
++      Buffer.from(result.png, 'base64'),
++    );
++    await fs.writeFile(
++      `${dir}/authoring.json`,
++      JSON.stringify(
++        { ...result.bundle, skeleton: undefined, handAtlas: undefined },
++        null,
++        2,
++      ),
++    );
++    console.log(
++      'Exported ' +
++        id +
++        ' editable skeleton, packed atlas and authoring metadata',
++    );
++  }
++} finally {
++  await browser.close();
++}
+--- a/scripts/measure-upgrade-contacts.mjs
++++ b/scripts/measure-upgrade-contacts.mjs
+@@ -0,0 +1,61 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++const characters = [];
++try {
++  const page = await browser.newPage();
++  for (const id of ['doug', 'dan']) {
++    await page.goto(
++      `http://127.0.0.1:3015/human-motion/?event=cornhole&actor=${id}&take=primaryAction`,
++    );
++    await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++    const result = await page.evaluate((id) => {
++      const api = window.__HERO_MOTION__,
++        initial = api.soles(id);
++      let maximum = 0,
++        release = null;
++      for (let i = 0; i < 360; i++) {
++        api.step(1 / 120);
++        api.soles(id).forEach((p, j) => {
++          maximum = Math.max(
++            maximum,
++            Math.hypot(p.x - initial[j].x, p.y - initial[j].y),
++          );
++        });
++      }
++      const s = api.getState(),
++        a = s.actors.find((a) => a.id === id);
++      return {
++        id,
++        soleSamples: initial.length,
++        maximumSoleDrift: maximum,
++        footLocks: a.rig.feet,
++        projectile: s.event.projectiles.find((p) => p.owner === id),
++        rig: a.rig.integrity,
++      };
++    }, id);
++    characters.push(result);
++    console.log(
++      JSON.stringify({ id, maximumSoleDrift: result.maximumSoleDrift }),
++    );
++  }
++} finally {
++  await browser.close();
++}
++await fs.writeFile(
++  'docs/review/animation-upgrade/contact-measurements.json',
++  JSON.stringify(
++    {
++      units: 'world pixels',
++      method:
++        'Actual rendered sole vertices, compared with initial planted stance through three seconds of the primary cornhole action at 120 Hz; both characters.',
++      characters,
++    },
++    null,
++    2,
++  ),
++);
+--- a/scripts/package-upgrade-contact-sheets.py
++++ b/scripts/package-upgrade-contact-sheets.py
+@@ -0,0 +1,26 @@
++from pathlib import Path
++import json
++from PIL import Image,ImageDraw
++root=Path(__file__).resolve().parents[1]
++r=root/'work/qa/animation-upgrade/sequences/after-final-v2'
++out=root/'docs/review/animation-upgrade'
++frames=[14,20,24,27,28,29,32,38,44,54,64,79]
++sheet=Image.new('RGB',(1440,800),'#e7e4da');draw=ImageDraw.Draw(sheet)
++for i,f in enumerate(frames):
++    im=Image.open(r/'doug-basketball-primaryAction-1x'/f'{f:04}.jpg').crop((450,115,770,595));im.thumbnail((235,360))
++    x=i%6*240;y=i//6*400;sheet.paste(im,(x,y+28));draw.text((x+5,y+8),f'{(f+1)/30:.3f}s',fill='black')
++sheet.save(out/'basketball-pose-strip.jpg',quality=91)
++rows=[('running','run-stop',.25,[58,80,104,128]),('cornhole','fistPump',1,[14,19,24,32]),('cornhole','chestTap',1,[14,20,23,30]),('cornhole','bagFlip',1,[14,19,24,30])]
++sheet=Image.new('RGB',(1400,1350),'#eee9df');draw=ImageDraw.Draw(sheet)
++for row,(event,take,rate,indices) in enumerate(rows):
++    for col,f in enumerate(indices):
++        im=Image.open(r/f'doug-{event}-{take}-{rate:g}x'/f'{f:04}.jpg')
++        im=im.crop((350,140,760,710) if rate==.25 else (460,185,760,610));im.thumbnail((340,303))
++        x=col*350;y=row*336;sheet.paste(im,(x+(350-im.width)//2,y+28));draw.text((x+8,y+8),f'{take} {(f+1)*rate/30:.3f}s',fill='black')
++sheet.save(out/'motion-pose-strips.jpg',quality=91)
++measurements=[]
++for p in r.glob('*/samples.json'):
++    samples=json.loads(p.read_text());actor=p.parent.name.split('-')[0];aa=[next(a for a in s['actors'] if a['id']==actor) for s in samples]
++    ratios=[l['width']/l['setupWidth'] for a in aa for l in a['rig']['integrity']['limbs'] if l.get('width') is not None]
++    measurements.append({'capture':p.parent.name,'samples':len(samples),'maxFootLockSlide':max(f['maxSlide'] for a in aa for f in a['rig']['feet']),'minArmWidthRatio':min(ratios),'maxArmWidthRatio':max(ratios),'integrityWarnings':sum(len(a['rig']['integrity']['warnings']) for a in aa)})
++(out/'pose-measurements.json').write_text(json.dumps({'scope':'Captured samples; world-space foot-lock diagnostics and bind-normal mesh-width ratios, not a proof of all possible inputs.','captures':measurements},indent=2))
+--- a/scripts/package-upgrade-review.py
++++ b/scripts/package-upgrade-review.py
+@@ -0,0 +1,57 @@
++"""Encode actual deterministic Phaser captures; no generated/interpolated motion."""
++from pathlib import Path
++import json, sys, html, hashlib
++sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'.analysis-tools'))
++import av
++from PIL import Image
++root=Path(__file__).resolve().parents[1]
++output=root/'docs/review/animation-upgrade'
++output.mkdir(parents=True,exist_ok=True)
++manifest=[]
++for version in ['before','after']:
++    capture_version='after-final-v2' if version=='after' else version
++    source=root/f'work/qa/animation-upgrade/sequences/{capture_version}/manifest.json'
++    if not source.exists(): continue
++    for entry in json.loads(source.read_text()):
++        dest=output/'clips'/capture_version/(entry['name']+'.mp4')
++        dest.parent.mkdir(parents=True,exist_ok=True)
++        frames=sorted((root/entry['directory']).glob('*.jpg'))
++        assert len(frames)==entry['frames'], entry['name']
++        if not dest.exists():
++            container=av.open(str(dest),'w',options={'movflags':'+faststart'})
++            stream=container.add_stream('libx264',rate=30)
++            stream.width=1280;stream.height=760;stream.pix_fmt='yuv420p'
++            stream.options={'crf':'20','preset':'veryfast','threads':'1'}
++            for frame in frames:
++                for packet in stream.encode(av.VideoFrame.from_image(Image.open(frame))):container.mux(packet)
++            for packet in stream.encode():container.mux(packet)
++            container.close()
++        samples=json.loads((root/entry['directory']/'samples.json').read_text())
++        landmarks={}
++        for sample in samples:
++            for marker in sample.get('markers',[]):
++                if marker['player']==entry['actor']:landmarks.setdefault(marker['name'],marker['time'])
++        asset_manifest=root/'lab/human-motion/assets/upgrade-v1/manifest.json' if version=='after' else output/'baseline-source-sha256.json'
++        manifest.append({**entry,'version':version,'url':dest.relative_to(output).as_posix(),'markers':landmarks,
++            'viewport':[1440,1080],'canvas':[1280,760],'seed':None,'inputSource':'Deterministic scripted controller intents; no random seed',
++            'sourceManifestSha256':hashlib.sha256(asset_manifest.read_bytes()).hexdigest(),'firstFrameSimulationTime':entry['rate']/30})
++        print(version,entry['name'],flush=True)
++(output/'captures.json').write_text(json.dumps(manifest,indent=2))
++payload=json.dumps(manifest)
++page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arena animation comparison</title>
++<style>body{background:#142019;color:#f5ecd7;font:16px system-ui;margin:24px}h1{font-size:28px;margin:0 0 8px}p{max-width:920px;line-height:1.5}button,select{font:inherit;padding:10px 14px;margin:4px;background:#f4d28b;color:#18231b;border:0;border-radius:5px}main{display:grid;grid-template-columns:1fr 1fr;gap:18px}video{width:100%;background:#080d0a}figcaption{padding:8px 0;font-weight:650}figure{margin:0}a{color:#f4d28b}.note{color:#c7cfc5;font-size:14px}@media(max-width:850px){main{grid-template-columns:1fr}}</style>
++<h1>Arena · Animation comparison</h1><p>Choose an action, then play both views. These are captures of the actual LoongBones game runtime. The improved actions have their own timing; both players start from the same input.</p>
++<label>Action <select id="action"></select></label><label>Character <select id="actor"><option>doug</option><option>dan</option></select></label>
++<button id="play">Play together</button><button id="pause">Pause</button><button id="restart">Restart</button><button id="release">Align key moment</button><button id="step">Next frame</button>
++<main><figure><figcaption>Before</figcaption><video id="before" controls playsinline></video><p id="baseline-note" class="note"></p></figure><figure><figcaption>After</figcaption><video id="after" controls playsinline></video></figure></main>
++<p class="note">Captured at 30 frames per second with deterministic simulation steps. These clips demonstrate motion; they are not a real-time performance benchmark. Both characters have matching before and after views.</p>
++<details><summary>Quarter-speed close views</summary><div id="slow"></div></details><p><a href="README.md">Implementation and validation notes</a></p>
++<script>const captures=DATA;const labels={'primaryAction':'Throw / shot','run-stop':'Run and stop',chestTap:'Chest tap',bagFlip:'Bag flip',fistPump:'Fist pump',matchup:'Combat'};
++const sel=document.querySelector('#action'),actor=document.querySelector('#actor'),before=document.querySelector('#before'),after=document.querySelector('#after');
++const options=[...new Set(captures.filter(c=>c.version==='after'&&c.rate===1).map(c=>c.event+'|'+c.take))];for(const key of options){const [e,t]=key.split('|');sel.add(new Option(e+' · '+labels[t],key))}
++function load(){const [event,take]=(sel.value||'basketball|primaryAction').split('|');for(const [version,video] of [['before',before],['after',after]]){const c=captures.find(c=>c.version===version&&c.actor===actor.value&&c.event===event&&c.take===take&&c.rate===1);video.pause();if(c){video.src=c.url;video.hidden=false}else{video.removeAttribute('src');video.hidden=true;}}document.querySelector('#baseline-note').textContent=before.hidden?'Matching before checkpoints are provided in the review evidence.':'';}
++sel.onchange=actor.onchange=load;document.querySelector('#play').onclick=()=>{for(const v of [before,after])if(!v.hidden)v.play()};document.querySelector('#pause').onclick=()=>[before,after].forEach(v=>v.pause());document.querySelector('#restart').onclick=()=>[before,after].forEach(v=>{v.pause();v.currentTime=0});document.querySelector('#step').onclick=()=>[before,after].forEach(v=>{v.pause();v.currentTime=Math.min(v.duration||0,v.currentTime+1/30)});load();
++document.querySelector('#release').onclick=()=>{const [event,take]=sel.value.split('|');for(const [version,v] of [['before',before],['after',after]]){const c=captures.find(c=>c.version===version&&c.actor===actor.value&&c.event===event&&c.take===take&&c.rate===1);v.pause();const m=c?.markers??{};v.currentTime=Math.max(0,(m.equipmentRelease??m.propToss??m.chestTapContact??0)-1/30);}};
++for(const c of captures.filter(c=>c.version==='after'&&c.rate===.25)){const p=document.createElement('p');p.textContent=c.actor+' · '+c.event;const v=document.createElement('video');v.src=c.url;v.controls=true;v.preload='none';document.querySelector('#slow').append(p,v);}
++</script></html>'''.replace('DATA',payload)
++(output/'index.html').write_text(page,encoding='utf-8')
+--- a/scripts/performance-human-motion.mjs
++++ b/scripts/performance-human-motion.mjs
+@@ -19,26 +19,51 @@
+     });
+     const errors = [];
+     page.on('pageerror', (error) => errors.push(error.message));
+-    await page.goto(`http://127.0.0.1:3010/human-motion/?event=${event}`);
++    await page.goto(
++      `${process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010'}/human-motion/?event=${event}`,
++    );
+     await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+     await page.evaluate(() => {
+       window.__HERO_MOTION__.view({ skeleton: false, trails: false });
+       window.__HERO_MOTION__.resume();
++      const observer = { deltas: [], previous: null, handle: 0 };
++      const sample = (now) => {
++        if (observer.previous !== null)
++          observer.deltas.push(now - observer.previous);
++        observer.previous = now;
++        observer.handle = requestAnimationFrame(sample);
++      };
++      observer.handle = requestAnimationFrame(sample);
++      window.__ARENA_PERF_OBSERVER__ = observer;
+     });
+     // Sample the running course while athletes are moving, before its finish-line idle.
+     const durationMs = event === 'running' ? 4200 : 12000;
+     await page.waitForTimeout(durationMs);
+-    const snapshot = await page.evaluate(() => ({
+-      state: window.__HERO_MOTION__.getState(),
+-      performance: window.__HERO_MOTION__.getPerformance(),
+-    }));
++    const snapshot = await page.evaluate(() => {
++      const observer = window.__ARENA_PERF_OBSERVER__;
++      cancelAnimationFrame(observer.handle);
++      return {
++        state: window.__HERO_MOTION__.getState(),
++        performance: window.__HERO_MOTION__.getPerformance(),
++        frameDeltas: observer.deltas,
++      };
++    });
++    const sorted = [...snapshot.frameDeltas].sort((a, b) => a - b);
++    const mean = sorted.reduce((a, b) => a + b, 0) / sorted.length;
++    snapshot.measuredCadence = {
++      samples: sorted.length,
++      meanMs: mean,
++      fps: 1000 / mean,
++      p95Ms: sorted[Math.ceil(sorted.length * 0.95) - 1],
++      worstMs: sorted.at(-1),
++    };
+     results.push({
+       event,
+       observedSeconds: durationMs / 1000,
+       ...snapshot,
+       errors,
+     });
+-    console.log(event, JSON.stringify(snapshot.performance.realtime));
++    console.log(event, JSON.stringify(snapshot.measuredCadence));
+     await page.close();
+   }
+ } finally {
+@@ -51,7 +76,7 @@
+     {
+       captured: new Date().toISOString(),
+       method:
+-        'One headless Chrome page at a time; 12 seconds real-time per event, except running at 4.2 seconds before finish. No video recorder or manual stepping. Last bounded 240-frame timing window. Other user apps may remain open.',
++        'One headless Chrome page at a time; 12 seconds real-time per event, except running at 4.2 seconds before finish. measuredCadence is a fresh requestAnimationFrame observer started after assets and actors are ready; no video recorder or manual stepping. Legacy performance buckets are retained separately and may include initialization. Other user apps may remain open.',
+       results,
+     },
+     null,
+--- a/scripts/probe-upgrade-shot.mjs
++++ b/scripts/probe-upgrade-shot.mjs
+@@ -0,0 +1,30 @@
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++try {
++  const page = await browser.newPage();
++  for (const id of ['dan', 'doug']) {
++    await page.goto(
++      'http://127.0.0.1:3015/human-motion/?event=basketball&actor=' +
++        id +
++        '&take=primaryAction',
++    );
++    await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++    console.log(
++      JSON.stringify(
++        await page.evaluate((id) => {
++          const api = window.__HERO_MOTION__;
++          api.step(3.333333333333);
++          const s = api.getState(),
++            a = s.actors.find((a) => a.id === id);
++          return { id, score: a.score, projectile: s.event.projectiles[0] };
++        }, id),
++      ),
++    );
++  }
++} finally {
++  await browser.close();
++}
+--- a/scripts/serve-animation-review.mjs
++++ b/scripts/serve-animation-review.mjs
+@@ -0,0 +1,66 @@
++import http from 'node:http';
++import fs from 'node:fs';
++import path from 'node:path';
++const root = path.resolve('docs/review/animation-upgrade');
++const types = {
++  '.html': 'text/html; charset=utf-8',
++  '.json': 'application/json',
++  '.mp4': 'video/mp4',
++  '.png': 'image/png',
++  '.jpg': 'image/jpeg',
++  '.md': 'text/plain; charset=utf-8',
++  '.zip': 'application/zip',
++};
++http
++  .createServer((request, response) => {
++    try {
++      const pathname = decodeURIComponent(
++        new URL(request.url, 'http://localhost').pathname,
++      );
++      const file = path.resolve(
++        root,
++        '.' + (pathname === '/' ? '/index.html' : pathname),
++      );
++      if (!file.startsWith(root + path.sep)) {
++        response.writeHead(403).end();
++        return;
++      }
++      if (!['GET', 'HEAD'].includes(request.method)) {
++        response.writeHead(405).end();
++        return;
++      }
++      const stat = fs.statSync(file);
++      if (!stat.isFile()) throw Error('Not a file');
++      let start = 0,
++        end = stat.size - 1,
++        status = 200;
++      const range = request.headers.range?.match(/^bytes=(\d+)-(\d*)$/);
++      if (range) {
++        start = Number(range[1]);
++        end = range[2] ? Math.min(end, Number(range[2])) : end;
++        status = 206;
++      }
++      if (start > end || start >= stat.size) {
++        response
++          .writeHead(416, { 'Content-Range': `bytes */${stat.size}` })
++          .end();
++        return;
++      }
++      response.writeHead(status, {
++        'Content-Type': types[path.extname(file)] ?? 'application/octet-stream',
++        'Content-Length': end - start + 1,
++        'Accept-Ranges': 'bytes',
++        'Cache-Control': 'no-cache',
++        ...(status === 206
++          ? { 'Content-Range': `bytes ${start}-${end}/${stat.size}` }
++          : {}),
++      });
++      if (request.method === 'HEAD') response.end();
++      else fs.createReadStream(file, { start, end }).pipe(response);
++    } catch {
++      response.writeHead(404).end('Not found');
++    }
++  })
++  .listen(3019, '127.0.0.1', () =>
++    console.log('Arena comparison: http://127.0.0.1:3019'),
++  );
+--- a/scripts/verify-animation-review.mjs
++++ b/scripts/verify-animation-review.mjs
+@@ -0,0 +1,75 @@
++import fs from 'node:fs/promises';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++const errors = [];
++try {
++  const page = await browser.newPage({
++    viewport: { width: 1440, height: 1000 },
++  });
++  page.on('pageerror', (e) => errors.push(e.message));
++  await page.goto('http://127.0.0.1:3019');
++  await page.waitForFunction(
++    () => document.querySelectorAll('#action option').length === 7,
++  );
++  const actions = await page
++    .locator('#action option')
++    .evaluateAll((es) => es.map((e) => e.value));
++  for (const actor of ['doug', 'dan']) {
++    await page.selectOption('#actor', actor);
++    for (const action of actions) {
++      await page.selectOption('#action', action);
++      await page.waitForFunction(
++        () =>
++          ['before', 'after'].every((id) => {
++            const v = document.getElementById(id);
++            return !v.hidden && v.readyState >= 2 && v.videoWidth === 1280;
++          }),
++        {},
++        { timeout: 15000 },
++      );
++    }
++  }
++  await page.selectOption('#actor', 'doug');
++  await page.selectOption('#action', 'basketball|primaryAction');
++  await page.waitForFunction(() =>
++    ['before', 'after'].every(
++      (id) => document.getElementById(id).readyState >= 2,
++    ),
++  );
++  await page.click('#play');
++  await page.waitForTimeout(600);
++  const playing = await page
++    .locator('main video')
++    .evaluateAll((es) =>
++      es.map((v) => ({ time: v.currentTime, paused: v.paused })),
++    );
++  if (playing.some((v) => v.paused || v.time < 0.1))
++    throw Error('Video playback failed');
++  await page.click('#pause');
++  await page.click('#release');
++  await page.waitForTimeout(150);
++  await page.screenshot({
++    path: 'docs/review/animation-upgrade/review-page.png',
++  });
++  await page.setViewportSize({ width: 390, height: 844 });
++  await page.screenshot({
++    path: 'docs/review/animation-upgrade/review-phone.png',
++    fullPage: true,
++  });
++  if (errors.length) throw Error(errors.join('\n'));
++  await fs.writeFile(
++    'docs/review/animation-upgrade/review-check.json',
++    JSON.stringify(
++      { passed: true, combinations: 14, playing, errors },
++      null,
++      2,
++    ),
++  );
++  console.log(JSON.stringify({ passed: true, combinations: 14, playing }));
++} finally {
++  await browser.close();
++}
+--- a/scripts/verify-upgrade-import.mjs
++++ b/scripts/verify-upgrade-import.mjs
+@@ -0,0 +1,66 @@
++import fs from 'node:fs/promises';
++import path from 'node:path';
++import assert from 'node:assert/strict';
++import { chromium } from 'playwright';
++import { browserLaunchOptions } from './qa-server.mjs';
++const browser = await chromium.launch({
++  ...browserLaunchOptions(),
++  headless: true,
++});
++const report = [];
++try {
++  const page = await browser.newPage();
++  for (const id of ['dan', 'doug']) {
++    await page.goto('http://127.0.0.1:3015/loongbones/');
++    await page.waitForFunction(
++      () => window.__HERO_LOONGBONES_PROOF__?.getState().ready,
++    );
++    await page
++      .locator('#export-files')
++      .setInputFiles(
++        ['ske.json', 'tex.json', 'tex.png'].map((s) =>
++          path.resolve(`lab/human-motion/assets/upgrade-v1/${id}/${id}_${s}`),
++        ),
++      );
++    await page.waitForFunction(
++      () =>
++        window.__HERO_LOONGBONES_PROOF__?.getState().sampleSource?.kind ===
++        'local-import',
++    );
++    const result = await page.evaluate(() => {
++      const api = window.__HERO_LOONGBONES_PROOF__;
++      api.clip('v2_shoot', 'sample', 0);
++      api.step(0.9);
++      const s = api.getState();
++      return {
++        source: s.sampleSource,
++        runtime: s.runtime,
++        meshes: s.sample.meshes.length,
++        animations: s.sample.animations,
++        finite: s.sample.meshes.every((m) =>
++          m.vertices.every((v) => v.every(Number.isFinite)),
++        ),
++        fresh: s.freshLoongBonesExportVerified,
++      };
++    });
++    assert.equal(result.finite, true);
++    assert.equal(result.fresh, false);
++    report.push({ id, ...result });
++    console.log(JSON.stringify(report.at(-1)));
++  }
++} finally {
++  await browser.close();
++}
++await fs.writeFile(
++  'docs/review/animation-upgrade/import-check.json',
++  JSON.stringify(
++    {
++      passed: true,
++      scope:
++        'Arena packed-import runtime smoke; editor round trip remains unverified',
++      characters: report,
++    },
++    null,
++    2,
++  ),
++);
+--- a/tests/animation-upgrade-tests.mjs
++++ b/tests/animation-upgrade-tests.mjs
+@@ -0,0 +1,66 @@
++import assert from 'node:assert/strict';
++export async function testAnimationUpgrade({ check }) {
++  const { AnimationGraph } =
++    await import('../.test-build/engine/motion/AnimationGraph.mjs');
++  const { chestContactWeight } =
++    await import('../.test-build/engine/motion/ContactEnvelope.mjs');
++  const { PropPerformance } =
++    await import('../.test-build/engine/equipment/PropPerformance.mjs');
++  const clip = {
++    id: 'throw',
++    native: 'throw',
++    duration: 0.8,
++    layer: 'action',
++    priority: 2,
++    fade: 0.1,
++    phases: [],
++    markers: [
++      { name: 'release', at: 0.317 },
++      { name: 'recovery', at: 0.61 },
++    ],
++  };
++  const schedules = [[1 / 30], [1 / 60], [1 / 120], [1 / 60, 1 / 15, 1 / 120]];
++  const traces = [];
++  for (const schedule of schedules) {
++    const graph = new AnimationGraph();
++    graph.request(clip);
++    let time = 0,
++      index = 0;
++    const events = [];
++    while (time < 1 - 1e-9) {
++      let remaining = Math.min(schedule[index++ % schedule.length], 1 - time);
++      while (remaining > 1e-9) {
++        const dt = graph.untilNextMarker(remaining);
++        time += dt;
++        events.push(...graph.advance(dt, time));
++        remaining -= dt;
++      }
++    }
++    traces.push(events.filter((e) => e.name === 'release'));
++    check(() => assert.equal(traces.at(-1).length, 1));
++    check(() => assert.ok(Math.abs(traces.at(-1)[0].time - 0.317) < 1e-9));
++    check(() => assert.throws(() => graph.advance(-0.1, time), /seek/));
++    graph.request(clip, true);
++    const restarted = graph.advance(0.4, 1.4).find((e) => e.name === 'release');
++    check(() => assert.notEqual(restarted.eventId, traces.at(-1)[0].eventId));
++  }
++  const graph = new AnimationGraph();
++  graph.request({ ...clip, loop: true });
++  const releases = graph.advance(2.7, 2.7).filter((e) => e.name === 'release');
++  check(() => assert.equal(releases.length, 3));
++  check(() => assert.equal(new Set(releases.map((e) => e.eventId)).size, 3));
++  graph.remove('action');
++  check(() => assert.deepEqual(graph.advance(1, 3.7), []));
++  check(() => assert.equal(chestContactWeight(0.5), 1));
++  check(() => assert.equal(chestContactWeight(49 / 60), 1));
++  check(() => assert.equal(chestContactWeight(0.66), 0));
++  check(() => assert.equal(chestContactWeight(1.1), 0));
++  const prop = new PropPerformance();
++  prop.toss({ x: 0, y: 0, angle: 0 }, 0.3, 1);
++  prop.update(0.1);
++  prop.cancel();
++  prop.update(0.3);
++  check(() => assert.equal(prop.flight, null));
++  check(() => assert.equal(prop.catches, 0));
++  check(() => assert.equal(prop.cancellations, 1));
++}
+--- a/tests/run-tests.mjs
++++ b/tests/run-tests.mjs
+@@ -2,113 +2,731 @@
+ import path from 'node:path';
+ import assert from 'node:assert/strict';
+ import ts from 'typescript';
+-import {createHash} from 'node:crypto';
+-fs.mkdirSync('.test-build',{recursive:true});
+-fs.writeFileSync('.test-build/motion-catalog.mjs','export default '+fs.readFileSync('lib/arena/motion-catalog.json','utf8')+';');
+-fs.writeFileSync('.test-build/puppet-assets.mjs','export default '+fs.readFileSync('lib/arena/puppet-assets.json','utf8')+';');
++import { createHash } from 'node:crypto';
++fs.mkdirSync('.test-build', { recursive: true });
++fs.writeFileSync(
++  '.test-build/motion-catalog.mjs',
++  'export default ' +
++    fs.readFileSync('lib/arena/motion-catalog.json', 'utf8') +
++    ';',
++);
++fs.writeFileSync(
++  '.test-build/puppet-assets.mjs',
++  'export default ' +
++    fs.readFileSync('lib/arena/puppet-assets.json', 'utf8') +
++    ';',
++);
+ // Preserve relative module identities (the catalog is intentionally mutable).
+-function transpileDirectory(dir,relative=''){
+- for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+-  const rel=path.join(relative,entry.name),file=path.join(dir,entry.name),dest=path.join('.test-build',rel.replace(/\.ts$/,'.mjs'));
+-  if(entry.isDirectory()){transpileDirectory(file,rel);continue;}
+-  if(!entry.name.endsWith('.ts'))continue;
+-  fs.mkdirSync(path.dirname(dest),{recursive:true});
+-  const result=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText
+-   .replace(/from (['"])(\.[^'"]+)\1/g,(_,q,url)=>'from '+q+url.replace(/\.json$/,'.mjs')+(url.endsWith('.json')?'':'.mjs')+q)
+-   .replace(/import (['"])(\.[^'"]+)\1/g,(_,q,url)=>'import '+q+url+'.mjs'+q);
+-  fs.writeFileSync(dest,result);
+- }
++function transpileDirectory(dir, relative = '') {
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const rel = path.join(relative, entry.name),
++      file = path.join(dir, entry.name),
++      dest = path.join('.test-build', rel.replace(/\.ts$/, '.mjs'));
++    if (entry.isDirectory()) {
++      transpileDirectory(file, rel);
++      continue;
++    }
++    if (!entry.name.endsWith('.ts')) continue;
++    fs.mkdirSync(path.dirname(dest), { recursive: true });
++    const result = ts
++      .transpileModule(fs.readFileSync(file, 'utf8'), {
++        compilerOptions: {
++          target: ts.ScriptTarget.ES2022,
++          module: ts.ModuleKind.ES2022,
++        },
++      })
++      .outputText.replace(
++        /from (['"])(\.[^'"]+)\1/g,
++        (_, q, url) =>
++          'from ' +
++          q +
++          url.replace(/\.json$/, '.mjs') +
++          (url.endsWith('.json') ? '' : '.mjs') +
++          q,
++      )
++      .replace(
++        /import (['"])(\.[^'"]+)\1/g,
++        (_, q, url) => 'import ' + q + url + '.mjs' + q,
++      );
++    fs.writeFileSync(dest, result);
++  }
+ }
+ transpileDirectory('lib/arena');
+-const m=await import('../.test-build/model.mjs'),s=await import('../.test-build/simulation.mjs'),p=await import('../.test-build/persistence.mjs'),a=await import('../.test-build/assets.mjs');
+-let checks=0;const check=(f)=>{f();checks++;};
+-const setup=(sport='cornhole',seed='test')=>({id:'test-'+seed,seed,sport,participants:[{userId:'user-doug',copyId:'copy-0-0',cardId:'card-dan',strategy:'steady'},{userId:'user-dan',copyId:'copy-1-1',cardId:'card-doug',strategy:'steady'}],mode:'exhibition',tie:'draw',secret:false,showcase:false,policy:{...m.DEFAULT_POLICY},rulesVersion:s.RULES_VERSION,createdAt:'2026-09-08T00:00:00Z'});
+-const stats={};
+-for(const sport of m.SPORTS){const outcomes={};let draws=0;for(let i=0;i<500;i++){const cfg=setup(sport,'property-'+i),rec=s.simulate(cfg);check(()=>assert.deepEqual(rec,s.simulate(cfg)));check(()=>assert.deepEqual(s.validateRecording(rec),[]));check(()=>assert.equal(rec.attempts.length,m.EVENTS[sport].attempts*2));check(()=>assert.deepEqual(s.revealed(rec,rec.duration).scores,rec.scores));check(()=>assert.deepEqual(s.revealed(rec,0).scores,[0,0]));if(rec.winner===null)draws++;for(const attempt of rec.attempts){outcomes[attempt.contact]=(outcomes[attempt.contact]??0)+1;if(sport==='pong')check(()=>assert.equal(new Set(attempt.removedCups).size,attempt.removedCups.length));}const ot=s.simulate({...cfg,tie:'paired'});check(()=>assert.ok(ot.attempts.length<=rec.attempts.length+6));check(()=>assert.equal(ot.attempts.filter(a=>a.actor===0).length,ot.attempts.filter(a=>a.actor===1).length));}stats[sport]={outcomes,draws};}
+-check(()=>assert.equal(s.contactScore('cornhole',{x:9.2,y:.4,z:0},0).score,3));
+-check(()=>assert.equal(s.contactScore('cornhole',{x:8,y:.16,z:.52},0).score,1));
+-check(()=>assert.equal(s.contactScore('cornhole',{x:8,y:0,z:.521},0).score,0));
+-check(()=>assert.equal(s.contactScore('football',{x:8.8,y:2.25,z:0},0).score,3));
+-check(()=>assert.equal(s.contactScore('football',{x:8.8,y:3.1,z:0},0).score,0));
+-check(()=>assert.equal(s.contactScore('basketball',{x:8.8,y:2.9,z:0},0).score,1));
+-check(()=>assert.equal(s.contactScore('basketball',{x:8.8,y:2.9,z:.3},0).contact,'rim-out'));
+-class MemoryStorage{map=new Map();getItem(k){return this.map.get(k)??null;}setItem(k,v){this.map.set(k,v);}removeItem(k){this.map.delete(k);}}
+-const storage=new MemoryStorage(),repo=new p.LocalArenaRepository(storage),state=repo.load(),entry=m.SCHEDULE[0];
+-const ranked={...setup('cornhole',entry.seed),id:'counted-0',mode:'ranked',entryId:entry.id,policy:{...state.policy}};
+-const first=await repo.commit(ranked),second=await repo.commit(ranked),parallel=await Promise.all([repo.commit(ranked),repo.commit(ranked)]);
+-check(()=>assert.equal(second.existing,true));check(()=>assert.deepEqual(first.recording,second.recording));check(()=>assert.equal(repo.load().ledger.filter(a=>a.contestId===ranked.id).length,2));
+-const before=repo.load().ledger.length;await repo.commit(setup('pong','exhibition'));check(()=>assert.equal(repo.load().ledger.length,before));
+-repo.savePlayback(ranked.id,17.7);const resumed=new p.LocalArenaRepository(storage).load();check(()=>assert.equal(resumed.active.time,17.7));check(()=>assert.equal(resumed.active.id,ranked.id));
+-const historical=structuredClone(repo.load().ledger);await repo.updatePolicy({...m.DEFAULT_POLICY,win:7});check(()=>assert.deepEqual(repo.load().ledger,historical));
+-await assert.rejects(repo.commit({...ranked,id:'bad',entryId:'entry-1-0',seed:'bad',sport:'football'}));checks++;
+-const empty=p.emptyState();check(()=>assert.deepEqual(p.standings(empty).map(r=>r.rank),[1,1,1,1]));const correction=p.adjustAward(repo.load(),historical[0].id,-historical[0].delta,'correction-1');check(()=>assert.equal(correction.ledger.length,historical.length+1));check(()=>assert.deepEqual(p.adjustAward(correction,historical[0].id,-3,'correction-1'),correction));
+-const staged=repo.load();staged.revision+=10;staged.active={id:ranked.id,time:22};const payload=JSON.stringify(staged);storage.setItem(p.STORAGE_KEY+':journal',JSON.stringify({payload,checksum:s.hash(payload)}));check(()=>assert.equal(new p.LocalArenaRepository(storage).load().active.time,22));
+-check(()=>assert.deepEqual(a.validateAsset(a.manifest('card-dan','dan','human')).errors,[]));check(()=>assert.ok(a.validateAsset({cardId:''}).errors.length>5));
+-const adapters=await import('../.test-build/adapters.mjs');
+-const services=adapters.createDemoServices(new MemoryStorage());
+-check(()=>assert.equal(services.authority,'local-demo'));
+-check(()=>assert.ok(a.validateAsset({...a.manifest('card-dan','dan','human'),scale:2}).errors.some(e=>e.includes('scale'))));
+-check(()=>assert.ok(a.validateAsset({...a.manifest('card-dan','dan','human'),family:'secret'}).errors.some(e=>e.includes('Secret'))));
+-for(const card of m.CARDS){const asset=await services.characters.get(card.id);check(()=>assert.deepEqual(a.validateAsset(asset).errors,[]));fs.mkdirSync('docs/import-examples',{recursive:true});fs.writeFileSync(`docs/import-examples/${card.asset}.json`,JSON.stringify(asset,null,2));for(const url of [asset.cardImage,asset.sheet,...Object.values(asset.frames).map(p=>p.url)])check(()=>assert.ok(fs.existsSync('public'+url),`Missing ${url}`));}
+-const owned=await services.ownership.list('user-doug');check(()=>assert.equal(owned.length,2));const allowed=await services.ownership.verify('user-dan',owned[0].id,owned[0].cardId);check(()=>assert.equal(allowed,false));
+-const paper=await import('../.test-build/paper.mjs');
+-for(const card of m.CARDS)for(const sport of m.SPORTS){const socket=paper.paperSocket(card.asset,paper.releasePose(sport)),release=s.releasePosition(card.asset,sport,0),projected=s.project(release),base=s.project({x:1,y:0,z:0});check(()=>assert.ok(Math.hypot(projected.x-base.x-socket.x,projected.y-base.y-socket.y)<1e-8));}
+-const snapshotSetup=setup('cornhole','asset-snapshot');snapshotSetup.characterAssets=m.CARDS.map(c=>a.manifest(c.id,c.asset,c.family));snapshotSetup.characterAssets[0].frameScale=.55;const snap=s.simulate(snapshotSetup);const snapPoint=s.releasePosition('dan','cornhole',0,snapshotSetup.characterAssets[0]);check(()=>assert.deepEqual(snap.attempts[0].release,snapPoint));snapshotSetup.characterAssets[0].frameScale=1;check(()=>assert.equal(snap.setup.characterAssets[0].frameScale,.55));check(()=>assert.deepEqual(s.validateRecording(snap),[]));
+-const visual=await import('../.test-build/equipment-layout.mjs'),art=await import('../.test-build/equipment-art.mjs');
+-const nearBoard=visual.placement('cornhole',0),farBoard=visual.placement('cornhole',1);
+-check(()=>assert.ok(farBoard.scale<nearBoard.scale*.8,'The back board must read as smaller in perspective'));
+-for(let actor=0;actor<2;actor++){
+- const near=visual.artPoint('cornhole',actor,visual.quadPoint(art.EQUIPMENT_ART.board.plane,0,.5)),far=visual.artPoint('cornhole',actor,visual.quadPoint(art.EQUIPMENT_ART.board.plane,1,.5));
+- check(()=>assert.ok(far.x>near.x&&Math.abs(far.y-near.y)<(far.x-near.x)*.18,'The board long axis must face horizontally from the players toward the hole'));
+- const hole=visual.surfacePoint('cornhole',actor,{x:9.2,y:.16+1.2/1.9*.34,z:actor*3.5}),actualHole=visual.artPoint('cornhole',actor,art.EQUIPMENT_ART.board.hole);
+- check(()=>assert.ok(Math.hypot(hole.x-actualHole.x,hole.y-actualHole.y)<1e-6,'Bag contact must meet the illustrated aperture'));
+- const rim=visual.surfacePoint('basketball',actor,{x:8.8,y:2.9,z:actor*3.5});const rimArt=visual.artPoint('basketball',actor,art.EQUIPMENT_ART.hoop.rim);check(()=>assert.ok(Math.hypot(rim.x-rimArt.x,rim.y-rimArt.y)<1e-8,'Basketball contact meets the illustrated rim'));
+- for(const [radius,zone] of [[.25,'inner'],[.58,'middle'],[1.05,'outer']]){const center=visual.placement('football',actor);const edge=visual.surfacePoint('football',actor,{x:8.8,y:2,z:actor*3.5+radius});check(()=>assert.ok(Math.abs(edge.x-center.anchor.x-art.EQUIPMENT_ART.target[zone].x*center.scale)<1e-6,'Football scoring boundary must follow the printed ring'));}
+- for(const sport of m.SPORTS){const place=visual.placement(sport,actor),asset=art.EQUIPMENT_ART[place.name];check(()=>assert.ok(place.x>=0&&place.x+asset.width*place.scale<=1280&&place.y>=0&&place.y+asset.height*place.scale<680,'Complete equipment silhouette stays in the court'));}
+-}
+-for(const sport of m.SPORTS){const rec=s.simulate(setup(sport,'presentation-registration'));for(const attempt of rec.attempts){check(()=>assert.deepEqual(visual.presentedPoint(attempt,attempt.release,0),s.project(attempt.release),'Larger props stay on the recorded hand socket at release'));const contact=visual.presentedPoint(attempt,attempt.target,attempt.duration),surface=visual.surfacePoint(sport,attempt.actor,attempt.target);check(()=>assert.ok(Math.hypot(contact.x-surface.x,contact.y-surface.y)<1e-7,'Playback must meet the registered target surface'));for(const sample of attempt.trajectory)check(()=>assert.ok(Object.values(visual.presentedPoint(attempt,sample,sample.t)).every(Number.isFinite)));}}
+-for(const name of ['board','hoop','target','table','bag-yellow','bag-teal','football','basketball','ping-pong','cup-yellow','cup-orange'])check(()=>assert.ok(fs.existsSync('public/assets/equipment/'+name+'.png')));
++const m = await import('../.test-build/model.mjs'),
++  s = await import('../.test-build/simulation.mjs'),
++  p = await import('../.test-build/persistence.mjs'),
++  a = await import('../.test-build/assets.mjs');
++let checks = 0;
++const check = (f) => {
++  f();
++  checks++;
++};
++const setup = (sport = 'cornhole', seed = 'test') => ({
++  id: 'test-' + seed,
++  seed,
++  sport,
++  participants: [
++    {
++      userId: 'user-doug',
++      copyId: 'copy-0-0',
++      cardId: 'card-dan',
++      strategy: 'steady',
++    },
++    {
++      userId: 'user-dan',
++      copyId: 'copy-1-1',
++      cardId: 'card-doug',
++      strategy: 'steady',
++    },
++  ],
++  mode: 'exhibition',
++  tie: 'draw',
++  secret: false,
++  showcase: false,
++  policy: { ...m.DEFAULT_POLICY },
++  rulesVersion: s.RULES_VERSION,
++  createdAt: '2026-09-08T00:00:00Z',
++});
++const stats = {};
++for (const sport of m.SPORTS) {
++  const outcomes = {};
++  let draws = 0;
++  for (let i = 0; i < 500; i++) {
++    const cfg = setup(sport, 'property-' + i),
++      rec = s.simulate(cfg);
++    check(() => assert.deepEqual(rec, s.simulate(cfg)));
++    check(() => assert.deepEqual(s.validateRecording(rec), []));
++    check(() =>
++      assert.equal(rec.attempts.length, m.EVENTS[sport].attempts * 2),
++    );
++    check(() =>
++      assert.deepEqual(s.revealed(rec, rec.duration).scores, rec.scores),
++    );
++    check(() => assert.deepEqual(s.revealed(rec, 0).scores, [0, 0]));
++    if (rec.winner === null) draws++;
++    for (const attempt of rec.attempts) {
++      outcomes[attempt.contact] = (outcomes[attempt.contact] ?? 0) + 1;
++      if (sport === 'pong')
++        check(() =>
++          assert.equal(
++            new Set(attempt.removedCups).size,
++            attempt.removedCups.length,
++          ),
++        );
++    }
++    const ot = s.simulate({ ...cfg, tie: 'paired' });
++    check(() => assert.ok(ot.attempts.length <= rec.attempts.length + 6));
++    check(() =>
++      assert.equal(
++        ot.attempts.filter((a) => a.actor === 0).length,
++        ot.attempts.filter((a) => a.actor === 1).length,
++      ),
++    );
++  }
++  stats[sport] = { outcomes, draws };
++}
++check(() =>
++  assert.equal(
++    s.contactScore('cornhole', { x: 9.2, y: 0.4, z: 0 }, 0).score,
++    3,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('cornhole', { x: 8, y: 0.16, z: 0.52 }, 0).score,
++    1,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('cornhole', { x: 8, y: 0, z: 0.521 }, 0).score,
++    0,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('football', { x: 8.8, y: 2.25, z: 0 }, 0).score,
++    3,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('football', { x: 8.8, y: 3.1, z: 0 }, 0).score,
++    0,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('basketball', { x: 8.8, y: 2.9, z: 0 }, 0).score,
++    1,
++  ),
++);
++check(() =>
++  assert.equal(
++    s.contactScore('basketball', { x: 8.8, y: 2.9, z: 0.3 }, 0).contact,
++    'rim-out',
++  ),
++);
++class MemoryStorage {
++  map = new Map();
++  getItem(k) {
++    return this.map.get(k) ?? null;
++  }
++  setItem(k, v) {
++    this.map.set(k, v);
++  }
++  removeItem(k) {
++    this.map.delete(k);
++  }
++}
++const storage = new MemoryStorage(),
++  repo = new p.LocalArenaRepository(storage),
++  state = repo.load(),
++  entry = m.SCHEDULE[0];
++const ranked = {
++  ...setup('cornhole', entry.seed),
++  id: 'counted-0',
++  mode: 'ranked',
++  entryId: entry.id,
++  policy: { ...state.policy },
++};
++const first = await repo.commit(ranked),
++  second = await repo.commit(ranked),
++  parallel = await Promise.all([repo.commit(ranked), repo.commit(ranked)]);
++check(() => assert.equal(second.existing, true));
++check(() => assert.deepEqual(first.recording, second.recording));
++check(() =>
++  assert.equal(
++    repo.load().ledger.filter((a) => a.contestId === ranked.id).length,
++    2,
++  ),
++);
++const before = repo.load().ledger.length;
++await repo.commit(setup('pong', 'exhibition'));
++check(() => assert.equal(repo.load().ledger.length, before));
++repo.savePlayback(ranked.id, 17.7);
++const resumed = new p.LocalArenaRepository(storage).load();
++check(() => assert.equal(resumed.active.time, 17.7));
++check(() => assert.equal(resumed.active.id, ranked.id));
++const historical = structuredClone(repo.load().ledger);
++await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 7 });
++check(() => assert.deepEqual(repo.load().ledger, historical));
++await assert.rejects(
++  repo.commit({
++    ...ranked,
++    id: 'bad',
++    entryId: 'entry-1-0',
++    seed: 'bad',
++    sport: 'football',
++  }),
++);
++checks++;
++const empty = p.emptyState();
++check(() =>
++  assert.deepEqual(
++    p.standings(empty).map((r) => r.rank),
++    [1, 1, 1, 1],
++  ),
++);
++const correction = p.adjustAward(
++  repo.load(),
++  historical[0].id,
++  -historical[0].delta,
++  'correction-1',
++);
++check(() => assert.equal(correction.ledger.length, historical.length + 1));
++check(() =>
++  assert.deepEqual(
++    p.adjustAward(correction, historical[0].id, -3, 'correction-1'),
++    correction,
++  ),
++);
++const staged = repo.load();
++staged.revision += 10;
++staged.active = { id: ranked.id, time: 22 };
++const payload = JSON.stringify(staged);
++storage.setItem(
++  p.STORAGE_KEY + ':journal',
++  JSON.stringify({ payload, checksum: s.hash(payload) }),
++);
++check(() =>
++  assert.equal(new p.LocalArenaRepository(storage).load().active.time, 22),
++);
++check(() =>
++  assert.deepEqual(
++    a.validateAsset(a.manifest('card-dan', 'dan', 'human')).errors,
++    [],
++  ),
++);
++check(() => assert.ok(a.validateAsset({ cardId: '' }).errors.length > 5));
++const adapters = await import('../.test-build/adapters.mjs');
++const services = adapters.createDemoServices(new MemoryStorage());
++check(() => assert.equal(services.authority, 'local-demo'));
++check(() =>
++  assert.ok(
++    a
++      .validateAsset({ ...a.manifest('card-dan', 'dan', 'human'), scale: 2 })
++      .errors.some((e) => e.includes('scale')),
++  ),
++);
++check(() =>
++  assert.ok(
++    a
++      .validateAsset({
++        ...a.manifest('card-dan', 'dan', 'human'),
++        family: 'secret',
++      })
++      .errors.some((e) => e.includes('Secret')),
++  ),
++);
++for (const card of m.CARDS) {
++  const asset = await services.characters.get(card.id);
++  check(() => assert.deepEqual(a.validateAsset(asset).errors, []));
++  fs.mkdirSync('docs/import-examples', { recursive: true });
++  fs.writeFileSync(
++    `docs/import-examples/${card.asset}.json`,
++    JSON.stringify(asset, null, 2),
++  );
++  for (const url of [
++    asset.cardImage,
++    asset.sheet,
++    ...Object.values(asset.frames).map((p) => p.url),
++  ])
++    check(() => assert.ok(fs.existsSync('public' + url), `Missing ${url}`));
++}
++const owned = await services.ownership.list('user-doug');
++check(() => assert.equal(owned.length, 2));
++const allowed = await services.ownership.verify(
++  'user-dan',
++  owned[0].id,
++  owned[0].cardId,
++);
++check(() => assert.equal(allowed, false));
++const paper = await import('../.test-build/paper.mjs');
++for (const card of m.CARDS)
++  for (const sport of m.SPORTS) {
++    const socket = paper.paperSocket(card.asset, paper.releasePose(sport)),
++      release = s.releasePosition(card.asset, sport, 0),
++      projected = s.project(release),
++      base = s.project({ x: 1, y: 0, z: 0 });
++    check(() =>
++      assert.ok(
++        Math.hypot(
++          projected.x - base.x - socket.x,
++          projected.y - base.y - socket.y,
++        ) < 1e-8,
++      ),
++    );
++  }
++const snapshotSetup = setup('cornhole', 'asset-snapshot');
++snapshotSetup.characterAssets = m.CARDS.map((c) =>
++  a.manifest(c.id, c.asset, c.family),
++);
++snapshotSetup.characterAssets[0].frameScale = 0.55;
++const snap = s.simulate(snapshotSetup);
++const snapPoint = s.releasePosition(
++  'dan',
++  'cornhole',
++  0,
++  snapshotSetup.characterAssets[0],
++);
++check(() => assert.deepEqual(snap.attempts[0].release, snapPoint));
++snapshotSetup.characterAssets[0].frameScale = 1;
++check(() => assert.equal(snap.setup.characterAssets[0].frameScale, 0.55));
++check(() => assert.deepEqual(s.validateRecording(snap), []));
++const visual = await import('../.test-build/equipment-layout.mjs'),
++  art = await import('../.test-build/equipment-art.mjs');
++const nearBoard = visual.placement('cornhole', 0),
++  farBoard = visual.placement('cornhole', 1);
++check(() =>
++  assert.ok(
++    farBoard.scale < nearBoard.scale * 0.8,
++    'The back board must read as smaller in perspective',
++  ),
++);
++for (let actor = 0; actor < 2; actor++) {
++  const near = visual.artPoint(
++      'cornhole',
++      actor,
++      visual.quadPoint(art.EQUIPMENT_ART.board.plane, 0, 0.5),
++    ),
++    far = visual.artPoint(
++      'cornhole',
++      actor,
++      visual.quadPoint(art.EQUIPMENT_ART.board.plane, 1, 0.5),
++    );
++  check(() =>
++    assert.ok(
++      far.x > near.x && Math.abs(far.y - near.y) < (far.x - near.x) * 0.18,
++      'The board long axis must face horizontally from the players toward the hole',
++    ),
++  );
++  const hole = visual.surfacePoint('cornhole', actor, {
++      x: 9.2,
++      y: 0.16 + (1.2 / 1.9) * 0.34,
++      z: actor * 3.5,
++    }),
++    actualHole = visual.artPoint(
++      'cornhole',
++      actor,
++      art.EQUIPMENT_ART.board.hole,
++    );
++  check(() =>
++    assert.ok(
++      Math.hypot(hole.x - actualHole.x, hole.y - actualHole.y) < 1e-6,
++      'Bag contact must meet the illustrated aperture',
++    ),
++  );
++  const rim = visual.surfacePoint('basketball', actor, {
++    x: 8.8,
++    y: 2.9,
++    z: actor * 3.5,
++  });
++  const rimArt = visual.artPoint(
++    'basketball',
++    actor,
++    art.EQUIPMENT_ART.hoop.rim,
++  );
++  check(() =>
++    assert.ok(
++      Math.hypot(rim.x - rimArt.x, rim.y - rimArt.y) < 1e-8,
++      'Basketball contact meets the illustrated rim',
++    ),
++  );
++  for (const [radius, zone] of [
++    [0.25, 'inner'],
++    [0.58, 'middle'],
++    [1.05, 'outer'],
++  ]) {
++    const center = visual.placement('football', actor);
++    const edge = visual.surfacePoint('football', actor, {
++      x: 8.8,
++      y: 2,
++      z: actor * 3.5 + radius,
++    });
++    check(() =>
++      assert.ok(
++        Math.abs(
++          edge.x -
++            center.anchor.x -
++            art.EQUIPMENT_ART.target[zone].x * center.scale,
++        ) < 1e-6,
++        'Football scoring boundary must follow the printed ring',
++      ),
++    );
++  }
++  for (const sport of m.SPORTS) {
++    const place = visual.placement(sport, actor),
++      asset = art.EQUIPMENT_ART[place.name];
++    check(() =>
++      assert.ok(
++        place.x >= 0 &&
++          place.x + asset.width * place.scale <= 1280 &&
++          place.y >= 0 &&
++          place.y + asset.height * place.scale < 680,
++        'Complete equipment silhouette stays in the court',
++      ),
++    );
++  }
++}
++for (const sport of m.SPORTS) {
++  const rec = s.simulate(setup(sport, 'presentation-registration'));
++  for (const attempt of rec.attempts) {
++    check(() =>
++      assert.deepEqual(
++        visual.presentedPoint(attempt, attempt.release, 0),
++        s.project(attempt.release),
++        'Larger props stay on the recorded hand socket at release',
++      ),
++    );
++    const contact = visual.presentedPoint(
++        attempt,
++        attempt.target,
++        attempt.duration,
++      ),
++      surface = visual.surfacePoint(sport, attempt.actor, attempt.target);
++    check(() =>
++      assert.ok(
++        Math.hypot(contact.x - surface.x, contact.y - surface.y) < 1e-7,
++        'Playback must meet the registered target surface',
++      ),
++    );
++    for (const sample of attempt.trajectory)
++      check(() =>
++        assert.ok(
++          Object.values(visual.presentedPoint(attempt, sample, sample.t)).every(
++            Number.isFinite,
++          ),
++        ),
++      );
++  }
++}
++for (const name of [
++  'board',
++  'hoop',
++  'target',
++  'table',
++  'bag-yellow',
++  'bag-teal',
++  'football',
++  'basketball',
++  'ping-pong',
++  'cup-yellow',
++  'cup-orange',
++])
++  check(() =>
++    assert.ok(fs.existsSync('public/assets/equipment/' + name + '.png')),
++  );
+ 
+ // A newly installed character must be playable through the same ownership,
+ // recording and hand-socket path as the built-in roster, without source edits.
+-const packs=await import('../.test-build/character-pack.mjs'),registry=await import('../.test-build/character-registry.mjs');
+-const customCard={...m.CARDS[0],id:'card-portable-test',name:'Portable Test',asset:'portable-test'};
+-const customManifest=structuredClone(a.manifest('card-dan','dan','human')),revision='0123456789abcdef',prefix=`/assets/characters/${customCard.id}/${revision}/`;
+-delete customManifest.puppet;customManifest.cardId=customCard.id;customManifest.cardImage=prefix+'card.png';customManifest.sheet=prefix+'sheet.png';
+-for(const [pose,f] of Object.entries(customManifest.frames))f.url=prefix+pose+'.png';
+-const testPack={format:'wybmh-character',version:1,revision,card:customCard,manifest:customManifest,files:Object.fromEntries(packs.PACK_FILES.map(name=>{const bytes=fs.readFileSync('public/assets/dan/'+name);return[name,{data:'data:image/png;base64,'+bytes.toString('base64'),sha256:createHash('sha256').update(bytes).digest('hex')}];})),provenance:{method:'Test fixture from approved drawings',source:'Existing Dan art',createdAt:'2026-09-08T00:00:00Z'}};
+-check(()=>assert.equal(packs.validateCharacterPack(testPack).card.id,customCard.id));
+-const performancePack=structuredClone(testPack);
+-performancePack.manifest.performance=JSON.parse(fs.readFileSync('docs/import-examples/dan-performance.json','utf8'));
+-performancePack.manifest.performance.id=customCard.id;
+-check(()=>assert.deepEqual(packs.validateCharacterPack(performancePack).manifest.performance.pools,performancePack.manifest.performance.pools));
+-const foreignProfile=structuredClone(performancePack);foreignProfile.manifest.performance.id='card-other';
+-check(()=>assert.throws(()=>packs.validateCharacterPack(foreignProfile),/profile must belong/));
+-const unsupportedRig=structuredClone(performancePack);unsupportedRig.manifest.performance.rig={format:'spine'};
+-check(()=>assert.throws(()=>packs.validateCharacterPack(unsupportedRig),/Spine exports/));
+-for(const mutate of [p=>{p.card.id='card-dan'},p=>{delete p.files['ready.png']},p=>{p.manifest.frames.ready.url='https://elsewhere.test/ready.png'},p=>{p.manifest.frames.ready.hand=[-1,0]},p=>{p.card.family='cat'},p=>{p.card.accuracy=90},p=>{p.files['card.png'].data='data:text/html;base64,SGk='},p=>{p.manifest.frames.ready.width=9999}]){const invalid=structuredClone(testPack);mutate(invalid);check(()=>assert.throws(()=>packs.validateCharacterPack(invalid)));}
+-const priorCount=m.CARDS.length;registry.registerCharacter(customCard,customManifest,packs.packImageMap(testPack));registry.registerCharacter(customCard,customManifest,packs.packImageMap(testPack));
+-check(()=>assert.equal(m.CARDS.length,priorCount+1));check(()=>assert.equal(m.COPIES.filter(c=>c.cardId===customCard.id).length,m.USERS.length));check(()=>assert.equal(registry.cardImageUrl(customCard.id),testPack.files['card.png'].data));
+-const defaultCustom=a.manifest(customCard.id,customCard.asset,'human');check(()=>assert.deepEqual(defaultCustom,customManifest));defaultCustom.frames.ready.hand[0]++;check(()=>assert.deepEqual(a.manifest(customCard.id,customCard.asset,'human'),customManifest));
+-for(const sport of m.SPORTS){const cfg=setup(sport,'installed-'+sport);cfg.participants[0]={...cfg.participants[0],cardId:customCard.id,copyId:m.COPIES.find(c=>c.cardId===customCard.id&&c.userId===cfg.participants[0].userId).id};cfg.characterAssets=[customManifest,a.manifest('card-doug','doug','human')];const dynamicRepo=new p.LocalArenaRepository(new MemoryStorage());const result=await dynamicRepo.commit(cfg);check(()=>assert.deepEqual(s.validateRecording(result.recording),[]));check(()=>assert.equal(result.recording.attempts.length,m.EVENTS[sport].attempts*2));check(()=>assert.deepEqual(result.recording.attempts[0].release,s.releasePosition(customCard.asset,sport,0,customManifest)));check(()=>assert.ok(!JSON.stringify(result.recording).includes('data:image'),'Match storage must use immutable asset paths instead of large embedded pixels'));check(()=>assert.deepEqual(dynamicRepo.load().recordings.at(-1),result.recording));const duplicate=await dynamicRepo.commit(cfg);check(()=>assert.equal(duplicate.existing,true));}
++const packs = await import('../.test-build/character-pack.mjs'),
++  registry = await import('../.test-build/character-registry.mjs');
++const customCard = {
++  ...m.CARDS[0],
++  id: 'card-portable-test',
++  name: 'Portable Test',
++  asset: 'portable-test',
++};
++const customManifest = structuredClone(a.manifest('card-dan', 'dan', 'human')),
++  revision = '0123456789abcdef',
++  prefix = `/assets/characters/${customCard.id}/${revision}/`;
++delete customManifest.puppet;
++customManifest.cardId = customCard.id;
++customManifest.cardImage = prefix + 'card.png';
++customManifest.sheet = prefix + 'sheet.png';
++for (const [pose, f] of Object.entries(customManifest.frames))
++  f.url = prefix + pose + '.png';
++const testPack = {
++  format: 'wybmh-character',
++  version: 1,
++  revision,
++  card: customCard,
++  manifest: customManifest,
++  files: Object.fromEntries(
++    packs.PACK_FILES.map((name) => {
++      const bytes = fs.readFileSync('public/assets/dan/' + name);
++      return [
++        name,
++        {
++          data: 'data:image/png;base64,' + bytes.toString('base64'),
++          sha256: createHash('sha256').update(bytes).digest('hex'),
++        },
++      ];
++    }),
++  ),
++  provenance: {
++    method: 'Test fixture from approved drawings',
++    source: 'Existing Dan art',
++    createdAt: '2026-09-08T00:00:00Z',
++  },
++};
++check(() =>
++  assert.equal(packs.validateCharacterPack(testPack).card.id, customCard.id),
++);
++const performancePack = structuredClone(testPack);
++performancePack.manifest.performance = JSON.parse(
++  fs.readFileSync('docs/import-examples/dan-performance.json', 'utf8'),
++);
++performancePack.manifest.performance.id = customCard.id;
++check(() =>
++  assert.deepEqual(
++    packs.validateCharacterPack(performancePack).manifest.performance.pools,
++    performancePack.manifest.performance.pools,
++  ),
++);
++const foreignProfile = structuredClone(performancePack);
++foreignProfile.manifest.performance.id = 'card-other';
++check(() =>
++  assert.throws(
++    () => packs.validateCharacterPack(foreignProfile),
++    /profile must belong/,
++  ),
++);
++const unsupportedRig = structuredClone(performancePack);
++unsupportedRig.manifest.performance.rig = { format: 'spine' };
++check(() =>
++  assert.throws(
++    () => packs.validateCharacterPack(unsupportedRig),
++    /Spine exports/,
++  ),
++);
++for (const mutate of [
++  (p) => {
++    p.card.id = 'card-dan';
++  },
++  (p) => {
++    delete p.files['ready.png'];
++  },
++  (p) => {
++    p.manifest.frames.ready.url = 'https://elsewhere.test/ready.png';
++  },
++  (p) => {
++    p.manifest.frames.ready.hand = [-1, 0];
++  },
++  (p) => {
++    p.card.family = 'cat';
++  },
++  (p) => {
++    p.card.accuracy = 90;
++  },
++  (p) => {
++    p.files['card.png'].data = 'data:text/html;base64,SGk=';
++  },
++  (p) => {
++    p.manifest.frames.ready.width = 9999;
++  },
++]) {
++  const invalid = structuredClone(testPack);
++  mutate(invalid);
++  check(() => assert.throws(() => packs.validateCharacterPack(invalid)));
++}
++const priorCount = m.CARDS.length;
++registry.registerCharacter(
++  customCard,
++  customManifest,
++  packs.packImageMap(testPack),
++);
++registry.registerCharacter(
++  customCard,
++  customManifest,
++  packs.packImageMap(testPack),
++);
++check(() => assert.equal(m.CARDS.length, priorCount + 1));
++check(() =>
++  assert.equal(
++    m.COPIES.filter((c) => c.cardId === customCard.id).length,
++    m.USERS.length,
++  ),
++);
++check(() =>
++  assert.equal(
++    registry.cardImageUrl(customCard.id),
++    testPack.files['card.png'].data,
++  ),
++);
++const defaultCustom = a.manifest(customCard.id, customCard.asset, 'human');
++check(() => assert.deepEqual(defaultCustom, customManifest));
++defaultCustom.frames.ready.hand[0]++;
++check(() =>
++  assert.deepEqual(
++    a.manifest(customCard.id, customCard.asset, 'human'),
++    customManifest,
++  ),
++);
++for (const sport of m.SPORTS) {
++  const cfg = setup(sport, 'installed-' + sport);
++  cfg.participants[0] = {
++    ...cfg.participants[0],
++    cardId: customCard.id,
++    copyId: m.COPIES.find(
++      (c) =>
++        c.cardId === customCard.id && c.userId === cfg.participants[0].userId,
++    ).id,
++  };
++  cfg.characterAssets = [
++    customManifest,
++    a.manifest('card-doug', 'doug', 'human'),
++  ];
++  const dynamicRepo = new p.LocalArenaRepository(new MemoryStorage());
++  const result = await dynamicRepo.commit(cfg);
++  check(() => assert.deepEqual(s.validateRecording(result.recording), []));
++  check(() =>
++    assert.equal(
++      result.recording.attempts.length,
++      m.EVENTS[sport].attempts * 2,
++    ),
++  );
++  check(() =>
++    assert.deepEqual(
++      result.recording.attempts[0].release,
++      s.releasePosition(customCard.asset, sport, 0, customManifest),
++    ),
++  );
++  check(() =>
++    assert.ok(
++      !JSON.stringify(result.recording).includes('data:image'),
++      'Match storage must use immutable asset paths instead of large embedded pixels',
++    ),
++  );
++  check(() =>
++    assert.deepEqual(dynamicRepo.load().recordings.at(-1), result.recording),
++  );
++  const duplicate = await dynamicRepo.commit(cfg);
++  check(() => assert.equal(duplicate.existing, true));
++}
+ 
+-let showcase;for(let i=0;i<100000;i++){const r=s.simulate({...setup('cornhole','velvet-paw-'+i),showcase:true,secret:true});const last=r.attempts.at(-1),prior=r.attempts.at(-2);const contacts=r.attempts.map(a=>a.contact);if(r.winner===1&&last.contact==='hole'&&prior.scoreAfter[1]<=prior.scoreAfter[0]&&contacts.includes('miss')&&contacts.includes('board')&&r.attempts.some(a=>a.contact==='board'&&Math.hypot(a.target.x-9.2,a.target.z-a.actor*3.5)<.34)){showcase=r;break;}}
+-check(()=>assert.ok(showcase));fs.writeFileSync('docs/showcase-recording.json',JSON.stringify(showcase,null,2));
+-await (await import('./animation-tests.mjs')).testAnimation({check,setup,m,s,a,visual,stats});
+-await (await import('./personality-tests.mjs')).testPersonalities({check,setup,m,s,a});
+-await (await import('./puppet-tests.mjs')).testPuppets({check,setup,m,s,a,testPack,packs});
+-await (await import('./live-tests.mjs')).testLive({check});
+-await (await import('./engine-tests.mjs')).testEngine({check,setup,m,s,a});
+-await (await import('./sport-mechanics-tests.mjs')).testSportMechanics({check,setup,m,s,a});
+-await (await import('./observability-tests.mjs')).testObservability({check});
+-await (await import('./anatomy-tests.mjs')).testAnatomy({check});
+-await (await import('./human-motion-tests.mjs')).testHumanMotion({check});
+-await (await import('./organic-motion-tests.mjs')).testOrganicMotion({check});
+-await (await import('./reference-throw-tests.mjs')).testReferenceThrow({check});
+-await (await import('./performance-timeline-tests.mjs')).testPerformanceTimeline({check});
+-await (await import('./motion-v3-tests.mjs')).testMotionV3({check});
+-await (await import('./motion-v31-tests.mjs')).testMotionV31({check});
+-const report={checks,seededContests:2000,stats,showcaseSeed:showcase.setup.seed,showcaseScores:showcase.scores,showcaseContacts:showcase.attempts.map(a=>a.contact),storage:'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections verified'};
+-fs.writeFileSync('docs/test-results.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+-
+-
++let showcase;
++for (let i = 0; i < 100000; i++) {
++  const r = s.simulate({
++    ...setup('cornhole', 'velvet-paw-' + i),
++    showcase: true,
++    secret: true,
++  });
++  const last = r.attempts.at(-1),
++    prior = r.attempts.at(-2);
++  const contacts = r.attempts.map((a) => a.contact);
++  if (
++    r.winner === 1 &&
++    last.contact === 'hole' &&
++    prior.scoreAfter[1] <= prior.scoreAfter[0] &&
++    contacts.includes('miss') &&
++    contacts.includes('board') &&
++    r.attempts.some(
++      (a) =>
++        a.contact === 'board' &&
++        Math.hypot(a.target.x - 9.2, a.target.z - a.actor * 3.5) < 0.34,
++    )
++  ) {
++    showcase = r;
++    break;
++  }
++}
++check(() => assert.ok(showcase));
++fs.writeFileSync(
++  'docs/showcase-recording.json',
++  JSON.stringify(showcase, null, 2),
++);
++await (
++  await import('./animation-tests.mjs')
++).testAnimation({ check, setup, m, s, a, visual, stats });
++await (
++  await import('./personality-tests.mjs')
++).testPersonalities({ check, setup, m, s, a });
++await (
++  await import('./puppet-tests.mjs')
++).testPuppets({ check, setup, m, s, a, testPack, packs });
++await (await import('./live-tests.mjs')).testLive({ check });
++await (
++  await import('./engine-tests.mjs')
++).testEngine({ check, setup, m, s, a });
++await (
++  await import('./sport-mechanics-tests.mjs')
++).testSportMechanics({ check, setup, m, s, a });
++await (await import('./observability-tests.mjs')).testObservability({ check });
++await (await import('./anatomy-tests.mjs')).testAnatomy({ check });
++await (await import('./human-motion-tests.mjs')).testHumanMotion({ check });
++await (await import('./organic-motion-tests.mjs')).testOrganicMotion({ check });
++await (
++  await import('./reference-throw-tests.mjs')
++).testReferenceThrow({ check });
++await (
++  await import('./performance-timeline-tests.mjs')
++).testPerformanceTimeline({ check });
++await (await import('./motion-v3-tests.mjs')).testMotionV3({ check });
++await (await import('./motion-v31-tests.mjs')).testMotionV31({ check });
++await (
++  await import('./animation-upgrade-tests.mjs')
++).testAnimationUpgrade({ check });
++const report = {
++  checks,
++  seededContests: 2000,
++  stats,
++  showcaseSeed: showcase.setup.seed,
++  showcaseScores: showcase.scores,
++  showcaseContacts: showcase.attempts.map((a) => a.contact),
++  storage:
++    'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections verified',
++};
++fs.writeFileSync('docs/test-results.json', JSON.stringify(report, null, 2));
++console.log(JSON.stringify(report, null, 2));
+--- a/tests/browser/animation-upgrade.spec.ts
++++ b/tests/browser/animation-upgrade.spec.ts
+@@ -0,0 +1,128 @@
++import { test, expect } from 'playwright/test';
++import type { MotionSession } from '../../lab/human-motion/MotionSession';
++type State = ReturnType<MotionSession['snapshot']>;
++const load = async (page: any, event: string, take: string, actor = 'doug') => {
++  await page.goto(`/human-motion/?event=${event}&take=${take}&actor=${actor}`);
++  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++};
++test('Upgrade: native far-arm volume and opaque hands survive overhead motion', async ({
++  page,
++}) => {
++  await load(page, 'basketball', 'primaryAction');
++  const report = await page.evaluate(() => {
++    const api = window.__HERO_MOTION__,
++      samples = [];
++    for (let i = 0; i < 260; i++) {
++      api.step(1 / 120);
++      const s = api.getState(),
++        a = s.actors.find((a) => a.id === 'doug')!;
++      samples.push({
++        time: s.time,
++        releaseCount: a.releaseCount,
++        limbs: a.rig.integrity.limbs,
++        handExposure: a.rig.handExposure,
++        anchor: a.anchors.twoHandGrip,
++        joints: a.motion.latest!.joints,
++        projectile: (s.event as any).projectiles[0],
++      });
++    }
++    return samples;
++  });
++  expect(report.at(-1)!.releaseCount).toBe(1);
++  for (const s of report) {
++    for (const limb of s.limbs.filter((l) =>
++      ['leftUpperArm', 'leftForearm'].includes(l.id),
++    )) {
++      expect(limb.width).toBeGreaterThan(limb.setupWidth! * 0.7);
++      expect(limb.width).toBeLessThan(limb.setupWidth! * 1.3);
++    }
++    const hands = s.handExposure;
++    expect(
++      ['grip', 'open', 'relaxed', 'fist', 'support', 'chest'].reduce(
++        (n, k) => n + (hands[k] ?? 0),
++        0,
++      ),
++    ).toBe(1);
++  }
++  const releaseState = report.find((s) => s.releaseCount === 1)!;
++  const projectile = releaseState.projectile;
++  const anchor = releaseState.anchor;
++  expect(
++    Math.hypot(
++      projectile.release.x - anchor.x,
++      projectile.release.y - anchor.y,
++    ),
++  ).toBeLessThan(1.2);
++  expect(projectile.release.velocity.x).toBeGreaterThan(150);
++  const release = projectile.release.time;
++  for (const s of report.filter(
++    (s) => s.time > release + 0.1 && s.time < release + 0.35,
++  )) {
++    const joints = s.joints;
++    expect(joints.rightWrist.y).toBeLessThan(joints.head.y);
++  }
++});
++test('Upgrade: fist/chest/catch use distinct opaque drawings and release contacts', async ({
++  page,
++}) => {
++  for (const [take, time, expected] of [
++    ['fistPump', 0.7, 'fist'],
++    ['chestTap', 0.7, 'chest'],
++    ['bagFlip', 0.8, 'support'],
++  ] as const) {
++    await load(page, 'cornhole', take);
++    await page.evaluate((t) => window.__HERO_MOTION__.step(t), time);
++    const s = await page.evaluate(() => window.__HERO_MOTION__.getState());
++    expect(
++      s.actors.find((a) => a.id === 'doug')!.rig.handExposure[expected],
++    ).toBe(1);
++    await page.evaluate(() => window.__HERO_MOTION__.step(2));
++    const after = await page.evaluate(() => window.__HERO_MOTION__.getState());
++    expect(
++      after.actors.find((a) => a.id === 'doug')!.rig.handExposure.relaxed,
++    ).toBe(1);
++  }
++});
++test('Upgrade: fractional stepping, frame schedules and reload seek are deterministic', async ({
++  page,
++}) => {
++  const results = [];
++  for (const schedule of [
++    [1 / 30],
++    [1 / 60],
++    [1 / 120],
++    [1 / 240],
++    [1 / 60, 1 / 15, 1 / 120],
++  ]) {
++    await load(page, 'cornhole', 'primaryAction');
++    results.push(
++      await page.evaluate((schedule) => {
++        let t = 0,
++          i = 0;
++        while (t < 3 - 1e-9) {
++          const dt = Math.min(3 - t, schedule[i++ % schedule.length]);
++          window.__HERO_MOTION__.step(dt);
++          t += dt;
++        }
++        const s = window.__HERO_MOTION__.getState();
++        return {
++          steps: s.steps,
++          actors: s.actors.map((a) => ({
++            motor: a.motor,
++            release: a.releaseCount,
++            hand: a.anchors.rightHand,
++          })),
++          event: s.event,
++        };
++      }, schedule),
++    );
++  }
++  for (const result of results) expect(result).toEqual(results[0]);
++  await page.goto(
++    '/human-motion/?event=cornhole&take=primaryAction&actor=doug&seek=3',
++  );
++  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++  const s = await page.evaluate(() => window.__HERO_MOTION__.getState());
++  expect(s.actors.find((a) => a.id === 'doug')!.releaseCount).toBe(1);
++  expect(s.steps).toBe(360);
++});
+--- a/tests/browser/human-motion.spec.ts
++++ b/tests/browser/human-motion.spec.ts
+@@ -6,8 +6,24 @@
+   interface Window {
+     __HERO_MOTION__: {
+       getState(): State;
+-      soles(id: string): { index: number; foot: 'left' | 'right' | null; x: number; y: number }[];
++      soles(
++        id: string,
++      ): {
++        index: number;
++        foot: 'left' | 'right' | null;
++        x: number;
++        y: number;
++      }[];
+       step(t: number): void;
++      seek(t: number): void;
++      workshop(): {
++        loop: boolean;
++        from: number;
++        to: number;
++        loopCount: number;
++        neutral: boolean;
++        sound: boolean;
++      };
+       pause(): void;
+       resume(): void;
+       input(
+--- a/tests/browser/motion-v3.spec.ts
++++ b/tests/browser/motion-v3.spec.ts
+@@ -165,11 +165,11 @@
+             anchor.y - p.release.y,
+           );
+           handoffError = Math.hypot(
+-            p.position.x - p.release.x - p.release.velocity.x / 120,
++            p.position.x - p.release.x - p.release.velocity.x * p.age,
+             p.position.y -
+               p.release.y -
+-              p.release.velocity.y / 120 -
+-              (0.5 * p.gravity.y) / 120 ** 2,
++              p.release.velocity.y * p.age -
++              0.5 * p.gravity.y * p.age ** 2,
+           );
+         }
+         rows.push({
+@@ -270,7 +270,9 @@
+   );
+   expect(r.collision.event.presentation).toContain('rear-garment');
+   expect(r.collision.actors[1].rig.direction.facing).toBe(-1);
+-  expect(r.collision.actors[1].rig.direction.skin).toBe('authored-rear-three-quarter');
++  expect(r.collision.actors[1].rig.direction.skin).toBe(
++    'authored-rear-three-quarter',
++  );
+   expect(r.after.actors[0].rig.direction.facing).toBe(1);
+   await page.locator('#collision-view').check();
+   await page
+--- a/tests/browser/reference-throw.spec.ts
++++ b/tests/browser/reference-throw.spec.ts
+@@ -105,10 +105,18 @@
+       expect(flight.length).toBeGreaterThan(20);
+       // A roll can leave the board and enter a second free-flight segment.
+       // Impact/friction legitimately changed its velocity between those flights.
+-      for(let i=1;i<result.samples.length;i++){
+-        const previous=result.samples[i-1].projectile,current=result.samples[i].projectile;
+-        if(previous?.contact?.phase==='flight'&&current?.contact?.phase==='flight')
+-          expect(Math.abs(current.velocity.x-previous.velocity.x)).toBeLessThan(.001);
++      for (let i = 1; i < result.samples.length; i++) {
++        const previous = result.samples[i - 1].projectile,
++          current = result.samples[i].projectile;
++        // Board contact and edge departure may both occur within one step.
++        if (
++          previous?.contact?.phase === 'flight' &&
++          current?.contact?.phase === 'flight' &&
++          previous.contact.impacts === current.contact.impacts
++        )
++          expect(
++            Math.abs(current.velocity.x - previous.velocity.x),
++          ).toBeLessThan(0.001);
+       }
+       expect(result.samples.at(-1)!.projectile!.landed).toBe(true);
+       await page.evaluate(() =>
+--- a/tests/browser/workshop-controls.spec.ts
++++ b/tests/browser/workshop-controls.spec.ts
+@@ -0,0 +1,50 @@
++import { test, expect } from 'playwright/test';
++
++test('Workshop: in-page seek and loop reconstruct one isolated canvas', async ({
++  page,
++}) => {
++  const errors: string[] = [];
++  page.on('pageerror', (e) => errors.push(e.message));
++  await page.goto(
++    '/human-motion/?event=basketball&actor=doug&take=primaryAction&rate=0.25&neutral=1',
++  );
++  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++  await expect(page.locator('#speed')).toHaveValue('0.25');
++  await expect(page.locator('#neutral-background')).toBeChecked();
++  await page.evaluate(() => window.__HERO_MOTION__.step(1.1));
++  const before = await page.evaluate(() => window.__HERO_MOTION__.getState());
++  await page.evaluate(() => window.__HERO_MOTION__.seek(0.5));
++  await page.waitForFunction(
++    () => Math.abs((window.__HERO_MOTION__?.getState().time ?? 0) - 0.5) < 1e-6,
++  );
++  await page.evaluate(() => window.__HERO_MOTION__.step(0.6));
++  const after = await page.evaluate(() => window.__HERO_MOTION__.getState());
++  expect(after.event).toEqual(before.event);
++  expect(after.actors.map((a) => a.anchors)).toEqual(
++    before.actors.map((a) => a.anchors),
++  );
++  await page.locator('#loop-from').fill('0');
++  await page.locator('#loop-to').fill('1.2');
++  await page.locator('#loop-enabled').check();
++  await page.selectOption('#speed', '1');
++  await page.locator('#play').click();
++  await page.waitForFunction(
++    () => window.__HERO_MOTION__.workshop().loopCount >= 2,
++    {},
++    { timeout: 20000 },
++  );
++  await page.locator('#pause').click();
++  await expect(page.locator('canvas')).toHaveCount(1);
++  expect(errors).toEqual([]);
++});
++
++test('Workshop: reduced motion disables optional organic performance', async ({
++  page,
++}) => {
++  await page.emulateMedia({ reducedMotion: 'reduce' });
++  await page.goto('/human-motion/?event=cornhole');
++  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
++  await expect(page.locator('#organic')).not.toBeChecked();
++  const s = await page.evaluate(() => window.__HERO_MOTION__.getState());
++  expect(s.actors.every((a) => !a.rig.performance.enabled)).toBe(true);
++});

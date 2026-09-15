@@ -1,0 +1,37 @@
+{
+  "runs": [
+    {
+      "file": "initial-browser-results.json",
+      "passed": 107,
+      "failed": 10,
+      "skipped": 1
+    },
+    {
+      "file": "resolved-browser-results.json",
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "workshop-browser-results.json",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "final-motion-browser-results.json",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "file": "final-shoulder-browser-results.json",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "distinctPassed": 119,
+  "distinctSkipped": 1,
+  "unresolved": []
+}

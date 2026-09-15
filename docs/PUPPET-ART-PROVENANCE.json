@@ -1,0 +1,44 @@
+{
+  "method": "Codex image generation using approved Dan and Doug ready poses; separate twelve-part paper atlases; second image edit replaced a painted checkerboard with solid magenta. Runtime chroma-key import supplies transparency. Source PNGs are copied unchanged.",
+  "sourceReferences": [
+    "public/assets/dan/ready.png",
+    "public/assets/doug/ready.png"
+  ],
+  "generatedFiles": [
+    "public/assets/dan/puppet-v1.png",
+    "public/assets/doug/puppet-v1.png"
+  ],
+  "prompts": {
+    "dan": "Use case: identity-preserve. Asset type: production 2D paper-cutout puppet parts atlas for articulated game animation, NOT a finished poster. The reference is the exact approved person and outfit to preserve. Create a SQUARE 1536x1536 transparent PNG containing exactly TWELVE separated body parts in a strict four-column by three-row grid. No grid lines, labels, lettering outside the shirt logo, background, shadows or assembled duplicate figure. Each grid cell is 384 wide x 512 high. Parts centered in their cells, generous transparent space, never overlap. ALL PARTS use the same human anatomical scale, such that assembling them would make an adult about 1100 pixels tall: head about 190px tall, torso neck-through-hips about 370px tall, upper arm about 185px, forearm INCLUDING its hand about 220px, thigh about 250px, shin about 220px, foot about 100px. Keep the reference's adult proportions, precise face, bold black ink, restrained painted shading, cream PAPER CUTOUT external edges, warm sports-comic treatment. Internal joint ends should extend with rounded natural flesh/fabric overlap tabs and minimal internal contour lines, so a renderer can overlap them without gaps. All limbs point vertically down in a relaxed neutral stance; do not bend them. The head looks slightly toward screen RIGHT. No balls or bags. Exact layout, reading left to right:\nROW 1: isolated HEAD including hair/accessories and short neck; isolated TORSO including complete shirt, shoulders/sleeves and upper shorts waistband but NO arms/head/legs; isolated screen-LEFT UPPER ARM from shoulder to elbow; isolated screen-RIGHT UPPER ARM from shoulder to elbow.\nROW 2: screen-LEFT FOREARM including natural hand, elbow at top and fingers down at bottom; screen-RIGHT FOREARM including hand; screen-LEFT THIGH including its black shorts leg, hip at top and knee at bottom; screen-RIGHT THIGH including shorts leg.\nROW 3: screen-LEFT SHIN from knee to ankle (no foot); screen-RIGHT SHIN (no foot); screen-LEFT FOOT and ankle with footwear, pointing slightly outward LEFT; screen-RIGHT FOOT and ankle with footwear pointing slightly outward RIGHT.\nThis is an asset separation task: each part MUST be independently usable with actual alpha transparency. No white background or checkerboard painting. The person MUST remain recognizable from the reference. Keep both hands anatomically intact, five fingers.\nCharacter Dan: same tousled brown hair, short brown beard, no glasses, white Pepperoni Cheesers pizza mascot T-shirt, black shorts, bare lower legs, black flip-flop sandals. Preserve the exact pizza mascot shirt graphic and likeness from the reference.",
+    "doug": "Use case: identity-preserve. Asset type: production 2D paper-cutout puppet parts atlas for articulated game animation, NOT a finished poster. The reference is the exact approved person and outfit to preserve. Create a SQUARE 1536x1536 transparent PNG containing exactly TWELVE separated body parts in a strict four-column by three-row grid. No grid lines, labels, lettering outside the shirt logo, background, shadows or assembled duplicate figure. Each grid cell is 384 wide x 512 high. Parts centered in their cells, generous transparent space, never overlap. ALL PARTS use the same human anatomical scale, such that assembling them would make an adult about 1100 pixels tall: head about 190px tall, torso neck-through-hips about 370px tall, upper arm about 185px, forearm INCLUDING its hand about 220px, thigh about 250px, shin about 220px, foot about 100px. Keep the reference's adult proportions, precise face, bold black ink, restrained painted shading, cream PAPER CUTOUT external edges, warm sports-comic treatment. Internal joint ends should extend with rounded natural flesh/fabric overlap tabs and minimal internal contour lines, so a renderer can overlap them without gaps. All limbs point vertically down in a relaxed neutral stance; do not bend them. The head looks slightly toward screen RIGHT. No balls or bags. Exact layout, reading left to right:\nROW 1: isolated HEAD including hair/accessories and short neck; isolated TORSO including complete shirt, shoulders/sleeves and upper shorts waistband but NO arms/head/legs; isolated screen-LEFT UPPER ARM from shoulder to elbow; isolated screen-RIGHT UPPER ARM from shoulder to elbow.\nROW 2: screen-LEFT FOREARM including natural hand, elbow at top and fingers down at bottom; screen-RIGHT FOREARM including hand; screen-LEFT THIGH including its black shorts leg, hip at top and knee at bottom; screen-RIGHT THIGH including shorts leg.\nROW 3: screen-LEFT SHIN from knee to ankle (no foot); screen-RIGHT SHIN (no foot); screen-LEFT FOOT and ankle with footwear, pointing slightly outward LEFT; screen-RIGHT FOOT and ankle with footwear pointing slightly outward RIGHT.\nThis is an asset separation task: each part MUST be independently usable with actual alpha transparency. No white background or checkerboard painting. The person MUST remain recognizable from the reference. Keep both hands anatomically intact, five fingers.\nCharacter Doug: same reddish beard, blue cap worn backwards, white wraparound sunglasses, open black-and-white patterned short sleeve button shirt over the white Pepperoni Cheesers pizza mascot T-shirt, gray-black shorts, black socks and gray sneakers. Preserve the exact sunglasses, cap, pizza mascot shirt graphic and likeness from the reference."
+  },
+  "continuousRepair": {
+    "method": "Image generation from the approved ready poses; unchanged generated PNGs registered into continuous full-limb surfaces. No separate elbow, wrist, knee or ankle art.",
+    "promptFile": "art-prompts/continuous-limb-repair.txt",
+    "generatedFiles": [
+      "public/assets/dan/puppet-v2.png",
+      "public/assets/doug/puppet-v2.png"
+    ],
+    "sourceReferences": [
+      "public/assets/dan/ready.png",
+      "public/assets/doug/ready.png"
+    ],
+    "generatedSourceFiles": [
+      "exec-eca84f93-1995-43c8-b886-219221d84ad2.png",
+      "exec-ce3da469-24e3-4c37-9d1d-5095026fd6fd.png"
+    ]
+  },
+  "joinedShoulderRepair": {
+    "method": "Image generation repaired each character into one continuous headless chest/shoulder/sleeve/arm/shorts drawing. Mechanical atlas packing puts the unchanged generated source above the old atlas, reusing its original head and leg art. Runtime supplies chroma-key transparency and deformation.",
+    "promptFile": "art-prompts/joined-shoulder-repair.txt",
+    "generatedFiles": [
+      "public/assets/dan/puppet-v3.png",
+      "public/assets/doug/puppet-v3.png"
+    ],
+    "generatedSourceFiles": [
+      "exec-d3a9e57b-9910-4d48-9dec-c55e387440df.png",
+      "exec-4c3a0535-e83f-4999-beb2-cc8dca34dc9f.png"
+    ],
+    "registration": "Pixel landmarks and mesh weighting calibrated through enlarged frame review and multiple 60 fps captures. Prior repair files remain available as history."
+  }
+}

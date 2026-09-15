@@ -1,0 +1,553 @@
+{
+  "sourceDimensions": [
+    1254,
+    1254
+  ],
+  "sourceFormat": "Generated RGB chroma source; derived alpha atlas",
+  "origin": {
+    "x": 510,
+    "y": 1227
+  },
+  "joints": [
+    {
+      "name": "root",
+      "point": {
+        "x": 510,
+        "y": 1227
+      }
+    },
+    {
+      "name": "pelvis",
+      "parent": "root",
+      "point": {
+        "x": 510,
+        "y": 684
+      },
+      "end": {
+        "x": 510,
+        "y": 590
+      }
+    },
+    {
+      "name": "spine_lower",
+      "parent": "pelvis",
+      "point": {
+        "x": 510,
+        "y": 590
+      },
+      "end": {
+        "x": 518,
+        "y": 495
+      }
+    },
+    {
+      "name": "spine_mid",
+      "parent": "spine_lower",
+      "point": {
+        "x": 518,
+        "y": 495
+      },
+      "end": {
+        "x": 520,
+        "y": 390
+      }
+    },
+    {
+      "name": "chest",
+      "parent": "spine_mid",
+      "point": {
+        "x": 520,
+        "y": 390
+      },
+      "end": {
+        "x": 493,
+        "y": 244
+      }
+    },
+    {
+      "name": "neck",
+      "parent": "chest",
+      "point": {
+        "x": 493,
+        "y": 244
+      },
+      "end": {
+        "x": 497,
+        "y": 213
+      }
+    },
+    {
+      "name": "head",
+      "parent": "neck",
+      "point": {
+        "x": 497,
+        "y": 213
+      },
+      "end": {
+        "x": 503,
+        "y": 126
+      }
+    },
+    {
+      "name": "skull_center",
+      "parent": "head",
+      "point": {
+        "x": 503,
+        "y": 126
+      }
+    },
+    {
+      "name": "clavicle_L",
+      "parent": "chest",
+      "point": {
+        "x": 489,
+        "y": 257
+      },
+      "end": {
+        "x": 436,
+        "y": 315
+      }
+    },
+    {
+      "name": "upper_arm_L",
+      "parent": "clavicle_L",
+      "point": {
+        "x": 436,
+        "y": 315
+      },
+      "end": {
+        "x": 447,
+        "y": 465
+      }
+    },
+    {
+      "name": "forearm_L",
+      "parent": "upper_arm_L",
+      "point": {
+        "x": 447,
+        "y": 465
+      },
+      "end": {
+        "x": 518,
+        "y": 645
+      }
+    },
+    {
+      "name": "hand_L",
+      "parent": "forearm_L",
+      "point": {
+        "x": 518,
+        "y": 645
+      },
+      "end": {
+        "x": 578,
+        "y": 645
+      }
+    },
+    {
+      "name": "throwing_hand",
+      "parent": "hand_L",
+      "point": {
+        "x": 560,
+        "y": 639
+      }
+    },
+    {
+      "name": "clavicle_R",
+      "parent": "chest",
+      "point": {
+        "x": 520,
+        "y": 263
+      },
+      "end": {
+        "x": 574,
+        "y": 320
+      }
+    },
+    {
+      "name": "upper_arm_R",
+      "parent": "clavicle_R",
+      "point": {
+        "x": 574,
+        "y": 320
+      },
+      "end": {
+        "x": 593,
+        "y": 482
+      }
+    },
+    {
+      "name": "forearm_R",
+      "parent": "upper_arm_R",
+      "point": {
+        "x": 593,
+        "y": 482
+      },
+      "end": {
+        "x": 619,
+        "y": 610
+      }
+    },
+    {
+      "name": "hand_R",
+      "parent": "forearm_R",
+      "point": {
+        "x": 619,
+        "y": 610
+      },
+      "end": {
+        "x": 626,
+        "y": 678
+      }
+    },
+    {
+      "name": "off_hand",
+      "parent": "hand_R",
+      "point": {
+        "x": 626,
+        "y": 678
+      }
+    },
+    {
+      "name": "thigh_L",
+      "parent": "pelvis",
+      "point": {
+        "x": 470,
+        "y": 692
+      },
+      "end": {
+        "x": 447,
+        "y": 858
+      }
+    },
+    {
+      "name": "shin_L",
+      "parent": "thigh_L",
+      "point": {
+        "x": 447,
+        "y": 858
+      },
+      "end": {
+        "x": 379,
+        "y": 1158
+      }
+    },
+    {
+      "name": "foot_L",
+      "parent": "shin_L",
+      "point": {
+        "x": 379,
+        "y": 1158
+      },
+      "end": {
+        "x": 459,
+        "y": 1198
+      }
+    },
+    {
+      "name": "heel_L",
+      "parent": "foot_L",
+      "point": {
+        "x": 334,
+        "y": 1213
+      }
+    },
+    {
+      "name": "toe_L",
+      "parent": "foot_L",
+      "point": {
+        "x": 494,
+        "y": 1227
+      }
+    },
+    {
+      "name": "thigh_R",
+      "parent": "pelvis",
+      "point": {
+        "x": 553,
+        "y": 688
+      },
+      "end": {
+        "x": 554,
+        "y": 863
+      }
+    },
+    {
+      "name": "shin_R",
+      "parent": "thigh_R",
+      "point": {
+        "x": 554,
+        "y": 863
+      },
+      "end": {
+        "x": 584,
+        "y": 1150
+      }
+    },
+    {
+      "name": "foot_R",
+      "parent": "shin_R",
+      "point": {
+        "x": 584,
+        "y": 1150
+      },
+      "end": {
+        "x": 664,
+        "y": 1190
+      }
+    },
+    {
+      "name": "heel_R",
+      "parent": "foot_R",
+      "point": {
+        "x": 548,
+        "y": 1193
+      }
+    },
+    {
+      "name": "toe_R",
+      "parent": "foot_R",
+      "point": {
+        "x": 734,
+        "y": 1201
+      }
+    },
+    {
+      "name": "foot_target_L",
+      "parent": "root",
+      "point": {
+        "x": 379,
+        "y": 1158
+      }
+    },
+    {
+      "name": "foot_target_R",
+      "parent": "root",
+      "point": {
+        "x": 584,
+        "y": 1150
+      }
+    }
+  ],
+  "registration": {
+    "body": [
+      304,
+      4,
+      452,
+      1240
+    ],
+    "arm": [
+      854,
+      204,
+      170,
+      407
+    ],
+    "sleeveOpening": [
+      [
+        380,
+        430
+      ],
+      [
+        384,
+        376
+      ],
+      [
+        399,
+        365
+      ],
+      [
+        418,
+        359
+      ],
+      [
+        440,
+        358
+      ],
+      [
+        460,
+        363
+      ],
+      [
+        480,
+        378
+      ],
+      [
+        490,
+        430
+      ]
+    ],
+    "sleeveBoundary": [
+      [
+        376,
+        240
+      ],
+      [
+        513,
+        240
+      ],
+      [
+        513,
+        335
+      ],
+      [
+        480,
+        381
+      ],
+      [
+        461,
+        390
+      ],
+      [
+        417,
+        391
+      ],
+      [
+        384,
+        379
+      ],
+      [
+        376,
+        372
+      ]
+    ],
+    "bodySleeveCutout": [
+      [
+        374,
+        240
+      ],
+      [
+        515,
+        240
+      ],
+      [
+        515,
+        343
+      ],
+      [
+        486,
+        391
+      ],
+      [
+        465,
+        403
+      ],
+      [
+        412,
+        403
+      ],
+      [
+        376,
+        387
+      ],
+      [
+        374,
+        382
+      ]
+    ],
+    "hands": [
+      [
+        892,
+        693,
+        198,
+        96
+      ],
+      [
+        890,
+        821,
+        219,
+        109
+      ],
+      [
+        894,
+        966,
+        162,
+        126
+      ]
+    ],
+    "wrists": [
+      [
+        944,
+        738
+      ],
+      [
+        944,
+        867
+      ],
+      [
+        944,
+        1002
+      ]
+    ],
+    "armJoints": [
+      [
+        910,
+        260
+      ],
+      [
+        921,
+        410
+      ],
+      [
+        992,
+        587
+      ]
+    ]
+  },
+  "interchangeBudget": {
+    "floats": 45098,
+    "ints": 43142,
+    "maxOffset": 65535
+  },
+  "layers": [
+    {
+      "name": "shirt_back",
+      "vertices": 267,
+      "triangles": 466,
+      "blendedVertices": 184
+    },
+    {
+      "name": "body",
+      "vertices": 3456,
+      "triangles": 6088,
+      "blendedVertices": 1056
+    },
+    {
+      "name": "sleeve_back",
+      "vertices": 235,
+      "triangles": 406,
+      "blendedVertices": 175
+    },
+    {
+      "name": "arm",
+      "vertices": 571,
+      "triangles": 1008,
+      "blendedVertices": 129
+    },
+    {
+      "name": "sleeve",
+      "vertices": 274,
+      "triangles": 470,
+      "blendedVertices": 237
+    },
+    {
+      "name": "grip",
+      "vertices": 281,
+      "triangles": 470,
+      "blendedVertices": 0
+    },
+    {
+      "name": "open",
+      "vertices": 315,
+      "triangles": 528,
+      "blendedVertices": 0
+    },
+    {
+      "name": "relaxed",
+      "vertices": 273,
+      "triangles": 468,
+      "blendedVertices": 0
+    }
+  ],
+  "editorExport": false,
+  "productionInstalled": false
+}

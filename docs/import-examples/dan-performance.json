@@ -1,0 +1,94 @@
+{
+  "id": "card-dan",
+  "version": 1,
+  "name": "Dan",
+  "personality": {
+    "confidence": 0.67,
+    "showmanship": 0.16,
+    "intensity": 0.74,
+    "calmness": 0.88,
+    "humor": 0.26,
+    "patience": 0.84,
+    "resilience": 0.68,
+    "sociability": 0.35
+  },
+  "throwingStyle": {
+    "speed": 0.46,
+    "flatness": 0.52,
+    "accuracy": 0.64,
+    "tendencies": {
+      "blocker": 4,
+      "roll": 3,
+      "soft": 2,
+      "standard": 2,
+      "airmail": 1.1,
+      "highArc": 0.8,
+      "collect": 0.5
+    }
+  },
+  "pools": {
+    "idle": [
+      "idle_breathe",
+      "idle_focused",
+      "idle_weightShift"
+    ],
+    "entrance": [
+      "enter_grounded",
+      "enter_casual"
+    ],
+    "ritual": [
+      "bag_squeeze",
+      "target_stare",
+      "hand_wipe",
+      "quiet_breath"
+    ],
+    "celebration": [
+      "celebrate_nod",
+      "quiet_reset",
+      "one_point",
+      "fist_pump",
+      "hold_follow",
+      "double_fist"
+    ],
+    "reaction": [
+      "head_shake",
+      "inspect_hand",
+      "quiet_reset",
+      "stare_board",
+      "hands_on_knees"
+    ],
+    "locomotion": [
+      "walk",
+      "back_step",
+      "reposition"
+    ]
+  },
+  "signatures": [
+    {
+      "id": "quiet_reset",
+      "chance": 0.6,
+      "cooldown": 2,
+      "tags": [
+        "reaction"
+      ]
+    },
+    {
+      "id": "hold_follow",
+      "chance": 0.4,
+      "cooldown": 3,
+      "tags": [
+        "celebration",
+        "airmail"
+      ]
+    },
+    {
+      "id": "double_fist",
+      "chance": 0.7,
+      "cooldown": 5,
+      "tags": [
+        "celebration",
+        "clutch"
+      ]
+    }
+  ]
+}

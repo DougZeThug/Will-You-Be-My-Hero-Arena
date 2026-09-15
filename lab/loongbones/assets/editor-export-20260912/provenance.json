@@ -1,0 +1,42 @@
+{
+  "id": "loongbones-1.2.3-ubbie-20260912",
+  "received": "2026-09-12",
+  "source": "User supplied C:/Users/Doug/Downloads/arena-editor-test.zip after the authenticated editor test",
+  "project": "https://www.loongbones.app/editor/?workId=NfiK5sO1",
+  "editorVersionObserved": "1.2.3",
+  "origin": "LoongBones built-in Mesh Example, original ubbie clips; not Arena character artwork",
+  "exportSettingsObserved": {
+    "format": "DragonBones JSON",
+    "version": "5.5",
+    "armature": "ubbie",
+    "scope": "Current Armature",
+    "textures": "Texture Atlas",
+    "scale": 1,
+    "keepArmatureScale": true,
+    "background": false,
+    "packaging": "Data + Texture + ZIP"
+  },
+  "filesUnchanged": true,
+  "sha256": {
+    "arena-editor-test.zip": "637994a9f4132e1f114884050558c6d3fafd2f796e385a9d211f99efa4954a32",
+    "arena-editor-test_ske.json": "b0d06e19ee8f49943736e828a9f7a6756f011900e66290dd71296f6c9d1f286c",
+    "arena-editor-test_tex.json": "b52886f8e548b3f12f2f441a223f355ce11c7dd44dcd0d6c2ca063ea7bd5984c",
+    "arena-editor-test_tex.png": "e19742ac21cd3d81b92fbaa7b70313e6043ee8c50ff48e36a0059b336412ede6"
+  },
+  "contents": {
+    "frameRate": 24,
+    "bones": 16,
+    "slots": 17,
+    "imageDisplays": 10,
+    "unweightedMeshDisplays": 8,
+    "atlasSize": [1024, 1024],
+    "clips": ["stand", "walk", "turn face", "atc"],
+    "ffd": true,
+    "blendedSkinWeights": false,
+    "authoredReleaseMarkers": false
+  },
+  "runtimeVerified": "Phaser 3.90.0 / DragonBones core 5.7.000 / Lab native bridge",
+  "verificationScope": "textured-character-bones-ffd",
+  "productionCharacter": false,
+  "review": "../../../../docs/review/loongbones-editor-export/README.md"
+}

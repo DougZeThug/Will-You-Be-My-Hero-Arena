@@ -1,0 +1,1881 @@
+[
+  {
+    "id": "legacy_success_fist",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:fist",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_flourish",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:flourish",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_jig",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:jig",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_smirk",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:smirk",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_salute",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:salute",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_strut",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:strut",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_pop",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:pop",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_success_bow",
+    "category": "celebration",
+    "tags": [
+      "success"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "success:bow",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_bow",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:bow",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_stamp",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:stamp",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_wobble",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:wobble",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_shrug",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:shrug",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_recoil",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:recoil",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_pace",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:pace",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_freeze",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:freeze",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_miss_slump",
+    "category": "reaction",
+    "tags": [
+      "miss"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "miss:slump",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_grounded",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:grounded",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_pop",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:pop",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_ricochet",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:ricochet",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_glide",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:glide",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_stomp",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:stomp",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_slide",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:slide",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_spiral",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:spiral",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_entrance_spring",
+    "category": "entrance",
+    "tags": [
+      "entrance"
+    ],
+    "duration": 1.15,
+    "weight": 1,
+    "intensity": 0.6,
+    "source": "entrance:spring",
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "legacy_idle_breathe",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:breathe",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_heel-tap",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:heel-tap",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_shuffle",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:shuffle",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_sway",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:sway",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_scan",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:scan",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_bob",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:bob",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_rock",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:rock",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "legacy_idle_lean",
+    "category": "idle",
+    "tags": [
+      "idle"
+    ],
+    "duration": 4.2,
+    "weight": 1,
+    "intensity": 0.15,
+    "source": "idle:lean",
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "idle_breathe",
+    "category": "idle",
+    "tags": [
+      "calm"
+    ],
+    "duration": 4.5,
+    "intensity": 0.08,
+    "weight": 1,
+    "markers": [],
+    "source": "idle:breathe",
+    "loop": true,
+    "spine": "idle_breathe"
+  },
+  {
+    "id": "idle_heelTap",
+    "category": "idle",
+    "tags": [
+      "confident"
+    ],
+    "duration": 4,
+    "intensity": 0.2,
+    "weight": 1,
+    "markers": [],
+    "source": "idle:heel-tap",
+    "loop": true,
+    "spine": "idle_heelTap"
+  },
+  {
+    "id": "idle_scan",
+    "category": "idle",
+    "tags": [
+      "intense"
+    ],
+    "duration": 4.8,
+    "intensity": 0.12,
+    "weight": 1,
+    "markers": [],
+    "source": "idle:scan",
+    "loop": true,
+    "spine": "idle_scan"
+  },
+  {
+    "id": "idle_weightShift",
+    "category": "idle",
+    "tags": [
+      "patient"
+    ],
+    "duration": 5,
+    "intensity": 0.12,
+    "weight": 1,
+    "markers": [],
+    "source": "idle:rock",
+    "loop": true,
+    "spine": "idle_weightShift"
+  },
+  {
+    "id": "enter_grounded",
+    "category": "entrance",
+    "tags": [
+      "focused",
+      "calm"
+    ],
+    "duration": 1.05,
+    "intensity": 0.3,
+    "weight": 1,
+    "markers": [],
+    "source": "entrance:grounded",
+    "loop": false,
+    "spine": "enter_grounded"
+  },
+  {
+    "id": "enter_pop",
+    "category": "entrance",
+    "tags": [
+      "confident",
+      "flashy"
+    ],
+    "duration": 1.2,
+    "intensity": 0.65,
+    "weight": 1,
+    "markers": [],
+    "source": "entrance:pop",
+    "loop": false,
+    "spine": "enter_pop"
+  },
+  {
+    "id": "enter_slide",
+    "category": "entrance",
+    "tags": [
+      "humor",
+      "flashy"
+    ],
+    "duration": 1.15,
+    "intensity": 0.6,
+    "weight": 1,
+    "markers": [],
+    "source": "entrance:slide",
+    "loop": false,
+    "spine": "enter_slide"
+  },
+  {
+    "id": "enter_casual",
+    "category": "entrance",
+    "tags": [
+      "calm",
+      "casual"
+    ],
+    "duration": 1.05,
+    "intensity": 0.3,
+    "weight": 1,
+    "markers": [],
+    "source": "entrance:glide",
+    "loop": false,
+    "spine": "enter_casual"
+  },
+  {
+    "id": "enter_stumble",
+    "category": "entrance",
+    "tags": [
+      "humor"
+    ],
+    "duration": 1.2,
+    "intensity": 0.7,
+    "weight": 1,
+    "markers": [],
+    "source": "entrance:ricochet",
+    "loop": false,
+    "spine": "enter_stumble"
+  },
+  {
+    "id": "fist_pump",
+    "category": "celebration",
+    "tags": [
+      "intense",
+      "confident"
+    ],
+    "duration": 0.85,
+    "intensity": 0.45,
+    "weight": 1,
+    "markers": [],
+    "source": "success:fist",
+    "loop": false,
+    "spine": "fist_pump"
+  },
+  {
+    "id": "victory_dance",
+    "category": "celebration",
+    "tags": [
+      "flashy",
+      "humor",
+      "clutch"
+    ],
+    "duration": 1.5,
+    "intensity": 0.9,
+    "weight": 1,
+    "markers": [],
+    "source": "success:jig",
+    "loop": false,
+    "spine": "victory_dance"
+  },
+  {
+    "id": "walk_off",
+    "category": "celebration",
+    "tags": [
+      "confident",
+      "clutch"
+    ],
+    "duration": 1.25,
+    "intensity": 0.65,
+    "weight": 1,
+    "markers": [],
+    "source": "success:strut",
+    "loop": false,
+    "spine": "walk_off"
+  },
+  {
+    "id": "shrug",
+    "category": "reaction",
+    "tags": [
+      "casual",
+      "humor"
+    ],
+    "duration": 0.85,
+    "intensity": 0.35,
+    "weight": 1,
+    "markers": [],
+    "source": "miss:shrug",
+    "loop": false,
+    "spine": "shrug"
+  },
+  {
+    "id": "salute",
+    "category": "celebration",
+    "tags": [
+      "confident"
+    ],
+    "duration": 1,
+    "intensity": 0.5,
+    "weight": 1,
+    "markers": [],
+    "source": "success:salute",
+    "loop": false,
+    "spine": "salute"
+  },
+  {
+    "id": "dramatic_bow",
+    "category": "celebration",
+    "tags": [
+      "humor",
+      "clutch"
+    ],
+    "duration": 1.3,
+    "intensity": 0.75,
+    "weight": 1,
+    "markers": [],
+    "source": "success:bow",
+    "loop": false,
+    "spine": "dramatic_bow"
+  },
+  {
+    "id": "chest_tap",
+    "category": "celebration",
+    "tags": [
+      "confident",
+      "ritual",
+      "clutch"
+    ],
+    "duration": 0.92,
+    "intensity": 0.55,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.31,
+        "name": "sound",
+        "value": "chestTap"
+      },
+      {
+        "at": 0.55,
+        "name": "sound",
+        "value": "chestTap"
+      }
+    ],
+    "spine": "chest_tap"
+  },
+  {
+    "id": "bag_flip",
+    "category": "ritual",
+    "tags": [
+      "confident",
+      "flashy",
+      "bag"
+    ],
+    "duration": 0.68,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.35,
+        "name": "bagFlip"
+      },
+      {
+        "at": 0.72,
+        "name": "catch"
+      }
+    ],
+    "spine": "bag_flip"
+  },
+  {
+    "id": "bag_squeeze",
+    "category": "ritual",
+    "tags": [
+      "focused",
+      "calm",
+      "bag"
+    ],
+    "duration": 0.44,
+    "intensity": 0.18,
+    "weight": 1,
+    "markers": [],
+    "spine": "bag_squeeze"
+  },
+  {
+    "id": "hat_adjust",
+    "category": "ritual",
+    "tags": [
+      "confident",
+      "casual"
+    ],
+    "duration": 0.7,
+    "intensity": 0.3,
+    "weight": 1,
+    "markers": [],
+    "spine": "hat_adjust"
+  },
+  {
+    "id": "target_stare",
+    "category": "ritual",
+    "tags": [
+      "focused",
+      "patient"
+    ],
+    "duration": 0.45,
+    "intensity": 0.12,
+    "weight": 1,
+    "markers": [],
+    "spine": "target_stare"
+  },
+  {
+    "id": "quiet_breath",
+    "category": "ritual",
+    "tags": [
+      "calm",
+      "focused"
+    ],
+    "duration": 0.48,
+    "intensity": 0.12,
+    "weight": 1,
+    "markers": [],
+    "spine": "quiet_breath"
+  },
+  {
+    "id": "hand_wipe",
+    "category": "ritual",
+    "tags": [
+      "focused",
+      "nervous"
+    ],
+    "duration": 0.6,
+    "intensity": 0.2,
+    "weight": 1,
+    "markers": [],
+    "spine": "hand_wipe"
+  },
+  {
+    "id": "shoulder_roll",
+    "category": "ritual",
+    "tags": [
+      "intense",
+      "confident"
+    ],
+    "duration": 0.55,
+    "intensity": 0.25,
+    "weight": 1,
+    "markers": [],
+    "spine": "shoulder_roll"
+  },
+  {
+    "id": "celebrate_nod",
+    "category": "celebration",
+    "tags": [
+      "calm",
+      "subtle",
+      "focused"
+    ],
+    "duration": 0.65,
+    "intensity": 0.08,
+    "weight": 1,
+    "markers": [],
+    "spine": "celebrate_nod"
+  },
+  {
+    "id": "quiet_reset",
+    "category": "reaction",
+    "tags": [
+      "calm",
+      "subtle",
+      "focused",
+      "celebration"
+    ],
+    "duration": 0.7,
+    "intensity": 0.15,
+    "weight": 1,
+    "markers": [],
+    "spine": "quiet_reset"
+  },
+  {
+    "id": "one_point",
+    "category": "celebration",
+    "tags": [
+      "calm",
+      "confident"
+    ],
+    "duration": 0.8,
+    "intensity": 0.25,
+    "weight": 1,
+    "markers": [],
+    "spine": "one_point"
+  },
+  {
+    "id": "hold_follow",
+    "category": "celebration",
+    "tags": [
+      "airmail",
+      "focused",
+      "clutch"
+    ],
+    "duration": 0.95,
+    "intensity": 0.32,
+    "weight": 1,
+    "markers": [],
+    "spine": "hold_follow"
+  },
+  {
+    "id": "finger_guns",
+    "category": "celebration",
+    "tags": [
+      "humor",
+      "flashy",
+      "confident"
+    ],
+    "duration": 1.05,
+    "intensity": 0.65,
+    "weight": 1,
+    "markers": [],
+    "spine": "finger_guns"
+  },
+  {
+    "id": "double_fist",
+    "category": "celebration",
+    "tags": [
+      "intense",
+      "clutch"
+    ],
+    "duration": 1.1,
+    "intensity": 0.75,
+    "weight": 1,
+    "markers": [],
+    "spine": "double_fist"
+  },
+  {
+    "id": "jump_fist",
+    "category": "celebration",
+    "tags": [
+      "flashy",
+      "clutch",
+      "rare"
+    ],
+    "duration": 1.25,
+    "intensity": 0.9,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.64,
+        "name": "footstep"
+      },
+      {
+        "at": 0.64,
+        "name": "effect",
+        "value": "dust"
+      }
+    ],
+    "spine": "jump_fist"
+  },
+  {
+    "id": "head_shake",
+    "category": "reaction",
+    "tags": [
+      "focused",
+      "subtle",
+      "annoyed"
+    ],
+    "duration": 0.85,
+    "intensity": 0.23,
+    "weight": 1,
+    "markers": [],
+    "spine": "head_shake"
+  },
+  {
+    "id": "inspect_hand",
+    "category": "reaction",
+    "tags": [
+      "focused",
+      "annoyed"
+    ],
+    "duration": 0.85,
+    "intensity": 0.3,
+    "weight": 1,
+    "markers": [],
+    "spine": "inspect_hand"
+  },
+  {
+    "id": "stare_board",
+    "category": "reaction",
+    "tags": [
+      "calm",
+      "subtle",
+      "disbelief"
+    ],
+    "duration": 0.75,
+    "intensity": 0.12,
+    "weight": 1,
+    "markers": [],
+    "spine": "stare_board"
+  },
+  {
+    "id": "annoyed_wave",
+    "category": "reaction",
+    "tags": [
+      "intense",
+      "annoyed"
+    ],
+    "duration": 0.9,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [],
+    "spine": "annoyed_wave"
+  },
+  {
+    "id": "laugh_miss",
+    "category": "reaction",
+    "tags": [
+      "humor",
+      "casual"
+    ],
+    "duration": 0.9,
+    "intensity": 0.35,
+    "weight": 1,
+    "markers": [],
+    "spine": "laugh_miss"
+  },
+  {
+    "id": "hands_on_head",
+    "category": "reaction",
+    "tags": [
+      "disbelief",
+      "clutch"
+    ],
+    "duration": 1.15,
+    "intensity": 0.72,
+    "weight": 1,
+    "markers": [],
+    "spine": "hands_on_head"
+  },
+  {
+    "id": "hands_on_knees",
+    "category": "reaction",
+    "tags": [
+      "intense",
+      "clutch"
+    ],
+    "duration": 1.1,
+    "intensity": 0.58,
+    "weight": 1,
+    "markers": [],
+    "spine": "hands_on_knees"
+  },
+  {
+    "id": "slow_clap",
+    "category": "interaction",
+    "tags": [
+      "sarcastic",
+      "humor",
+      "reaction"
+    ],
+    "duration": 1.1,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "sound",
+        "value": "clap"
+      },
+      {
+        "at": 0.59,
+        "name": "sound",
+        "value": "clap"
+      }
+    ],
+    "spine": "slow_clap"
+  },
+  {
+    "id": "idle_focused",
+    "category": "idle",
+    "tags": [
+      "focused",
+      "calm"
+    ],
+    "duration": 4.8,
+    "intensity": 0.08,
+    "weight": 1,
+    "markers": [],
+    "spine": "idle_focused"
+  },
+  {
+    "id": "idle_confident",
+    "category": "idle",
+    "tags": [
+      "confident",
+      "casual"
+    ],
+    "duration": 4.4,
+    "intensity": 0.22,
+    "weight": 1,
+    "markers": [],
+    "spine": "idle_confident"
+  },
+  {
+    "id": "walk",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 1.25,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "walk"
+  },
+  {
+    "id": "jog",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.85,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "jog"
+  },
+  {
+    "id": "run",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.65,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "run"
+  },
+  {
+    "id": "sprint",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.55,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "sprint"
+  },
+  {
+    "id": "shuffle",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.7,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "shuffle"
+  },
+  {
+    "id": "sidestep",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.85,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "sidestep"
+  },
+  {
+    "id": "back_step",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.85,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "back_step"
+  },
+  {
+    "id": "reposition",
+    "category": "locomotion",
+    "tags": [
+      "locomotion"
+    ],
+    "duration": 0.7,
+    "intensity": 0.4,
+    "weight": 1,
+    "markers": [
+      {
+        "at": 0.34,
+        "name": "footstep"
+      },
+      {
+        "at": 0.7,
+        "name": "footstep"
+      }
+    ],
+    "spine": "reposition"
+  },
+  {
+    "id": "throw_standard",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "standard"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_standard"
+  },
+  {
+    "id": "throw_flat",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "flat"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_flat"
+  },
+  {
+    "id": "throw_airmail",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "airmail"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_airmail"
+  },
+  {
+    "id": "throw_roll",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "roll"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_roll"
+  },
+  {
+    "id": "throw_slide",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "slide"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_slide"
+  },
+  {
+    "id": "throw_blocker",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "blocker"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_blocker"
+  },
+  {
+    "id": "throw_push",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "push"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_push"
+  },
+  {
+    "id": "throw_cut",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "cut"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_cut"
+  },
+  {
+    "id": "throw_drag",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "drag"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_drag"
+  },
+  {
+    "id": "throw_collect",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "collect"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_collect"
+  },
+  {
+    "id": "throw_flop",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "flop"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_flop"
+  },
+  {
+    "id": "throw_soft",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "soft"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_soft"
+  },
+  {
+    "id": "throw_fast",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "fast"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_fast"
+  },
+  {
+    "id": "throw_desperation",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "desperation"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_desperation"
+  },
+  {
+    "id": "throw_trick",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "trick"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_trick"
+  },
+  {
+    "id": "throw_offBalance",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "offBalance"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_offBalance"
+  },
+  {
+    "id": "throw_clutch",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "clutch"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_clutch"
+  },
+  {
+    "id": "throw_casual",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "casual"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_casual"
+  },
+  {
+    "id": "throw_highArc",
+    "category": "throw",
+    "tags": [
+      "throw",
+      "highArc"
+    ],
+    "duration": 0.82,
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "at": 0.62,
+        "name": "release"
+      }
+    ],
+    "spine": "throw_highArc"
+  },
+  {
+    "id": "combat.stance",
+    "category": "idle",
+    "duration": 2.2,
+    "tags": [
+      "combat",
+      "stance"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": true
+  },
+  {
+    "id": "combat.jab",
+    "category": "interaction",
+    "duration": 0.48,
+    "tags": [
+      "combat",
+      "jab"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.cross",
+    "category": "interaction",
+    "duration": 0.72,
+    "tags": [
+      "combat",
+      "cross"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.uppercut",
+    "category": "interaction",
+    "duration": 0.8,
+    "tags": [
+      "combat",
+      "uppercut"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.finisher",
+    "category": "interaction",
+    "duration": 0.94,
+    "tags": [
+      "combat",
+      "finisher"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.special",
+    "category": "interaction",
+    "duration": 0.98,
+    "tags": [
+      "combat",
+      "special"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.grapple",
+    "category": "interaction",
+    "duration": 0.84,
+    "tags": [
+      "combat",
+      "grapple"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "hitboxOn",
+        "at": 0.32
+      },
+      {
+        "name": "hitboxOff",
+        "at": 0.54
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.72
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.block",
+    "category": "interaction",
+    "duration": 0.35,
+    "tags": [
+      "combat",
+      "block"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "combat.dodge",
+    "category": "locomotion",
+    "duration": 0.55,
+    "tags": [
+      "combat",
+      "dodge"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "cancelWindow",
+        "at": 0.85
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "combat.hit",
+    "category": "reaction",
+    "duration": 0.38,
+    "tags": [
+      "combat",
+      "hit"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "combat.heavyHit",
+    "category": "reaction",
+    "duration": 0.72,
+    "tags": [
+      "combat",
+      "heavyHit"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "combat.defeat",
+    "category": "reaction",
+    "duration": 1.2,
+    "tags": [
+      "combat",
+      "defeat"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "athletic.jump",
+    "category": "locomotion",
+    "duration": 0.8,
+    "tags": [
+      "athletic",
+      "jump"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "jump",
+        "at": 0.12
+      },
+      {
+        "name": "land",
+        "at": 0.95
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "running.stumble",
+    "category": "reaction",
+    "duration": 0.75,
+    "tags": [
+      "running",
+      "stumble"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "running.slide",
+    "category": "locomotion",
+    "duration": 0.62,
+    "tags": [
+      "running",
+      "slide"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [],
+    "loop": false
+  },
+  {
+    "id": "throw.precision",
+    "category": "throw",
+    "duration": 0.78,
+    "tags": [
+      "throw",
+      "precision"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "release",
+        "at": 0.44
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.92
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "throw.airmail.live",
+    "category": "throw",
+    "duration": 0.78,
+    "tags": [
+      "throw",
+      "airmail",
+      "live"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "release",
+        "at": 0.44
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.92
+      }
+    ],
+    "loop": false
+  },
+  {
+    "id": "throw.roll.live",
+    "category": "throw",
+    "duration": 0.78,
+    "tags": [
+      "throw",
+      "roll",
+      "live"
+    ],
+    "weight": 1,
+    "intensity": 0.5,
+    "markers": [
+      {
+        "name": "release",
+        "at": 0.44
+      },
+      {
+        "name": "cancelWindow",
+        "at": 0.92
+      }
+    ],
+    "loop": false
+  }
+]

@@ -1,0 +1,472 @@
+{
+  "reviewedAt": "2026-09-13T17:21:30.024289+00:00",
+  "boundary": "opt-in Arena Lab",
+  "architectureImplemented": true,
+  "allSportsVisualAcceptance": false,
+  "productionInstalled": false,
+  "editorRoundTripVerified": false,
+  "fullRegression": {
+    "started": "2026-09-13T16:27:02.290Z",
+    "completed": "2026-09-13T16:34:35.751Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 12.334
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 27.956
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 376.619
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 20.396
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 16.15
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "followup": {
+    "pureChecks": 169290,
+    "v2BrowserPassed": 9,
+    "typecheck": "passed",
+    "focusedLint": "passed",
+    "reason": "contact reach, stale landing locks, reaction/cancel-window edge cases, timed retarget proposals, paused rendering",
+    "browserLog": "work/qa/human-motion/contact-final-browser.log"
+  },
+  "humanReference": {
+    "frames": 125,
+    "detected": 125,
+    "duration": 5.0,
+    "warnings": [
+      "Monocular estimates: perspective, occlusion and camera motion require human review.",
+      "Pose hand landmarks are coarse; no finger articulation inferred.",
+      "Hip-centered normalized motion removes camera translation; raw image/root coordinates retained."
+    ],
+    "source": {
+      "file": "human-reference.mp4",
+      "sha256": "e06e2ec9a2c1e6e15de0de1bf68740b3dd5f216adb416a9015865d0c4cd164ca",
+      "url": "https://mediapipe.dev/images/mobile/pose_world_landmarks.mp4",
+      "modelSHA256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a",
+      "mediapipe": "0.10.32",
+      "opencv": "4.13.0",
+      "fps": 25.16891891891892,
+      "width": 640,
+      "height": 360,
+      "crop": null,
+      "start": 0,
+      "normalization": "fixed median torso length in aspect-correct image pixels",
+      "torsoPixels": 88.20646060297139,
+      "worldUnits": "estimated meters, hip-centered, not calibrated motion capture",
+      "timestampFallbacks": 0
+    }
+  },
+  "performance": {
+    "mode": "realtime",
+    "capacity": 240,
+    "realtime": {
+      "frames": 693,
+      "windowFrames": 240,
+      "frameTiming": {
+        "samples": 240,
+        "meanMs": 17.634,
+        "p95Ms": 18.2,
+        "worstMs": 18.8
+      },
+      "updateWork": {
+        "samples": 240,
+        "meanMs": 3.819,
+        "p95Ms": 5.6,
+        "worstMs": 7.1
+      },
+      "renderWork": {
+        "samples": 240,
+        "meanMs": 1.681,
+        "p95Ms": 2.1,
+        "worstMs": 3.8
+      },
+      "slowFrames": 5,
+      "fps": 56.709
+    },
+    "manual": {
+      "frames": 0,
+      "windowFrames": 0,
+      "frameTiming": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "updateWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "renderWork": {
+        "samples": 0,
+        "meanMs": 0,
+        "p95Ms": 0,
+        "worstMs": 0
+      },
+      "slowFrames": 0,
+      "fps": null
+    },
+    "drawCalls": 3,
+    "counters": {
+      "scenes": 1,
+      "objects": 51,
+      "visibleObjects": 28,
+      "meshes": 32,
+      "meshVertices": 11728,
+      "meshTriangles": 20551,
+      "textures": 18,
+      "textureSources": 18,
+      "textureMBEstimate": 31.706
+    },
+    "notes": [
+      "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+      "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+      "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+      "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+    ]
+  },
+  "measurements": {
+    "running": {
+      "maxFeet": {
+        "dan": 0.9641312899669382,
+        "doug": 0.9852354543757784
+      },
+      "maxStep": 15.999730986476724,
+      "handError": 0,
+      "clockDrift": 0,
+      "airborne": true,
+      "actors": [
+        {
+          "id": "dan",
+          "phase": "airborne",
+          "releaseCount": 0,
+          "health": 100,
+          "nativeStarts": 6,
+          "nativeTicks": 481
+        },
+        {
+          "id": "doug",
+          "phase": "load",
+          "releaseCount": 0,
+          "health": 100,
+          "nativeStarts": 6,
+          "nativeTicks": 481
+        }
+      ],
+      "recordings": [
+        {
+          "rate": 1,
+          "video": "work/qa/human-motion/contact-motion/running-1x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.5,
+          "video": "work/qa/human-motion/contact-motion/running-0.5x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.25,
+          "video": "work/qa/human-motion/contact-motion/running-0.25x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        }
+      ]
+    },
+    "basketball": {
+      "maxFeet": {
+        "dan": 2.2914314707516465e-13,
+        "doug": 1.2710574864626038e-13
+      },
+      "maxStep": 22.41504973344922,
+      "handError": 6.946199339191074,
+      "clockDrift": 0,
+      "airborne": true,
+      "actors": [
+        {
+          "id": "dan",
+          "phase": "settle",
+          "releaseCount": 1,
+          "health": 100,
+          "nativeStarts": 3,
+          "nativeTicks": 481
+        },
+        {
+          "id": "doug",
+          "phase": "settle",
+          "releaseCount": 1,
+          "health": 100,
+          "nativeStarts": 3,
+          "nativeTicks": 481
+        }
+      ],
+      "recordings": [
+        {
+          "rate": 1,
+          "video": "work/qa/human-motion/final-motion/basketball-1x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.5,
+          "video": "work/qa/human-motion/final-motion/basketball-0.5x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.25,
+          "video": "work/qa/human-motion/final-motion/basketball-0.25x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        }
+      ]
+    },
+    "cornhole": {
+      "maxFeet": {
+        "dan": 2.2914314707516465e-13,
+        "doug": 1.2710574864626038e-13
+      },
+      "maxStep": 5.99558071305261,
+      "handError": 0,
+      "clockDrift": 0,
+      "airborne": false,
+      "actors": [
+        {
+          "id": "dan",
+          "phase": "settle",
+          "releaseCount": 1,
+          "health": 100,
+          "nativeStarts": 3,
+          "nativeTicks": 481
+        },
+        {
+          "id": "doug",
+          "phase": "settle",
+          "releaseCount": 1,
+          "health": 100,
+          "nativeStarts": 3,
+          "nativeTicks": 481
+        }
+      ],
+      "recordings": [
+        {
+          "rate": 1,
+          "video": "work/qa/human-motion/final-motion/cornhole-1x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.5,
+          "video": "work/qa/human-motion/final-motion/cornhole-0.5x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.25,
+          "video": "work/qa/human-motion/final-motion/cornhole-0.25x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        }
+      ]
+    },
+    "fighting": {
+      "maxFeet": {
+        "dan": 3.1213543722522665,
+        "doug": 1.6077746776921858e-13
+      },
+      "maxStep": 10.774180639512934,
+      "handError": 0,
+      "clockDrift": 0,
+      "airborne": false,
+      "actors": [
+        {
+          "id": "dan",
+          "phase": "contact",
+          "releaseCount": 0,
+          "health": 100,
+          "nativeStarts": 9,
+          "nativeTicks": 481
+        },
+        {
+          "id": "doug",
+          "phase": "recovery",
+          "releaseCount": 0,
+          "health": 56,
+          "nativeStarts": 11,
+          "nativeTicks": 481
+        }
+      ],
+      "recordings": [
+        {
+          "rate": 1,
+          "video": "work/qa/human-motion/contact-motion/fighting-1x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.5,
+          "video": "work/qa/human-motion/contact-motion/fighting-0.5x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        },
+        {
+          "rate": 0.25,
+          "video": "work/qa/human-motion/contact-motion/fighting-0.25x.webm",
+          "decodedFrames": 8,
+          "errors": []
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "file": "lib/arena/engine/movement/CharacterMotor.ts",
+      "sha256": "b97b03e06178fe0a26803ad63cce98d86712ef10cf4252c54c771c36ce934e53"
+    },
+    {
+      "file": "lib/arena/engine/movement/FootLock.ts",
+      "sha256": "d9f7ed84cdc3bab2f2abc4305ad0491d209fec6e2f980979b3b80dd666bd3081"
+    },
+    {
+      "file": "lib/arena/engine/motion/AnimationGraph.ts",
+      "sha256": "d5ee792251e049e637875a92a2b295627bac90db476f8fe3164256103b17f39d"
+    },
+    {
+      "file": "lib/arena/engine/motion/HumanSkeleton.ts",
+      "sha256": "10708baaadf1e79b838a9102d8d070d0b83a23a4df0265f12ba214cf8d1346f3"
+    },
+    {
+      "file": "lib/arena/engine/motion/MotionAnalyzer.ts",
+      "sha256": "8dd2f64f15de81c2cfeeb42e6a69cc83f9c07bfa4b8f4b40ba2599d30f1f08d4"
+    },
+    {
+      "file": "lib/arena/engine/motion/MotionPlanner.ts",
+      "sha256": "da9318e917198aa6daeeb8cb685c502f0a78fa9e766a674fce7a932ade9a7a5a"
+    },
+    {
+      "file": "lib/arena/engine/motion/MotionTypes.ts",
+      "sha256": "14c4c9a7a2d982b84f9cbe73e85cc24a55a09153b58b19e70125d74d3ed4ea31"
+    },
+    {
+      "file": "lib/arena/engine/equipment/AttachmentManager.ts",
+      "sha256": "c878c125cf6337805fda86032dd63625316707b421ae5a28611276fecc1383e6"
+    },
+    {
+      "file": "lib/arena/engine/motion-tools/ReferenceMotion.ts",
+      "sha256": "9d39e1286d20a420a35a87c9e4c98af92b7f668bb9e2c35767b55e672e47b19e"
+    },
+    {
+      "file": "lab/human-motion/authoring.ts",
+      "sha256": "26bb74e7d1729b18976005efa0327b4e464ba88b9fb4426ffa4e4f704ff075ff"
+    },
+    {
+      "file": "lab/human-motion/index.html",
+      "sha256": "e4349fcfc3ca16a845a478a007af90f7dc5894566a60efcd3f3d3ad74f274f9f"
+    },
+    {
+      "file": "lab/human-motion/main.ts",
+      "sha256": "babf2214a68bec85083cac7b44783ad4170c37574a8b949e8cf7506f32396411"
+    },
+    {
+      "file": "lab/human-motion/MotionActor.ts",
+      "sha256": "212b27d45651999b9e1e27f87d2afa391e6e3e6c7e8bbf94d73dcac4513f489d"
+    },
+    {
+      "file": "lab/human-motion/MotionScene.ts",
+      "sha256": "a1f96a7c94a6cb9a9901a27faeedc459b68c42f5539540005845daeee0d7f62a"
+    },
+    {
+      "file": "lab/human-motion/MotionSession.ts",
+      "sha256": "6473d286c39d971c015e123fb8bdd514f7f86949c02d6ee000aa04bfc45414e8"
+    },
+    {
+      "file": "lab/human-motion/NativeAnimator.ts",
+      "sha256": "a747780bc95fb0d931c9d1eefe5740e2810339fecf520dd9a552b56b550a20a6"
+    },
+    {
+      "file": "lab/human-motion/authoring/basketball.ts",
+      "sha256": "2cdf4f45494ef92ce5a6f1f4520530c1d8ae850621904a238ed31171866e6ea9"
+    },
+    {
+      "file": "lab/human-motion/authoring/builder.ts",
+      "sha256": "749c07b650158cd6aed0250f17069a98d923960e17f087a3412d68bc2b6fd89e"
+    },
+    {
+      "file": "lab/human-motion/authoring/combat.ts",
+      "sha256": "63436e34cc4928aa733edb908b1a9123278a59810e46b02860ad825fb6a91eaf"
+    },
+    {
+      "file": "lab/human-motion/authoring/locomotion.ts",
+      "sha256": "59e35a30a18610f4877dc93bcf6a9821dec9f763d796ba47401368dc0ec7a9b2"
+    },
+    {
+      "file": "lab/human-motion/events/CombatProof.ts",
+      "sha256": "0510f5f07da38a960b4d6f1ffa03e1f5ca0cc8749c81dca0874cffb48e143e3d"
+    },
+    {
+      "file": "lab/human-motion/events/contracts.ts",
+      "sha256": "4e5887a73cf744fac9a2f1307a581e86593f6cabf1358b74313e66e6b8395b7a"
+    },
+    {
+      "file": "lab/human-motion/events/PrecisionProof.ts",
+      "sha256": "9eefa3c02e203da89d552ca29aac485dd13e45507ea3f0532b58c80d9834f96e"
+    },
+    {
+      "file": "lab/human-motion/events/RunningProof.ts",
+      "sha256": "c3e1a9922b6e15ffcbd011d949a7ef5084d6d671fb437333077e155b5c9406e8"
+    },
+    {
+      "file": "scripts/motion-reference/extract.py",
+      "sha256": "c0ca941dc1b05f258a9494d85cc7d8b39e6af5544cd9d041288db1c8242d4a3c"
+    },
+    {
+      "file": "scripts/motion-reference/review_capture.py",
+      "sha256": "744b73c21cb227e4ec41bd1b841af2b28f43cbcdf13bc76a812cc629d3420dcf"
+    },
+    {
+      "file": "motion-reference/README.md",
+      "sha256": "1cdd833e455a78997d607efaf65370a3fc9e8ce0d30f568f348ad2ba89d1ad32"
+    },
+    {
+      "file": "motion-reference/requirements.txt",
+      "sha256": "ec3eee98342ff227edf8f93a2117834040388ee7113fb306f88ea3618c8073e0"
+    },
+    {
+      "file": "motion-reference/locomotion/pose-demo.json",
+      "sha256": "1b8798565f6c98ca1377ed550a1f9b2a00652ad23e7407da19a4c3c5c9ed5c0d"
+    }
+  ],
+  "limitations": [
+    "Athletic silhouette and sole/hand articulation still require art-direction review.",
+    "Combat lacks opposite-facing and closed-hand artwork; Dan contact error reaches 3.12px.",
+    "Retarget output is an intermediate proposal requiring native authoring and review.",
+    "Physical gamepad hardware not tested.",
+    "No guaranteed 60fps or calibrated biomechanics."
+  ],
+  "lastVisualAdjustment": "Character overlap now follows ground depth; final-views screenshots rechecked after recordings. Motion curves and timing unchanged by this draw-order correction."
+}

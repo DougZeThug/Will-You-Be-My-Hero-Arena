@@ -1,0 +1,251 @@
+{
+  "capturedAt": "2026-09-12T21:28:24.759Z",
+  "scenario": "cornhole-recorded",
+  "seed": "arena-lab:cornhole-recorded:v1",
+  "mode": "Internal recorded Lab",
+  "assets": {
+    "dan": {
+      "source": "lab/loongbones/assets/cornhole-side-v3/dan_source.png",
+      "sourceSHA256": "233da1a99c31f23f2e9d95c917fae17669d9a17a1f259a249dacf7a6c6fb5123",
+      "limbSource": "lab/loongbones/assets/cornhole-side-v3/dan_limbs-source.png",
+      "limbSourceSHA256": "0dc0596214607e7e1e9a2c5e51ea8ff016631c4b73233f4758e5933fa9b9742d",
+      "atlasAssembly": "Body from original sheet x<840; isolated limbs from wrist-clean generated edit x>=840. Edited body discarded.",
+      "assetsSha256": {
+        "dan_ske.json": "09c8a9b814cdeea26329ae6b6d524e01a9a7dacb932f913dce16ad81b30f2894",
+        "dan_tex.json": "464c0bc1cdc7235e3ba7a0c780baee27a383a937c791e1be7b6c0e9d1a1f8eb7",
+        "dan_tex.png": "3ab18b381a7f534c8b4971910952ea71a649a6f60d3e1982f61e5aaa579953fb"
+      },
+      "motionRevision": 3,
+      "clips": {
+        "cornhole_throw_flat_R_dan": {
+          "duration": 2.033333333333333,
+          "release": 0.8166666666666667
+        },
+        "cornhole_throw_slide_R_dan": {
+          "duration": 2.033333333333333,
+          "release": 0.8166666666666667
+        },
+        "cornhole_throw_airmail_R_dan": {
+          "duration": 2.15,
+          "release": 0.9333333333333333
+        },
+        "cornhole_throw_roll_R_dan": {
+          "duration": 2.033333333333333,
+          "release": 0.8166666666666667
+        },
+        "cornhole_throw_blocker_R_dan": {
+          "duration": 2.0833333333333335,
+          "release": 0.8666666666666667
+        }
+      },
+      "editorExportReceived": false,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false,
+      "sourceArtwork": "Built-in image generation; new near-profile body, continuous near arm, three authored hands",
+      "sourceAlpha": false,
+      "atlasAlpha": "Derived using existing chroma-key preparation"
+    },
+    "doug": {
+      "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+      "sourceSHA256": "a9ec98a336dc589e535f97645f4f49e81216cba9ca437b87a10faf801be6b5c8",
+      "limbSource": "lab/loongbones/assets/cornhole-side-v3/doug_limbs-source.png",
+      "limbSourceSHA256": "98b5c2b32e6ba19e8e52f355a519805d539f0798534d5c72e1a0994525c107cd",
+      "atlasAssembly": "Body from original sheet x<840; isolated limbs from wrist-clean generated edit x>=840. Edited body discarded.",
+      "assetsSha256": {
+        "doug_ske.json": "a32b96d6a92160705465a56b806eb361bee61be46f183b753a1d35f899a61e71",
+        "doug_tex.json": "0450a8a0e8c2427e703c7f0d9a7d902b5f364c68e3a9b95e0d3b07ff27ce3b55",
+        "doug_tex.png": "c558fcd634ea998d4c9c97a27135b0003239a9f9f0de1bdae551de69675e5f4d"
+      },
+      "motionRevision": 3,
+      "clips": {
+        "cornhole_throw_flat_R_doug": {
+          "duration": 1.8666666666666667,
+          "release": 0.7166666666666667
+        },
+        "cornhole_throw_slide_R_doug": {
+          "duration": 1.8666666666666667,
+          "release": 0.7166666666666667
+        },
+        "cornhole_throw_airmail_R_doug": {
+          "duration": 1.9833333333333334,
+          "release": 0.8333333333333334
+        },
+        "cornhole_throw_roll_R_doug": {
+          "duration": 1.8666666666666667,
+          "release": 0.7166666666666667
+        },
+        "cornhole_throw_blocker_R_doug": {
+          "duration": 1.9166666666666667,
+          "release": 0.7666666666666667
+        }
+      },
+      "editorExportReceived": false,
+      "editorRoundTripVerified": false,
+      "productionInstalled": false,
+      "sourceArtwork": "Built-in image generation; new near-profile body, continuous near arm, three authored hands",
+      "sourceAlpha": false,
+      "atlasAlpha": "Derived using existing chroma-key preparation"
+    }
+  },
+  "regression": {
+    "started": "2026-09-12T21:05:09.083Z",
+    "completed": "2026-09-12T21:10:34.585Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 10.952
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 27.955
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 255.703
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 15.423
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 15.465
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "fullBrowserSuite": {
+    "passed": 58,
+    "skipped": 1,
+    "skip": "Opt-in approved pixel baselines; deliberately not replaced for new artwork"
+  },
+  "postRegressionRefinement": {
+    "change": "Forearm-following wrist with bounded palm alignment through release; final authored assets rebuilt and repackaged",
+    "typecheck": true,
+    "browserTestsPassed": 11,
+    "suites": [
+      "cornhole-motion",
+      "cornhole-side",
+      "dan-main-lab",
+      "doug-weighted"
+    ]
+  },
+  "recordings": [
+    {
+      "character": "dan",
+      "video": "work/qa/cornhole-side-v3/dan.webm",
+      "decodedFrames": 15,
+      "largestSeekErrorSeconds": 0.04486666671434847,
+      "errors": []
+    },
+    {
+      "character": "doug",
+      "video": "work/qa/cornhole-side-v3/doug.webm",
+      "decodedFrames": 15,
+      "largestSeekErrorSeconds": 0.04596666667858784,
+      "errors": []
+    }
+  ],
+  "matchRecording": {
+    "video": "work/qa/cornhole-side-v3/match/cornhole.webm",
+    "decodedFrames": 15,
+    "largestSeekErrorSeconds": 0.027000000000000135,
+    "errors": [],
+    "performance": {
+      "mode": "manual",
+      "capacity": 240,
+      "realtime": {
+        "frames": 533,
+        "windowFrames": 240,
+        "frameTiming": {
+          "samples": 240,
+          "meanMs": 18.047,
+          "p95Ms": 18.4,
+          "worstMs": 76.9
+        },
+        "updateWork": {
+          "samples": 240,
+          "meanMs": 0.902,
+          "p95Ms": 1.7,
+          "worstMs": 4
+        },
+        "renderWork": {
+          "samples": 240,
+          "meanMs": 2.043,
+          "p95Ms": 2.5,
+          "worstMs": 67.6
+        },
+        "slowFrames": 2,
+        "fps": 55.411
+      },
+      "manual": {
+        "frames": 7,
+        "windowFrames": 7,
+        "frameTiming": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "updateWork": {
+          "samples": 7,
+          "meanMs": 3.071,
+          "p95Ms": 9.2,
+          "worstMs": 9.2
+        },
+        "renderWork": {
+          "samples": 7,
+          "meanMs": 8.329,
+          "p95Ms": 39.9,
+          "worstMs": 39.9
+        },
+        "slowFrames": 0,
+        "fps": null
+      },
+      "drawCalls": 7,
+      "counters": {
+        "scenes": 1,
+        "objects": 52,
+        "visibleObjects": 31,
+        "meshes": 24,
+        "meshVertices": 8960,
+        "meshTriangles": 16002,
+        "textures": 23,
+        "textureSources": 23,
+        "textureMBEstimate": 72.664
+      },
+      "notes": [
+        "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+        "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+        "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+        "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+      ]
+    }
+  },
+  "visualReview": [
+    "Neutral anatomy and foot orientation",
+    "Skeleton overlay",
+    "Black silhouette and mirror",
+    "Continuous side-view flat/airmail motion",
+    "Neighboring decoded release and recovery frames",
+    "Main Arena Dan and Doug throws at gameplay scale"
+  ],
+  "limitations": [
+    "Three authored hand poses, not individual finger bones",
+    "New LoongBones editor round trip pending",
+    "Production and other sports remain unchanged",
+    "Video timestamps are capture-clock samples; exact marker checks use deterministic Lab state"
+  ]
+}

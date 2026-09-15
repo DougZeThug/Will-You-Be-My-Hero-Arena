@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arena Lab · LoongBones compatibility proof</title>
+    <style>
+      body {
+        margin: 0;
+        background: #eee8d6;
+        color: #182219;
+        font: 16px system-ui;
+      }
+      main {
+        max-width: 1200px;
+        margin: 25px auto;
+        padding: 0 20px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      h1 {
+        font-size: 29px;
+      }
+      p {
+        line-height: 1.6;
+      }
+      a {
+        color: #195d69;
+      }
+      button,
+      select {
+        font: inherit;
+        padding: 10px 15px;
+        background: #faf6e9;
+        color: #182219;
+        border: 1px solid #51584b;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #ffda51;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      #stage {
+        aspect-ratio: 1200/680;
+        width: 100%;
+        border: 2px solid #263226;
+      }
+      #status {
+        display: block;
+        margin: 12px 0;
+        font-weight: 600;
+      }
+      pre {
+        white-space: pre-wrap;
+        max-height: 260px;
+        overflow: auto;
+        font-size: 13px;
+        background: #17231d;
+        color: #f6eac4;
+        padding: 15px;
+      }
+      small {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>LoongBones compatibility proof</h1>
+        <a href="/">← Arena Lab</a>
+      </header>
+      <p>
+        Exact Arena runtime: <b>Phaser 3.90.0</b>. Official DragonBones core
+        with an experimental native Phaser mesh adapter. This is an engineering
+        test; Dan and Doug’s game artwork and animation are unchanged.
+      </p>
+      <small id="provenance"
+        >Left: unmodified official DragonBones sample export. Right:
+        Arena-authored weighted mesh fixture. Use the button below to load the
+        user's verified LoongBones 1.2.3 mesh-example export. Dan's rig remains
+        separate.</small
+      >
+      <p>
+        <button id="editor-export">Load verified editor export</button
+        ><br /><br />
+        <label
+          >Test a local export:
+          <input
+            id="export-files"
+            type="file"
+            multiple
+            accept=".json,.png" /></label
+        ><br /><small
+          >Choose skeleton JSON + atlas JSON + PNG together. DragonBones
+          5.5/5.6, one atlas page. Files stay in this browser; editor origin is
+          not inferred.</small
+        >
+      </p>
+      <div class="controls">
+        <button id="play">Play</button><button id="pause">Pause</button
+        ><button id="step">+1 frame</button><button id="reset">Reset</button
+        ><label
+          >Character animation
+          <select id="clip"></select></label
+        ><button id="throw">Test hand release</button
+        ><button id="deform">Test mesh deformation</button
+        ><button id="mirror">Mirror</button
+        ><button id="bones">Toggle bones</button>
+      </div>
+      <output id="status">Loading pinned runtime…</output>
+      <div id="stage"></div>
+      <pre id="state"></pre>
+      <script type="module" src="./main.ts"></script>
+    </main>
+  </body>
+</html>

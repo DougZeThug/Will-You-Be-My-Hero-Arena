@@ -1,0 +1,307 @@
+/* Arena presentation tokens: used by the player application and local workshops. */
+:root {
+  --arena-ink: #111b20;
+  --arena-cream: #ffedc8;
+  --arena-gold: #e7b75b;
+  --arena-teal: #398f9a;
+  --arena-edge: #647274;
+  --arena-radius: 6px;
+  --arena-gap: 12px;
+  --arena-heading: Impact, 'Arial Narrow', sans-serif;
+}
+.club-shell {
+  max-width: 1680px;
+  padding: 0 28px;
+}
+.club-header {
+  height: 94px;
+  border-bottom-color: #26353b;
+}
+.club-header .brand > strong {
+  font-size: 47px;
+  letter-spacing: 0.3px;
+}
+.club-header nav button.active {
+  transform: none;
+  border-radius: 4px;
+  box-shadow: 0 3px 0 var(--arena-gold);
+  background: var(--arena-ink);
+}
+.lobby-title {
+  padding: 21px 0 17px;
+}
+.lobby-title h1 {
+  font-size: 46px;
+}
+.event-dock {
+  padding: 7px;
+  border-radius: 6px;
+  background: var(--arena-ink);
+  color: var(--arena-cream);
+  gap: 15px;
+}
+.dock-label {
+  padding-left: 9px;
+  color: #a7b4b4;
+}
+.event-buttons {
+  gap: 5px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.event-buttons button {
+  border-color: #556164;
+  border-radius: 3px;
+  min-height: 43px;
+  flex: 1;
+  justify-content: center;
+  color: #c2cecc;
+  white-space: nowrap;
+}
+.event-buttons button.selected {
+  background: var(--arena-gold);
+  color: var(--arena-ink);
+  box-shadow: none;
+  transform: none;
+  border-color: var(--arena-gold);
+}
+.arena-layout {
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: 18px;
+}
+.club-stage,
+.club-stage.in-contest {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 16/9;
+  border: 2px solid var(--arena-ink);
+  border-radius: 6px;
+  box-shadow: 0 5px 16px #111b2026;
+  background: var(--arena-ink);
+}
+.club-stage .pixi-host,
+.club-stage.in-contest .pixi-host {
+  inset: 0;
+}
+.club-stage .stage-top,
+.club-stage.in-contest .stage-top {
+  top: auto;
+  bottom: 40px;
+  left: 12px;
+  right: 12px;
+  justify-content: flex-end;
+}
+.stage-top > span {
+  display: none;
+}
+.stage-controls button {
+  border-color: #aaa892;
+  border-radius: 3px;
+  width: 31px;
+  height: 31px;
+  background: #111b20d9;
+}
+.stage-bottom {
+  background: #111b20ed;
+  padding: 7px 13px;
+  font-size: 9px;
+}
+/* The accessible DOM scores remain; the shared Phaser HUD is the sole visual score. */
+.club-stage .scoreboard,
+.club-stage .stage-event-label,
+.live-stage-wrap .live-score-strip,
+.live-stage-wrap .shot-meter {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  left: 0 !important;
+  top: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.competitor-station {
+  background: #eee0b8;
+  border-radius: 6px;
+  border: 1px solid #5b594b;
+  box-shadow: 0 4px 10px #111b2018;
+  padding: 16px;
+}
+.station-heading > span:first-child {
+  font-size: 22px;
+}
+.duel-cards {
+  gap: 9px;
+  padding: 18px 0 12px;
+}
+.duel-cards strong {
+  font-size: 24px;
+}
+.live-copy {
+  font-size: 14px;
+  min-height: 58px;
+}
+.watch-desk {
+  border-color: #bdb28f;
+}
+.playback-controls button {
+  border-radius: 4px;
+  width: 39px;
+  height: 39px;
+}
+.playback-controls button:hover {
+  background: var(--arena-gold);
+}
+.entry-stamp {
+  line-height: 1.5;
+}
+.live-stage-wrap {
+  border: 2px solid var(--arena-ink);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 5px 16px #111b2026;
+}
+.live-caption {
+  background: var(--arena-ink);
+  color: var(--arena-cream);
+  border-radius: 0 0 5px 5px;
+  padding: 12px 16px;
+}
+.live-event-tabs button {
+  border-radius: 4px;
+}
+.live-state-overlay {
+  background: #111b20bc;
+}
+.motion-workshop {
+  background: #111b20;
+  color: var(--arena-cream);
+}
+.motion-workshop header {
+  padding: 10px 20px;
+  gap: 9px;
+  border-bottom: 1px solid #35434a;
+}
+.motion-workshop header:first-of-type {
+  background: #0d161b;
+  min-height: 50px;
+}
+.motion-workshop header:first-of-type strong {
+  font-family: var(--arena-heading);
+  font-size: 22px;
+  letter-spacing: 0.8px;
+}
+.motion-workshop button,
+.motion-workshop select,
+.motion-workshop input {
+  background: #1d2c32;
+  border: 1px solid #506166;
+  border-radius: 4px;
+  color: var(--arena-cream);
+}
+.motion-workshop button:hover {
+  background: #34494e;
+}
+.motion-workshop #play,
+.motion-workshop #load-take {
+  background: var(--arena-gold);
+  border-color: var(--arena-gold);
+  color: var(--arena-ink);
+  font-weight: 700;
+}
+.motion-workshop #stage {
+  border: 1px solid #5d655f;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 18px auto 0;
+  box-shadow: 0 7px 26px #0004;
+}
+.motion-workshop section {
+  padding: 10px 20px;
+}
+.motion-workshop label {
+  font-size: 12px;
+  color: #c2ccc5;
+}
+.motion-workshop a {
+  color: var(--arena-gold);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .event-buttons button,
+  .playback-controls button,
+  .motion-workshop button {
+    transition:
+      background-color 0.14s ease,
+      border-color 0.14s ease;
+  }
+}
+@media (max-width: 1000px) {
+  .club-shell {
+    padding: 0 16px;
+  }
+  .arena-layout {
+    grid-template-columns: minmax(0, 1fr) 224px;
+  }
+  .event-buttons button {
+    padding: 0 10px;
+  }
+  .dock-label {
+    display: none;
+  }
+}
+@media (max-width: 720px) {
+  .club-shell {
+    padding: 0 10px;
+  }
+  .club-header {
+    height: auto;
+    min-height: 82px;
+  }
+  .lobby-title h1 {
+    font-size: 34px;
+  }
+  .arena-layout {
+    grid-template-columns: 1fr;
+  }
+  .event-dock {
+    overflow: visible;
+  }
+  .event-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .event-buttons button {
+    font-size: 12px;
+  }
+  .club-stage,
+  .club-stage.in-contest {
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+  .competitor-station {
+    margin-top: 5px;
+  }
+  .motion-workshop #stage {
+    border-radius: 0;
+  }
+  .motion-workshop header {
+    padding: 8px;
+  }
+  .motion-workshop header:first-of-type strong {
+    font-size: 18px;
+  }
+}
+@media (max-width: 720px) {
+  .club-header .brand > strong {
+    font-size: 32px;
+    letter-spacing: -1px;
+  }
+  .club-header {
+    gap: 8px;
+  }
+  .header-tools {
+    flex-shrink: 0;
+  }
+}

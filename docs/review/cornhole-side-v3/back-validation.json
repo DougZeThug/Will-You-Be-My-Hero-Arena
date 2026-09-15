@@ -1,0 +1,1037 @@
+{
+  "date": "2026-09-13",
+  "scope": "Side-v3 cornhole Lab, attachment revision 4",
+  "rootCause": "Throwing-arm weights extended below the cuff through the torso back to source row 525, removing the back silhouette during forward swing.",
+  "fix": "Separate torso fabric from back/front sleeve; chest/spine weighted hidden fabric registered to source rear silhouette; remove duplicate stationary cuff ink.",
+  "preservation": [
+    {
+      "character": "dan",
+      "sourceUnchanged": true,
+      "limbsUnchanged": true,
+      "textureUnchanged": true,
+      "skeletonUnchanged": true,
+      "animationsUnchanged": true,
+      "meshCount": 8
+    },
+    {
+      "character": "doug",
+      "sourceUnchanged": true,
+      "limbsUnchanged": true,
+      "textureUnchanged": true,
+      "skeletonUnchanged": true,
+      "animationsUnchanged": true,
+      "meshCount": 8
+    }
+  ],
+  "pairedCoverage": [
+    {
+      "character": "dan",
+      "phase": 0,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "dan",
+      "phase": 0.45,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "dan",
+      "phase": 0.82,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "dan",
+      "phase": 1.08,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "dan",
+      "phase": 1.7,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "doug",
+      "phase": 0,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "doug",
+      "phase": 0.45,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "doug",
+      "phase": 0.82,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 3
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 3
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "doug",
+      "phase": 1.08,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 8
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 9
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 1
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    },
+    {
+      "character": "doug",
+      "phase": 1.7,
+      "before": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ],
+      "after": [
+        {
+          "source": [
+            414,
+            340
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            415,
+            365
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            419,
+            397
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            429,
+            425
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            452
+          ],
+          "backgroundPixels": 0
+        },
+        {
+          "source": [
+            442,
+            478
+          ],
+          "backgroundPixels": 0
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "torsoPoses": 50,
+    "torsoProbes": 300,
+    "sleevePoses": 50,
+    "sleeveInteriorProbes": 200,
+    "pureChecks": 169248,
+    "initialAggregate": {
+      "started": "2026-09-13T12:40:36.096Z",
+      "completed": "2026-09-13T12:46:51.564Z",
+      "passed": false,
+      "checks": [
+        {
+          "name": "typecheck",
+          "passed": false,
+          "exitCode": 2,
+          "seconds": 5.153
+        },
+        {
+          "name": "simulation-and-animation",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 24.474
+        },
+        {
+          "name": "browser",
+          "passed": false,
+          "exitCode": 1,
+          "seconds": 314.979
+        },
+        {
+          "name": "production-build",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 15.754
+        },
+        {
+          "name": "production-isolation",
+          "passed": true,
+          "exitCode": 0,
+          "seconds": 15.103
+        }
+      ],
+      "deployment": "Not performed",
+      "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+    },
+    "corrections": [
+      {
+        "check": "typecheck",
+        "cause": "New test parsed Response.json as unknown without its export type",
+        "fix": "Explicit ClothExport type",
+        "standalonePassed": true
+      },
+      {
+        "check": "main Lab integration",
+        "cause": "Stale six-mesh assertion after intentional eight-material-layer split",
+        "fix": "Expect eight meshes",
+        "rerunPassed": 2
+      }
+    ],
+    "requiredChecksPassingAfterCorrections": true,
+    "browserDistinctPassingAfterRerun": 66,
+    "optionalVisualBaselineSkipped": 1,
+    "fullAggregateRepeated": false
+  },
+  "review": {
+    "view": "1280x760 inspection canvas in 1440x1100 browser viewport",
+    "styles": [
+      "flat",
+      "slide",
+      "blocker",
+      "roll",
+      "airmail"
+    ],
+    "phases": [
+      "rest",
+      "backswing",
+      "release",
+      "follow",
+      "recovery"
+    ],
+    "isolatedRecordings": [
+      "work/qa/shirt-back/motion/dan.webm",
+      "work/qa/shirt-back/motion/doug.webm"
+    ],
+    "courtRecording": "work/qa/shirt-back/match/cornhole.webm",
+    "note": "Decoded frame review plus exact-clock stills. Real-time capture ran alongside tests and is not a performance benchmark."
+  },
+  "editorRoundTripVerified": false,
+  "productionInstalled": false
+}

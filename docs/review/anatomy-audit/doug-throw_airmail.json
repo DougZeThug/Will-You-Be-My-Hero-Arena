@@ -1,0 +1,392 @@
+{
+  "browser": "153.0.8010.37",
+  "viewport": {
+    "width": 1440,
+    "height": 1080
+  },
+  "capture": "Actual canvas MediaRecorder, 4 seconds real-time; decoded frames are analysis evidence, not a device performance benchmark.",
+  "state": {
+    "apiVersion": 1,
+    "ready": true,
+    "status": "ready",
+    "errors": [],
+    "scenario": {
+      "id": "character-doug",
+      "version": 1,
+      "label": "Doug · animation",
+      "kind": "character",
+      "sport": "cornhole",
+      "description": "One actual connected paper rig. Sample a registered clip at an exact time.",
+      "seed": "arena-lab:character-doug:v1",
+      "character": "doug",
+      "animation": "throw_airmail"
+    },
+    "runtime": "character",
+    "time": 0.2694200000119261,
+    "paused": true,
+    "clockMode": "manual",
+    "checkpoints": [
+      {
+        "name": "start",
+        "time": 0
+      },
+      {
+        "name": "anticipation",
+        "time": 0.10396734693877552
+      },
+      {
+        "name": "release",
+        "time": 0.50944
+      },
+      {
+        "name": "gesture",
+        "time": 0.7094400000000001
+      },
+      {
+        "name": "result",
+        "time": 1.91944
+      },
+      {
+        "name": "recovery",
+        "time": 2.9394400000000003
+      },
+      {
+        "name": "end",
+        "time": 3.2694400000000003
+      }
+    ],
+    "event": {
+      "phase": "inspection",
+      "scores": [],
+      "complete": false,
+      "animation": "throw_airmail",
+      "timeline": {
+        "kind": "production-throw",
+        "duration": 3.2694400000000003,
+        "cycleDuration": 3.7194400000000005,
+        "markers": [
+          {
+            "name": "release",
+            "time": 0.50944
+          },
+          {
+            "name": "contact",
+            "time": 1.7594400000000001
+          }
+        ],
+        "checkpoints": [
+          {
+            "name": "start",
+            "time": 0
+          },
+          {
+            "name": "anticipation",
+            "time": 0.10396734693877552
+          },
+          {
+            "name": "release",
+            "time": 0.50944
+          },
+          {
+            "name": "gesture",
+            "time": 0.7094400000000001
+          },
+          {
+            "name": "result",
+            "time": 1.91944
+          },
+          {
+            "name": "recovery",
+            "time": 2.9394400000000003
+          },
+          {
+            "name": "end",
+            "time": 3.2694400000000003
+          }
+        ]
+      }
+    },
+    "characters": [
+      {
+        "actor": 0,
+        "cardId": "card-doug",
+        "name": "Doug",
+        "rig": "connected-paper",
+        "root": {
+          "x": 640,
+          "y": 625,
+          "scaleX": 1.45,
+          "scaleY": 1.45,
+          "rotation": 0,
+          "alpha": 1,
+          "visible": true
+        },
+        "animation": {
+          "clip": "throw_airmail",
+          "progress": 0.14036385613091637,
+          "pose": {
+            "hipX": -8.511005325886162,
+            "hipY": -172,
+            "body": 0,
+            "head": -4.642366541392452,
+            "shrug": 0,
+            "handLX": -36.66209346002359,
+            "handLY": -174.92810296156836,
+            "handRX": -3.7988383752249675,
+            "handRY": -126.82136382484575,
+            "footLX": -40,
+            "footLY": -22,
+            "footRX": 41,
+            "footRY": -22,
+            "footL": 0,
+            "footR": 0,
+            "turn": 1
+          }
+        },
+        "sockets": {
+          "coordinateSpace": "render-world",
+          "throwingHand": {
+            "x": 636.4618168794448,
+            "y": 434.57794442281363
+          },
+          "offHand": {
+            "x": 586.8399627347809,
+            "y": 371.35424236450393
+          },
+          "footL": {
+            "x": 581.9999980926514,
+            "y": 593.0999989509583
+          },
+          "footR": {
+            "x": 699.4500019550323,
+            "y": 593.0999989509583
+          },
+          "head": {
+            "x": 627.6590418716287,
+            "y": 219.32112451748566
+          },
+          "chest": {
+            "x": 627.6590418716287,
+            "y": 283.12112661556915
+          },
+          "waist": {
+            "x": 627.6590418716287,
+            "y": 358.69512910084444
+          }
+        }
+      }
+    ],
+    "inputs": [],
+    "controllers": [],
+    "markers": [],
+    "rendering": null,
+    "rigQA": {
+      "options": {
+        "overlay": true,
+        "silhouette": false,
+        "mirror": false,
+        "view": "current",
+        "scale": "detail"
+      },
+      "current": {
+        "status": "current-production-solver",
+        "coordinates": "character-local-y-down",
+        "joints": {
+          "root": {
+            "x": 0,
+            "y": 0
+          },
+          "pelvis": {
+            "x": -8.511005325886162,
+            "y": -183.65852561492042
+          },
+          "neck": {
+            "x": -8.511005325886162,
+            "y": -279.77852561492045
+          },
+          "shoulder_L": {
+            "x": -53.439005325886164,
+            "y": -260.1385256149204
+          },
+          "elbow_L": {
+            "x": -75.20617378121817,
+            "y": -215.11920758373014
+          },
+          "palm_L": {
+            "x": -36.66209346002359,
+            "y": -174.92810296156836
+          },
+          "shoulder_R": {
+            "x": 36.416994674113845,
+            "y": -260.1385256149204
+          },
+          "elbow_R": {
+            "x": 31.416994674113845,
+            "y": -192.02604355170894
+          },
+          "palm_R": {
+            "x": -2.440126209793739,
+            "y": -131.32555125179042
+          },
+          "hip_L": {
+            "x": -31.51100532588616,
+            "y": -177.65852561492042
+          },
+          "knee_L": {
+            "x": -49.01537820224501,
+            "y": -91.41702209019404
+          },
+          "ankle_L": {
+            "x": -40,
+            "y": -22
+          },
+          "hip_R": {
+            "x": 14.488994674113838,
+            "y": -177.65852561492042
+          },
+          "knee_R": {
+            "x": 32.00882793818114,
+            "y": -91.42016151634026
+          },
+          "ankle_R": {
+            "x": 41,
+            "y": -22
+          }
+        },
+        "chains": [
+          [
+            "pelvis",
+            "neck"
+          ],
+          [
+            "neck",
+            "shoulder_L",
+            "elbow_L",
+            "palm_L"
+          ],
+          [
+            "neck",
+            "shoulder_R",
+            "elbow_R",
+            "palm_R"
+          ],
+          [
+            "pelvis",
+            "hip_L",
+            "knee_L",
+            "ankle_L"
+          ],
+          [
+            "pelvis",
+            "hip_R",
+            "knee_R",
+            "ankle_R"
+          ]
+        ],
+        "missingControls": [
+          "clavicle_L",
+          "clavicle_R",
+          "spine_lower",
+          "spine_mid",
+          "chest rotation",
+          "pelvis rotation",
+          "wrist_L",
+          "wrist_R",
+          "support-leg load"
+        ],
+        "balance": null,
+        "targets": {
+          "palm_L": {
+            "x": -36.66209346002359,
+            "y": -174.92810296156836
+          },
+          "palm_R": {
+            "x": -3.7988383752249675,
+            "y": -126.82136382484575
+          },
+          "ankle_L": {
+            "x": -40,
+            "y": -22
+          },
+          "ankle_R": {
+            "x": 41,
+            "y": -22
+          }
+        },
+        "note": "Dots are evaluated solver joints. Neck–pelvis and neck–shoulder lines summarize one torso transform, not independent spine/clavicle bones. Arm endpoints are palms, not wrists. Ankle y=-22 is the registered ankle above the drawn sole at floor y=0. Targets are the actual requested palm/ankle coordinates before solving; they are not Spine IK bones. There is no center-of-mass model."
+      },
+      "plan": null
+    },
+    "syntheticGamepad": false,
+    "performance": {
+      "mode": "manual",
+      "capacity": 240,
+      "realtime": {
+        "frames": 240,
+        "windowFrames": 240,
+        "frameTiming": {
+          "samples": 239,
+          "meanMs": 16.683,
+          "p95Ms": 17.2,
+          "worstMs": 17.8
+        },
+        "updateWork": {
+          "samples": 240,
+          "meanMs": 1.64,
+          "p95Ms": 2,
+          "worstMs": 2.6
+        },
+        "renderWork": {
+          "samples": 240,
+          "meanMs": 2.184,
+          "p95Ms": 2.6,
+          "worstMs": 3.3
+        },
+        "slowFrames": 0,
+        "fps": 59.941
+      },
+      "manual": {
+        "frames": 2,
+        "windowFrames": 2,
+        "frameTiming": {
+          "samples": 0,
+          "meanMs": 0,
+          "p95Ms": 0,
+          "worstMs": 0
+        },
+        "updateWork": {
+          "samples": 2,
+          "meanMs": 1.35,
+          "p95Ms": 1.6,
+          "worstMs": 1.6
+        },
+        "renderWork": {
+          "samples": 2,
+          "meanMs": 1.9,
+          "p95Ms": 2.6,
+          "worstMs": 2.6
+        },
+        "slowFrames": 0,
+        "fps": null
+      },
+      "drawCalls": 4,
+      "counters": {
+        "scenes": 1,
+        "objects": 27,
+        "visibleObjects": 27,
+        "meshes": 3,
+        "meshVertices": 7043,
+        "meshTriangles": 13312,
+        "textures": 37,
+        "textureSources": 37,
+        "textureMBEstimate": 60.245
+      },
+      "notes": [
+        "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+        "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+        "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+        "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+      ]
+    }
+  }
+}

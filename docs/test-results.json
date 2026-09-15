@@ -1,5 +1,5 @@
 {
-  "checks": 20057,
+  "checks": 170688,
   "seededContests": 2000,
   "stats": {
     "cornhole": {
@@ -8,7 +8,7 @@
         "miss": 727,
         "hole": 465
       },
-      "draws": 83
+      "draws": 80
     },
     "football": {
       "outcomes": {
@@ -40,7 +40,7 @@
   "showcaseSeed": "velvet-paw-29",
   "showcaseScores": [
     3,
-    5
+    7
   ],
   "showcaseContacts": [
     "board",

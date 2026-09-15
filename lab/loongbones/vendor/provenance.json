@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/DragonBones/DragonBonesJS",
+  "revision": "64b6c69ae35777c2404be68c9192e2c56906079e",
+  "license": "MIT",
+  "runtimeVersion": "5.7.000",
+  "compiler": "5.9.3",
+  "changes": "Official core compiled unchanged; ESM export appended. Phaser bridge is separate Arena code.",
+  "sample": "Unmodified official mecha_1406 DragonBones 5.5 export; not a fresh LoongBones editor export.",
+  "hashes": {
+    "mecha_1406_ske.json": "3e6f93a76436b57c98b1e2e54e39d2e41037a22a71b072c8b7b1cc33ac2596ee",
+    "mecha_1406_tex.json": "2b61d795679dcbb1f56a2d13154ce36bdbe9738ffbbc8e0600203d46ac748258",
+    "mecha_1406_tex.png": "c34fb6dda28420cc588cbd28e8cbf238b4beaa85d40f40ffe71c6c7e23ec3c0f"
+  }
+}

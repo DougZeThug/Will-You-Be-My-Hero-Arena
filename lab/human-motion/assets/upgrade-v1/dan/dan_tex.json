@@ -1,0 +1,36 @@
+{
+  "name": "dan_motion_upgrade",
+  "imagePath": "dan_tex.png",
+  "width": 2172,
+  "height": 1978,
+  "SubTexture": [
+    {
+      "name": "sheet",
+      "x": 0,
+      "y": 0,
+      "width": 1254,
+      "height": 1254
+    },
+    {
+      "name": "hand-fist",
+      "x": 0,
+      "y": 1254,
+      "width": 724,
+      "height": 724
+    },
+    {
+      "name": "hand-support",
+      "x": 724,
+      "y": 1254,
+      "width": 724,
+      "height": 724
+    },
+    {
+      "name": "hand-chest",
+      "x": 1448,
+      "y": 1254,
+      "width": 724,
+      "height": 724
+    }
+  ]
+}

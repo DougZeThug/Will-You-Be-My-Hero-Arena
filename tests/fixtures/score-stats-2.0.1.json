@@ -1,0 +1,36 @@
+{
+  "cornhole": {
+    "outcomes": {
+      "board": 2808,
+      "miss": 727,
+      "hole": 465
+    },
+    "draws": 83
+  },
+  "football": {
+    "outcomes": {
+      "zone2": 1771,
+      "zone1": 2024,
+      "zone3": 595,
+      "miss": 610
+    },
+    "draws": 74
+  },
+  "pong": {
+    "outcomes": {
+      "cup": 2763,
+      "rim-out": 2390,
+      "miss": 847
+    },
+    "draws": 118
+  },
+  "basketball": {
+    "outcomes": {
+      "rim-out": 2641,
+      "airball": 481,
+      "make": 1664,
+      "backboard": 214
+    },
+    "draws": 115
+  }
+}

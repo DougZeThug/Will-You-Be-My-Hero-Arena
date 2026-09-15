@@ -1,0 +1,1305 @@
+{
+  "method": "One headless Chrome page at a time; 12 seconds real-time per event, except running at 4.2 seconds before finish. measuredCadence is a fresh requestAnimationFrame observer started after assets and actors are ready; no video recorder or manual stepping. Legacy performance buckets are retained separately and may include initialization. Other user apps may remain open.",
+  "startupPolicy": "Both measurements start after assets/actors are ready; there is no additional discarded warm-up interval.",
+  "scope": "Same desktop, viewport and observer; measurements ran without tests/builds/encoding. Paired samples replay saved pre-change TypeScript through an isolated local Vite server, then the current checkout. This is not a hardware guarantee.",
+  "finding": "The original baseline was about 59 FPS. Later paired baseline/current samples were cornhole 55.45/55.98, running 54.98/50.19, basketball 55.53/53.30, fighting 57.86/58.29 FPS. The environment varied, but running retained an approximately 8.7% cadence regression and basketball 4.0%; these remain performance limitations. Render geometry and texture counts did not increase.",
+  "investigation": "A separate 4.2-second CDP CPU profile of each running version identified NativeSlot._updateMesh as the largest self-time sample category in both. The new contact-roll helper was not a major sampled hotspot. Profiles are diagnostic, not additional frame-rate benchmarks; they do not establish a unique cause for the cadence difference. Avoid broad renderer changes in this animation pass.",
+  "rows": [
+    {
+      "label": "before",
+      "event": "cornhole",
+      "medianMs": 16.699999999999818,
+      "samples": 709,
+      "meanMs": 16.942031029619162,
+      "fps": 59.02480040626386,
+      "p95Ms": 16.80000000000109,
+      "worstMs": 50.19999999999982,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 809,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.891,
+            "p95Ms": 18.8,
+            "worstMs": 49.7
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 7.824,
+            "p95Ms": 11.9,
+            "worstMs": 28.8
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.403,
+            "p95Ms": 3.4,
+            "worstMs": 41.2
+          },
+          "slowFrames": 14,
+          "fps": 59.203
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 8,
+        "counters": {
+          "scenes": 1,
+          "objects": 82,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "before",
+      "event": "running",
+      "medianMs": 16.699999999999818,
+      "samples": 252,
+      "meanMs": 16.815079365079367,
+      "fps": 59.470429980648504,
+      "p95Ms": 16.800000000000182,
+      "worstMs": 33.399999999999636,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 272,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.691,
+            "p95Ms": 17.7,
+            "worstMs": 31
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 8.046,
+            "p95Ms": 12.1,
+            "worstMs": 28.6
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.931,
+            "p95Ms": 2.6,
+            "worstMs": 6.6
+          },
+          "slowFrames": 6,
+          "fps": 59.913
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "before",
+      "event": "basketball",
+      "medianMs": 16.699999999999818,
+      "samples": 710,
+      "meanMs": 16.941690140845047,
+      "fps": 59.02598806178616,
+      "p95Ms": 16.80000000000109,
+      "worstMs": 66.69999999999982,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 747,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.823,
+            "p95Ms": 18.3,
+            "worstMs": 44.8
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 7.677,
+            "p95Ms": 11.2,
+            "worstMs": 41
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.955,
+            "p95Ms": 2.6,
+            "worstMs": 16.9
+          },
+          "slowFrames": 10,
+          "fps": 59.442
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 84,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "before",
+      "event": "fighting",
+      "medianMs": 16.699999999999818,
+      "samples": 718,
+      "meanMs": 16.822701949860697,
+      "fps": 59.443483156300026,
+      "p95Ms": 16.80000000000109,
+      "worstMs": 49.899999999999636,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 750,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.756,
+            "p95Ms": 18.7,
+            "worstMs": 33.3
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 6.812,
+            "p95Ms": 12.9,
+            "worstMs": 26.1
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 1.737,
+            "p95Ms": 2.5,
+            "worstMs": 13.6
+          },
+          "slowFrames": 12,
+          "fps": 59.68
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "after",
+      "event": "cornhole",
+      "medianMs": 16.700000000000728,
+      "samples": 682,
+      "meanMs": 17.612903225806445,
+      "fps": 56.776556776556795,
+      "p95Ms": 17.5,
+      "worstMs": 99.69999999999982,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 829,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 17.104,
+            "p95Ms": 22.3,
+            "worstMs": 39
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 10.626,
+            "p95Ms": 16.5,
+            "worstMs": 36
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.295,
+            "p95Ms": 6.5,
+            "worstMs": 14.5
+          },
+          "slowFrames": 13,
+          "fps": 58.466
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 8,
+        "counters": {
+          "scenes": 1,
+          "objects": 82,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "after",
+      "event": "running",
+      "medianMs": 16.700000000000728,
+      "samples": 213,
+      "meanMs": 19.892018779342724,
+      "fps": 50.27141845645504,
+      "p95Ms": 33.400000000000546,
+      "worstMs": 82.89999999999964,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 333,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 239,
+            "meanMs": 30.745,
+            "p95Ms": 37.6,
+            "worstMs": 2612.6
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 13.005,
+            "p95Ms": 29.8,
+            "worstMs": 61.9
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.428,
+            "p95Ms": 6.1,
+            "worstMs": 93.3
+          },
+          "slowFrames": 21,
+          "fps": 32.526
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "after",
+      "event": "basketball",
+      "medianMs": 16.700000000000728,
+      "samples": 650,
+      "meanMs": 18.531230769230767,
+      "fps": 53.962956505857065,
+      "p95Ms": 33.399999999999636,
+      "worstMs": 150.09999999999945,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 704,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.853,
+            "p95Ms": 22,
+            "worstMs": 33.8
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.659,
+            "p95Ms": 15.9,
+            "worstMs": 28.1
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.849,
+            "p95Ms": 5.8,
+            "worstMs": 14.5
+          },
+          "slowFrames": 26,
+          "fps": 59.337
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 84,
+          "visibleObjects": 29,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "after",
+      "event": "fighting",
+      "medianMs": 16.699999999999818,
+      "samples": 690,
+      "meanMs": 17.3846376811594,
+      "fps": 57.52205011921243,
+      "p95Ms": 17,
+      "worstMs": 100,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 735,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.811,
+            "p95Ms": 22,
+            "worstMs": 39.2
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.564,
+            "p95Ms": 16,
+            "worstMs": 27.8
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.804,
+            "p95Ms": 6.2,
+            "worstMs": 12
+          },
+          "slowFrames": 15,
+          "fps": 59.485
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-paired",
+      "event": "cornhole",
+      "medianMs": 16.700000000000728,
+      "samples": 666,
+      "meanMs": 18.035885885885886,
+      "fps": 55.44501702478376,
+      "p95Ms": 33.29999999999927,
+      "worstMs": 100.10000000000036,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 818,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 17.852,
+            "p95Ms": 26.2,
+            "worstMs": 42.4
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 10.877,
+            "p95Ms": 19,
+            "worstMs": 38.8
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.527,
+            "p95Ms": 7.2,
+            "worstMs": 20
+          },
+          "slowFrames": 21,
+          "fps": 56.016
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 8,
+        "counters": {
+          "scenes": 1,
+          "objects": 82,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-paired",
+      "event": "running",
+      "medianMs": 16.700000000000728,
+      "samples": 233,
+      "meanMs": 18.187124463519314,
+      "fps": 54.98395318104587,
+      "p95Ms": 33.30000000000109,
+      "worstMs": 50.19999999999891,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 511,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 239,
+            "meanMs": 28.79,
+            "p95Ms": 29.2,
+            "worstMs": 2504.6
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 12.149,
+            "p95Ms": 22.3,
+            "worstMs": 42.9
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.468,
+            "p95Ms": 5.6,
+            "worstMs": 83.4
+          },
+          "slowFrames": 13,
+          "fps": 34.734
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-paired",
+      "event": "basketball",
+      "medianMs": 16.700000000000728,
+      "samples": 668,
+      "meanMs": 18.00673652694611,
+      "fps": 55.53477158415429,
+      "p95Ms": 33.30000000000018,
+      "worstMs": 100,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 762,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 17.195,
+            "p95Ms": 22.8,
+            "worstMs": 43.6
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.921,
+            "p95Ms": 17.2,
+            "worstMs": 32.5
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.73,
+            "p95Ms": 6.9,
+            "worstMs": 12
+          },
+          "slowFrames": 16,
+          "fps": 58.156
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 84,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "baseline-paired",
+      "event": "fighting",
+      "medianMs": 16.700000000000728,
+      "samples": 695,
+      "meanMs": 17.2841726618705,
+      "fps": 57.85639958376692,
+      "p95Ms": 16.899999999999636,
+      "worstMs": 133.69999999999982,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 851,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 16.824,
+            "p95Ms": 20.7,
+            "worstMs": 40.8
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 8.43,
+            "p95Ms": 12.7,
+            "worstMs": 27.1
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.634,
+            "p95Ms": 5.2,
+            "worstMs": 15.2
+          },
+          "slowFrames": 15,
+          "fps": 59.439
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "current-paired",
+      "event": "cornhole",
+      "medianMs": 16.700000000000728,
+      "samples": 678,
+      "meanMs": 17.864454277286132,
+      "fps": 55.977080770469215,
+      "p95Ms": 33,
+      "worstMs": 100,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 811,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 17.144,
+            "p95Ms": 23,
+            "worstMs": 52.2
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 10.778,
+            "p95Ms": 17.6,
+            "worstMs": 28.3
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.328,
+            "p95Ms": 6.6,
+            "worstMs": 36.4
+          },
+          "slowFrames": 19,
+          "fps": 58.329
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 8,
+        "counters": {
+          "scenes": 1,
+          "objects": 82,
+          "visibleObjects": 30,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "current-paired",
+      "event": "running",
+      "medianMs": 16.700000000000728,
+      "samples": 211,
+      "meanMs": 19.924644549763034,
+      "fps": 50.18910111557765,
+      "p95Ms": 33.399999999999636,
+      "worstMs": 116.79999999999927,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 420,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 239,
+            "meanMs": 30.879,
+            "p95Ms": 35.6,
+            "worstMs": 2729.3
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 12.31,
+            "p95Ms": 28.1,
+            "worstMs": 102.9
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.421,
+            "p95Ms": 8.1,
+            "worstMs": 91.5
+          },
+          "slowFrames": 19,
+          "fps": 32.384
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "current-paired",
+      "event": "basketball",
+      "medianMs": 16.700000000000728,
+      "samples": 642,
+      "meanMs": 18.762149532710275,
+      "fps": 53.2987970411696,
+      "p95Ms": 33.399999999999636,
+      "worstMs": 150.10000000000036,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 793,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 20.091,
+            "p95Ms": 38.9,
+            "worstMs": 62.1
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 13.66,
+            "p95Ms": 30.2,
+            "worstMs": 56.7
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 3.335,
+            "p95Ms": 6.7,
+            "worstMs": 34.3
+          },
+          "slowFrames": 34,
+          "fps": 49.774
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 84,
+          "visibleObjects": 29,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 19,
+          "textureSources": 19,
+          "textureMBEstimate": 37.704
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    },
+    {
+      "label": "current-paired",
+      "event": "fighting",
+      "medianMs": 16.700000000000728,
+      "samples": 705,
+      "meanMs": 17.156737588652476,
+      "fps": 58.286139473357885,
+      "p95Ms": 17,
+      "worstMs": 50.5,
+      "renderCounters": {
+        "mode": "realtime",
+        "capacity": 240,
+        "realtime": {
+          "frames": 863,
+          "windowFrames": 240,
+          "frameTiming": {
+            "samples": 240,
+            "meanMs": 17.163,
+            "p95Ms": 23.9,
+            "worstMs": 41.4
+          },
+          "updateWork": {
+            "samples": 240,
+            "meanMs": 9.521,
+            "p95Ms": 15.1,
+            "worstMs": 38.4
+          },
+          "renderWork": {
+            "samples": 240,
+            "meanMs": 2.597,
+            "p95Ms": 5.8,
+            "worstMs": 13.4
+          },
+          "slowFrames": 16,
+          "fps": 58.265
+        },
+        "manual": {
+          "frames": 0,
+          "windowFrames": 0,
+          "frameTiming": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "updateWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "renderWork": {
+            "samples": 0,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "slowFrames": 0,
+          "fps": null
+        },
+        "drawCalls": 3,
+        "counters": {
+          "scenes": 1,
+          "objects": 73,
+          "visibleObjects": 25,
+          "meshes": 64,
+          "meshVertices": 14133,
+          "meshTriangles": 23239,
+          "textures": 23,
+          "textureSources": 23,
+          "textureMBEstimate": 61.699
+        },
+        "notes": [
+          "Frame cadence is wall-clock time in realtime mode; manual mode reports requested step delta and does not measure display FPS.",
+          "Update/render work are CPU wall-clock estimates, not GPU timings. Slow frames exceed 33.33 ms; counts span the run while percentiles use the bounded window.",
+          "Texture memory estimates RGBA source pixels only; it excludes driver overhead, mipmaps, render targets and browser copies.",
+          "Visible objects have visible ancestors and nonzero alpha; this is not camera culling or draw-call count."
+        ]
+      },
+      "errors": []
+    }
+  ]
+}

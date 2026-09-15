@@ -1,0 +1,16 @@
+{
+  "character": "dan",
+  "authoringRevision": 2,
+  "authoredBy": "Astra; local DragonBones 5.5 authoring",
+  "editorExport": false,
+  "editorRoundTripVerified": false,
+  "productionInstalled": false,
+  "source": "lab/assets/dan-source/full-body-v2.png",
+  "sourceSha256": "0ebff85c3331b1efbcf200741c1511412706d49d037c16aca0182967cacfbd73",
+  "texturePreparation": "Existing magenta chroma-key converted to alpha; drawing RGB and dimensions preserved",
+  "assetsSha256": {
+    "dan_ske.json": "5336a11ed113bfce20c72960701181fc2809cbb6991bf7222e90f9c165ea1862",
+    "dan_tex.json": "5093e17a433a982d2e3d05c424e00a3da7a50fcd76989cd332e0a02eb7e72f0a",
+    "dan_tex.png": "d4b3ac26ca5835846adc1afb41faef4f2ca1e4c3449665af5ef096196d01c13e"
+  }
+}

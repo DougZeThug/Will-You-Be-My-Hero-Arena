@@ -1,0 +1,54 @@
+{
+  "format": "DragonBones 5.5",
+  "runtime": "5.7.000",
+  "editorTarget": "LoongBones 1.2.3",
+  "editorRoundTripVerified": false,
+  "productionInstalled": false,
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 3129,
+      "sha256": "1a09b58de08b0a1348d30aa2bbd7f56c4543b9f9562e14fe18de0f7d30beebbe"
+    },
+    {
+      "file": "dan/authoring.json",
+      "bytes": 46555,
+      "sha256": "fd8ae89ae70d6e3e740f0a71f5fb067724c9175d70069fe65b9dbf2dc5160482"
+    },
+    {
+      "file": "dan/dan_ske.json",
+      "bytes": 2460534,
+      "sha256": "aed6b64108f7651693bebcf403750ca0f5e4f2afef901c35f55131d55637f03e"
+    },
+    {
+      "file": "dan/dan_tex.json",
+      "bytes": 569,
+      "sha256": "28f08f743fda1a42ca468ea3b9a026c23dc20c4093a809afa273bd9eadf16168"
+    },
+    {
+      "file": "dan/dan_tex.png",
+      "bytes": 1868867,
+      "sha256": "fd1812603648ba08a6ba6b54ad29361ec633cbd94c9faa999338a0c1bd13c5a3"
+    },
+    {
+      "file": "doug/authoring.json",
+      "bytes": 46980,
+      "sha256": "4344a47644a09333ec82c50947c648183ae5e833ab49689ff768acf8ca883b08"
+    },
+    {
+      "file": "doug/doug_ske.json",
+      "bytes": 2602272,
+      "sha256": "db2db1a4deba70ea839f404f71370364205f51fdafa58b3bad689dbf4f54ad95"
+    },
+    {
+      "file": "doug/doug_tex.json",
+      "bytes": 571,
+      "sha256": "fa1bb17a61eaa0aeb804eff6f33664efd00c636fdf2a55404d901606694e9725"
+    },
+    {
+      "file": "doug/doug_tex.png",
+      "bytes": 2032338,
+      "sha256": "03a8d130475942245ea072357e47ddb89efdb17f9c41c2992a5fff0534a3b470"
+    }
+  ]
+}

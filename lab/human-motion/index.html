@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arena · Animation workshop</title>
+    <style>
+      body {
+        margin: 0;
+        background: #111c16;
+        color: #f1e7c7;
+        font: 14px system-ui;
+      }
+      header,
+      section {
+        padding: 14px 22px;
+      }
+      header {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      a {
+        color: #e5c86c;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+        padding: 8px;
+        background: #26362b;
+        color: #ffedb5;
+        border: 1px solid #617461;
+        border-radius: 3px;
+      }
+      button {
+        cursor: pointer;
+      }
+      #stage {
+        max-width: 1280px;
+        aspect-ratio: 1280/760;
+        margin: auto;
+        outline: none;
+      }
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #summary {
+        white-space: pre-wrap;
+        font: 12px ui-monospace;
+        max-height: 250px;
+        overflow: auto;
+      }
+      label {
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
+      }
+      #timeline {
+        width: 240px;
+      }
+      #error {
+        color: #ff9494;
+      }
+    </style>
+    <link rel="stylesheet" href="/assets/arena-interface.css" />
+  </head>
+  <body class="motion-workshop">
+    <header>
+      <a href="/">← Arena Lab</a><strong>ANIMATION WORKSHOP</strong
+      ><select id="event" aria-label="Motion event">
+        <option value="cornhole">Cornhole</option>
+        <option value="running">Running</option>
+        <option value="basketball">Basketball</option>
+        <option value="fighting">Fighting</option></select
+      ><button id="reset">Reset</button><button id="play">Play</button
+      ><button id="pause">Pause</button><button id="step">+1 frame</button
+      ><select id="speed" aria-label="Speed">
+        <option value="1">1×</option>
+        <option value="0.5">0.5×</option>
+        <option value="0.25">0.25×</option></select
+      ><select id="device" aria-label="Control">
+        <option value="ai">AI / AI</option>
+        <option value="keyboard">Keyboard 1 / 2</option>
+        <option value="gamepad">Controller 1 / 2</option>
+      </select>
+    </header>
+    <header>
+      <label
+        ><input id="skeleton" type="checkbox" checked /> Skeleton /
+        contacts</label
+      ><label><input id="trails" type="checkbox" checked /> Trails</label
+      ><label><input id="silhouette" type="checkbox" /> Silhouette</label
+      ><label
+        >Seek
+        <input
+          id="timeline"
+          type="range"
+          min="0"
+          max="12"
+          step="0.008333"
+          value="0" /></label
+      ><span id="clock">0.000s</span
+      ><button id="download">Download state</button>
+    </header>
+    <header>
+      <label><input id="loop-enabled" type="checkbox" /> Loop selection</label>
+      <label
+        >From
+        <input
+          id="loop-from"
+          aria-label="Loop from seconds"
+          type="number"
+          min="0"
+          max="11.9"
+          step="0.1"
+          value="0"
+          style="width: 65px"
+      /></label>
+      <label
+        >To
+        <input
+          id="loop-to"
+          aria-label="Loop to seconds"
+          type="number"
+          min="0.1"
+          max="12"
+          step="0.1"
+          value="3"
+          style="width: 65px"
+      /></label>
+      <label
+        ><input id="neutral-background" type="checkbox" /> Neutral
+        background</label
+      >
+      <label><input id="sound" type="checkbox" /> Event sounds</label>
+    </header>
+    <section id="help">
+      WASD move · arrows aim · J primary · K secondary · L dodge/roll · E high
+      arc · Space charge/sprint · Shift block. Click the court before keyboard
+      play. All modes use the same controller pipeline.
+    </section>
+    <header>
+      <label
+        ><input id="organic" type="checkbox" checked /> Organic
+        performance</label
+      >
+      <select id="review-character" aria-label="Review character">
+        <option value="dan">Dan</option>
+        <option value="doug">Doug</option>
+      </select>
+      <select id="review-take" aria-label="Review action">
+        <option value="">AI matchup</option>
+      </select>
+      <button id="load-take">Load take</button>
+      <button id="save-review">Save review preset</button>
+      <button id="export-rig">Export editable rig</button>
+      <select id="review-focus" aria-label="Camera framing">
+        <option value="arena">Arena scale</option>
+        <option value="dan">Dan close view</option>
+        <option value="doug">Doug close view</option>
+      </select>
+      <select id="review-landmark" aria-label="Action breakdown pose">
+        <option value="">Action breakdown pose…</option>
+      </select>
+      <label
+        ><input id="balance-view" type="checkbox" /> Balance / foot locks</label
+      >
+      <label><input id="velocity-view" type="checkbox" /> Velocity</label>
+      <label
+        ><input id="collision-view" type="checkbox" /> Body collision</label
+      >
+      <label
+        ><input id="equipment-view" type="checkbox" /> Equipment anchors</label
+      >
+    </header>
+    <header>
+      <label><input id="bone-names" type="checkbox" /> Bone names</label>
+      <label><input id="mesh-outlines" type="checkbox" /> Mesh outlines</label>
+      <label
+        ><input id="mesh-weights" type="checkbox" /> Right-arm weights</label
+      >
+      <select id="rig-layers" aria-label="Rig layer isolation">
+        <option value="full">Full character</option>
+        <option value="no-sleeve">Hide sleeve layers</option>
+        <option value="arm-only">Right arm only</option>
+      </select>
+      <span
+        >Layer view follows the selected review character.
+        Body/T-shirt/overshirt fabric is fused in this source.</span
+      >
+    </header>
+    <div id="stage" tabindex="0" aria-label="Human motion court"></div>
+    <section>
+      <details id="integrity-panel">
+        <summary>Rig integrity · lengths, widths and bone scales</summary>
+        <pre id="rig-integrity"></pre>
+      </details>
+    </section>
+    <section id="error"></section>
+    <section id="summary">Loading weighted characters…</section>
+    <details id="reference-comparison">
+      <summary>Human reference / character — synchronized comparison</summary>
+      <p>
+        Use the shared Play, Pause, speed, frame-step and timeline controls
+        above. Reference timing is phase-aligned for review, not automatic
+        motion capture retargeting.
+      </p>
+      <label
+        >Motion reference
+        <select id="reference-choice"></select
+      ></label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+        <div>
+          REFERENCE HUMAN
+          <div id="reference-human"></div>
+        </div>
+        <div>
+          ACTUAL ILLUSTRATED RUNTIME
+          <div id="reference-character"></div>
+        </div>
+      </div>
+      <p id="comparison-status">Open to load measured reference.</p>
+      <a
+        id="reference-source"
+        href="https://www.youtube.com/watch?v=MQFTtLG3Vxo&amp;t=330s"
+        target="_blank"
+        rel="noreferrer"
+        >Source: Perfect Throwing a Cornhole Bag — demonstration #1</a
+      >
+    </details>
+    <section>
+      <p id="contact-summary"></p>
+      <p id="balance-summary"></p>
+      <details id="curve-panel">
+        <summary>Evaluated joint motion curves</summary>
+        <label
+          >Metric
+          <select id="curve-mode">
+            <option value="x">Position X</option>
+            <option value="y">Position Y</option>
+            <option value="speed">Speed</option>
+            <option value="acceleration">Acceleration</option>
+          </select></label
+        >
+        <button id="export-curves">Export motion curves</button>
+        <p>
+          Fixed torso-length normalization; 6-second history. Purple dashed
+          curves show the loaded reference. Align action, timebase and view
+          before comparing. Chest rotation is always shown in radians.
+        </p>
+        <svg
+          id="motion-curves"
+          viewBox="0 0 1040 615"
+          role="img"
+          aria-label="Evaluated joint trajectory plots"
+          style="width: 100%; max-width: 1040px"
+        ></svg>
+      </details>
+    </section>
+    <section>
+      <button id="demo-reference">Load selected reference curves</button>
+      <button id="export-reference">Export Dan motion proposal</button>
+      <span id="reference-status" role="status">No reference loaded</span>
+      <label
+        ><input id="retarget-overlay" type="checkbox" /> Retarget proposal on
+        Dan</label
+      >
+      <label
+        >Load motion-reference JSON
+        <input id="reference" type="file" accept=".json" /></label
+      ><label
+        >Reference offset <input id="offset" type="number" value="0" step="0.1"
+      /></label>
+      <p>
+        Purple is measured reference / proposed skeleton, not installed
+        character motion. Development preview. Original artwork, meshes and
+        editor exports are preserved. These new motion proofs have not been
+        installed into the player game.
+      </p>
+    </section>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

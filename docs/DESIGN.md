@@ -1,17 +1,13 @@
-# Surreal blacklight clubhouse
+# Printed backyard sports
 
-Three independent shell-generated random seeds informed three directions: trophy-brass midnight coliseum, sun-faded desert rodeo, and surreal blacklight clubhouse. The seeds remain private working material. The user explicitly selected the clubhouse.
+The latest user direction replaces the earlier blacklight clubhouse with the supplied sports-card style across the figures, court and interface. The visual language is adult-proportioned illustrated people as physical paper cutouts: black ink, cream outlines, halftone print, orange and mustard yellow, and small teal accents.
 
-The visual thesis is a lovingly over-important backyard athletic club after dark. Oversized chairs, giant collectible-card trophy arches and a hanging wooden scoreboard establish the silhouette. The original card becomes an opening in a physical player station; the illustrated competitor clears that boundary and lands on the court.
+Dan retains his tousled brown hair, stubble, pizza tee, black shorts and sandals. Doug retains his ginger beard, backwards blue/red cap, white sunglasses, pizza tee, speckled overshirt and sneakers. Their exact original collectible cards remain the selection artwork. The revised review pair is these two people.
 
-Palette: ink plum `#120e19`, violet `#b495ff`, chartreuse `#d9fb76`, warm coral `#ffab79`, and cream `#f4f0df`. Warm illustrated faces contrast with the ultraviolet environment. Georgia italic headlines add an eccentric club character; compact sans-serif controls remain quiet. Materials are painted wood, worn violet supports, brass fasteners, card foil and fluorescent court lines.
+The court is an illustrated backyard diorama with a timber fence, crowd, orange sky and overhead display. Wood-print boards, cream cut edges and ink-outlined props carry the same material language. Impact headings, black rules, tilted card pairs and yellow/orange action areas extend it into the UI. A quieter paper background keeps text readable.
 
-Motion vocabulary: anticipation, deliberate release, readable ballistic flight, a contact marker, expression, then recovery. Camera moves are controlled pans/crops/zooms; no orbit exposes character planes. The mobile camera follows release-to-target while keeping both scores in the interface. Reduced motion suppresses camera emphasis, particles and spotlights.
+The world uses an orthographic oblique projection; moving a lane farther back does not reduce character scale. The mobile camera follows the recorded throw to its target, while scores remain above the play area. Flat figures stay in the illustration plane.
 
-Applied the publicly accessible exploration, critique, image and restraint techniques in [How to turn your AI into a world-class designer](https://www.lennysnewsletter.com/p/how-to-turn-your-ai-into-a-world). Subscriber-only material was not used.
+A first fresh critic reviewed the running redesign against the references and requested a smaller hanging sign, stronger character presence, more illustrated board surfaces, local ink wear, and less busy asphalt/crowd detail. Those refinements were implemented. A second fresh critic found recognizable likenesses, successful paper silhouettes, cohesive scene/UI materials, and no obvious anatomy, clipping or UI overlap defects. Their remaining suggestions—rear-lane scale reduction and less board foreshortening—are aesthetic alternatives to the current orthographic staging. These are independent review opinions, not user approval.
 
-Two independent critics reviewed running screenshots with the generated environment and character artwork as quality references, without implementation history. Pass one scored 6.5/10 and prioritized staging, scoreboard placement and material consistency. Pass two scored 7.2/10 and identified character overlap/grounding and flat props. Refinements moved information onto the suspended display, added an illustrated board texture and contact shadows, separated lane silhouettes, corrected crop fragments and joint overlaps, and blended reactions back to rest. The numerical scores are critic opinions, not user approval or a claim of finished studio quality.
-
-The interface cleanup removed the large floating event heading from the play area and retained one primary setup action. Secondary rules, history, host settings and import mapping remain in accessible panels.
-
-Generated imagery used the built-in image-generation tool. Exact prompts are included in `docs/art-prompts/`; selected assets are in `public/assets/`. The game renders real recorded trajectories; generated still images are not used as substitutes for simulated throws.
+Motion uses six authored held drawings per person, synchronized with recorded releases. It deliberately preserves likeness and the flat printed silhouette. It still needs the user's review before extending the roster or investing in denser frame-by-frame animation.

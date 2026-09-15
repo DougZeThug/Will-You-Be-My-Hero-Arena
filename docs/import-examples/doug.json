@@ -1,0 +1,512 @@
+{
+  "puppet": {
+    "version": 2,
+    "url": "/assets/doug/puppet-v3.png",
+    "width": 1536,
+    "height": 2560,
+    "keyColor": [
+      255,
+      0,
+      255
+    ],
+    "pieces": {
+      "head": {
+        "rect": [
+          31,
+          1219,
+          269,
+          306
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "torso": {
+        "rect": [
+          350,
+          1115,
+          385,
+          587
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "upperL": {
+        "rect": [
+          74,
+          1814,
+          175,
+          616
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "upperR": {
+        "rect": [
+          812,
+          1117,
+          163,
+          590
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "foreL": {
+        "rect": [
+          74,
+          1814,
+          175,
+          616
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "foreR": {
+        "rect": [
+          812,
+          1117,
+          163,
+          590
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "thighL": {
+        "rect": [
+          338,
+          1787,
+          255,
+          669
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "thighR": {
+        "rect": [
+          746,
+          1787,
+          245,
+          681
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "shinL": {
+        "rect": [
+          338,
+          1787,
+          255,
+          669
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "shinR": {
+        "rect": [
+          746,
+          1787,
+          245,
+          681
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "footL": {
+        "rect": [
+          338,
+          1787,
+          255,
+          669
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      },
+      "footR": {
+        "rect": [
+          746,
+          1787,
+          245,
+          681
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "span": 0.78
+      }
+    },
+    "arm": [
+      65.04177119359527,
+      69.50434806542681
+    ],
+    "leg": [
+      88,
+      70
+    ],
+    "headSize": [
+      70,
+      86
+    ],
+    "torsoSize": [
+      108,
+      116.1951219512195
+    ],
+    "footSize": [
+      48,
+      32
+    ],
+    "skin": {
+      "head": {
+        "rect": [
+          31,
+          1219,
+          269,
+          306
+        ],
+        "anchor": [
+          0.5,
+          0.94
+        ],
+        "size": [
+          77,
+          76
+        ]
+      },
+      "torso": {
+        "rect": [
+          350,
+          1115,
+          385,
+          587
+        ],
+        "anchor": [
+          0.5,
+          0.735
+        ],
+        "size": [
+          119,
+          182
+        ]
+      },
+      "armL": {
+        "rect": [
+          74,
+          1814,
+          175,
+          616
+        ],
+        "root": [
+          0.5,
+          0.085
+        ],
+        "joint": [
+          0.56,
+          0.465
+        ],
+        "end": [
+          0.53,
+          0.865
+        ],
+        "width": 36
+      },
+      "armR": {
+        "rect": [
+          812,
+          1117,
+          163,
+          590
+        ],
+        "root": [
+          0.5,
+          0.085
+        ],
+        "joint": [
+          0.56,
+          0.465
+        ],
+        "end": [
+          0.53,
+          0.865
+        ],
+        "width": 36
+      },
+      "legL": {
+        "rect": [
+          338,
+          1787,
+          255,
+          669
+        ],
+        "root": [
+          0.55,
+          0
+        ],
+        "joint": [
+          0.6,
+          0.34
+        ],
+        "end": [
+          0.56,
+          0.815
+        ],
+        "width": 63,
+        "start": 0.2
+      },
+      "legR": {
+        "rect": [
+          746,
+          1787,
+          245,
+          681
+        ],
+        "root": [
+          0.55,
+          0
+        ],
+        "joint": [
+          0.44,
+          0.34
+        ],
+        "end": [
+          0.48,
+          0.815
+        ],
+        "width": 63,
+        "start": 0.2
+      }
+    },
+    "joined": {
+      "rect": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "hip": [
+        768,
+        650
+      ],
+      "scale": 0.24,
+      "neck": [
+        768,
+        205
+      ],
+      "arms": [
+        {
+          "root": [
+            560,
+            245
+          ],
+          "elbow": [
+            406,
+            468
+          ],
+          "palm": [
+            241,
+            706
+          ]
+        },
+        {
+          "root": [
+            976,
+            245
+          ],
+          "elbow": [
+            1130,
+            468
+          ],
+          "palm": [
+            1295,
+            706
+          ]
+        }
+      ],
+      "posture": {
+        "width": 0.9,
+        "torsoHeight": 0.9,
+        "shoulderDrop": 11,
+        "hipLift": 12
+      }
+    }
+  },
+  "personality": {
+    "preset": "showboat",
+    "energy": 1.08,
+    "tempo": 1,
+    "seed": 29
+  },
+  "version": 1,
+  "renderMode": "paper-frames",
+  "cardId": "card-doug",
+  "cardImage": "/assets/doug/card.png",
+  "family": "human",
+  "sheet": "/assets/doug/sheet.png",
+  "parts": {},
+  "frames": {
+    "ready": {
+      "width": 255,
+      "height": 589,
+      "origin": [
+        149,
+        589
+      ],
+      "hand": [
+        23,
+        327
+      ],
+      "url": "/assets/doug/ready.png"
+    },
+    "underarm-backswing": {
+      "width": 366,
+      "height": 541,
+      "origin": [
+        215,
+        541
+      ],
+      "hand": [
+        26,
+        253
+      ],
+      "url": "/assets/doug/underarm-backswing.png"
+    },
+    "underarm-release": {
+      "width": 324,
+      "height": 549,
+      "origin": [
+        125,
+        549
+      ],
+      "hand": [
+        290,
+        179
+      ],
+      "url": "/assets/doug/underarm-release.png"
+    },
+    "football-cocked": {
+      "width": 413,
+      "height": 532,
+      "origin": [
+        214,
+        532
+      ],
+      "hand": [
+        73,
+        42
+      ],
+      "url": "/assets/doug/football-cocked.png"
+    },
+    "basketball-shot": {
+      "width": 209,
+      "height": 626,
+      "origin": [
+        106,
+        626
+      ],
+      "hand": [
+        45,
+        25
+      ],
+      "url": "/assets/doug/basketball-shot.png"
+    },
+    "celebrate": {
+      "width": 288,
+      "height": 619,
+      "origin": [
+        137,
+        619
+      ],
+      "hand": [
+        70,
+        23
+      ],
+      "url": "/assets/doug/celebrate.png"
+    }
+  },
+  "frameScale": 0.6,
+  "scale": 1,
+  "groundAnchor": [
+    0,
+    0
+  ],
+  "facing": "right-three-quarter",
+  "clips": [
+    "summon",
+    "idle",
+    "walk",
+    "prepare",
+    "cornhole",
+    "football",
+    "pong",
+    "basketball",
+    "follow",
+    "await",
+    "success",
+    "miss",
+    "special",
+    "disappointment",
+    "victory"
+  ],
+  "attachments": {
+    "release": [
+      99,
+      -222
+    ]
+  },
+  "supportedEvents": [
+    "cornhole",
+    "football",
+    "pong",
+    "basketball"
+  ],
+  "props": [
+    "bag",
+    "football",
+    "pong-ball",
+    "basketball"
+  ],
+  "effectPalette": [
+    "#ffca23",
+    "#f05a24",
+    "#117d87"
+  ],
+  "signatureMove": "The lock-in",
+  "audioCues": {
+    "summon": "paper-snap",
+    "release": "whoosh",
+    "success": "crowd-hit",
+    "miss": "tap",
+    "victory": "fanfare"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "dan_weighted_v1",
+  "imagePath": "dan_tex.png",
+  "width": 808,
+  "height": 1947,
+  "SubTexture": [
+    {
+      "name": "dan_approved_body",
+      "x": 0,
+      "y": 0,
+      "width": 808,
+      "height": 1947
+    }
+  ]
+}

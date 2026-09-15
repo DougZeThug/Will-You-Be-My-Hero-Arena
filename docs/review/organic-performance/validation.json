@@ -1,0 +1,240 @@
+{
+  "date": "2026-09-13T20:30:24.166Z",
+  "regression": {
+    "started": "2026-09-13T20:05:25.955Z",
+    "completed": "2026-09-13T20:14:31.837Z",
+    "passed": true,
+    "checks": [
+      {
+        "name": "typecheck",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 11.896
+      },
+      {
+        "name": "simulation-and-animation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 30.42
+      },
+      {
+        "name": "browser",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 465.925
+      },
+      {
+        "name": "production-build",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 20.054
+      },
+      {
+        "name": "production-isolation",
+        "passed": true,
+        "exitCode": 0,
+        "seconds": 17.58
+      }
+    ],
+    "deployment": "Not performed",
+    "controllerValidation": "Synthetic browser Gamepad API; physical hardware requires a separate manual pass"
+  },
+  "pureChecks": 169905,
+  "browser": {
+    "passed": 82,
+    "skipped": 1,
+    "skippedReason": "Optional approved-image baseline suite"
+  },
+  "afterCameraFramingFix": {
+    "typecheck": "passed",
+    "focusedBrowserTests": 4,
+    "visualReview": {
+      "started": "2026-09-13T20:26:00.915Z",
+      "completed": "2026-09-13T20:26:19.150Z",
+      "passed": true,
+      "screenshots": 22,
+      "errors": [],
+      "actualNativeRendering": true,
+      "reference": "Unmatched measured demonstration, not a cornhole accuracy claim"
+    }
+  },
+  "performance": {
+    "frames": 693,
+    "windowFrames": 240,
+    "frameTiming": {
+      "samples": 240,
+      "meanMs": 17.588,
+      "p95Ms": 18.2,
+      "worstMs": 18.6
+    },
+    "updateWork": {
+      "samples": 240,
+      "meanMs": 5.007,
+      "p95Ms": 6.8,
+      "worstMs": 8.3
+    },
+    "renderWork": {
+      "samples": 240,
+      "meanMs": 1.507,
+      "p95Ms": 1.8,
+      "worstMs": 2.3
+    },
+    "slowFrames": 3,
+    "fps": 56.857
+  },
+  "media": [
+    {
+      "source": "work\\qa\\organic-motion\\videos\\basketball-0.25x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-basketball-0.25x.mp4",
+      "bytes": 4302709,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\basketball-1x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-basketball-1x.mp4",
+      "bytes": 1830036,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\cornhole-0.25x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-cornhole-0.25x.mp4",
+      "bytes": 4095333,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\cornhole-1x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-cornhole-1x.mp4",
+      "bytes": 1847017,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\fighting-0.25x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-fighting-0.25x.mp4",
+      "bytes": 3831800,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\fighting-1x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-fighting-1x.mp4",
+      "bytes": 1792879,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\running-0.25x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-running-0.25x.mp4",
+      "bytes": 4233157,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\videos\\running-1x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\dan-running-1x.mp4",
+      "bytes": 1823102,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\doug-close\\cornhole-0.25x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\doug-close-cornhole-0.25x.mp4",
+      "bytes": 4217709,
+      "decodeErrors": []
+    },
+    {
+      "source": "work\\qa\\organic-motion\\doug-close\\cornhole-1x.webm",
+      "mp4": "work\\qa\\organic-motion\\review-videos\\doug-close-cornhole-1x.mp4",
+      "bytes": 1767480,
+      "decodeErrors": []
+    }
+  ],
+  "metrics": [
+    {
+      "evidence": "work/qa/organic-motion/final-browser/organic-motion-Organic-mot-0bc6a--jump-shot-and-jab-recovery-desktop-chromium/basketball-organic.json",
+      "sha256": "1fd4b5c0ea73341e9e1c2fb8cf10e9a2f322275c8e8581f57fab38d12c3b3fcf",
+      "maxLockedContactError": 2.2914314707516465e-13,
+      "releaseCount": 1,
+      "techniques": [
+        "idle",
+        "overhead"
+      ]
+    },
+    {
+      "evidence": "work/qa/organic-motion/final-browser/organic-motion-Organic-mot-0bc6a--jump-shot-and-jab-recovery-desktop-chromium/fighting-organic.json",
+      "sha256": "6251327aabdbc76537a88da78d275a62cb28b392f8c7fa09a54700799af0b4f9",
+      "maxLockedContactError": 2.0495186137532014e-13,
+      "releaseCount": 0,
+      "techniques": [
+        "idle",
+        "strike"
+      ]
+    },
+    {
+      "evidence": "work/qa/organic-motion/final-browser/organic-motion-Organic-mot-0bc6a--jump-shot-and-jab-recovery-desktop-chromium/running-organic.json",
+      "sha256": "0495ccbdc63ed407aed60b3ef983f0f61f84e6d14e9815506844e845f2a95868",
+      "maxLockedContactError": 2.5421149729252077e-13,
+      "releaseCount": 0,
+      "techniques": [
+        "idle",
+        "stride"
+      ]
+    },
+    {
+      "evidence": "work/qa/organic-motion/final-browser/organic-motion-Organic-mot-217dd--visibly-and-keeps-contacts-desktop-chromium/dan-organic.json",
+      "sha256": "7560635db5be1e3f28d760bae5c08ad9d5e2b6ea3878e33a6e99bd205b805c7e",
+      "maxLockedContactError": 2.5421149729252077e-13,
+      "samples": 360,
+      "releaseCount": 1
+    },
+    {
+      "evidence": "work/qa/organic-motion/final-browser/organic-motion-Organic-mot-e51fc--visibly-and-keeps-contacts-desktop-chromium/doug-organic.json",
+      "sha256": "9de98ce4b5e0be3cde2ffe913e2c85faa84acd42462193aafacb9a60c8e742dd",
+      "maxLockedContactError": 1.2710574864626038e-13,
+      "samples": 360,
+      "releaseCount": 0
+    }
+  ],
+  "sourceHashes": {
+    "lab/human-motion/authoring.ts": "bce7da92fa4024e0bc21cf9313c4f2f07df70d28246277c51bc6551a268edb01",
+    "lab/human-motion/authoring/basketball.ts": "70df0363aede41cdd2395c839e7bce21ef0fb9e5c9468e688231a9e346ea79ac",
+    "lab/human-motion/authoring/builder.ts": "788171d2fb831782ad56365d45fb71b0323ebe0ce4811cd7bb64224196d4a018",
+    "lab/human-motion/authoring/combat.ts": "9a4de28d6cc47edec5c8d8f49945a5ddd6b4a9623222c5423fb5cc576e908071",
+    "lab/human-motion/authoring/locomotion.ts": "2c5d626bcb2cd177d9b88af95c66bce4696332bf39d40a5c9c66b2ae6f1f4d69",
+    "lab/human-motion/events/CombatProof.ts": "5aa9f1fa67f9f403f6c2f9172973a2e6a445c0e8c8e0351fe75700a736cb44f9",
+    "lab/human-motion/events/contracts.ts": "4e5887a73cf744fac9a2f1307a581e86593f6cabf1358b74313e66e6b8395b7a",
+    "lab/human-motion/events/PrecisionProof.ts": "f6ed549cc63c24ebcebb66fb697dded4a1f4924a825b48b41c763c974dcdc677",
+    "lab/human-motion/events/RunningProof.ts": "c3e1a9922b6e15ffcbd011d949a7ef5084d6d671fb437333077e155b5c9406e8",
+    "lab/human-motion/index.html": "15281ed11962adc170d48c853908a8b607af3d38e936adad0060f4887e7fb705",
+    "lab/human-motion/InertialPose.ts": "0bfc8510cd3096f1cd57a4aa6aabcc5407a5fe0f68667d850e8c4d0b4940c279",
+    "lab/human-motion/main.ts": "a484335687902abc98668ac37a0222d156d365c4afdccf3981bf190825bb6cea",
+    "lab/human-motion/MotionActor.ts": "1bc007f16adf2928a4c9c586029222c68979785fc2afd0d367cb9233d1c5b53b",
+    "lab/human-motion/MotionReview.ts": "2e1e1f1a2f3aeb0544a2d9582bf4fd1d538ea899c688b5499b57ba8437c03027",
+    "lab/human-motion/MotionScene.ts": "6df4defdcb7e69fa55bc8fb91810e8d4ab7835e23eacf536126443b5ed017b3f",
+    "lab/human-motion/MotionSession.ts": "6473d286c39d971c015e123fb8bdd514f7f86949c02d6ee000aa04bfc45414e8",
+    "lab/human-motion/NativeAnimator.ts": "e09125bc30c54a722646b737639ba8a5910717f04d6e8899d9c441fef367b2c2",
+    "lab/human-motion/ReviewTake.ts": "db78f58fe448e738004eb7d404fa4cc58f0bca3f828ab74d03782de67fb3ebd1",
+    "lib/arena/engine/motion-tools/ReferenceCurves.ts": "4f64d5a0e188998e86825a7ef9201708f83599446d4e0a98f5e85c3ccaec179e",
+    "lib/arena/engine/motion-tools/ReferenceMotion.ts": "9d39e1286d20a420a35a87c9e4c98af92b7f668bb9e2c35767b55e672e47b19e",
+    "lib/arena/engine/motion/AnimationGraph.ts": "d5ee792251e049e637875a92a2b295627bac90db476f8fe3164256103b17f39d",
+    "lib/arena/engine/motion/BodyBalance.ts": "e85d7b596e9d360c6e833cbe460236d95e463bc58ccb4330c6f9c8b4cc9a217a",
+    "lib/arena/engine/motion/DampedMotion.ts": "a04e2bf744d371098142d46592b4f67a4e9a097a85cb8bf0c83f347b3fa9db4e",
+    "lib/arena/engine/motion/HumanSkeleton.ts": "10708baaadf1e79b838a9102d8d070d0b83a23a4df0265f12ba214cf8d1346f3",
+    "lib/arena/engine/motion/MotionAnalyzer.ts": "d53c5add22007e13f1f20d23930d979aa87f830842851a3e6457033ef616ef9a",
+    "lib/arena/engine/motion/MotionCurves.ts": "83624535a967d33e0bd4b6b77bc909914c57d80dab4b89c365863c415c03ff6c",
+    "lib/arena/engine/motion/MotionPlanner.ts": "7e05f60f6457bd0219a28ed4a8cecca8c5b938d1a3ca67fe4491c4fb28124d18",
+    "lib/arena/engine/motion/MotionTypes.ts": "2d39b23d639d0df664aa4f804ed11105bf481ef65a492b1b11bb55ab6cf10b97",
+    "lib/arena/engine/motion/OrganicMotion.ts": "9128a6da44d79bf07aa1088791adaa790a31463bc7848266b5d4d825d8f90060",
+    "lib/arena/engine/motion/RecoveryMatcher.ts": "5ac1a8c3255f43f9761902e3bbf8351b63cd00c67f480e9142917da1a3396d24",
+    "lib/arena/engine/motion/SupportAdjustment.ts": "512fa84c53efb091ab93ab4585158c6d45648b6af163f80b28430e0a2e5d755b",
+    "lib/arena/engine/movement/FootLock.ts": "dc25c2c9d66f4fb9083cf8bfeaaa64a7ae7053f49859355b5d429bd48a04f496",
+    "scripts/capture-human-motion.mjs": "fc6b75fddeddd0e1e7d93735b61ef2cb918efa2a54bf2b263d851a5524e4ca54",
+    "scripts/motion-reference/compare.py": "0c70a8f97752e29503486f7003a2198f21708d3a2c64fb344f641236d84966ec",
+    "scripts/review-organic-motion.mjs": "214f20a9e12ea9804e9e8e058074f906a501ba2fd8291b7450ad91ee42cc159f",
+    "tests/browser/organic-motion.spec.ts": "c437ff7fca543815279c641ee62f26725338abc5e29c2c2c09149e3c06a96a46",
+    "tests/organic-motion-tests.mjs": "afcbdcde22edbd9f7d040c27bd2a24cc440b2fd62b3a32d6abae06ce2aab0c4c"
+  },
+  "limitations": [
+    "Opt-in Lab only; not production installed",
+    "No new editor round trip",
+    "Measured demo is not a matched cornhole throw",
+    "No individual finger or cloth helper rig",
+    "Fighting lacks guard/fist and opposing-facing art",
+    "Physical controllers not exercised"
+  ]
+}

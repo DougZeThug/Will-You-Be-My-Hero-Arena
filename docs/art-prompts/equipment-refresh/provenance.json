@@ -1,0 +1,14 @@
+{
+  "generator": "Built-in image_gen.imagegen, two distinct calls, no variants and no CLI fallback",
+  "prompts": "prompts.json",
+  "styleReferences": [
+    "C:\\Users\\Doug\\Documents\\Codex\\2026-09-08\\files-pasted-by-the-user-you\\outputs\\arena\\public\\assets\\dan\\ready.png",
+    "C:\\Users\\Doug\\Downloads\\1000015706.png"
+  ],
+  "originals": [
+    "equipment-sheet-original.png",
+    "projectile-sheet-original.png"
+  ],
+  "preparation": "prepare_assets.py; Pillow and NumPy, no generated artwork redrawn; removed synthetic neutral checkerboard, retained warm cream border, isolated each item, cleaned two neighboring-bag margin slivers.",
+  "qa": "Viewed both source sheets, every individual crop and dark-background contact sheet. Anchor overlays visually checked. Files are RGBA with genuinely transparent pixels."
+}
