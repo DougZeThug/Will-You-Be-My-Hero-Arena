@@ -5,6 +5,7 @@ import {
   surfacePoint,
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
+  placement,
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
 export function surfaceTravelSeconds(a: Attempt, shot: ShotStyle) {
@@ -33,8 +34,7 @@ export function releasedBag(
   time: number,
 ): ProjectileFrame {
   const velocity = release.velocity!;
-  const target = surfacePoint('cornhole', a.actor, a.target),
-    onBoard = ['board', 'hole'].includes(a.contact);
+  const target = surfacePoint('cornhole', a.actor, a.target);
   const direct = [
     'airmail',
     'highArc',
@@ -56,10 +56,19 @@ export function releasedBag(
   const rolls = ['roll', 'cut', 'flop', 'trick'].includes(shot),
     omega = rolls ? 2.5 : direct ? 0.16 : 0.08;
   let angle = (release.angle ?? 0) + omega * t,
-    flatten = BAG_FLIGHT_FLATTEN + (rolls ? 0.09 * Math.sin(t * 5) : 0),
+    flatten =
+      (release.flatten ?? BAG_FLIGHT_FLATTEN) +
+      (rolls ? 0.09 * Math.sin(t * 5) : 0),
     alpha = 1;
   let vx = velocity.x + ax * t,
     vy = velocity.y + gravity * t;
+  // Only the new performance supplies an edge-on release exposure. Ease that
+  // same object toward the board plane before contact; preserve historical paths.
+  if (release.flatten !== undefined) {
+    const approach = smooth(clamp01((t / air - 0.55) / 0.45));
+    angle += (-0.1 - angle) * approach;
+    flatten += (0.52 - flatten) * approach;
+  }
   if (elapsed >= air && slide) {
     const u = clamp01((elapsed - air) / slide),
       travel = 1 - (1 - u) ** 2;
@@ -82,9 +91,9 @@ export function releasedBag(
     vx = 0;
     vy = 0;
     if (a.contact === 'hole') {
-      y += 18 * fall * fall;
-      alpha = 1 - smooth(fall);
-      flatten *= 1 - 0.5 * fall;
+      y += 42 * smooth(fall) * boardDepthScale(a.actor);
+      alpha = fall >= 1 ? 0 : 1;
+      flatten *= 1 - 0.15 * fall;
     } else if (a.contact === 'board') {
       angle += (-0.1 - angle) * smooth(fall);
       flatten += (0.52 - flatten) * smooth(fall);
@@ -95,14 +104,25 @@ export function releasedBag(
       alpha = 1 - clamp01((after - 0.4) / 0.3);
     }
   }
-  const depth = 1 + (boardDepthScale(a.actor) - 1) * clamp01(t / air);
+  const startScale = release.scale ?? 1;
+  const depth =
+    startScale + (boardDepthScale(a.actor) - startScale) * clamp01(t / air);
   return {
     x,
     y,
     angle,
     flatten,
     alpha,
-    scale: depth * (a.contact === 'hole' ? 1 - 0.65 * fall : 1),
+    scale: depth * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
+    ...(a.contact === 'hole' && elapsed >= a.duration
+      ? {
+          occlusion: {
+            ...placement('cornhole', a.actor).anchor,
+            y: placement('cornhole', a.actor).anchor.y + 5 * depth,
+            slope: -0.1,
+          },
+        }
+      : {}),
     ground: {
       x,
       y:

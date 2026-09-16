@@ -2,6 +2,7 @@ import { expect, type Page, type TestInfo } from 'playwright/test';
 import { writeFile } from 'node:fs/promises';
 import type { RigQAOptions } from '../../lab/rig-qa';
 import type { RigInspector } from '../../lab/RigInspector';
+import type { ArenaScene } from '../../lib/arena/engine/scenes/ArenaScene';
 
 // Keep tests coupled to the versioned public contract, never Phaser private fields.
 export type LabState = {
@@ -33,6 +34,7 @@ export type LabState = {
   controllers: Record<string, any>[];
   markers: Record<string, any>[];
   performance: Record<string, any>;
+  rendering: ReturnType<ArenaScene['debugSnapshot']> | null;
   rigQA: ReturnType<RigInspector['snapshot']> | null;
 };
 type LabAPI = {

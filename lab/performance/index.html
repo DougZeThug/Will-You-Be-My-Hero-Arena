@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arena · Character Performance Lab</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">WILL YOU BE MY HERO? / DEVELOPMENT</p>
+          <h1>Character Performance Lab</h1>
+        </div>
+        <a href="/?scenario=cornhole-performance"
+          >Play the recorded cornhole scene ↗</a
+        >
+      </header>
+      <section class="toolbar" aria-label="Performance controls">
+        <label
+          >Character
+          <select id="character">
+            <option value="doug">Doug</option>
+            <option value="dan">Dan</option>
+          </select></label
+        >
+        <label
+          >Action
+          <select id="action">
+            <option value="cornholeThrow">Cornhole throw</option>
+            <option value="look">Look at target</option>
+            <option value="settle">Settle stance</option>
+            <option value="celebrate">Signature gesture</option>
+            <option value="returnToIdle">Recover</option>
+          </select></label
+        >
+        <label
+          >Recorded take
+          <select id="outcome">
+            <option value="success">Successful bag</option>
+            <option value="board">Bag on board</option>
+            <option value="miss">Missed bag</option>
+          </select></label
+        >
+        <button id="play">Play</button><button id="pause">Pause</button
+        ><button id="restart">Restart</button
+        ><button id="step">+1 frame</button>
+        <label class="check"><input id="loop" type="checkbox" />Loop</label>
+        <label
+          >Speed
+          <select id="speed">
+            <option value="0.25">0.25×</option>
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+          </select></label
+        >
+      </section>
+      <section class="readout">
+        <output id="status" role="status">Loading character…</output
+        ><span id="result">Recorded cornhole • points are not saved</span>
+      </section>
+      <section
+        id="tuning"
+        class="tuning"
+        aria-label="Tune the shared motion profile"
+      ></section>
+      <div id="stage" aria-label="Animated arena"></div>
+      <section class="timeline">
+        <label
+          >State
+          <select id="phase">
+            <option value="">Choose a state</option>
+          </select></label
+        ><label class="scrub"
+          >Timeline
+          <input
+            id="timeline"
+            type="range"
+            min="0"
+            max="10"
+            step="0.0166667"
+            value="0" /></label
+        ><output id="time">0.00s</output>
+      </section>
+      <section class="toolbar debug" aria-label="Debug overlays">
+        <label class="check"
+          ><input id="close" type="checkbox" />Close view</label
+        ><label class="check"
+          ><input id="skeleton" type="checkbox" />Skeleton / IK</label
+        ><label class="check"
+          ><input id="names" type="checkbox" />Bone names</label
+        >
+        <label class="check"
+          ><input id="attachments" type="checkbox" />Hands / feet / mass
+          proxy</label
+        ><label class="check"><input id="bounds" type="checkbox" />Bounds</label
+        ><label class="check"
+          ><input id="silhouette" type="checkbox" />Silhouette</label
+        ><label class="check"><input id="audio" type="checkbox" />Sound</label>
+      </section>
+      <div class="details">
+        <section>
+          <h2>Performance events</h2>
+          <ol id="events" aria-label="Animation event log"></ol>
+        </section>
+        <section>
+          <h2>Candidate settings</h2>
+          <p>
+            Changes pause at the current time. Replay to judge timing. Both
+            characters use these same controls.
+          </p>
+          <button id="defaults">Reset to reviewed settings</button>
+          <button id="export">Export candidate</button>
+          <label class="profile-import"
+            >Reload candidate JSON
+            <input
+              id="import-profile"
+              type="file"
+              accept=".json,application/json"
+            />
+          </label>
+          <output id="profile-error" role="alert"></output>
+          <details>
+            <summary>Advanced profile JSON</summary>
+            <label class="profile"
+              >Profile JSON<textarea
+                id="profile"
+                rows="16"
+                spellcheck="false"
+              ></textarea></label
+            ><button id="apply">Apply profile at this time</button>
+          </details>
+          <p>
+            Exported candidates are portable. Reviewed defaults live in the
+            shared character profiles and are used by normal matches.
+          </p>
+        </section>
+        <section>
+          <h2>Motion checks</h2>
+          <pre id="checks"></pre>
+          <details>
+            <summary>Runtime snapshot</summary>
+            <pre id="snapshot"></pre>
+          </details>
+        </section>
+      </div>
+      <p class="note">
+        Existing artwork and LoongBones exports are preserved. This Lab
+        evaluates derived shared motion and registered arm geometry. Cornhole
+        uses a seeded recording’s contact and the existing recorded-flight
+        presenter. The purple mass marker is a visual approximation. Editor
+        round-trip remains unverified. Recorded cornhole in the player game now
+        uses this same controller, runtime and motion content.
+      </p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

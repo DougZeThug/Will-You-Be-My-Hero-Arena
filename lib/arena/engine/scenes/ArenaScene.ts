@@ -1,20 +1,15 @@
 import { RenderMetrics } from '../core/RenderMetrics';
 import { personalityMoves } from '../../personality';
 import * as Phaser from 'phaser';
-import { cardById, type Attempt, type Recording } from '../../model';
+import { cardById, type Recording } from '../../model';
 import { revealed, project } from '../../simulation';
 import {
   completionTime,
-  scoreTime,
   clamp01,
   TIMING,
   attemptLength,
 } from '../../match-timeline';
-import {
-  surfacePoint,
-  boardDepthScale,
-  placement,
-} from '../../equipment-layout';
+import { placement } from '../../equipment-layout';
 import { previewAttempt } from '../../pose-motion';
 import type { ArenaBridge } from '../core/ArenaOptions';
 import { BattleDirector } from '../core/BattleDirector';
@@ -33,6 +28,7 @@ import { animation } from '../animation/AnimationRegistry';
 import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
+import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -51,6 +47,8 @@ export class ArenaScene extends Phaser.Scene {
   private loaded = false;
   private hud!: ArenaHud;
   private environment?: ArenaEnvironment;
+  private performanceTakes = new Map<number, CornholePerformancePlayback>();
+  private performanceTime: number | null = null;
   constructor(private bridge: ArenaBridge) {
     super('Arena');
   }
@@ -87,6 +85,11 @@ export class ArenaScene extends Phaser.Scene {
             Number.parseInt(cardById(c.loaded.asset.cardId).color.slice(1), 16),
           ),
       );
+      const performanceRevision = this.characters
+        .find((c) => c.rig.performance)
+        ?.rig.debugInfo?.().runtimeRevision;
+      if (typeof performanceRevision === 'string')
+        this.game.canvas.dataset.characterRuntime = performanceRevision;
       this.metrics = new RenderMetrics(this.game);
       this.loadMs = Math.round(performance.now() - this.bridge.started);
       this.loaded = true;
@@ -103,6 +106,7 @@ export class ArenaScene extends Phaser.Scene {
         this.effects.destroy();
         this.cards.forEach((c) => c.destroy());
         this.characters.forEach((c) => c.destroy());
+        this.performanceTakes.forEach((t) => t.destroy());
       });
     } catch (e) {
       this.bridge.current.onError('Arena could not start: ' + String(e));
@@ -150,6 +154,17 @@ export class ArenaScene extends Phaser.Scene {
   }
   renderAt(time: number) {
     if (!this.loaded) return;
+    const previousPerformanceTime = this.performanceTime;
+    if (
+      previousPerformanceTime !== null &&
+      (time < previousPerformanceTime - 1e-8 ||
+        time - previousPerformanceTime > 0.3)
+    ) {
+      this.performanceTakes.forEach((t) => t.destroy());
+      this.performanceTakes.clear();
+      this.characters.forEach((c) => c.rig.performance?.reset());
+    }
+    this.performanceTime = time;
     const p = this.bridge.current,
       rec = p.recording,
       status = rec ? revealed(rec, time) : null,
@@ -163,6 +178,20 @@ export class ArenaScene extends Phaser.Scene {
     for (const [i, c] of this.characters.entries()) {
       c.place();
       const plan = this.director?.plan;
+      if (rec && p.sport === 'cornhole' && c.rig.performance) {
+        if (time < rec.introDuration) {
+          const intro = this.cards[i].entrance(
+            time,
+            i,
+            c.personality,
+            rec.introDuration,
+            p.reduced,
+          );
+          c.place(intro.x, intro.y, intro.scale, intro.alpha);
+        } else this.cards[i].settle();
+        this.renderPerformance(c, rec, time);
+        continue;
+      }
       if (!rec && p.previewAnimation) {
         this.cards[i].settle();
         this.libraryPreview(c, time, p.previewAnimation);
@@ -236,7 +265,11 @@ export class ArenaScene extends Phaser.Scene {
     if (rec) {
       for (const object of this.event.persistentObjects(time))
         this.projectile(object.id, object.actor).show(object.frame, false);
-      if (active && time >= active.releaseAt) {
+      if (
+        active &&
+        time >= active.releaseAt &&
+        !this.characters[active.actor].rig.performance
+      ) {
         const frame = this.event.performAction(
           active,
           direction!,
@@ -263,18 +296,23 @@ export class ArenaScene extends Phaser.Scene {
         },
         !p.clock.paused,
       );
-      cameraEffects(this.cameras.main, time, active, direction, p.reduced);
+      if (this.characters.some((c) => c.rig.performance))
+        this.cameras.main.setZoom(1).setScroll(0, 0);
+      else cameraEffects(this.cameras.main, time, active, direction, p.reduced);
     }
     this.hud.update({
       event: p.sport,
       time,
       protectedPoints: [...this.projectiles.values()]
         .filter((p) => p.sprite.visible && !p.attached)
-        .map((p) => ({
-          x: p.sprite.x,
-          y: p.sprite.y,
-          radius: Math.max(p.sprite.displayWidth, p.sprite.displayHeight) * 0.5,
-        })),
+        .map((p) => {
+          const f = p.worldFrame();
+          return {
+            x: f.x,
+            y: f.y,
+            radius: Math.max(f.displayWidth, f.displayHeight) * 0.5,
+          };
+        }),
       phase: !rec
         ? 'CHOOSE A MATCHUP'
         : status?.complete
@@ -308,6 +346,71 @@ export class ArenaScene extends Phaser.Scene {
       })),
     });
     this.hud.setVisible(!p.previewAnimation);
+  }
+  private renderPerformance(
+    c: CharacterController,
+    rec: Recording,
+    time: number,
+  ) {
+    const controller = c.rig.performance!,
+      lead = CornholePerformancePlayback.releaseLead(controller);
+    const opponent = this.characters.find((other) => other.actor !== c.actor)
+      ?.rig.performance;
+    const opponentLead = opponent
+      ? CornholePerformancePlayback.releaseLead(opponent)
+      : lead;
+    const observe = (at: number) =>
+      controller.observe(
+        CornholePerformancePlayback.observation(rec, c.actor, at, opponentLead),
+      );
+    const attempt = rec.attempts.findLast(
+      (a) => a.actor === c.actor && a.releaseAt - lead <= time + 1e-9,
+    );
+    if (!attempt) {
+      // A direct seek before the first own turn reconstructs the same context
+      // transitions as playback, using the existing character clock.
+      while (controller.time + 1e-9 < time) {
+        observe(controller.time);
+        controller.advance(Math.min(1 / 120, time - controller.time));
+      }
+      return;
+    }
+    let take = this.performanceTakes.get(c.actor);
+    if (take?.attempt.id !== attempt.id) {
+      if (take) {
+        take.sync(Math.max(take.startAt, attempt.releaseAt - lead), observe);
+        take.destroy();
+      }
+      take = new CornholePerformancePlayback(controller, attempt);
+      this.performanceTakes.set(c.actor, take);
+    }
+    take.sync(time, observe);
+    const hand = controller.attachments.current();
+    if (controller.attachments.attached && hand)
+      this.projectile(attempt.id, c.actor).hold(
+        hand.x,
+        hand.y,
+        hand.angle,
+        hand.scale,
+        c.rig.root.depth - 0.01,
+        c.rig.heldObjectLayer,
+        hand.flatten,
+      );
+    else if (take.frame) {
+      this.projectile(attempt.id, c.actor).release(
+        take.frame,
+        c.rig.heldObjectLayer,
+        controller.runtime.attachment('rightHand'),
+      );
+      this.effects.contact(
+        {
+          ...attempt,
+          contactAt: attempt.releaseAt + take.frame.kinematics!.airTime,
+        },
+        time,
+        this.bridge.current.reduced || this.bridge.current.low,
+      );
+    }
   }
   private libraryPreview(c: CharacterController, time: number, id: string) {
     const clip = animation(id),
@@ -419,13 +522,7 @@ export class ArenaScene extends Phaser.Scene {
         attached: o.attached,
         kinematics: o.kinematics,
         visible: o.sprite.visible,
-        x: o.sprite.x,
-        y: o.sprite.y,
-        rotation: o.sprite.rotation,
-        scaleX: o.sprite.scaleX,
-        scaleY: o.sprite.scaleY,
-        displayWidth: o.sprite.displayWidth,
-        displayHeight: o.sprite.displayHeight,
+        ...o.worldFrame(),
         alpha: o.sprite.alpha,
       })),
       counters: {

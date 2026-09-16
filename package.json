@@ -18,7 +18,9 @@
     "test:browser:visual": "node scripts/browser-tests.mjs --visual",
     "test:browser:update": "node scripts/browser-tests.mjs --update-baselines",
     "test:production": "node scripts/production-smoke.mjs",
-    "check:regression": "node scripts/regression.mjs"
+    "check:regression": "node scripts/regression.mjs",
+    "review:cornhole-turn": "node scripts/cornhole-turn-review.mjs --build",
+    "motion:apply-profile": "node scripts/apply-performance-profile.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

@@ -2,6 +2,8 @@ import type { Vec2 } from '../motion/MotionTypes';
 export interface AnchorSample extends Vec2 {
   time: number;
   angle: number;
+  scale?: number;
+  flatten?: number;
 }
 export interface ReleaseKinematics extends AnchorSample {
   velocity: Vec2;

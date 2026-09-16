@@ -206,9 +206,16 @@ export class LabRuntime {
     this.timestamp = 0;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
-      const characterRigs = scenario.id === 'cornhole-recorded'
-        ? await (await import('./loongbones/arena/provider')).weightedMatchProvider()
-        : undefined;
+      const characterRigs =
+        scenario.id === 'cornhole-performance'
+          ? await (
+              await import('./performance/provider')
+            ).performanceMatchProvider()
+          : scenario.id === 'cornhole-recorded'
+            ? await (
+                await import('./loongbones/arena/provider')
+              ).weightedMatchProvider()
+            : undefined;
       await new Promise<void>((resolve, reject) => {
         timeout = setTimeout(
           () =>

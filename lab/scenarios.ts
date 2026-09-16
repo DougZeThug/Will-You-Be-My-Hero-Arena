@@ -58,6 +58,14 @@ export const SCENARIOS: readonly Scenario[] = [
     'Board-facing layered Dan and Doug, palm-up release, three hand poses and planted-foot underhand swings. New authored LoongBones import rigs; editor round trips pending. Original exports remain in their comparison pages.',
   ),
   define(
+    'cornhole-performance',
+    'Cornhole · character performance',
+    'recorded',
+    'cornhole',
+    'The player game ArenaScene with the shared character performance controller and immutable recorded timing.',
+    { seed: 'arena-lab:cornhole-recorded:v1' },
+  ),
+  define(
     'cornhole-paper-reference',
     'Cornhole · legacy paper reference',
     'recorded',

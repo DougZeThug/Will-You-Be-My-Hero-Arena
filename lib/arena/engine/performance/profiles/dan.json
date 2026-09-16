@@ -1,0 +1,20 @@
+{
+  "id": "dan",
+  "celebration": "nod",
+  "movementTempo": 0.91,
+  "stanceWidth": 0.98,
+  "posture": 0.35,
+  "confidence": 0.72,
+  "backswing": 22,
+  "releaseLift": 10,
+  "followThrough": 70,
+  "finishRetention": 0.52,
+  "recoveryDuration": 0.86,
+  "weightTransfer": 30,
+  "reactionIntensity": 0.42,
+  "idleEnergy": 0.3,
+  "restShift": -5,
+  "restCompression": 4,
+  "attentionLean": 1.8,
+  "perception": 0.22
+}

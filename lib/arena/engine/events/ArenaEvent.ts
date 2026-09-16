@@ -9,6 +9,8 @@ export interface ReleaseFrame extends XY {
   velocity?: XY;
   angle?: number;
   angularVelocity?: number;
+  scale?: number;
+  flatten?: number;
 }
 export interface ProjectileFrame extends XY {
   angle: number;
@@ -16,6 +18,8 @@ export interface ProjectileFrame extends XY {
   flatten: number;
   alpha: number;
   ground: XY;
+  /** Registered front lip; mask only the part descending behind the board. */
+  occlusion?: { x: number; y: number; slope: number };
   kinematics?: {
     model: string;
     velocity: XY;

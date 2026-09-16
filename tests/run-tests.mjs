@@ -4,6 +4,13 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 import { createHash } from 'node:crypto';
 fs.mkdirSync('.test-build', { recursive: true });
+// The reviewed motion defaults are the same JSON inputs used by normal matches.
+for (const id of ['doug', 'dan']) {
+  const folder = '.test-build/engine/performance/profiles';
+  fs.mkdirSync(folder, { recursive: true });
+  fs.writeFileSync(`${folder}/${id}.mjs`, 'export default ' +
+    fs.readFileSync(`lib/arena/engine/performance/profiles/${id}.json`, 'utf8') + ';');
+}
 fs.writeFileSync(
   '.test-build/motion-catalog.mjs',
   'export default ' +
@@ -719,6 +726,7 @@ await (await import('./performance-upgrade-tests.mjs')).testPerformanceUpgrade({
 await (
   await import('./animation-upgrade-tests.mjs')
 ).testAnimationUpgrade({ check });
+checks += await (await import('./character-performance.test.mjs')).performanceTests();
 const report = {
   checks,
   seededContests: 2000,

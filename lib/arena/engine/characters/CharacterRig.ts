@@ -4,6 +4,7 @@ import type { XY } from '../events/ArenaEvent';
 import type { ReleaseFrame } from '../events/ArenaEvent';
 import type { LoadedCharacter } from '../scenes/CharacterAssetLoader';
 import type { CharacterProfile } from './CharacterProfile';
+import type { CharacterPerformanceController } from '../performance/CharacterPerformanceController';
 export type SocketName =
   | 'throwingHand'
   | 'offHand'
@@ -16,6 +17,8 @@ export type SocketName =
 export interface CharacterRig {
   readonly root: Phaser.GameObjects.Container;
   readonly backend?: string;
+  readonly performance?: CharacterPerformanceController;
+  readonly heldObjectLayer?: Phaser.GameObjects.Container;
   debugInfo?(): Record<string, unknown>;
   apply(pose: PuppetPose, clip?: string, progress?: number): void;
   socket(name: SocketName): XY;

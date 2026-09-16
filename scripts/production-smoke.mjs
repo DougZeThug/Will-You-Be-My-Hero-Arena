@@ -30,6 +30,7 @@ try {
           '__HERO_DAN_RIG__',
           '__HERO_WEIGHTED_RIG__',
           '__HERO_MOTION__',
+          '__HERO_PERFORMANCE__',
         ])
           assert.ok(
             !source.includes(symbol),
@@ -58,7 +59,14 @@ try {
   const page = await context.newPage();
   page.on('pageerror', (error) => report.errors.push(error.message));
   await page.goto(url);
-  assert.equal(await page.evaluate(() => typeof window.__HERO_MOTION__), 'undefined');
+  assert.equal(
+    await page.evaluate(() => typeof window.__HERO_MOTION__),
+    'undefined',
+  );
+  assert.equal(
+    await page.evaluate(() => typeof window.__HERO_PERFORMANCE__),
+    'undefined',
+  );
   await page.getByRole('button', { name: 'Play', exact: true }).waitFor();
   assert.equal(
     await page.evaluate(() => typeof window.__HERO_ARENA__),
@@ -146,7 +154,7 @@ try {
       ...document.querySelectorAll('.scoreboard small'),
     ].some((node) => /^[1-9]\d*\/\d+/.test(node.textContent ?? ''));
     return (
-      /^ROUND /.test(round) &&
+      round.startsWith('ROUND ') &&
       progress > 0 &&
       completedAttempt &&
       !document.querySelector('.arena-loading')
@@ -168,7 +176,15 @@ try {
         .getAttribute('aria-valuenow'),
     ),
     mode: 'exhibition',
+    characterRuntime: await page
+      .locator('canvas[data-character-runtime]')
+      .getAttribute('data-character-runtime'),
   };
+  assert.equal(
+    report.watchReadyEvidence.characterRuntime,
+    'cornhole-finish-settle-v1',
+    'Production cornhole must use the reviewed performance runtime',
+  );
   report.watch = true;
   await page.screenshot({
     path: path.join(directory, 'production-watch.png'),

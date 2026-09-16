@@ -232,6 +232,7 @@ export class CharacterController {
     };
   }
   debugSnapshot() {
+    const performance = this.rig.performance?.snapshot();
     const root = this.rig.root,
       matrix = root.getWorldTransformMatrix();
     const socket = (name: SocketName) => {
@@ -266,7 +267,14 @@ export class CharacterController {
         alpha: root.alpha,
         visible: root.visible,
       },
-      animation: this.renderedAnimation,
+      animation: performance
+        ? {
+            clip: performance.action ?? 'idle',
+            progress: performance.segmentTime,
+            pose: null,
+            phase: performance.state,
+          }
+        : this.renderedAnimation,
       sockets: {
         coordinateSpace: 'render-world' as const,
         throwingHand: socket('throwingHand'),

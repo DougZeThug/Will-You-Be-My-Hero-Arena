@@ -1,0 +1,20 @@
+{
+  "id": "doug",
+  "celebration": "chestTap",
+  "movementTempo": 1.05,
+  "stanceWidth": 1,
+  "posture": 0.7,
+  "confidence": 0.9,
+  "backswing": 32,
+  "releaseLift": 0,
+  "followThrough": 52,
+  "finishRetention": 0.58,
+  "recoveryDuration": 0.74,
+  "weightTransfer": 48,
+  "reactionIntensity": 0.8,
+  "idleEnergy": 0.55,
+  "restShift": -10,
+  "restCompression": 6,
+  "attentionLean": 2.8,
+  "perception": 0.16
+}
