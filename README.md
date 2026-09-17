@@ -20,7 +20,7 @@ Upload the card in Codex and say **“Make this card an arena character.”** Th
 
 ## Run
 
-Requires Node.js 22.13+ and pnpm. Verified with Node 24.19 on Windows.
+Requires Node.js 24.x and pnpm 11.19.0 (pinned in `package.json`). Verified with Node 24.19 on Windows.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -35,6 +35,13 @@ pnpm start
 ```
 
 The production server defaults to http://localhost:3000. Set PORT to change it. Serve `dist/client` over HTTP; do not open index.html as a file. The build script uses Vinext's build/export APIs and allows native workers to shut down naturally on Windows.
+
+### Vercel
+
+Import the repository root with the **Other** framework preset. `vercel.json`
+selects the existing static build and `dist/client` output. See
+[Vercel deployment settings and verification](docs/VERCEL-DEPLOYMENT.md), including
+the Corepack build setting needed for the pinned pnpm version. No game backend is required.
 
 ## Verify and extend
 

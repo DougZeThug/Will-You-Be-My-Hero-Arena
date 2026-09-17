@@ -1,22 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import './live-arena.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
   title: 'Will You Be My Hero? — Arena',
   description:
     'Illustrated paper cutouts. Automatic backyard sports. Pick your cards and settle it on the court.',
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({
@@ -29,11 +19,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="/assets/arena-interface.css" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

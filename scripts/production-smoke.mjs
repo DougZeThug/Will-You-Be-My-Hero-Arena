@@ -3,6 +3,7 @@ import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { auditProductionAssets } from './production-assets.mjs';
 
 const directory = 'work/qa/production';
 await mkdir(directory, { recursive: true });
@@ -14,6 +15,8 @@ const report = {
   watch: false,
   noPracticeSaveWrites: false,
   errors: [],
+  requests: [],
+  consoleErrors: [],
 };
 let server, browser;
 try {
@@ -40,6 +43,8 @@ try {
     }
   }
   await scan('dist/client');
+  const assets = await auditProductionAssets();
+  report.assets = assets.report;
   const port = process.env.ARENA_PRODUCTION_QA_PORT ?? '3011';
   assert.match(port, /^\d{4,5}$/);
   const url = `http://127.0.0.1:${port}`;
@@ -56,8 +61,33 @@ try {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1080 },
   });
+  context.setDefaultTimeout(30000);
   const page = await context.newPage();
   page.on('pageerror', (error) => report.errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') report.consoleErrors.push(message.text());
+  });
+  page.on('requestfailed', (request) => {
+    report.errors.push(
+      `Request failed: ${request.url()} (${request.failure()?.errorText})`,
+    );
+  });
+  page.on('response', (response) => {
+    const requestUrl = new URL(response.url());
+    if (!['http:', 'https:'].includes(requestUrl.protocol)) return;
+    const file =
+      decodeURIComponent(requestUrl.pathname.slice(1)) || 'index.html';
+    report.requests.push({
+      path: requestUrl.pathname,
+      status: response.status(),
+    });
+    if (requestUrl.origin !== url)
+      report.errors.push(`External dependency: ${response.url()}`);
+    else if (!assets.files.has(file))
+      report.errors.push(`Missing or wrong-case production URL: ${file}`);
+    if (response.status() >= 400)
+      report.errors.push(`HTTP ${response.status()}: ${response.url()}`);
+  });
   await page.goto(url);
   assert.equal(
     await page.evaluate(() => typeof window.__HERO_MOTION__),
@@ -138,6 +168,9 @@ try {
   await exhibition.waitFor();
   assert.equal(await exhibition.getAttribute('aria-selected'), 'true');
   await page
+    .getByRole('checkbox', { name: 'Replayable showcase seed' })
+    .check();
+  await page
     .getByRole('button', { name: 'Start showdown', exact: true })
     .click();
   await page.locator('.setup-dialog').waitFor({ state: 'hidden' });
@@ -190,11 +223,100 @@ try {
     path: path.join(directory, 'production-watch.png'),
     fullPage: true,
   });
+  await page.getByRole('button', { name: 'Enable sound', exact: true }).click();
+  await page.getByRole('button', { name: 'Mute sound', exact: true }).waitFor();
+  await page
+    .getByRole('button', { name: 'Resume playback', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Replay same recording', exact: true })
+    .waitFor({ timeout: 90000 });
+  await page
+    .getByRole('progressbar', { name: 'Contest playback', exact: true })
+    .filter({ visible: true })
+    .waitFor();
+  await page.waitForFunction(
+    () =>
+      Number(
+        document
+          .querySelector('[aria-label="Contest playback"]')
+          ?.getAttribute('aria-valuenow'),
+      ) === 100,
+  );
+  report.completedMatch = {
+    seed: 'velvet-paw-29',
+    speed: '1×',
+    score: await page.locator('.scoreboard').innerText(),
+    stage: await page.locator('.stage-bottom').innerText(),
+  };
+  assert.match(report.completedMatch.score, /4\/4 bags/);
+  assert.match(report.completedMatch.stage, /FINAL SCORE/);
+  await page.screenshot({
+    path: path.join(directory, 'production-results.png'),
+    fullPage: true,
+  });
+  const savedFacts = () =>
+    page.evaluate(() => {
+      const envelope = JSON.parse(localStorage.getItem('wybmh-paper-arena-v2'));
+      const state = JSON.parse(envelope.payload);
+      return {
+        recordings: state.recordings,
+        ledger: state.ledger,
+        policy: state.policy,
+      };
+    });
+  const beforeReplay = await savedFacts();
+  assert.equal(
+    beforeReplay.recordings.at(-1).setup.seed,
+    report.completedMatch.seed,
+  );
+  await page
+    .getByRole('button', { name: 'Replay same recording', exact: true })
+    .click();
+  await page.waitForFunction(() => {
+    const progress = Number(
+      document
+        .querySelector('[aria-label="Contest playback"]')
+        ?.getAttribute('aria-valuenow'),
+    );
+    return progress > 0 && progress < 10;
+  });
+  await page
+    .getByRole('button', { name: 'Pause playback', exact: true })
+    .click();
+  assert.deepEqual(await savedFacts(), beforeReplay);
+  // These menus are React state on /, not server routes. A reload restores the
+  // lobby and offers the saved contest through the existing Resume control.
+  assert.equal(new URL(page.url()).pathname, '/');
+  await page.reload();
+  await page.getByRole('button', { name: 'Watch', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Resume contest', exact: true })
+    .waitFor();
+  assert.deepEqual(await savedFacts(), beforeReplay);
+  report.refreshPreservedMatch = true;
+  await page
+    .getByRole('button', { name: 'Resume contest', exact: true })
+    .click();
+  await page.locator('.arena-loading').waitFor({ state: 'detached' });
+  // Restoring a nonzero saved position intentionally starts paused.
+  await page
+    .getByRole('button', { name: 'Resume playback', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Pause playback', exact: true })
+    .click();
+  await page.screenshot({
+    path: path.join(directory, 'production-resumed.png'),
+    fullPage: true,
+  });
   assert.equal(
     await page.evaluate(() => typeof window.__HERO_ARENA__),
     'undefined',
   );
   assert.deepEqual(report.errors, []);
+  assert.deepEqual(report.consoleErrors, []);
+  await context.close();
   report.passed = true;
 } catch (error) {
   report.errors.push(String(error));
