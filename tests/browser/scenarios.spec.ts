@@ -1,4 +1,6 @@
 import { test, expect } from 'playwright/test';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { openScenario, snapshot, checkpoint, artifact, step } from './helpers';
 
 const recorded = [
@@ -162,9 +164,31 @@ test('@visual fixed-clock approved reference images', async ({ page }) => {
         maxDiffPixelRatio: 0.002,
       });
   }
+});
 
-  // Current production cornhole performance: freeze its own deterministic
-  // clocks before capture. Playwright's CSS animation option is not the clock.
+test('@visual current cornhole performance approved images', async ({
+  page,
+}) => {
+  const baselineDirectory = path.join(
+    'tests/browser/baselines/desktop-chromium/scenarios.spec.ts',
+  );
+  const baselines = [
+    'cornhole-performance-isolated-dan-release.png',
+    'cornhole-performance-isolated-doug-release.png',
+    'cornhole-performance-court-dan-release.png',
+    'cornhole-performance-court-doug-release.png',
+  ];
+  test.skip(
+    process.env.ARENA_UPDATE_BASELINES !== '1' &&
+      baselines.some((name) => !existsSync(path.join(baselineDirectory, name))),
+    'Current-performance captures remain candidates until all four images are visually reviewed and committed together.',
+  );
+  test.skip(
+    process.env.ARENA_VISUAL_BASELINES !== '1',
+    'Run test:browser:visual for reviewed, environment-specific pixel baselines.',
+  );
+  // Freeze the engine's deterministic clocks before capture. Playwright's CSS
+  // animation option is not a substitute for pausing the performance clock.
   await page.goto('/performance/');
   await expect(page.getByRole('status').first()).toContainText('Doug · idle');
   for (const id of ['dan', 'doug'] as const) {

@@ -47,6 +47,14 @@ if (args.includes('--require-fresh-build')) {
   const build = JSON.parse(
     await readFile('dist/client/arena-build.json', 'utf8'),
   );
+  const head = execFileSync('git', ['rev-parse', 'HEAD'], {
+    encoding: 'utf8',
+  }).trim();
+  assert.equal(
+    build.head,
+    head,
+    'Production build is from a different commit. Run pnpm build at the current revision.',
+  );
   assert.equal(
     build.sourceFingerprint,
     sourceFingerprint(),

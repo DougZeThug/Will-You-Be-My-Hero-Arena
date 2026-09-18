@@ -132,14 +132,17 @@ owned by the command rather than silently reused, and acceptance verifies the
 fresh build fingerprint. This makes stale server/build reuse an error rather
 than ambiguous evidence.
 
-The opt-in approved-image suite now names four current implementation views:
-Dan and Doug isolated release, and Dan and Doug release on the real court. Each
-uses the engine's paused seek/step clock and matching Playwright environment;
-CSS animation disabling is only extra screenshot stabilization. Missing or
-changed images produced by `pnpm test:browser:update` are **candidates** until a
-person opens them, compares matching environments, and deliberately reviews
-the Git diff. A generated image and a passing technical check are not visual
-approval, and a baseline is only a comparison reference.
+The opt-in image suite registers four current implementation views: Dan and
+Doug isolated release, and Dan and Doug release on the real court. Each uses
+the engine's paused seek/step clock and matching Playwright environment; CSS
+animation disabling is only extra screenshot stabilization. The current four
+baselines are intentionally absent, so this focused comparison reports a skip
+rather than becoming a permanently failing assertion or pretending that an
+older review image is current. Captures produced by
+`pnpm test:browser:update` are **candidates** until a person opens all four,
+compares matching environments, and deliberately commits them together. A
+generated image and a passing technical check are not visual approval, and a
+baseline is only a comparison reference.
 
 ## Launch and manual review
 
