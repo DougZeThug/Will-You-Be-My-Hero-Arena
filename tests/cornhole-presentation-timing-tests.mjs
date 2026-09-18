@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
 export async function testCornholePresentationTiming({ check, setup, s }) {
-  const { firstImpactTime, surfaceTravelSeconds } =
+  const { firstImpactTime, presentationShot, surfaceTravelSeconds } =
       await import('../.test-build/engine/events/cornhole/CornholePresentationTiming.mjs'),
     { BattleDirector, directBattle } =
       await import('../.test-build/engine/core/BattleDirector.mjs'),
@@ -60,7 +61,7 @@ export async function testCornholePresentationTiming({ check, setup, s }) {
     recording.direction = directBattle(recording);
     const action = recording.direction.actions[0],
       impactCue = recording.direction.cues.filter(
-        (cue) => cue.attemptId === attempt.id && cue.name === 'impact',
+        (cue) => cue.attemptId === attempt.id && cue.name === 'boardImpact',
       ),
       scoreCue = recording.direction.cues.find(
         (cue) => cue.attemptId === attempt.id && cue.name === 'score',
@@ -99,14 +100,14 @@ export async function testCornholePresentationTiming({ check, setup, s }) {
     );
 
     recording.direction.cues.find(
-      (cue) => cue.attemptId === attempt.id && cue.name === 'impact',
+      (cue) => cue.attemptId === attempt.id && cue.name === 'boardImpact',
     ).time = attempt.contactAt;
     const emitted = [],
       director = new BattleDirector(recording);
     check(() =>
       assert.equal(
         recording.direction.cues.find(
-          (cue) => cue.attemptId === attempt.id && cue.name === 'impact',
+          (cue) => cue.attemptId === attempt.id && cue.name === 'boardImpact',
         ).time,
         attempt.contactAt,
         'Playback derives presentation timing without modifying saved fields',
@@ -115,7 +116,10 @@ export async function testCornholePresentationTiming({ check, setup, s }) {
     director.seek(impact - stepTolerance / 2);
     director.advance(impact + stepTolerance / 2, (cue) => emitted.push(cue));
     check(() =>
-      assert.equal(emitted.filter((cue) => cue.name === 'impact').length, 1),
+      assert.equal(
+        emitted.filter((cue) => cue.name === 'boardImpact').length,
+        1,
+      ),
     );
     director.seek(reveal - stepTolerance / 2);
     director.advance(reveal + stepTolerance / 2, (cue) => emitted.push(cue));
@@ -124,4 +128,25 @@ export async function testCornholePresentationTiming({ check, setup, s }) {
     );
     check(() => assert.ok(reveal + action.reactionDelay > reveal + epsilon));
   }
+
+  const historical = JSON.parse(
+      fs.readFileSync('tests/fixtures/paper-arcade-2.0.1.json', 'utf8'),
+    ),
+    historicalAttempt = historical.attempts[5];
+  delete historical.direction;
+  delete historicalAttempt.boardResolution;
+  const historicalPlan = directBattle(historical),
+    historicalAction = historicalPlan.actions[5],
+    sharedShot = presentationShot(historicalAttempt, historicalAction.shot),
+    historicalImpact = historicalPlan.cues.find(
+      (cue) =>
+        cue.attemptId === historicalAttempt.id && cue.name === 'boardImpact',
+    );
+  check(() => assert.equal(sharedShot, historicalAction.shot));
+  check(() =>
+    assert.equal(
+      historicalImpact.time,
+      firstImpactTime(historicalAttempt, sharedShot),
+    ),
+  );
 }

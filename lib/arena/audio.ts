@@ -12,7 +12,7 @@ export class ArenaAudio {
       victory: 'victory',
       footstep: 'miss',
       catch: 'miss',
-      impact: 'boardImpact',
+      boardImpact: 'boardImpact',
     };
     if (cue.name === 'score')
       this.cue(Number(cue.value) > 0 ? 'score' : 'miss');

@@ -12,6 +12,7 @@ import {
   DEFAULT_PERSONALITY,
 } from './personality';
 import type { ShotStyle } from './engine/animation/AnimationTypes';
+import type { DirectedAction } from './engine/core/BattlePlan';
 import { firstImpactTime } from './engine/events/cornhole/CornholePresentationTiming';
 
 // Seconds on PlaybackClock, never wall-clock timers. Sampling is safe when
@@ -152,12 +153,16 @@ export function attemptState(a: Attempt, time: number, shot?: ShotStyle) {
     flightElapsed: time - a.releaseAt,
   };
 }
-export function matchState(rec: Recording, time: number) {
+export function matchState(
+  rec: Recording,
+  time: number,
+  actions: DirectedAction[] | undefined = rec.direction?.actions,
+) {
   const contacts = rec.attempts.filter((a) => a.contactAt <= time),
     resolved = rec.attempts.filter((a) => scoreTime(a) <= time);
   const current = rec.attempts.find((a) => time >= a.start && time < a.end),
     directed = current
-      ? rec.direction?.actions.find((d) => d.attemptId === current.id)
+      ? actions?.find((d) => d.attemptId === current.id)
       : undefined,
     action = current ? attemptState(current, time, directed?.shot) : null,
     complete = time >= completionTime(rec);

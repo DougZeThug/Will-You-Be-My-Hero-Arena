@@ -116,7 +116,7 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   expect(end.event.scores).toEqual(end.event.finalScores);
   expect(end.event.recordingHash).toBe(hash);
   const physicalImpacts = end.rendering!.emittedCues.filter(
-    (cue: { name: string }) => cue.name === 'impact',
+    (cue: { name: string }) => cue.name === 'boardImpact',
   );
   expect(physicalImpacts).toHaveLength(8);
   expect(

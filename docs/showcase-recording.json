@@ -4255,7 +4255,7 @@
   "introDuration": 2.65,
   "rulesVersion": "phaser-arena-3.0.0",
   "unresolvedDraw": false,
-  "integrity": "124cd81c",
+  "integrity": "4f8bef06",
   "direction": {
     "version": 1,
     "seed": "velvet-paw-29",
@@ -4789,7 +4789,7 @@
         "id": "test-velvet-paw-29:attempt:0:impact",
         "time": 4.1248,
         "actor": 0,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "board",
         "attemptId": "test-velvet-paw-29:attempt:0"
       },
@@ -4826,7 +4826,7 @@
         "id": "test-velvet-paw-29:attempt:1:impact",
         "time": 7.530800565521161,
         "actor": 1,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "miss",
         "attemptId": "test-velvet-paw-29:attempt:1"
       },
@@ -4849,7 +4849,7 @@
         "id": "test-velvet-paw-29:attempt:2:impact",
         "time": 10.427591118311614,
         "actor": 0,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "miss",
         "attemptId": "test-velvet-paw-29:attempt:2"
       },
@@ -4872,7 +4872,7 @@
         "id": "test-velvet-paw-29:attempt:3:impact",
         "time": 13.193061399513875,
         "actor": 1,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "board",
         "attemptId": "test-velvet-paw-29:attempt:3"
       },
@@ -4895,7 +4895,7 @@
         "id": "test-velvet-paw-29:attempt:4:impact",
         "time": 16.31951092068112,
         "actor": 0,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "board",
         "attemptId": "test-velvet-paw-29:attempt:4"
       },
@@ -4918,7 +4918,7 @@
         "id": "test-velvet-paw-29:attempt:5:impact",
         "time": 19.730166587985302,
         "actor": 1,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "board",
         "attemptId": "test-velvet-paw-29:attempt:5"
       },
@@ -4941,7 +4941,7 @@
         "id": "test-velvet-paw-29:attempt:6:impact",
         "time": 22.70782440364738,
         "actor": 0,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "board",
         "attemptId": "test-velvet-paw-29:attempt:6"
       },
@@ -4980,7 +4980,7 @@
         "id": "test-velvet-paw-29:attempt:7:impact",
         "time": 26.668481299054072,
         "actor": 1,
-        "name": "impact",
+        "name": "boardImpact",
         "value": "hole",
         "attemptId": "test-velvet-paw-29:attempt:7"
       },

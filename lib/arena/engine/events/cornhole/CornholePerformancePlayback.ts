@@ -4,6 +4,7 @@ import type { ReleaseKinematics } from '../../equipment/AttachmentManager';
 import type { ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
 import { firstImpactTime } from './CornholePresentationTiming';
+import { presentationShot } from './CornholePresentationTiming';
 import { placement } from '../../../equipment-layout';
 import { scoreTime } from '../../../match-timeline';
 import { project } from '../../../simulation';
@@ -24,6 +25,7 @@ export class CornholePerformancePlayback {
   constructor(
     readonly character: CharacterPerformanceController,
     readonly attempt: Attempt,
+    readonly shot = presentationShot(attempt),
   ) {
     this.unsubscribe = character.onEvent((e) => {
       if (
@@ -161,7 +163,7 @@ export class CornholePerformancePlayback {
   update() {
     if (!this.release) return;
     const elapsed = this.character.time - this.release.time;
-    const shot = this.attempt.boardResolution?.shot ?? 'flat';
+    const shot = this.shot;
     this.frame = releasedBag(
       this.attempt,
       shot,

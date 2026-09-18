@@ -149,7 +149,7 @@ export function directBattle(rec: Recording): BattlePlan {
         id: a.id + ':impact',
         time: impactAt,
         actor,
-        name: 'impact',
+        name: a.sport === 'cornhole' ? 'boardImpact' : 'impact',
         value: a.contact,
         attemptId: a.id,
       },
@@ -237,10 +237,14 @@ export class BattleDirector {
       : directBattle(recording);
     if (recording.setup.sport === 'cornhole') {
       for (const cue of this.plan.cues) {
-        if (cue.name !== 'impact' || !cue.attemptId) continue;
+        if (!['impact', 'boardImpact'].includes(cue.name) || !cue.attemptId)
+          continue;
         const attempt = recording.attempts.find((a) => a.id === cue.attemptId),
           action = this.plan.actions.find((a) => a.attemptId === cue.attemptId);
-        if (attempt && action) cue.time = firstImpactTime(attempt, action.shot);
+        if (attempt && action) {
+          cue.name = 'boardImpact';
+          cue.time = firstImpactTime(attempt, action.shot);
+        }
       }
       this.plan.cues.sort((a, b) => a.time - b.time);
     }

@@ -29,7 +29,10 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
-import { firstImpactTime } from '../events/cornhole/CornholePresentationTiming';
+import {
+  firstImpactTime,
+  presentationShot,
+} from '../events/cornhole/CornholePresentationTiming';
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -169,7 +172,7 @@ export class ArenaScene extends Phaser.Scene {
     this.performanceTime = time;
     const p = this.bridge.current,
       rec = p.recording,
-      status = rec ? revealed(rec, time) : null,
+      status = rec ? revealed(rec, time, this.director?.plan.actions) : null,
       active = status?.current,
       direction = active ? this.director!.action(active.id) : undefined;
     this.field(p.sport, rec);
@@ -389,7 +392,11 @@ export class ArenaScene extends Phaser.Scene {
         take.sync(Math.max(take.startAt, attempt.releaseAt - lead), observe);
         take.destroy();
       }
-      take = new CornholePerformancePlayback(controller, attempt);
+      take = new CornholePerformancePlayback(
+        controller,
+        attempt,
+        presentationShot(attempt, this.director?.action(attempt.id).shot),
+      );
       this.performanceTakes.set(c.actor, take);
     }
     take.sync(time, observe);
@@ -413,10 +420,7 @@ export class ArenaScene extends Phaser.Scene {
       this.effects.contact(
         {
           ...attempt,
-          contactAt: firstImpactTime(
-            attempt,
-            attempt.boardResolution?.shot ?? 'flat',
-          ),
+          contactAt: firstImpactTime(attempt, take.shot),
         },
         time,
         this.bridge.current.reduced || this.bridge.current.low,

@@ -24,3 +24,12 @@ export function surfaceTravelSeconds(attempt: Attempt, shot: ShotStyle) {
 export function firstImpactTime(attempt: Attempt, shot: ShotStyle) {
   return attempt.contactAt - surfaceTravelSeconds(attempt, shot);
 }
+
+/** Resolve the one presentation shot shared by direction, physics, effects,
+ * HUD phases, and cues. A generated historical direction takes precedence. */
+export function presentationShot(
+  attempt: Attempt,
+  directedShot?: ShotStyle,
+): ShotStyle {
+  return directedShot ?? attempt.boardResolution?.shot ?? 'flat';
+}
