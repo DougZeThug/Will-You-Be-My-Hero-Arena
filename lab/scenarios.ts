@@ -212,7 +212,7 @@ export function createRecording(s: Scenario) {
       { name: 'landing', time: first.contactAt },
       { name: 'result', time: beats.result + 1 / 60 },
       { name: 'recovery', time: beats.reset },
-      ...(s.id === 'cornhole-recorded'
+      ...(s.id === 'cornhole-recorded' || s.id === 'cornhole-performance'
         ? [
             {
               name: 'doug-anticipation',

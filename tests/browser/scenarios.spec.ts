@@ -155,9 +155,45 @@ test('@visual fixed-clock approved reference images', async ({ page }) => {
   ]) {
     await openScenario(page, id);
     await checkpoint(page, point);
-    await expect.soft(page.locator('#arena canvas')).toHaveScreenshot(
-      id + '-' + point + '.png',
-      { animations: 'disabled', maxDiffPixelRatio: 0.002 },
-    );
+    await expect
+      .soft(page.locator('#arena canvas'))
+      .toHaveScreenshot(id + '-' + point + '.png', {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.002,
+      });
+  }
+
+  // Current production cornhole performance: freeze its own deterministic
+  // clocks before capture. Playwright's CSS animation option is not the clock.
+  await page.goto('/performance/');
+  await expect(page.getByRole('status').first()).toContainText('Doug · idle');
+  for (const id of ['dan', 'doug'] as const) {
+    await page.evaluate((character) => {
+      const api = window.__HERO_PERFORMANCE__;
+      api.load(character, 'board');
+      const release = api
+        .catalog()
+        .checkpoints.find((point) => point.name === 'release')!.time;
+      api.seek(release);
+    }, id);
+    await expect
+      .soft(page.locator('#stage canvas'))
+      .toHaveScreenshot(`cornhole-performance-isolated-${id}-release.png`, {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.002,
+      });
+  }
+  await openScenario(page, 'cornhole-performance');
+  for (const [character, point] of [
+    ['dan', 'release'],
+    ['doug', 'doug-release'],
+  ]) {
+    await checkpoint(page, point);
+    await expect
+      .soft(page.locator('#arena canvas'))
+      .toHaveScreenshot(`cornhole-performance-court-${character}-release.png`, {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.002,
+      });
   }
 });
