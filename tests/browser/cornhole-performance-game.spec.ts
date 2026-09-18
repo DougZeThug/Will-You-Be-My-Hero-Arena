@@ -115,6 +115,13 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   const end = await snapshot(page);
   expect(end.event.scores).toEqual(end.event.finalScores);
   expect(end.event.recordingHash).toBe(hash);
+  const physicalImpacts = end.rendering!.emittedCues.filter(
+    (cue: { name: string }) => cue.name === 'impact',
+  );
+  expect(physicalImpacts).toHaveLength(8);
+  expect(
+    new Set(physicalImpacts.map((cue: { id: string }) => cue.id)).size,
+  ).toBe(8);
   for (const c of end.characters) {
     expect(c.rig).toBe('loongbones-performance');
     expect(c.rigDetails.runtimeRevision).toBe('cornhole-finish-settle-v1');
@@ -140,6 +147,8 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   const hand = launch.characters[a.actor].sockets.throwingHand;
   expect(Math.hypot(object.x - hand.x, object.y - hand.y)).toBeLessThan(0.02);
   expect(object.displayWidth).toBeCloseTo(previous.displayWidth, 5);
+  expect(object.displayHeight).toBeCloseTo(previous.displayHeight, 5);
+  expect(object.rotation).toBeCloseTo(previous.rotation, 3);
   expect(
     launch.characters[a.actor].rigDetails.performance.events.filter(
       (e: { name: string }) => e.name === 'OBJECT_RELEASED',
@@ -147,7 +156,13 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   ).toHaveLength(1);
   await artifact(page, info, 'hand-release');
   await checkpoint(page, 'finish');
-  expect((await snapshot(page)).event.scores).toEqual(end.event.scores);
+  const beforeBackwardSeek = await snapshot(page);
+  expect(beforeBackwardSeek.event.scores).toEqual(end.event.scores);
+  const cueCount = beforeBackwardSeek.rendering!.emittedCues.length;
+  await checkpoint(page, 'pre-release');
+  expect((await snapshot(page)).rendering!.emittedCues).toHaveLength(cueCount);
+  await checkpoint(page, 'finish');
+  expect((await snapshot(page)).rendering!.emittedCues).toHaveLength(cueCount);
   const resources = [];
   for (let replay = 0; replay < 3; replay++) {
     await checkpoint(page, 'intro');

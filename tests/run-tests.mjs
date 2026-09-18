@@ -8,8 +8,15 @@ fs.mkdirSync('.test-build', { recursive: true });
 for (const id of ['doug', 'dan']) {
   const folder = '.test-build/engine/performance/profiles';
   fs.mkdirSync(folder, { recursive: true });
-  fs.writeFileSync(`${folder}/${id}.mjs`, 'export default ' +
-    fs.readFileSync(`lib/arena/engine/performance/profiles/${id}.json`, 'utf8') + ';');
+  fs.writeFileSync(
+    `${folder}/${id}.mjs`,
+    'export default ' +
+      fs.readFileSync(
+        `lib/arena/engine/performance/profiles/${id}.json`,
+        'utf8',
+      ) +
+      ';',
+  );
 }
 fs.writeFileSync(
   '.test-build/motion-catalog.mjs',
@@ -720,13 +727,20 @@ await (
 await (
   await import('./performance-timeline-tests.mjs')
 ).testPerformanceTimeline({ check });
+await (
+  await import('./cornhole-presentation-timing-tests.mjs')
+).testCornholePresentationTiming({ check, setup, s });
 await (await import('./motion-v3-tests.mjs')).testMotionV3({ check });
 await (await import('./motion-v31-tests.mjs')).testMotionV31({ check });
-await (await import('./performance-upgrade-tests.mjs')).testPerformanceUpgrade({check});
+await (
+  await import('./performance-upgrade-tests.mjs')
+).testPerformanceUpgrade({ check });
 await (
   await import('./animation-upgrade-tests.mjs')
 ).testAnimationUpgrade({ check });
-checks += await (await import('./character-performance.test.mjs')).performanceTests();
+checks += await (
+  await import('./character-performance.test.mjs')
+).performanceTests();
 const report = {
   checks,
   seededContests: 2000,

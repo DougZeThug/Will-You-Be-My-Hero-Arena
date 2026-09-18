@@ -29,6 +29,7 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
+import { firstImpactTime } from '../events/cornhole/CornholePresentationTiming';
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -49,6 +50,7 @@ export class ArenaScene extends Phaser.Scene {
   private environment?: ArenaEnvironment;
   private performanceTakes = new Map<number, CornholePerformancePlayback>();
   private performanceTime: number | null = null;
+  private emittedCues: { id: string; time: number; name: string }[] = [];
   constructor(private bridge: ArenaBridge) {
     super('Arena');
   }
@@ -291,6 +293,7 @@ export class ArenaScene extends Phaser.Scene {
       this.director!.advance(
         time,
         (cue) => {
+          this.emittedCues.push({ id: cue.id, time: cue.time, name: cue.name });
           this.game.events.emit('arena:cue', cue);
           p.onCue?.(cue);
         },
@@ -341,7 +344,12 @@ export class ArenaScene extends Phaser.Scene {
                 ? p.sport === 'cornhole'
                   ? 'BAG FLIGHT'
                   : 'BALL FLIGHT'
-                : (status?.phase ?? 'READY').replace(/([a-z])([A-Z])/g, '$1 $2')
+                : status?.phase === 'boardTravel'
+                  ? 'BOARD TRAVEL'
+                  : (status?.phase ?? 'READY').replace(
+                      /([a-z])([A-Z])/g,
+                      '$1 $2',
+                    )
               : 'WAITING',
       })),
     });
@@ -405,7 +413,10 @@ export class ArenaScene extends Phaser.Scene {
       this.effects.contact(
         {
           ...attempt,
-          contactAt: attempt.releaseAt + take.frame.kinematics!.airTime,
+          contactAt: firstImpactTime(
+            attempt,
+            attempt.boardResolution?.shot ?? 'flat',
+          ),
         },
         time,
         this.bridge.current.reduced || this.bridge.current.low,
@@ -525,6 +536,7 @@ export class ArenaScene extends Phaser.Scene {
         ...o.worldFrame(),
         alpha: o.sprite.alpha,
       })),
+      emittedCues: this.emittedCues,
       counters: {
         characters: this.characters.length,
         cards: this.cards.length,

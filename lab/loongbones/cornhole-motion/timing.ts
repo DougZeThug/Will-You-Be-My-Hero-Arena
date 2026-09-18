@@ -3,7 +3,6 @@ import { hash } from '../../../lib/arena/simulation';
 import { directBattle } from '../../../lib/arena/engine/core/BattleDirector';
 import { shotAlias } from './throws';
 import motion from '../assets/cornhole-side-v3/provenance.json';
-import { surfaceTravelSeconds } from '../../../lib/arena/engine/events/cornhole/ReleasedBagPhysics';
 /** Timing of NEW internal fixtures only. Scores, target physics, outcomes and
  * historical saved recordings are never changed. */
 export function timeCornholeFixture(source: Recording): Recording {
@@ -33,14 +32,6 @@ export function timeCornholeFixture(source: Recording): Recording {
   rec.direction.cues = rec.direction.cues.filter(
     (c) => !c.id.includes(':ritual:'),
   );
-  for (const cue of rec.direction.cues)
-    if (cue.name === 'impact' && cue.attemptId) {
-      const a = rec.attempts.find((a) => a.id === cue.attemptId)!;
-      cue.time =
-        a.contactAt -
-        surfaceTravelSeconds(a, rec.direction.actions[a.index].shot);
-    }
-  rec.direction.cues.sort((a, b) => a.time - b.time);
   rec.integrity = hash(JSON.stringify({ ...rec, integrity: '' }));
   return rec;
 }

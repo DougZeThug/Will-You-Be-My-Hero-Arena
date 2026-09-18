@@ -8,21 +8,11 @@ import {
   placement,
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
-export function surfaceTravelSeconds(a: Attempt, shot: ShotStyle) {
-  const onBoard = ['board', 'hole'].includes(a.contact),
-    direct = ['airmail', 'highArc', 'collect', 'drag', 'desperation'].includes(
-      shot,
-    );
-  const target = surfacePoint('cornhole', a.actor, a.target),
-    touch = a.boardResolution?.touch
-      ? surfacePoint('cornhole', a.actor, a.boardResolution.touch)
-      : target;
-  return onBoard && !direct
-    ? 0.28
-    : Math.hypot(touch.x - target.x, touch.y - target.y) > 2
-      ? 0.22
-      : 0;
-}
+import { surfaceTravelSeconds } from './CornholePresentationTiming';
+export {
+  firstImpactTime,
+  surfaceTravelSeconds,
+} from './CornholePresentationTiming';
 
 /** Integrate from the evaluated release velocity. Solve acceleration against
  * the immutable board contact. Horizontal acceleration accommodates the
