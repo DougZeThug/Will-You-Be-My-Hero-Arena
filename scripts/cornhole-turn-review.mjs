@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { sourceFingerprint } from './source-fingerprint.mjs';
 
 // One repeatable case, not an editor. All state is isolated from the user's saves.
 const args = process.argv.slice(2);
@@ -23,14 +24,43 @@ assert.ok(
   !(labOnly && journeyOnly),
   'Choose one partial review mode, or omit both for the complete package.',
 );
+await assert.rejects(
+  access(directory),
+  `Review package ${directory} already exists. Use a new --label so baseline and candidate evidence remain separate.`,
+);
+const startedAt = performance.now();
+const marks = {};
+const mark = (name) => {
+  marks[name] = Number(((performance.now() - startedAt) / 1000).toFixed(3));
+};
 const compiled = await readFile('lab/performance/compile.ts', 'utf8');
 const revision = option(
   '--expected-runtime',
   compiled.match(/PERFORMANCE_REVISION = '([^']+)'/)[1],
 );
 await mkdir(directory, { recursive: true });
-if (args.includes('--build'))
+if (args.includes('--build')) {
   execFileSync(process.execPath, ['scripts/build.mjs'], { stdio: 'inherit' });
+  mark('buildComplete');
+}
+if (args.includes('--require-fresh-build')) {
+  const build = JSON.parse(
+    await readFile('dist/client/arena-build.json', 'utf8'),
+  );
+  const head = execFileSync('git', ['rev-parse', 'HEAD'], {
+    encoding: 'utf8',
+  }).trim();
+  assert.equal(
+    build.head,
+    head,
+    'Production build is from a different commit. Run pnpm build at the current revision.',
+  );
+  assert.equal(
+    build.sourceFingerprint,
+    sourceFingerprint(),
+    'Production build is stale. Run pnpm build after the final source edit.',
+  );
+}
 const save = (name, value) =>
   writeFile(`${directory}/${name}.json`, JSON.stringify(value, null, 2) + '\n');
 const report = {
@@ -39,12 +69,38 @@ const report = {
   viewport,
   speed: 1,
   revision,
+  workflow: labOnly
+    ? 'fast-candidate'
+    : journeyOnly
+      ? 'acceptance'
+      : 'complete',
   errors: [],
   console: [],
   limitations: [
     'Headless Chrome; timings are desktop diagnostics, not a physical-device guarantee.',
     'Pose images are manually stepped. MP4 files are real-time captures at 1×.',
   ],
+};
+const hashes = {};
+for (const file of [
+  'lab/performance/compile.ts',
+  'lib/arena/engine/performance/BodyMechanics.ts',
+  'lib/arena/engine/performance/profiles/doug.json',
+  'lib/arena/engine/performance/profiles/dan.json',
+  'lab/loongbones/assets/cornhole-side-v3/dan_ske.json',
+  'lab/loongbones/assets/cornhole-side-v3/dan_tex.png',
+  'lab/loongbones/assets/cornhole-side-v3/doug_ske.json',
+  'lab/loongbones/assets/cornhole-side-v3/doug_tex.png',
+  'docs/showcase-recording.json',
+])
+  hashes[file] = createHash('sha256')
+    .update(await readFile(file))
+    .digest('hex');
+report.checkpoint = {
+  head: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  status: execFileSync('git', ['status', '--short'], { encoding: 'utf8' }),
+  sourceFingerprint: sourceFingerprint(),
+  hashes,
 };
 const servers = [];
 let browser;
@@ -201,21 +257,32 @@ async function motionCase() {
   await page.goto(labUrl + '/?scenario=cornhole-performance&seed=' + seed);
   await page.waitForFunction(() => window.__HERO_ARENA__?.ready);
   const initial = await page.evaluate(() => window.__HERO_ARENA__.getState());
-  const times = [
-    1.55, 2.55, 3.05, 3.55, 4.55, 5.55, 10.55, 11.55, 12.05, 12.55, 13.55,
-    14.55,
+  const recording = JSON.parse(await readFile('docs/showcase-recording.json'));
+  const first = recording.attempts[0];
+  const next = recording.attempts[1];
+  const finalDoug = recording.attempts.at(-1);
+  // These named samples are exact game-clock steps, not CSS-animation freezes.
+  const samples = [
+    ['preparation', first.start + 0.08],
+    ['release', first.releaseAt],
+    ['follow-through', first.releaseAt + 0.3],
+    ['first-impact', first.contactAt],
+    ['reaction', first.scoreAt + 0.25],
+    ['recovery', first.end - 0.12],
+    ['next-turn', next.start + 0.12],
+    ['doug-chest-contact', finalDoug.scoreAt + 0.55],
   ];
   let frame = 0;
   const court = [];
-  for (const time of times) {
+  for (const [phase, time] of samples) {
     const target = Math.round(time * 60);
     await page.evaluate((n) => window.__HERO_ARENA__.step(n), target - frame);
     frame = target;
     const s = await page.evaluate(() => window.__HERO_ARENA__.getState());
-    court.push(s);
+    court.push({ phase, time, state: s });
     await page
       .locator('#arena canvas')
-      .screenshot({ path: `${directory}/game-${time.toFixed(2)}.png` });
+      .screenshot({ path: `${directory}/game-${phase}.png` });
   }
   const remaining = Math.ceil((initial.event.duration + 0.5) * 60) - frame;
   await page.evaluate((n) => window.__HERO_ARENA__.step(n), remaining);
@@ -267,6 +334,7 @@ async function motionCase() {
   assert.deepEqual(report.replays[1], report.replays[0]);
   assert.deepEqual(report.replays[2], report.replays[0]);
   await context.close();
+  mark('labCaptureComplete');
 }
 async function userJourney() {
   const context = await browser.newContext({ viewport }),
@@ -398,6 +466,7 @@ async function userJourney() {
   };
   assert.deepEqual(report.journey.labGlobals, ['undefined', 'undefined']);
   await context.close();
+  mark('watchJourneyComplete');
 }
 async function videoFrames(name, times) {
   const page = await browser.newPage();
@@ -521,7 +590,7 @@ try {
           new URL(labUrl).port,
         ],
         label: 'turn-lab',
-        reuse: true,
+        reuse: false,
         identify: 'Arena Lab',
       }),
     );
@@ -532,7 +601,7 @@ try {
         args: ['scripts/serve.mjs'],
         env: { PORT: new URL(appUrl).port },
         label: 'turn-app',
-        reuse: true,
+        reuse: false,
         identify: 'Will You Be My Hero?',
       }),
     );
@@ -540,6 +609,11 @@ try {
     ...browserLaunchOptions(),
     headless: true,
   });
+  report.browser = {
+    name: 'Chromium',
+    version: browser.version(),
+    headless: true,
+  };
   if (!journeyOnly) {
     await motionCase();
     await sheets();
@@ -561,23 +635,8 @@ try {
     );
   }
   assert.deepEqual(report.errors, []);
-  const hashes = {};
-  for (const file of [
-    'lab/performance/compile.ts',
-    'lib/arena/engine/performance/BodyMechanics.ts',
-    'lib/arena/engine/performance/profiles/doug.json',
-    'lib/arena/engine/performance/profiles/dan.json',
-  ])
-    hashes[file] = createHash('sha256')
-      .update(await readFile(file))
-      .digest('hex');
-  report.checkpoint = {
-    head: execFileSync('git', ['rev-parse', 'HEAD'], {
-      encoding: 'utf8',
-    }).trim(),
-    status: execFileSync('git', ['status', '--short'], { encoding: 'utf8' }),
-    hashes,
-  };
+  mark('packageComplete');
+  report.timingsSeconds = marks;
   report.passed = true;
 } catch (error) {
   report.passed = false;

@@ -41,6 +41,7 @@ try {
       ...process.env,
       ARENA_LAB_URL: url,
       ...(visual ? { ARENA_VISUAL_BASELINES: '1' } : {}),
+      ...(update ? { ARENA_UPDATE_BASELINES: '1' } : {}),
     },
   });
   process.exitCode = await new Promise((resolve, reject) => {

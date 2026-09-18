@@ -9,12 +9,12 @@ append a pass-by-pass history. Historical implementation evidence remains in
 
 - Repository root: `/workspace/Will-You-Be-My-Hero-Arena`
 - Branch at task start: `work`
-- Source HEAD at task start: `b7920f93f312561a2206d8a711cf7476f72588b8`
+- Source HEAD at workflow task start: `889988cb7ebb3cc274cdfe3e4d986d4a28bae6e4`
 - Configured Git remotes at task start: none. The checkout therefore cannot
   independently verify a `DougZeThug/Will-You-Be-My-Hero-Arena` hosting URL;
   the root and committed project content are the available local identity.
-- Starting worktree: clean. No newer local changes or untracked files needed
-  merging, and the requested research revision was the checked-out HEAD.
+- Starting worktree: clean. The workflow changes described below preserve that
+  checkpoint and do not change performance curves, gameplay, or artwork.
 - Recoverable pre-task checkpoint: ignored
   `work/qa/checkpoints/router-start/source.bundle` (SHA-256
   `ed1926b20cea771a55109929d241b6080290d5ccdc67a90ddda0807adda141e1`).
@@ -74,50 +74,104 @@ contracts.
   repository's preserved recording is `docs/showcase-recording.json`
   (SHA-256 `6400b75a501895b950025e94b4941ff3aa71cab730c47cc102dd652d42ebc85f`).
 
-## Baseline and preview
+## Review workflows
 
-The current capture command was attempted at the source HEAD with label
-`current-router-baseline`. The production build completed, but this environment
-has no Chromium executable, and Playwright's browser download was rejected by
-the package CDN. Consequently there is **no fresh rendered video claimed for
-this HEAD**. The honest attempt report is
-`work/qa/turn-polish/current-router-baseline/review.json`; it records revision,
-seed, viewport, and the browser-launch failure.
+### Fast candidate review (edit to preview)
 
-Until the capture can be rerun in an environment with Chromium, use:
+```bash
+pnpm review:cornhole-fast -- --label <unique-candidate-label>
+```
 
-- actual immutable match recording: `docs/showcase-recording.json` with seed
-  `velvet-paw-29`;
-- last preserved real-court side-view preview:
-  `docs/review/cornhole-side-v3/polish-court-release.png` (SHA-256
-  `0e4dcc62f224a99b077de24c7e88d15fe5ddde858d3a438094ff0abf744f01f5`).
+This runs the focused tuning/current-performance browser tests against Vite,
+then uses the existing `--lab-only` capture. It does **not** build production.
+The package contains both characters in the isolated current renderer, exact
+game-clock court frames for preparation, release, follow-through, first impact,
+reaction, recovery, the next turn, and Doug's final chest contact, plus native
+1× videos. The timeline, profile import/export/reset controls, and production
+provider are reused; `doug-release` is the only added named checkpoint.
 
-That PNG is a useful asset/court preview, **not** a fresh proof of the current
-performance controller or finish timing. Do not relabel it as current capture
-evidence.
+For a capture without the focused tests, the underlying command remains:
 
-## Launch and capture
+```bash
+pnpm review:cornhole-turn -- --lab-only --label <unique-candidate-label>
+```
+
+### Acceptance review (fresh production and shared runtime)
+
+```bash
+pnpm review:cornhole-acceptance -- --label <unique-acceptance-label>
+```
+
+`check:regression` supplies typecheck, deterministic tests, all ordinary browser
+tests, a fresh production build, and production isolation. The existing
+`--journey-only` capture then exercises the actual **Watch → selection → eight
+bags → results → replay** path. It rejects a build whose recorded source
+fingerprint differs from the current tree. Use the full underlying capture only
+when one package genuinely needs both surfaces:
+
+```bash
+pnpm review:cornhole-turn -- --build --label <unique-complete-label>
+```
+
+The `--build` flag is now explicit. Previously the package script silently
+built even with `--lab-only`: the measured failed baseline attempt took 38.961s,
+with the production build consuming about 30s before browser launch failed.
+That made the unnecessary build the observed edit-to-preview bottleneck on this
+machine. These timings describe this checkout only; they are not a portable
+speedup promise. Successful packages record cumulative command milestones in
+`review.json` for future comparisons. Regression reports separately retain
+per-check acceptance timing.
+
+## Evidence identity and image review
+
+Every new label must be unique; the tool refuses to overwrite an earlier
+package. `review.json` records HEAD, dirty-source SHA-256 fingerprint, runtime,
+profile/asset/recording hashes, immutable recording hash, viewport, normal
+Arena camera, Chromium version/headless mode, and 1× speed. Review servers are
+owned by the command rather than silently reused, and acceptance verifies the
+fresh build fingerprint. This makes stale server/build reuse an error rather
+than ambiguous evidence.
+
+The opt-in image suite registers four current implementation views: Dan and
+Doug isolated release, and Dan and Doug release on the real court. Each uses
+the engine's paused seek/step clock and matching Playwright environment; CSS
+animation disabling is only extra screenshot stabilization. The current four
+baselines are intentionally absent, so this focused comparison reports a skip
+rather than becoming a permanently failing assertion or pretending that an
+older review image is current. Captures produced by
+`pnpm test:browser:update` are **candidates** until a person opens all four,
+compares matching environments, and deliberately commits them together. A
+generated image and a passing technical check are not visual approval, and a
+baseline is only a comparison reference.
+
+## Launch and manual review
 
 ```bash
 pnpm lab
 # http://127.0.0.1:3010/performance/
 # http://127.0.0.1:3010/?scenario=cornhole-performance&seed=velvet-paw-29
 
-pnpm review:cornhole-turn -- --build --label current-baseline
-# work/qa/turn-polish/current-baseline/{recording.json,match.mp4,results.png,...}
+pnpm review:cornhole-fast -- --label candidate-01
+# work/qa/turn-polish/candidate-01/{doug.mp4,dan.mp4,game-*.png,...}
+
+pnpm review:cornhole-acceptance -- --label acceptance-01
+# work/qa/turn-polish/acceptance-01/{recording.json,match.mp4,results.png,...}
 ```
 
-The capture tool uses isolated contexts/storage and saves the actual selected
-Watch recording plus its seed. A successful rerun should replace this section's
-failed-attempt note with the exact output directory, recording hash, preview,
-errors/console result, viewport, and revision. Do not copy a personal browser
-profile into the repository.
+Open `review.html`, the full-size PNGs, and the 1× videos. Judge rhythm from
+continuous playback—not manual stepping. Timestamped video frames help locate
+a moment but do not replace motion review. If video cannot be played, disclose
+that limitation rather than calling stepped poses a real-time benchmark. Keep
+technical assertions (hashes, markers, scoring, warnings) separate from visual
+judgment (weight, continuity, contacts, likeness). The contexts/storage remain
+isolated from the regular game.
 
 ## Known defects and next task
 
-- Current blocker to a fresh local baseline is environmental: Chromium is
-  absent and the Playwright download returned HTTP 403. This is not evidence of
-  a runtime or animation failure.
+- Current environment limitation: Chromium is absent and the Playwright CDN
+  returned HTTP 403 on September 18, 2026. The 38.961s measurement therefore
+  ends at browser launch; it is not a successful visual review or evidence of
+  a runtime/animation failure.
 - The last documented bounded animation defect is visibility/readability of
   bag impact against the existing `LANDING` cue after the settled finish. Do
   not change scoring, saved contact time, target registration, release motion,
