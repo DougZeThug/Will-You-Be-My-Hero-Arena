@@ -73,6 +73,13 @@ contracts.
 - Preferred real-match case: immutable showcase seed `velvet-paw-29`. The
   repository's preserved recording is `docs/showcase-recording.json`
   (SHA-256 `6400b75a501895b950025e94b4941ff3aa71cab730c47cc102dd652d42ebc85f`).
+- Annotated `velvet-paw-29` timing axis: **13.193 s first board impact →
+  13.473 s saved final target/outcome → saved score reveal →
+  perception-delayed character reaction**. The 13.193-to-13.473-second
+  separation is the recorded flat bag's 0.28-second board slide, not extra
+  airborne time. The saved contact, target, score, score reveal, and all other
+  outcome facts were preserved; only presentation derives first impact from
+  the directed shot and existing surface-travel rule.
 
 ## Review workflows
 

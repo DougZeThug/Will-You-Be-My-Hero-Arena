@@ -3,6 +3,8 @@ import type { CharacterPerformanceController } from '../../performance/Character
 import type { ReleaseKinematics } from '../../equipment/AttachmentManager';
 import type { ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
+import { firstImpactTime } from './CornholePresentationTiming';
+import { presentationShot } from './CornholePresentationTiming';
 import { placement } from '../../../equipment-layout';
 import { scoreTime } from '../../../match-timeline';
 import { project } from '../../../simulation';
@@ -23,6 +25,7 @@ export class CornholePerformancePlayback {
   constructor(
     readonly character: CharacterPerformanceController,
     readonly attempt: Attempt,
+    readonly shot = presentationShot(attempt),
   ) {
     this.unsubscribe = character.onEvent((e) => {
       if (
@@ -160,18 +163,23 @@ export class CornholePerformancePlayback {
   update() {
     if (!this.release) return;
     const elapsed = this.character.time - this.release.time;
+    const shot = this.shot;
     this.frame = releasedBag(
       this.attempt,
-      this.attempt.boardResolution?.shot ?? 'flat',
+      shot,
       this.release,
       this.attempt.releaseAt + elapsed,
     );
     this.character.lookAt(this.frame);
     if (
       this.contactAt === null &&
-      elapsed + 1e-8 >= this.frame.kinematics!.airTime
+      elapsed + 1e-8 >=
+        firstImpactTime(this.attempt, shot) - this.attempt.releaseAt
     ) {
-      this.contactAt = this.release.time + this.frame.kinematics!.airTime;
+      this.contactAt =
+        this.release.time +
+        firstImpactTime(this.attempt, shot) -
+        this.attempt.releaseAt;
       this.character.confirmContact(this.actionId!);
     }
     if (

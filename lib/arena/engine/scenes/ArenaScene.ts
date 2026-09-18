@@ -29,6 +29,10 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
+import {
+  firstImpactTime,
+  presentationShot,
+} from '../events/cornhole/CornholePresentationTiming';
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -49,6 +53,7 @@ export class ArenaScene extends Phaser.Scene {
   private environment?: ArenaEnvironment;
   private performanceTakes = new Map<number, CornholePerformancePlayback>();
   private performanceTime: number | null = null;
+  private emittedCues: { id: string; time: number; name: string }[] = [];
   constructor(private bridge: ArenaBridge) {
     super('Arena');
   }
@@ -167,7 +172,7 @@ export class ArenaScene extends Phaser.Scene {
     this.performanceTime = time;
     const p = this.bridge.current,
       rec = p.recording,
-      status = rec ? revealed(rec, time) : null,
+      status = rec ? revealed(rec, time, this.director?.plan.actions) : null,
       active = status?.current,
       direction = active ? this.director!.action(active.id) : undefined;
     this.field(p.sport, rec);
@@ -291,6 +296,7 @@ export class ArenaScene extends Phaser.Scene {
       this.director!.advance(
         time,
         (cue) => {
+          this.emittedCues.push({ id: cue.id, time: cue.time, name: cue.name });
           this.game.events.emit('arena:cue', cue);
           p.onCue?.(cue);
         },
@@ -341,7 +347,12 @@ export class ArenaScene extends Phaser.Scene {
                 ? p.sport === 'cornhole'
                   ? 'BAG FLIGHT'
                   : 'BALL FLIGHT'
-                : (status?.phase ?? 'READY').replace(/([a-z])([A-Z])/g, '$1 $2')
+                : status?.phase === 'boardTravel'
+                  ? 'BOARD TRAVEL'
+                  : (status?.phase ?? 'READY').replace(
+                      /([a-z])([A-Z])/g,
+                      '$1 $2',
+                    )
               : 'WAITING',
       })),
     });
@@ -381,7 +392,11 @@ export class ArenaScene extends Phaser.Scene {
         take.sync(Math.max(take.startAt, attempt.releaseAt - lead), observe);
         take.destroy();
       }
-      take = new CornholePerformancePlayback(controller, attempt);
+      take = new CornholePerformancePlayback(
+        controller,
+        attempt,
+        presentationShot(attempt, this.director?.action(attempt.id).shot),
+      );
       this.performanceTakes.set(c.actor, take);
     }
     take.sync(time, observe);
@@ -405,7 +420,7 @@ export class ArenaScene extends Phaser.Scene {
       this.effects.contact(
         {
           ...attempt,
-          contactAt: attempt.releaseAt + take.frame.kinematics!.airTime,
+          contactAt: firstImpactTime(attempt, take.shot),
         },
         time,
         this.bridge.current.reduced || this.bridge.current.low,
@@ -525,6 +540,7 @@ export class ArenaScene extends Phaser.Scene {
         ...o.worldFrame(),
         alpha: o.sprite.alpha,
       })),
+      emittedCues: this.emittedCues,
       counters: {
         characters: this.characters.length,
         cards: this.cards.length,
