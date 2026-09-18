@@ -7,8 +7,9 @@ Launch with `pnpm lab` from the repository; open [http://127.0.0.1:3010](http://
 The toolbar selects a named scenario and seed. Character inspection also selects Dan/Doug and a registered non-legacy clip. **Load / reset** rebuilds that configuration; **Play** resumes real-time rendering; **Pause** freezes inspection; **+1 frame** and **+1 second** advance 1 or 60 fixed steps. Checkpoint buttons depend on the loaded scenario.
 
 - Recorded scenarios: intro, anticipation, release, flight, landing, result, recovery, finish. These are derived from the first recorded attempt and match completion.
-- Main `cornhole-recorded` uses weighted Dan and Doug, with additional `doug-anticipation`, `doug-release`, `doug-follow`, and `doug-recovery` checkpoints. `characters[].rig` identifies the actual renderer; `rigDetails` identifies the armature, resolved authored clip, exact asset hashes and remaining editor/production verification. `cornhole-paper-reference` explicitly retains the old paper versions.
-- Character scenarios: start, anticipation, gesture and recovery for registered clips. `throw_*` previews instead expose the production throw's start, anticipation, release, gesture, result, recovery and end.
+- `cornhole-performance` is the current recorded-cornhole Watch performance in ArenaScene. It uses the same provider, controller, native adapter, profiles and side-view-v3 assets as the normal Watch app; `/performance/` is its isolated motion surface.
+- `cornhole-recorded` is the earlier weighted-rig comparison and `cornhole-paper-reference` is the explicit old-paper comparison. Neither is the current Watch routing.
+- `character-doug` and `character-dan` are legacy connected-paper clip previews. Their checkpoints describe those registered paper clips and must not be used to approve the current Watch performance.
 - Live scenarios: intro and ready; running also has obstacle, fighting also has encounter.
 
 **Copy scenario link** includes `scenario`, `seed`, optional `character`/`animation`, and a selected checkpoint. Example: [basketball release](http://127.0.0.1:3010/?scenario=basketball-recorded&checkpoint=release). A link does not encode arbitrary input history. **Download state JSON** exports the current snapshot. The expanded raw-state panel exposes the same readable data.
@@ -108,4 +109,9 @@ See [browser testing](../tests/browser/README.md) for launch options, isolated c
 
 ### Cornhole motion inspection
 
-Use the weighted motion review linked from Lab, choose Dan or Doug, and select a `cornhole_throw_*_R_*` clip. The shared API also works with `?character=dan`. Main-match `pre-release` and `doug-pre-release` checkpoints expose the held bag immediately before its authored release; kinematics on the released object show initial velocity, acceleration and flight/slide/settle phase. Bone labels are image-side names, so `releaseParent: hand_L` is correct for these right-handed front-facing characters. See `docs/review/cornhole-motion-v2/README.md` for provenance and motion checks.
+For current recorded-cornhole Watch animation, begin at `/performance/`, then
+verify `cornhole-performance` and the normal Watch flow. Follow
+[`docs/ANIMATION-HANDOFF.md`](../docs/ANIMATION-HANDOFF.md) for the exact runtime
+chain, baseline, identities, and launch commands. Use the weighted-rig review or
+`cornhole-recorded` only to investigate the preserved earlier rig implementation;
+use `character-doug`/`character-dan` only for legacy paper behavior.

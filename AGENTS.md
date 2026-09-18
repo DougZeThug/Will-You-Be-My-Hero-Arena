@@ -1,133 +1,110 @@
-# Arena engineering instructions
+# Arena engineering router
 
-This repository is **Will You Be My Hero? Arena**, a React application containing a reusable Phaser 2D sports/game engine. GPT-6 Astra is the user's preferred primary engineer. The user directs work in ordinary language; carry out implementation, local launch, testing and review without requiring them to edit code or run commands.
+This repository is **Will You Be My Hero? Arena**, a React application with a
+reusable Phaser 2D game engine. Work from the repository root (the directory
+containing this file and `package.json`). Inspect `git status` and the relevant
+imports before editing; preserve unrelated local work. Follow
+[`docs/GIT-WORKFLOW.md`](docs/GIT-WORKFLOW.md) for checkpoints or worktrees and
+[`docs/AI-DEVELOPMENT-WORKFLOW.md`](docs/AI-DEVELOPMENT-WORKFLOW.md) for Lab and
+test usage.
 
-## Start with the actual project
+## Route work to the current runtime
 
-- Work from this repository root, which contains `package.json`. Inspect Git status and the relevant implementation before editing. Preserve pre-existing modified and untracked files.
-- Read [the development workflow](docs/AI-DEVELOPMENT-WORKFLOW.md) for Lab/testing procedures and [the Git workflow](docs/GIT-WORKFLOW.md) before branch/worktree changes.
-- Current architecture: [PLAYABLE-ENGINE.md](docs/PLAYABLE-ENGINE.md) and [PHASER-ENGINE.md](docs/PHASER-ENGINE.md). Older design/review documents record earlier implementations and may mention superseded Pixi, GSAP or six-pose animation. Do not reintroduce those systems based on historical prose.
-- Inspect the relevant code and tests rather than rewriting a working subsystem. Keep changes bounded by the user's request; infrastructure work should not alter art or gameplay without a concrete need.
+For recorded-cornhole character performance, start with
+[`docs/ANIMATION-HANDOFF.md`](docs/ANIMATION-HANDOFF.md). The normal Watch entry
+is `components/arena/ArenaStage.tsx`; cornhole dynamically injects
+`lab/performance/provider.ts`, which composes
+`CharacterPerformanceController` with `lab/performance/LoongBonesAdapter.ts`
+and the side-view-v3 assets. The matching review surfaces are `/performance/`
+and the `cornhole-performance` Lab scenario. Use these paths for routine Dan or
+Doug recorded-cornhole animation work.
 
-## Architecture boundaries
+Do **not** route that work to:
 
-- React owns menus, setup, collections, accessible HUD, local persistence and result presentation. Phaser owns the competition canvas, character rendering, game objects, equipment, cameras and effects. Import Phaser runtime code only in the browser.
-- Preserve the two runtime contracts: **Watch** plays immutable simulated recordings through `ArenaGame` / `BattleDirector`; **Play** runs interactive practice through `LiveArenaGame` / fixed-step `ArenaSession`. Reuse their underlying character, animation and equipment systems.
-- The input path is device → semantic intent → player controller → event action map → controllable entity/components → event rules → animation markers → presentation. Keep physical key/button/axis codes in input adapters and bindings. AI must follow the same semantic controller path as humans.
-- An event owns its rules, specialized substates, mechanics, physics, scoring, control map and AI decisions. Shared controllers must remain event-independent. Add events through `EventRegistry`; do not add sport switches to global input or a giant universal state enum.
-- Character identity belongs in profiles, traits, pools, abilities and animation overrides. Compose small event components into `ArenaCharacter`; do not duplicate a character controller for each sport.
-- Use TypeScript. Keep simulation and geometry testable without Phaser, browser globals or React. Keep runtime, input, character data, animation selection, physics, rendering and UI in separate modules.
-- Phaser is the active framework. GSAP is appropriate for surrounding DOM/UI, not an independent game clock. Rive or another engine is not a reason to replace existing runtime boundaries.
+- `character-doug` or `character-dan`: legacy connected-paper clip previews.
+- `cornhole-recorded`: the earlier weighted-rig comparison, not the normal
+  Watch performance installation.
+- Human Motion V2/V3 scenes: experimental multi-event research, not Watch.
+- other recorded Watch sports or live Play: separate providers/contracts that
+  must not be migrated incidentally.
 
-## Gameplay and persistence invariants
+Historical constraints, asset provenance, and completed-pass evidence remain
+in [`docs/CHARACTER-PERFORMANCE.md`](docs/CHARACTER-PERFORMANCE.md) and its
+linked review documents. Consult the specific document relevant to the code
+being changed; do not treat every historical review as required reading.
 
-- Current live references are cornhole, running and fighting. Basketball, football and beer pong are implemented as recorded Watch events; their live action-map examples are not complete playable sports.
-- Recorded results are determined before playback. Pause, seek, speed, replay, resize and visual changes must not resimulate a winner or award points again.
-- Live practice and Lab scenarios do not change club points, entry allowances, saved matches or installed character data.
-- Preserve deterministic seeds, equal attempt budgets, authoritative contact scoring, immutable asset/performance snapshots and idempotent awards. Ledger corrections are append-only.
-- Preserve historical recordings and versioned rules. Rule changes require an explicit versioning/migration decision; never silently reinterpret old recordings. Keep historical test fixtures.
-- Local storage and the demo repository are not a trusted multiplayer backend. Do not claim shared authentication, server-authoritative competition or networking that is not implemented.
+## Architecture and gameplay boundaries
 
-## Established visual direction
+- React owns menus, accessible HUD, persistence, and results. Phaser owns the
+  competition canvas, character rendering, equipment, cameras, and effects.
+- **Watch** replays immutable pre-simulated recordings through `ArenaGame` and
+  `BattleDirector`. **Play** runs fixed-step interactive practice through
+  `LiveArenaGame` and `ArenaSession`. Pause, seek, speed, replay, resize, or a
+  visual change must not resimulate a winner or award points again.
+- The semantic input path is device → intent → controller → event action map →
+  entity/components → event rules → animation markers → presentation. Physical
+  codes stay in adapters; event rules own mechanics and scoring.
+- Keep simulation and geometry testable without Phaser or browser globals. Add
+  sports through `EventRegistry`; do not add global sport switches.
+- Live practice and Lab never change club points, entry allowances, saved
+  matches, or installed characters. Preserve deterministic seeds, versioned
+  historical recordings, authoritative contact scoring, and idempotent awards.
+- Run browser tests in isolated contexts/origins. Never clear or seed the
+  user's regular browser storage. Keep Lab globals out of the production app.
 
-- Preserve the approved **printed sunset backyard-sports** arena: adult-proportioned illustrated people, physical paper silhouettes, black ink, cream cut edges, halftone texture, orange/mustard with restrained teal accents. The earlier blacklight direction is historical.
-- Keep original collectible cards intact. Preserve Dan and Doug's likeness, clothing, proportions and current artwork unless the user requests an art change. Do not replace figures with 3D characters or generic cartoon bodies.
-- Feet must meet the court plane; soft contact shadows belong on the floor. Preserve warm scene tint and consistent card anchors behind/adjacent to the corresponding character.
-- Dan and Doug are both **5′8″ (68 inches)**. Keep their reference stature equal, then apply the occupied court lane's perspective uniformly to the rig, feet, sockets, shadows and release velocity. A farther player must not retain the foreground player's screen height. Never bake this depth correction into Doug's anatomy or asset alone.
-- Preserve horizontal cornhole board orientation, smaller far-board scale, registered printed holes/rims/targets/cups and intentional playing lanes. Use the common equipment mask/placement code; do not expose source-image checkerboards or invent contact coordinates independently of the artwork.
-- New visual assets need provenance and a likeness/silhouette/motion review. A single card provides visible identity, not unseen poses or a finished rig.
+## Art, motion, and provenance invariants
 
-## Animation rules
+- Preserve the approved printed-sunset backyard-sports direction, original
+  collectible cards, likenesses, clothing, and source files unless the user
+  explicitly requests art changes. Dan and Doug are both 5'8"; apply lane depth
+  uniformly to rig, feet, sockets, shadows, and release velocity.
+- Keep feet grounded, soft court shadows, correct equipment registration, and
+  the horizontal cornhole layout. Objects remain attached to the evaluated hand
+  until the semantic release marker.
+- Preserve connected anatomy, opaque hand exposures, sleeve/torso material
+  ownership, palm and foot registration, bounded IK, and semantic markers.
+  Passing numeric checks is not proof of natural motion; inspect the rendered
+  action at normal speed and around release/contact/recovery.
+- Current cornhole side-view rigs are Arena-authored LoongBones import assets,
+  not verified unchanged editor round trips. Preserve hashes and provenance;
+  do not claim unseen poses, measured motion, production-wide installation, or
+  editor verification. Spine is historical and must not be activated.
+- Keep original exports and artwork byte-preserved. Derived bind, geometry, or
+  hand-registration fixes must remain explicitly identified as derived.
 
-- In the recorded performance adapter, proximal hand artwork is forearm skin:
-  retain its weighted wrist transition, draw it beneath the continuous arm and
-  blend only the internal cut edge over opaque skin. Keep palm/finger exposures
-  opaque. A connected wrist socket alone does not prove a seamless painted join;
-  inspect chest contacts and finish poses, and preserve the material checks in
-  `tests/browser/character-performance.spec.ts`.
+Detailed durable constraints live in
+[`docs/CHARACTER-PERFORMANCE.md`](docs/CHARACTER-PERFORMANCE.md),
+[`docs/review/cornhole-side-v3/README.md`](docs/review/cornhole-side-v3/README.md),
+and [`docs/LOONGBONES-COMPATIBILITY.md`](docs/LOONGBONES-COMPATIBILITY.md).
+Human Motion work follows its own linked review contracts.
 
-- Pass 4 corrects the performance adapter's far-knee IK branch: both projected knees bend toward the rightward lane while the original foot targets and limb lengths stay fixed. Keep the painted-sole checks as well as ankle/heel/toe checks. Opponent attention uses bounded base poses on the existing recorded clock; committed actions retain priority and result acknowledgments wait for revealed results. Preserve the Pass 3 release hands and chest contacts. See the current pass-4 section of `docs/CHARACTER-PERFORMANCE.md`.
+## Working and validation policy
 
-- Pass 3 adds one corrective release-hand drawing per character in `lab/performance/assets/`, registered by `ReleaseHands.ts` to the existing wrist. Preserve the original exports and Doug's corrected arm registration. The performance owns one opaque hand exposure; held/recently released bags draw beneath the fingers until clear of the moving hand. Keep the shorter authored response timing, two Doug contacts, Dan nod and progressive arm relaxation. See the current pass-3 section of `docs/CHARACTER-PERFORMANCE.md` before using older findings.
+Routine bounded local source edits, profile edits, isolated captures, and
+disposable-fixture tests are authorized within the boundaries above; do not ask
+for repeated approval. Do not publish, deploy, rewrite history, delete user
+data, change protected art, or broaden a runtime migration without an explicit
+request.
 
-- The character-performance continuation installs the reviewed Dan/Doug motion in recorded cornhole Watch and the real-scene Lab scenario `cornhole-performance`, as explicitly requested by the user. `/performance/` remains the isolated authoring/review UI. Both use `engine/performance/CharacterPerformanceController`, the shared `AnimationGraph`, `AttachmentManager`, body mechanics, validated profiles and the same LoongBones adapter. The adapter owns native states, anatomy constraints, opaque hand exposure and chest contact. See `docs/CHARACTER-PERFORMANCE.md`. Preserve old clip inspectors, live Play and other sports as references. Saved release/contact/score times and result facts remain immutable; preparation starts before the saved release. This bounded recorded-cornhole installation supersedes older opt-in/production gates below for this path only. Runtime-derived motion and bind corrections are not unchanged editor exports; editor round-trip remains unverified.
+Use the smallest relevant checks while iterating. Documentation-only routing
+changes do not require the full runtime suite. Runtime changes should normally
+run `pnpm typecheck`, `pnpm test`, `pnpm build`, relevant browser scenarios, and
+`pnpm check:regression` when its aggregate scope is warranted. Report checks
+not run and why. Visual or animation changes require a real browser review and
+continuous-motion evidence; do not update pixel baselines merely to silence a
+failure. Store disposable evidence under ignored `work/qa/` and curated,
+intentional evidence under `docs/review/`.
 
-- **Human Motion V2** is an opt-in four-event Lab migration at `/human-motion/`; see [its runtime contract](docs/HUMAN-MOTION-V2.md). Reuse the pure `CharacterMotor`, `MotionPlanner`, `AnimationGraph`, semantic skeleton, attachment history and analyzer modules. Existing production Play/Watch and immutable recorded adapters are preserved. Do not call the V2 mechanical proofs fully polished production sports or unchanged editor exports.
-- V2 native animation states persist across ticks. DragonBones's default fade-in pauses the incoming playhead: explicitly play during blends and test graph/native phase agreement before using marker-driven contact. Do not restore per-frame `animation.reset()` to a live motor path. Foot and hand IK must release smoothly; an exact ankle lock alone cannot prove a planted shoe silhouette.
-- V2 organic performance uses shared technique metadata and character traits over authored motion; see [its contract](docs/ORGANIC-PERFORMANCE.md). Keep sequential response, inertial residuals, balance estimates, support-reach correction and debug measurements separate from event rules. Marker-driven hand exposure must agree with equipment detachment in the same step. Do not hide a failed reach by stretching a leg or moving a locked ankle. Pose-matched convergence policies are not a full authored motion-matching library; balance proxies are not measured forces.
-- MediaPipe/OpenCV belong exclusively to development tooling in `work/motion-venv`. Reference exports preserve timestamps, confidence and missing data. Use aspect-correct normalization, explicit anatomical handedness and retargeted target lengths. Never label generated or manually authored trajectories as measured motion, nor a torso/pelvis visual proxy as measured center of mass.
-
-- V2's [reference cornhole take](docs/review/reference-cornhole/README.md) uses independent authored loading/drive/recovery curves, motor root motion and release-instant hand sampling. Keep its fixed-gravity practice contact solver separate from immutable recorded trajectory presentation. Far-lane distance, character scale and projectile scale must agree; do not restore target-homing horizontal acceleration to conceal a court projection mismatch. Validate actual sole vertices in addition to ankle IK. Edited slow-motion reference derivatives retain their media timebase and must not be reported as calibrated execution speeds.
-
-- The subsequent [reference/personality pass](docs/review/reference-personality/README.md) compiles actual confidence-qualified MediaPipe angles and normalized hip motion into the V2 native throw. Preserve raw measurements separately from filtered/retimed adaptations; occluded far-side motion and hand exposures remain authored. Keep character movement signatures and `PerformanceTimeline` independent of sport rules. A forced gesture review may select rituals/reactions but must never manufacture a score. Reuse semantic gesture clips across events; decorative prop tosses must not count as scoring releases. Reference comparison copies Phaser pixels during `postrender`, not after WebGL has discarded its drawing buffer.
-
-- The [Human Motion V3 pass](docs/review/human-motion-v3/README.md) extends V2 rather than replacing it. Keep motor speed, gait travel, cycle duration and depth scale coherent; reconcile planted contacts across gait changes and allow bounded lower-body loading before declaring a locked leg reachable. Shoe-tip material must follow its own foot, including when source shoe silhouettes touch; correct whole-face ownership on documented derived meshes, never hide fragments with effects. Generic contacts, named equipment anchors, impact-driven landing absorption and body-space sweeps remain independent of event scoring. Basketball uses sampled hand release and fixed vertical gravity; do not restore target homing to force a make. Keep physical collision, preferred combat range and attack reach distinct.
-
-- [V3.1 geometry/motion rules](docs/review/human-motion-v31/README.md): audit source registration before changing anatomy. Nearly collinear three-point affine limb fits can inflate transverse width even when all animated bone scales are one; preserve anatomical segment lengths and source proportions with documented bind-mesh registration. `RigIntegrityValidator` reports actual evaluated lengths/scales and setup-relative mesh widths; it never silently rescales the character. Clothing width is not anatomical arm width. Opposite-facing Lab movement now uses a bounded rear-garment material variant with protected original alpha/face/limbs and unchanged anatomical-right semantics; never display a mirrored front logo as a shortcut. Combat retreat keeps opponent-facing policy independent of movement intent. Keep the review camera ground-anchored during jumps. Each event's reference panel must load relevant measured footage and disclose camera/occlusion/timebase limits; no automatic retarget from overlapping-person detections.
-
-- The [full-body performance/contact pass](docs/review/performance-upgrade/README.md) permits bounded heel/sole/forefoot roll in the Human Motion Lab. Validate rendered sole material against the intended support transform and separately measure material near the supported pivot; do not require the raised heel to remain fixed or treat an anatomical pivot as an exact visible sole measurement. Keep length invariance, mirrored contact QA, and the 2-world-pixel support tolerance. Combat uses independent seeded semantic AI decisions and distinct guard absorption; blocked contact retains the existing damage/interruption rules. The `performance-v2` pack is an Arena-authored derivative, not a verified returned editor export or a production installation.
-- Current reference characters use calibrated **connected paper meshes**, with joined shoulder/torso surfaces and registered palms/feet. They are not Spine-authored characters. The optional Spine boundary requires a compatible licensed runtime, matching exports, semantic markers and socket sampling before activation.
-- The user does not own Spine and now requests **LoongBones**, conditional on proving a real editor export in the exact Phaser 3.90.0 runtime. See [LoongBones compatibility status](docs/LOONGBONES-COMPATIBILITY.md). Do not activate or purchase Spine. Its earlier [pipeline plan](docs/SPINE-PRODUCTION-PIPELINE.md) is historical; its anatomy and animation-quality requirements still apply.
-- Keep anatomy → layered source → authored weighted rig → native Phaser presentation as the pipeline. Anatomical source pose, setup/bind pose and visible idle remain distinct. Dan is the first reference; approve his anatomy, deformation and locomotion before building Doug or the wider roster.
-- Dan's proportion authority is the full-body illustration selected by the user on 2026-09-12, preserved in `lab/assets/dan-source/proportion-reference.png` with a cleaned version at `full-body-v2.png`. The earlier assembled Lab body was rejected as too lanky. Preserve the selected figure's head/body ratio, torso volume, limb reach and three-quarter pose; do not fit it back to the old generic tall proposal or independently resize its parts. The current source view uses uniform scale and remains static pending a weighted editor rig.
-- The Lab-only LoongBones proof uses pinned official DragonBones core and a separate native Phaser mesh bridge. The user's unchanged LoongBones 1.2.3 `ubbie` example export (DragonBones 5.5) now runs in Phaser 3.90.0 with textured slots, authored bone animation, mesh deformation, blending and mirroring verified. That export contains no blended skin weights or release markers; the separate Arena-authored fixture tests those features. A production Dan rig remains unproven. Keep exact-file provenance and these scope distinctions; do not move the experimental bridge into Play/Watch before its remaining gates pass.
-- Dan has a separate **Astra-authored weighted foundation** at `lab/loongbones/dan/`, with authoring modules in `lab/loongbones/dan-rig/` and an import pack under `lab/loongbones/assets/dan-weighted-v1/`. Preserve the static approved source as comparison authority. The 30-bone rig, planted-foot IK and seven bounded clips run locally in Phaser. The user's actual returned `dan-editor-r2.zip` is preserved under `lab/loongbones/assets/dan-editor-r2/` and runs in the same Phaser bridge. It loses easing, idle loops, the left-knee bend direction and release-bone association. The explicitly derived `dan-arena-restored_ske.json` restores these against checked source data and removes only zero-weight entries; it is not unchanged editor output. Lab `?sample=authored`, `?sample=editor` and `?sample=restored` keep the distinction visible. See [the export audit and motion comparison](docs/review/dan-roundtrip-r2/README.md). `editorRoundTripVerified` remains false for this lossy interchange; `assetIdentityVerified` separately checks file hashes. `productionInstalled` stays false. Hidden art, alternate hands, full locomotion and production integration remain separate gates.
-- The first Dan import is preserved in LoongBones as `dan_import_r1`; its editor view failed because the initial mesh omitted `edges`. LoongBones 1.2.3 maps `edges` directly to its outline array and dereferences `.length`. Authoring revision 2 adds the complete boundary-edge list, `userEdges`, width and height while preserving all render/animation data. The corrected mesh now selects and renders in the authoring workspace. Runtime playback acceptance alone is insufficient: validate editor topology fields too. See [the import diagnosis](docs/review/dan-editor-import-r1/README.md). An editor Preview is also not proof that a downloaded export preserves every weight, constraint or semantic event.
-- The initial **Lab-only** `cornhole-recorded` migration injected weighted Dan and Doug through a per-game `CharacterRigProvider`: Dan's hash-checked restored returned export and Doug's separately authored `doug-weighted-v1` foundation. Preserve these sources and provenance distinctions when comparing them with the newer side-view revision below. `cornhole-paper-reference` preserves the old paper rigs. Other sports, live Play and the production app remain on their existing rigs. Do not silently broaden this migration.
-- Doug's foundation preserves `public/assets/doug/ready.png` byte for byte, with his own 30-joint anatomy and 11 authored clips. His overshirt hem must stay with the torso: trace its boundary against the forearm/wrist instead of using a constant horizontal cutoff. Single-view hand art, hidden surfaces and native source resolution remain authoring limits. See [Doug's weighted-rig review](docs/review/doug-weighted/README.md). Use `/loongbones/doug/` for weighted motion QA; the older `character-doug` scenario remains a legacy paper inspection.
-- The preserved **motion revision 2** lives under `lab/loongbones/assets/cornhole-motion-v2/`. Both players are anatomically right-handed. Imported bone suffixes describe image sides: the actual throwing chain is image `L`, with `throwing_hand` parented to `hand_L`. Never fix handedness by mirroring faces/logos. Original Dan editor files and Doug foundation assets remain preserved.
-- The current main cornhole Lab uses **side-view revision 3**, explicitly requested new artwork under `lab/loongbones/assets/cornhole-side-v3/`. Both bodies and feet face the rightward board lane. Eight weighted layers separate torso/back underlay, back/front sleeve, continuous near arm and registered grip/open/relaxed hands. The near anatomical right chain keeps the `L` suffix for socket compatibility. These are newly authored LoongBones import rigs, not returned editor exports; keep editor/production gates false. Current reviews are `/loongbones/doug/?character=dan` and `?character=doug`; `&version=2` preserves prior motion. See [the side-view review](docs/review/cornhole-side-v3/README.md).
-- Respect the layered export's 16-bit geometry/weight offset budget. Reduce topology density rather than texture resolution; reject overflow during authoring. Clip hidden arm-cap overlap beneath the sleeve, use the correct IK branch for each knee, and allow enough pelvis settling to keep both leg targets reachable. Wrist rotation follows the forearm during backswing and presents the palm near release; do not lock it horizontal throughout the entire action. Three hand surfaces are not individual finger rigs.
-- Keep `bagRelease` inside a moving forward swing, with `release` as the engine alias. Sparse monotone cubic tracks and overlapping body channels replace uniform stop-at-every-key easing. Clip durations/release times for new Lab fixtures come from the exported asset manifest. The same Phaser bag inherits evaluated hand position, tilt and velocity. Recorded visual acceleration remains constrained to immutable contact/results; it is not a replacement rules simulation.
-- Material overlap is separate from skin weights. Source atlas UVs must be converted through the actual subtexture rectangle before reading colors. Local clothing/hand boundary splits, whole-face fingertip ownership and original-fabric underlap are documented derived geometry changes, not unchanged editor bytes. Do not move only one vertex across a material boundary: that creates long stretched slivers. See [the motion audit](docs/review/cornhole-motion-v2/README.md). New editor exports still require round-trip comparison.
-- Sleeve assembly must separate back cuff, inserted upper arm and front cloth. Clip the front mesh to the printed cloth contour **and exclude the painted empty opening**; otherwise an opaque gray/dark sleeve interior covers the arm and reads as a closed cap. Retain under-sleeve overlap and inspect swing extremes for exposed cap fragments. Alpha connectivity or skin touching the lower edge alone is insufficient: the side-view pixel regression checks skin inside the opening as well as below the cuff, for both players and all five throws. Source-space cutouts must be convex with positive image-coordinate winding; triangulate disjoint remaining polygons rather than spanning a hole with one fan.
-- The shirt back is torso material, not sleeve material. Never broaden arm weights down the rib cage to hide a sleeve notch: the forward swing then removes the back silhouette. Keep torso/back cloth on chest/spine weights, remove the stationary sleeve duplicate including its ink edge, and register any hidden-fabric UV underlay to the source silhouette. Test back coverage against an independent chest/neck frame and inspect the whole shirt during the swing; sleeve contact alone cannot prove torso continuity.
-- Author whole-body throws from observed reference with independently timed pelvis compression/transfer, spine, clavicle, soft elbow and recovery. In this y-down side rig, positive torso pitch leans toward the rightward board. Head and palm compensation must include all animated ancestors. Named pose landmarks and 0.25× / 0.5× review controls are available in the weighted rig Lab. See [the biomechanics review](docs/review/cornhole-biomechanics/README.md); reference-informed animation is not measured mocap.
-- Separate topology at far-arm/torso and leg ownership boundaries. Draw whole material regions back-to-front rather than interleaving triangles row-by-row: independent motion otherwise reveals striped overlaps. Source-transparent gaps are authoritative for hand/shorts separation. Identify meshes by name in QA and assert a nonempty sample; the first mesh may be shirt cloth, not feet.
-- Hand artwork pivots belong at anatomical wrist creases, not the cut end of a painted forearm stub. Match hand scale to the forearm and preserve proximal overlap. Do not force palms-up art flat through excessive wrist extension. Use opaque hand exposures; dissolving different finger silhouettes makes ghost fingers. Handoff tests compare bag and hand orientation at the same instant, not two different moving poses.
-- Reconstruct pelvis/spine/chest/clavicle and limb relationships before fitting artwork. Shoulder sockets are under sleeves, hips inside the pelvis, wrists distinct from palms. Preserve likeness/logo/style; do not merely lower shoulders, widen stances or rename old procedural poses as Spine animations.
-- A landmark diagram or optional adapter is not a production rig. Current Lab QA can expose missing bones, silhouettes and mirror views; never fabricate absent IK/center-of-mass measurements or label a proposal as fitted art. Reject generation trials that alter protected identity/art or paint a checkerboard instead of providing usable transparency.
-- Preserve natural resting shoulders, continuous limb connections, bounded elbow paths and planted feet. Do not recreate independently rotating sleeve/torso parts that produced doubled shoulders and gaps.
-- Author motion with anticipation, contact/release, follow-through and recovery. Preserve character-specific rhythms and reaction pools; increased wobble alone does not establish personality.
-- Use semantic clips and meaningful markers such as `release`, `hitboxOn`, `hitboxOff`, `cancelWindow`, `footstep` and `animationComplete`. Do not scatter unrelated timers or raw frame-count assumptions across scenes.
-- Objects remain attached to the evaluated hand until release. Flight begins at that exact socket and meets registered equipment. Combat detection is separate from artwork and active only in its hitbox window.
-- A shared clock controls recorded playback. Live rules run fixed steps; presentation follows them. Seeking must not replay old audio/effect cues. Pause, blur, disconnect and cleanup must clear transient/buffered inputs and avoid a held-trigger phantom action on resume.
-- Test marker crossings and geometry, then inspect actual rendered motion. Passing connectivity or finite-number checks does not prove natural shoulders, smooth motion or correct visual occlusion.
-
-## Lab, debugging and evidence
-
-- The [presentation pass](docs/review/presentation-pass/README.md) shares `ArenaTheme`, `ArenaHud` and `ArenaEnvironment` across existing runtimes. Keep HUD values derived from revealed recordings/live event views, and retain accessible DOM scores. Projected projectile bounds clear overlapping HUD zones; close/neutral character QA hides them. Generated equipment appearance may need explicit source-to-canonical registration: preserve original target geometry and validate the printed hole against it. Presentation changes do not authorize migrating experimental rigs into Play/Watch. Ignore temporary `work`, `dist` and `.test-build` files in the development watcher.
-
-- Arena Lab is an internal standalone local entrypoint. Reuse real runtime modules; do not build a second mock game. Keep Lab controls and `window.__HERO_ARENA__` out of the production application.
-- Named scenarios fix seed, participants, event, mode and checkpoints. Use semantic input through normal controllers; never set a score or damage value to make a test pass.
-- Lab Pause is a diagnostic freeze that preserves in-progress state. Real blur/disconnect pause must still run normal gameplay cleanup. Live checkpoint seeking resets and replays neutral human input, then restores actual devices; it does not replay prior ad hoc human input.
-- Expose serializable state snapshots and bounded diagnostics. Do not expose mutable runtime objects, arbitrary evaluation or persistence-reset operations through the debugging API.
-- Run browser tests in isolated contexts/origins. Do not clear or seed the user's normal browser storage. Synthetic gamepad coverage is distinct from physical hardware testing.
-- Save temporary screenshots, traces, state dumps and timing captures under ignored `work/qa/`. Keep concise reviewed evidence and intentional fixtures/baselines in versioned locations. Record scenario, seed, checkpoint, viewport and runtime mode with evidence.
-- Measure real-time performance separately from deterministic/manual stepping. Report frame distribution and relevant counters; texture memory is an estimate. No physical-device FPS guarantee follows from a desktop/headless run.
-
-## Validation and delivery
-
-- Run the smallest relevant checks while iterating. Before delivering a runtime/infrastructure change, run `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm test:browser` and `pnpm check:regression` as applicable to the final change. Investigate failures; report any check not run and why.
-- Browser changes need console/error review and actual UI interaction. Animation/rendering changes need checkpoint screenshots plus continuous motion review around anticipation, release/contact and recovery. Test Play and Watch when shared code changes.
-- The regular browser suite captures screenshots/state; `pnpm test:browser:visual` separately compares reviewed pixel baselines. Baseline updates are deliberate review actions. Inspect differences and explain intended changes before using `pnpm test:browser:update`; never update snapshots merely to silence failures.
-- The test suite writes some `docs/` reports and import examples. Review expected generated changes; do not revert unrelated work to make Git status clean.
-- Preserve the Windows-safe build wrapper in `scripts/build.mjs`; it avoids a known vinext CLI shutdown problem. Builds export to `dist/client`. Do not stop another task's server to claim its port.
-- Local preview is separate from publication. `.openai/hosting.json` describes Sites hosting; use the applicable Sites workflow for a requested deployment. Infrastructure validation does not require publishing.
-- Deliver the working local result, concise changes, tests actually run, meaningful limitations and evidence links. Update permanent guidance only when a durable decision changed, not after every incidental problem.
-
-## Navigation
+## Code map
 
 | Area | Source |
 |---|---|
-| UI / React bridges | `components/arena/`, `app/` |
-| Live session / event registry | `lib/arena/engine/core/` |
-| Inputs / controllers | `lib/arena/engine/input/`, `controllers/` |
-| Characters / components | `lib/arena/engine/characters/` |
-| Clips / selectors / markers | `lib/arena/engine/animation/` |
-| Event mechanics | `lib/arena/engine/events/` |
-| Rig geometry / skin weights | `lib/arena/puppet-geometry.ts`, `skin-geometry.ts`, `puppet-assets.json` |
-| Equipment registration | `lib/arena/equipment-art.ts`, `equipment-layout.ts` |
-| Recorded simulation / ledger | `lib/arena/simulation.ts`, `persistence.ts`, `adapters.ts` |
-| Test suites / legacy review tools | `tests/`, `review/` |
-| Repeatable repository skills | `.agents/skills/` |
+| React / player bridges | `components/arena/`, `app/` |
+| Watch / Live cores | `lib/arena/engine/core/` |
+| Current cornhole performance | `lib/arena/engine/performance/`, `lab/performance/` |
+| Event rules | `lib/arena/engine/events/` |
+| Input/controllers | `lib/arena/engine/input/`, `lib/arena/engine/controllers/` |
+| Character systems | `lib/arena/engine/characters/` |
+| Lab scenarios | `lab/scenarios.ts`, `lab/LabRuntime.ts` |
+| Tests | `tests/`, `tests/browser/` |
+| Repeatable workflows | `.agents/skills/` |
