@@ -1,20 +1,53 @@
 ---
 name: arena-animation-direction
-description: Direct and refine Arena character motion while preserving approved artwork, connected rig anatomy, semantic markers and distinct personality. Use for entrances, throws, locomotion, reactions and celebration polish.
+description: Direct and refine current Arena character motion while preserving approved artwork, runtime boundaries, immutable recordings, semantic markers, and distinct personality.
 ---
 
 # Arena animation direction
 
-Start with [AGENTS.md](../../../AGENTS.md), the relevant character profile and the failing clip in the current registry. Use `character-doug` or `character-dan` plus the affected event scenario from [Arena Lab](../../../docs/AI-DEVELOPMENT-WORKFLOW.md).
+Read [the current handoff](../../../docs/ANIMATION-HANDOFF.md) and inspect the
+imports at the affected entry point before choosing a review scene.
 
-Identify the motion problem in performance terms before changing curves: anticipation too long, shoulder fold, drifting planted foot, abrupt pose recovery, missed palm release, repeated gesture or wrong reaction intensity. Watch the full action at normal speed, then inspect neighboring frames at the problem.
+## Choose the correct surface
 
-The current actors are calibrated connected paper meshes. Preserve joined chest/shoulder/sleeve surfaces, artwork, rest posture and registered palms/feet. Do not split outlined arms from the torso or compensate with extra wobble. Their fixed fingers and facial drawings are real authoring limits; new anatomy or expressions require authored assets.
+- **Recorded cornhole Watch (current Dan/Doug performance):** use the normal
+  Watch flow, `/performance/`, and `cornhole-performance`. This path is
+  `ArenaStage` → `performanceMatchProvider` →
+  `CharacterPerformanceController` → `LoongBonesAdapter` → side-view-v3 assets.
+- **Legacy connected-paper comparison:** use `character-doug`, `character-dan`,
+  or `cornhole-paper-reference` only when the task explicitly concerns those
+  old paper rigs. They are not a proxy for current Watch animation.
+- **Other recorded Watch sports:** reproduce their own recorded scenario; they
+  do not use the cornhole performance provider.
+- **Live Play:** reproduce the relevant live scenario and preserve its
+  fixed-step rules and semantic controller path.
+- **Human Motion V2/V3:** use only for an explicitly experimental Human Motion
+  task. Do not promote it into Play or Watch incidentally.
 
-Use independently authored effector paths, bounded interpolation, anticipation, follow-through and recovery. Character differences belong in profiles, clip overrides, rhythm, gesture pools and contextual selection. Compare Dan's restrained behavior with Doug's expressive behavior; scaling the same motion is insufficient for a request for distinctive performance.
+## Direct and verify the motion
 
-Keep release/contact/hitbox/cancel/footstep moments as semantic markers. Held equipment follows the evaluated socket until release. Score changes remain owned by event rules. Validate same-clip restarts, transitions and pause/seek behavior when modifying timeline code. Layer only where body continuity and foot placement remain sound.
+State the visible problem before changing curves: timing, shoulder or wrist
+join, planted-foot drift, IK branch, palm/release registration, abrupt recovery,
+or reaction choice. Capture the current action at normal speed, then inspect
+neighboring frames at anticipation, release/contact, follow-through, and
+recovery. Keep the scenario, seed, viewport, runtime revision, profile, and
+asset identity with the evidence.
 
-Inspect entry, extremes and recovery in isolated and on-court views. Check planted feet, elbow branch continuity, shoulder/neck shape, palm contact and equipment trajectory. Run relevant animation/geometry tests plus browser scenarios; review continuous motion after tests pass. Do not describe finite coordinates or connected alpha regions as proof of natural movement.
+Preserve approved likeness, protected art, connected chest/shoulder/sleeve
+surfaces, opaque hands, registered palms/feet, lane-depth scaling, and original
+asset provenance. Do not solve motion by mirroring faces/logos, stretching a
+limb, moving a locked support foot, dissolving hand silhouettes, or rewriting
+recorded outcome/timing facts. Held equipment follows the evaluated hand until
+the semantic release marker; scoring remains owned by event rules.
 
-Save reproducible before/after evidence under `work/qa/`. Report the performance change, clips/profiles affected, tests and remaining drawing limitations. Keep a new permanent rule only if it addresses a recurring authoring constraint.
+Character differences belong in profiles, authored technique, rhythm, gesture
+pools, and contextual selection—not indiscriminate wobble or a scaled copy of
+one performance. Preserve action priority, same-clip restarts, native phase,
+pause/seek behavior, and result acknowledgments after revealed results.
+
+Run the smallest relevant pure and browser checks while iterating. For a motion
+change, finish with continuous playback in the affected real runtime plus its
+matching isolated surface; test Play/other Watch sports only if shared code was
+touched. Numeric geometry and marker checks complement, but never replace,
+rendered review. Save disposable evidence under `work/qa/` and update
+`docs/ANIMATION-HANDOFF.md` rather than appending a new chronological router.

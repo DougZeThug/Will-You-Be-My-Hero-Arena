@@ -52,17 +52,17 @@ const define = (
 export const SCENARIOS: readonly Scenario[] = [
   define(
     'cornhole-recorded',
-    'Cornhole · side-view Dan + Doug',
+    'Cornhole · earlier weighted-rig comparison',
     'recorded',
     'cornhole',
-    'Board-facing layered Dan and Doug, palm-up release, three hand poses and planted-foot underhand swings. New authored LoongBones import rigs; editor round trips pending. Original exports remain in their comparison pages.',
+    'Preserved side-view weighted-rig comparison. This is not the character-performance provider installed in normal recorded-cornhole Watch.',
   ),
   define(
     'cornhole-performance',
-    'Cornhole · character performance',
+    'Cornhole · current Watch performance',
     'recorded',
     'cornhole',
-    'The player game ArenaScene with the shared character performance controller and immutable recorded timing.',
+    'Current recorded-cornhole Watch path in ArenaScene: shared performance provider, controller, native adapter, side-view-v3 assets, and immutable recorded timing.',
     { seed: 'arena-lab:cornhole-recorded:v1' },
   ),
   define(
@@ -70,7 +70,7 @@ export const SCENARIOS: readonly Scenario[] = [
     'Cornhole · legacy paper reference',
     'recorded',
     'cornhole',
-    'Explicit comparison with the older production paper Dan. Main cornhole Lab uses the returned LoongBones rig.',
+    'Explicit comparison with the legacy connected-paper renderer. This is not the character-performance provider installed in normal recorded-cornhole Watch.',
     { seed: 'arena-lab:cornhole-recorded:v1' },
   ),
   define(

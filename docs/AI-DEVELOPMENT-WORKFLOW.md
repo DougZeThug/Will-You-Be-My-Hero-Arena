@@ -18,39 +18,57 @@ Start with an observable outcome and what should stay intact:
 
 Astra should establish the current Git state and starting behavior before modifying a subsystem. For larger features, use the [checkpoint/worktree workflow](GIT-WORKFLOW.md). A worktree must start with the present Arena source and assets, not the old repository baseline.
 
-## Arena Lab
+## Arena Lab and animation routes
 
-For the opt-in shared movement architecture, ask **“Open Human Motion V2.”** The Lab's V2 link opens cornhole, running, basketball and fighting proofs using the same motor, planner and native graph. Choose an event and press Play; slow-motion, silhouettes, skeleton/contact overlays and a timeline slider are built in. See [Human Motion V2](HUMAN-MOTION-V2.md) for its migration boundary and current artwork limits. Ask **“Analyze this real sports video as motion reference”** with an attached video; Astra handles the separate MediaPipe/OpenCV utility and loads the result for review. No code or terminal work is required from you.
+Ask **“Open Arena Lab.”** Astra runs `pnpm lab` from the repository and opens
+[http://127.0.0.1:3010](http://127.0.0.1:3010). It is an isolated internal
+entrypoint that shares real runtime modules and does not award points or use the
+regular game's browser storage.
 
-Ask **“Open Arena Lab.”** Astra runs `pnpm lab` from the repository and opens [http://127.0.0.1:3010](http://127.0.0.1:3010). It is a standalone internal environment sharing the actual Phaser runtimes, characters, equipment and rules. The normal Play/Watch application remains separate.
+For the character performance installed in normal recorded-cornhole Watch, use
+[the current handoff](ANIMATION-HANDOFF.md):
 
-Choose a named scenario instead of navigating collection/setup flows. **Load / reset** uses the selected seed. Character scenarios also expose character and animation selectors. **Play**, **Pause**, **+1 frame**, **+1 second** and named checkpoint buttons control inspection. **Copy scenario link** preserves the selected scenario/options/checkpoint; **Download state JSON** saves the inspected state. The Lab does not award points, install characters or clear the regular game's browser storage.
+- `/performance/` isolates the same controller, adapter, profiles, and assets.
+- `/?scenario=cornhole-performance` runs them in the recorded Arena scene.
+- the normal app's Watch flow is the final real-match surface.
 
-The Lab opens paused with a manual clock. Its **Pause** button is a diagnostic freeze: it preserves a partially charged shot for inspection. This differs deliberately from real gameplay pause caused by window blur, visibility loss or controller disconnect, which runs input cleanup and cancels charging. Press **Play** and focus the arena to use actual keyboard or controller input.
+Do not substitute `character-doug` or `character-dan`; those are legacy
+connected-paper clip previews. `cornhole-recorded` is an earlier weighted-rig
+comparison. Other recorded sports, live Play, and `/human-motion/` use separate
+runtime paths and should be opened only when that boundary is actually under
+review.
 
-| Scenario | What it proves |
+The Lab opens paused with a manual clock. **Load / reset** uses the selected
+seed. **Play**, **Pause**, **+1 frame**, **+1 second**, and named checkpoints
+support inspection. **Copy scenario link** preserves scenario options and the
+checkpoint; **Download state JSON** saves the inspected state. Pause is a
+non-destructive diagnostic freeze, unlike blur/disconnect cleanup in live play.
+
+| Surface or scenario | Purpose |
 |---|---|
-| `cornhole-recorded` | Weighted Dan + Doug in recorded cornhole; includes named Doug anticipation/release/follow/recovery checkpoints |
-| `cornhole-paper-reference` | Explicit older-paper comparison; no weighted replacement |
-| `basketball-recorded` | Recorded shot/release, ball flight, hoop contact and score |
-| `football-recorded` | Recorded football release, target contact and score |
-| `beer-pong-recorded` | Recorded wrist release, table/cup contact and result |
-| `character-doug` | Doug's isolated semantic animation, pose and attachment state |
-| `character-dan` | Dan's isolated motion and contrasting personality |
-| `keyboard-cornhole` | Real keyboard focus, aim, hold/release and controller path |
-| `controller-cornhole` | Browser gamepad mapping, analog values and lifecycle behavior |
-| `running-live` | Continuous movement, locomotion and obstacle reference |
-| `fighting-live` | Attacks, guard/dodge, hit windows, reactions and buffering |
+| `/performance/` | Current Dan/Doug recorded-cornhole controller and native adapter in isolation |
+| `cornhole-performance` | Current recorded-cornhole performance in the real Arena scene |
+| normal Watch → cornhole | Current production entry, immutable real-match playback |
+| `character-doug`, `character-dan` | Legacy connected-paper previews only |
+| `cornhole-paper-reference` | Explicit legacy paper comparison |
+| `cornhole-recorded` | Earlier side-view weighted-rig comparison; not current Watch routing |
+| `basketball-recorded`, `football-recorded`, `beer-pong-recorded` | Other immutable Watch sports with their own presentation paths |
+| `keyboard-cornhole`, `controller-cornhole`, `running-live`, `fighting-live` | Live fixed-step Play references |
+| `/human-motion/` | Experimental multi-event Human Motion research; not installed in Play/Watch |
 
-The `*-recorded` sports are Watch scenarios. Basketball, football and beer pong do not become direct-control events merely by being available in the Lab. Cornhole, running and fighting are the current live references. Live scenarios assign Doug to keyboard/controller slot 0 and Dan to AI; recorded scenarios present Dan first, then Doug.
+Named scenarios pin seed, participants, and options. Keep those inputs with a
+defect report. A changed seed is a new comparison. Recorded checkpoints seek to
+exact sampled times; live checkpoints reset and replay neutral human input
+through the real controller path before restoring configured devices. Paused
+checkpoints are for exact comparisons; use real-time playback to judge rhythm.
 
-Weighted character reviews are linked at the top of Lab. [the current weighted motion review](http://127.0.0.1:3010/loongbones/doug/) offers Play, clip selection, skeleton, silhouette, mirror, court scale and his editor import ZIP. [Dan's restored review](http://127.0.0.1:3010/loongbones/dan/?sample=restored) uses his returned export with documented compatibility fixes. Doug's current pack is locally authored, not yet returned from LoongBones. The main cornhole Lab now uses explicit motion-v2 derivatives with right-handed throws. Choose Dan or Doug in the motion review, then select a clip and press Reset / Play. The new import ZIP uses the same derived files. Other sports, live play and the player app retain existing rigs. See [the motion audit](review/cornhole-motion-v2/README.md). Ask Astra: “Review Doug's flat throw, then compare it with Dan in the main Lab.”
-
-Named scenarios pin seed, participants and options. Keep those inputs with a defect report. A changed seed is a new comparison; it should not silently replace a failing reproduction. Recorded/character checkpoints seek to exact sampled times. Live checkpoints reset and replay neutral human input through the real controller path, then restore the assigned keyboard/gamepad device. Held hardware cannot change that baseline. A checkpoint does not restore earlier ad hoc human input; load and replay an explicit sequence to reproduce such a case. Paused checkpoints are for exact comparisons, while real-time playback is needed to judge rhythm and fluidity.
-
-Useful request:
-
-> Load `character-doug`, inspect his celebration and release, then compare with `character-dan`. Show me any shoulder distortion, foot sliding or detached equipment before changing anything.
+For the repeatable current cornhole capture, run
+`pnpm review:cornhole-turn -- --build --label <label>`. It uses the
+`velvet-paw-29` showcase seed, isolated storage, the `/performance/` surface,
+`cornhole-performance`, and the normal Watch journey. It saves the immutable
+match recording, normal-speed video, screenshots, state, and report under
+`work/qa/turn-polish/<label>/`. See `docs/ANIMATION-HANDOFF.md` for the latest
+known baseline and any environment limitation.
 
 ## Debugging/state API
 
