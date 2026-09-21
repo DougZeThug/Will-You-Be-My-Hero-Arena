@@ -11,6 +11,14 @@ The test runner starts the isolated Arena Lab on port 3010 when needed. Each tes
 
 Windows defaults to installed Chrome. Elsewhere the default is Playwright Chromium (`pnpm exec playwright install chromium` once). Override with `ARENA_BROWSER_CHANNEL=msedge` or `ARENA_BROWSER_EXECUTABLE` for an explicitly selected browser executable. `ARENA_LAB_URL` uses an already running Lab instead of starting a server. Set environment variables in your shell using its native syntax; no machine-specific paths are committed.
 
+CI should prefer a browser already installed in its image when the Playwright
+CDN is unavailable. Set `ARENA_BROWSER_EXECUTABLE` to that absolute path and
+run `pnpm browser:preflight` before the suite. The preflight performs a real
+headless launch and page load, so a present but unusable executable fails
+before a long review begins. `.github/workflows/cornhole-visual-review.yml`
+uses the Chrome supplied by the hosted Ubuntu runner and uploads `work/qa`
+evidence even when a later review step fails.
+
 The script owns Vite as a direct Node subprocess to avoid Windows shell cleanup hangs. It stops only a server it started and preserves an existing Lab. Direct Playwright runner/editor users must start `pnpm lab` first; the package scripts handle startup automatically. Avoid editing Lab source while a regression run is active: development hot reload intentionally replaces the page and invalidates an in-flight browser step.
 
 `pnpm check:regression` runs typechecking, the pure simulation/animation/observability suite, browser tests, a fresh production build, then `pnpm test:production`. The final smoke test scans exported files for accidental Lab API leakage and opens Play and Watch in a separate clean browser on its own port 3011. It verifies live practice does not write the saved-results key. Set `ARENA_PRODUCTION_QA_PORT` if 3011 is occupied. It never reuses or stops the normal game at port 3001. Results and screenshots are saved in `work/qa/production`; the combined report is `work/qa/regression.json`.

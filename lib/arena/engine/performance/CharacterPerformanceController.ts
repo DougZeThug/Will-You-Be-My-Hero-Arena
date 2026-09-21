@@ -419,7 +419,19 @@ export class CharacterPerformanceController {
     if (s.state === 'celebrate') this.emit('CELEBRATION_COMPLETED');
     a.index++;
     if (a.index >= a.segments.length) this.finish('completed');
-    else this.startSegment();
+    else {
+      const next = a.segments[a.index];
+      if (next.state === 'recover')
+        next.clip =
+          {
+            watch: 'recoverWatch',
+            positive: 'recoverPositive',
+            negative: 'recoverNegative',
+            nod: 'recoverRest',
+            chestTap: 'recoverRest',
+          }[s.clip] ?? next.clip;
+      this.startSegment();
+    }
   }
   snapshot() {
     return structuredClone({

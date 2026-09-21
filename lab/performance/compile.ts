@@ -11,7 +11,8 @@ import {
   type Knot,
 } from '../loongbones/cornhole-motion/curves';
 import type { NativeClip } from '../human-motion/authoring/builder';
-export const PERFORMANCE_REVISION = 'cornhole-finish-settle-v1';
+export const PERFORMANCE_REVISION = 'cornhole-distinct-recovery-v2';
+export const PERFORMANCE_HAND_LIMITS = [-35, 95] as const;
 
 const map = {
   hips: 'pelvis',
@@ -69,22 +70,28 @@ export function compilePerformance(p: PerformanceProfile) {
         y: at('compression', f),
       }),
     );
+    const handRequests = Array.from(
+      { length: end + 1 },
+      (_, f) =>
+        at('palm', f) -
+        torso(f) -
+        at('shoulder', f) -
+        at('upperArm', f) -
+        at('elbow', f),
+    );
+    const outside = handRequests.find(
+      (rotation) =>
+        rotation < PERFORMANCE_HAND_LIMITS[0] ||
+        rotation > PERFORMANCE_HAND_LIMITS[1],
+    );
+    if (outside !== undefined)
+      throw Error(
+        `${p.id} ${id} authors hand_L outside native limits: ${outside.toFixed(2)}`,
+      );
     bones.push(
       {
         name: 'hand_L',
-        rotateFrame: bake((f) =>
-          Math.max(
-            -35,
-            Math.min(
-              90,
-              at('palm', f) -
-                torso(f) -
-                at('shoulder', f) -
-                at('upperArm', f) -
-                at('elbow', f),
-            ),
-          ),
-        ),
+        rotateFrame: bake((f) => handRequests[f]),
       },
       { name: 'neck', rotateFrame: bake((f) => -0.72 * torso(f)) },
       {
@@ -276,10 +283,11 @@ export function compilePerformance(p: PerformanceProfile) {
     [0.55, { ...response, chest: 0.4, shoulder: -1.5, gaze: -2.5 }],
     [1, response],
   ]);
+  const negativeEnd = { ...response, elbow: -12, gaze: 3 };
   pose('negative', 0.4, [
     [0, watch],
     [0.4, { ...watch, chest: 2.8, gaze: 4 * p.reactionIntensity }],
-    [1, { ...response, elbow: -12, gaze: 3 }],
+    [1, negativeEnd],
   ]);
   const rest = {
     ...neutral,
@@ -291,35 +299,42 @@ export function compilePerformance(p: PerformanceProfile) {
     elbow: -9,
     palm: 48,
   };
-  pose(
-    'recover',
-    p.recoveryDuration,
-    [
-      [0, rest],
-      // The native entry blend releases the arm first. The pelvis follows;
-      // compression converges to rest without rising past it and bouncing back.
+  const recovery = (id: string, entry: Pose) =>
+    pose(
+      id,
+      p.recoveryDuration,
       [
-        0.24,
-        {
-          ...rest,
-          upperArm: 2,
-          elbow: -6,
-          palm: 56,
-          weightX: rest.weightX * 0.92,
-        },
+        [0, entry],
+        // The native entry blend releases the arm first. The pelvis follows;
+        // compression converges to rest without rising past it and bouncing back.
+        [
+          0.24,
+          {
+            ...rest,
+            upperArm: 2,
+            elbow: -6,
+            palm: 56,
+            weightX: rest.weightX * 0.92,
+          },
+        ],
+        [
+          0.58,
+          {
+            ...neutral,
+            weightX: neutral.weightX + (rest.weightX - neutral.weightX) * 0.28,
+            compression: p.restCompression + 1.4,
+          },
+        ],
+        [1, neutral],
       ],
-      [
-        0.58,
-        {
-          ...neutral,
-          weightX: neutral.weightX + (rest.weightX - neutral.weightX) * 0.28,
-          compression: p.restCompression + 1.4,
-        },
-      ],
-      [1, neutral],
-    ],
-    { fade: 0.3 },
-  );
+      { fade: 0.18 },
+    );
+  recovery('recoverWatch', watch);
+  recovery('recoverPositive', response);
+  recovery('recoverNegative', negativeEnd);
+  recovery('recoverRest', rest);
+  // Compatibility for callers that request a standalone return-to-idle action.
+  recovery('recover', rest);
   pose('nod', 0.9, [
     [0, response],
     [0.14, { ...response, gaze: -2, chest: 0.6 }],
