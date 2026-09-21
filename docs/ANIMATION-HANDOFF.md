@@ -27,8 +27,9 @@ append a pass-by-pass history. Historical implementation evidence remains in
 Normal app route:
 
 1. `components/arena/ArenaStage.tsx` creates the recorded `ArenaGame`.
-2. Only when `recording.setup.sport === 'cornhole'`, it dynamically loads
-   `lab/performance/provider.ts` and calls `performanceMatchProvider()`.
+2. Only when the resolved sport is `cornhole` (`recording.setup.sport` once a
+   recording is loaded, otherwise the stage's `sport` prop), it dynamically
+   loads `lab/performance/provider.ts` and calls `performanceMatchProvider()`.
 3. The provider hash-checks and preloads side-view-v3 Dan/Doug assets, creates
    `lab/performance/LoongBonesAdapter.ts`, loads the matching profile from
    `lib/arena/engine/performance/profiles/`, and wraps the adapter in
