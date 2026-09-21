@@ -20,6 +20,28 @@ const REQUIRED = [
 ];
 
 export async function testArmMaterialGenerator({ check }) {
+  const sharedDefinitions = fs.readFileSync(
+    'lab/loongbones/side-rig/definitions.ts',
+    'utf8',
+  );
+  const performanceDefinitions = fs.readFileSync(
+    'lab/performance/definitions.ts',
+    'utf8',
+  );
+  check(() =>
+    assert.doesNotMatch(
+      sharedDefinitions,
+      /doug_arm-material-v1/,
+      'shared Human Motion definitions must retain the original export',
+    ),
+  );
+  check(() =>
+    assert.match(
+      performanceDefinitions,
+      /doug_arm-material-v1\.provenance\.json/,
+      'the marked derivative must remain performance-only',
+    ),
+  );
   const temporary = fs.mkdtempSync(
     path.join(os.tmpdir(), 'arena-arm-material-'),
   );

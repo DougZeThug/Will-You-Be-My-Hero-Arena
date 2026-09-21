@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { PerformanceScene } from './PerformanceScene';
 import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
 import { verifyRig } from '../loongbones/arena/provider';
-import { sideDefinitions } from '../loongbones/side-rig/definitions';
+import { performanceDefinitions } from './definitions';
 import './style.css';
 import { bindTuning } from './Tuning';
 const element = <T = HTMLElement>(id: string) =>
@@ -15,7 +15,7 @@ if (query.get('character') === 'dan') {
   scene.profile = { ...performanceProfiles.dan };
   select('character').value = 'dan';
 }
-await Promise.all(sideDefinitions.map(verifyRig));
+await Promise.all(performanceDefinitions.map(verifyRig));
 const game = new Phaser.Game({
   type: Phaser.WEBGL,
   parent: 'stage',
