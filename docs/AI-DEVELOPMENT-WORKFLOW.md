@@ -34,9 +34,9 @@ For the character performance installed in normal recorded-cornhole Watch, use
 
 Do not substitute `character-doug` or `character-dan`; those are legacy
 connected-paper clip previews. `cornhole-recorded` is an earlier weighted-rig
-comparison. Other recorded sports, live Play, and `/human-motion/` use separate
-runtime paths and should be opened only when that boundary is actually under
-review.
+comparison. Other recorded sports, non-cornhole live Play, and `/human-motion/`
+use separate runtime paths and should be opened only when that boundary is
+actually under review.
 
 The Lab opens paused with a manual clock. **Load / reset** uses the selected
 seed. **Play**, **Pause**, **+1 frame**, **+1 second**, and named checkpoints

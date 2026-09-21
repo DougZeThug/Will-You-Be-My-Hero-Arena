@@ -1,6 +1,6 @@
 # LoongBones compatibility gate
 
-Status: **the user's actual LoongBones 1.2.3 exports run in Phaser 3.90.0.** The initial example proof below remains a separate fixture. The main cornhole **Lab** now renders Dan's restored returned weighted export and Doug's locally authored weighted foundation. Production, other sports and live Play retain the established rigs. Match rules, cards, UI and equipment are unchanged by this migration.
+Status: **the user's actual LoongBones 1.2.3 exports run in Phaser 3.90.0.** The initial example proof below remains a separate fixture. The main cornhole **Lab** now renders Dan's restored returned weighted export and Doug's locally authored weighted foundation. Production, other sports and non-cornhole live Play retain the established rigs. Match rules, cards, UI and equipment are unchanged by this migration.
 
 Current integration: [Doug weighted review and editor workflow](review/doug-weighted/README.md). The per-game rig provider selects real native weighted meshes, samples their authored release markers on the immutable recording timeline and exposes provenance in `characters[].rigDetails`. Main-Lab playback uses deterministic absolute clip sampling; the older compatibility demo below uses persistent real-time tracks. Doug is not a returned editor export and must not inherit Dan's verified-export label.
 
