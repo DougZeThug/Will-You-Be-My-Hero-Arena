@@ -11,7 +11,11 @@ import {
   type Knot,
 } from '../loongbones/cornhole-motion/curves';
 import type { NativeClip } from './NativeClip';
-export const PERFORMANCE_REVISION = 'cornhole-distinct-recovery-v2';
+import {
+  PERFORMANCE_ASSET_REVISION,
+  PERFORMANCE_REVISION,
+} from './PerformanceAuthority';
+export { PERFORMANCE_REVISION } from './PerformanceAuthority';
 export const PERFORMANCE_HAND_LIMITS = [-35, 95] as const;
 
 const map = {
@@ -28,7 +32,20 @@ const map = {
 type Pose = Record<BodyChannel, number>;
 /** One full-body pose compiler. Action owns articulated support, spine and arms;
  * the adapter then applies bounded gaze, native contact IK and hand exposure. */
-export function compilePerformance(p: PerformanceProfile) {
+export interface CompiledPerformance {
+  profileId: string;
+  compilerRevision: string;
+  assetRevision: string;
+  native: NativeClip[];
+  clips: Map<string, MotionClip>;
+}
+
+/**
+ * Sole compiler for shipped cornhole motion. BodyMechanics supplies authored
+ * curves, the validated profile supplies character timing/personality, and
+ * this function owns native durations, loop counts and semantic markers.
+ */
+export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
   const native: NativeClip[] = [],
     clips = new Map<string, MotionClip>();
   const emit = (
@@ -395,5 +412,11 @@ export function compilePerformance(p: PerformanceProfile) {
       ],
     },
   );
-  return { native, clips };
+  return {
+    profileId: p.id,
+    compilerRevision: PERFORMANCE_REVISION,
+    assetRevision: PERFORMANCE_ASSET_REVISION,
+    native,
+    clips,
+  };
 }

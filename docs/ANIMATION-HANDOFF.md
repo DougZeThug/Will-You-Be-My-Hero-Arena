@@ -67,6 +67,17 @@ contracts.
 
 ## Asset, profile, and recording identity
 
+- **Shipped motion authority:** curves originate in
+  `lib/arena/engine/performance/BodyMechanics.ts`; character differences come
+  from the validated Dan/Doug profiles; and `lab/performance/compile.ts` alone
+  emits native curves, durations, loop counts and semantic marker timing.
+  `installShippedPerformanceClips` validates the character profile, compiler
+  revision and `side-v3-attachment-r4` asset revision before deliberately
+  replacing the skeleton's editor-reference clips. Those embedded clips are
+  not an editable production motion source and are never merged into runtime.
+- **Side-v3 asset authority:** the skeleton and atlas remain authoritative for
+  bind geometry, bones, slots, IK constraints, material registration and source
+  artwork. Motion installation must not rewrite those fields.
 - Runtime revision: `cornhole-distinct-recovery-v2` in
   `lab/performance/compile.ts`.
 - Character profiles:
@@ -85,6 +96,11 @@ contracts.
   from approved likeness/art sources. They are not verified unchanged editor
   round trips. Original sources and returned-export distinctions remain in the
   provenance manifest and linked historical reviews.
+- A returned editor export is accepted only after
+  `assertPerformanceEditorRoundTrip` compares bind/skin/slot/constraint data,
+  every compiled curve, duration and loop count, semantic marker timing, and
+  named preparation, release, follow-through and recovery pose samples. Merely
+  loading successfully or matching a file identity is not motion acceptance.
 - Preferred real-match case: immutable showcase seed `velvet-paw-29`. The
   repository's preserved recording is `docs/showcase-recording.json`
   (SHA-256 `6400b75a501895b950025e94b4941ff3aa71cab730c47cc102dd652d42ebc85f`).
