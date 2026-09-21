@@ -95,6 +95,9 @@ export class ArenaScene extends Phaser.Scene {
         ?.rig.debugInfo?.().runtimeRevision;
       if (typeof performanceRevision === 'string')
         this.game.canvas.dataset.characterRuntime = performanceRevision;
+      this.game.canvas.dataset.characterBackends = this.characters
+        .map((character) => character.rig.backend ?? 'paper')
+        .join(',');
       this.metrics = new RenderMetrics(this.game);
       this.loadMs = Math.round(performance.now() - this.bridge.started);
       this.loaded = true;

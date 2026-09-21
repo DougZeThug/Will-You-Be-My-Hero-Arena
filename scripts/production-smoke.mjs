@@ -171,6 +171,23 @@ try {
   await page.getByRole('button', { name: 'Watch', exact: true }).click();
   await page.getByRole('button', { name: /Set up showdown/i }).waitFor();
   await page.locator('.arena-loading').waitFor({ state: 'detached' });
+  const watchLobbyCanvas = page.locator('.phaser-host canvas');
+  report.watchLobbyCharacterBackends = await watchLobbyCanvas.getAttribute(
+    'data-character-backends',
+  );
+  report.watchLobbyCharacterRuntime = await watchLobbyCanvas.getAttribute(
+    'data-character-runtime',
+  );
+  assert.equal(
+    report.watchLobbyCharacterBackends,
+    'loongbones-performance,loongbones-performance',
+    'Initial Watch cornhole lobby must use both reviewed performance rigs',
+  );
+  assert.equal(
+    report.watchLobbyCharacterRuntime,
+    'cornhole-finish-settle-v1',
+    'Initial Watch cornhole lobby must use the reviewed performance runtime',
+  );
   await page.getByRole('button', { name: /Set up showdown/i }).click();
   const exhibition = page.getByRole('tab', {
     name: 'Exhibition · no points',
