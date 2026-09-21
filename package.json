@@ -19,6 +19,7 @@
     "test:browser:visual": "node scripts/browser-tests.mjs --visual",
     "test:browser:update": "node scripts/browser-tests.mjs --update-baselines",
     "test:production": "node scripts/production-smoke.mjs",
+    "browser:preflight": "node scripts/verify-ci-browser.mjs",
     "check:regression": "node scripts/regression.mjs",
     "review:cornhole-turn": "node scripts/cornhole-turn-review.mjs",
     "review:cornhole-fast": "pnpm test:browser -- performance-tuning.spec.ts cornhole-performance-game.spec.ts && node scripts/cornhole-turn-review.mjs --lab-only",

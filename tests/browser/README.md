@@ -7,9 +7,20 @@ pnpm test:browser
 pnpm check:regression
 ```
 
-The test runner starts the isolated Arena Lab on port 3010 when needed. Each test owns a clean browser context, does not use your normal browser profile, and never changes your game saves. Named scenarios have fixed seeds and manual clocks. Tests inspect the versioned `window.__HERO_ARENA__` contract and capture screenshots plus state JSON in `work/qa/browser`. Failures retain a Playwright trace. Open the HTML report with `pnpm exec playwright show-report work/qa/browser/report`. Optional failure video is enabled with `ARENA_BROWSER_VIDEO=1` after `pnpm exec playwright install ffmpeg`.
+The test runner starts the isolated Arena Lab on port 3010 when needed. Each test owns a clean browser context, does not use your normal browser profile, and never changes your game saves. Named scenarios have fixed seeds and manual clocks. Tests inspect the versioned `window.__HERO_ARENA__` contract and capture screenshots plus state JSON in `work/qa/browser`. Failures retain a Playwright trace. Open the HTML report with `pnpm exec playwright show-report work/qa/browser/report`. Optional Playwright failure video is enabled with `ARENA_BROWSER_VIDEO=1` only after `pnpm exec playwright install ffmpeg`; the cornhole review command records its own 1× MP4s and does not need that setting.
 
 Windows defaults to installed Chrome. Elsewhere the default is Playwright Chromium (`pnpm exec playwright install chromium` once). Override with `ARENA_BROWSER_CHANNEL=msedge` or `ARENA_BROWSER_EXECUTABLE` for an explicitly selected browser executable. `ARENA_LAB_URL` uses an already running Lab instead of starting a server. Set environment variables in your shell using its native syntax; no machine-specific paths are committed.
+
+CI should prefer a browser already installed in its image when the Playwright
+CDN is unavailable. Set `ARENA_BROWSER_EXECUTABLE` to that absolute path and
+run `pnpm browser:preflight` before the suite. The preflight performs a real
+headless launch and page load, so a present but unusable executable fails
+before a long review begins. `.github/workflows/cornhole-visual-review.yml`
+uses the Chrome supplied by the hosted Ubuntu runner and uploads `work/qa`
+evidence even when a later review step fails. It intentionally leaves
+`ARENA_BROWSER_VIDEO` unset because Playwright's failure-video feature requires
+its separately downloaded FFmpeg package; the review workflow's canvas
+recorder still produces the required normal-speed MP4 evidence.
 
 The script owns Vite as a direct Node subprocess to avoid Windows shell cleanup hangs. It stops only a server it started and preserves an existing Lab. Direct Playwright runner/editor users must start `pnpm lab` first; the package scripts handle startup automatically. Avoid editing Lab source while a regression run is active: development hot reload intentionally replaces the page and invalidates an in-flight browser step.
 

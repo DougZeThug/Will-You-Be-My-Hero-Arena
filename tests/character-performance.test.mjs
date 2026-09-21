@@ -13,6 +13,7 @@ export async function performanceTests() {
   class Runtime {
     time = 0;
     destroyed = false;
+    evaluated = [];
     clips = new Map(
       [
         'idle',
@@ -20,6 +21,10 @@ export async function performanceTests() {
         'settle',
         'watch',
         'recover',
+        'recoverWatch',
+        'recoverPositive',
+        'recoverNegative',
+        'recoverRest',
         'positive',
         'negative',
         'nod',
@@ -44,8 +49,10 @@ export async function performanceTests() {
         },
       ]),
     );
-    evaluate(_graph, _dt, time) {
+    evaluate(graph, _dt, time) {
       this.time = time;
+      const action = graph.get('action')?.clip.id;
+      if (action) this.evaluated.push(action);
     }
     attachment() {
       return {
@@ -63,6 +70,24 @@ export async function performanceTests() {
   }
   const make = (profile = performanceProfiles.doug) =>
     new CharacterPerformanceController(new Runtime(), profile);
+
+  const { underhandMechanics } =
+    await import('../.test-build/engine/performance/BodyMechanics.mjs');
+  const danTake = underhandMechanics(performanceProfiles.dan),
+    dougTake = underhandMechanics(performanceProfiles.doug);
+  check(() => assert.notDeepEqual(danTake.times, dougTake.times));
+  check(() =>
+    assert.notDeepEqual(danTake.channels.hips, dougTake.channels.hips),
+  );
+  for (const take of [danTake, dougTake])
+    check(() => {
+      for (let i = 0; i < take.times.length; i++) {
+        const c = take.channels,
+          torso = c.hips[i] + c.lowerSpine[i] + c.upperSpine[i] + c.chest[i],
+          hand = c.palm[i] - torso - c.shoulder[i] - c.upperArm[i] - c.elbow[i];
+        assert.ok(hand >= -35 && hand <= 95, `hand ${hand} at knot ${i}`);
+      }
+    });
   const run = (step, result = true) => {
     const c = make(),
       events = [];
@@ -111,7 +136,13 @@ export async function performanceTests() {
       large.events.map((e) => e.name),
     ),
   );
-  check(() => assert.ok(observing.snapshot().events.every((e,i) => Math.abs(e.time-large.events[i].time)<1e-8)));
+  check(() =>
+    assert.ok(
+      observing
+        .snapshot()
+        .events.every((e, i) => Math.abs(e.time - large.events[i].time) < 1e-8),
+    ),
+  );
   observing.reset();
   check(() => assert.equal(observing.snapshot().observation, null));
   check(() => assert.equal(large.c.state, 'idle'));
@@ -168,6 +199,7 @@ export async function performanceTests() {
   check(() =>
     assert.ok(timed.events.some((e) => e.detail?.includes('Result timeout'))),
   );
+  check(() => assert.ok(timed.c.runtime.evaluated.includes('recoverWatch')));
   const c = make(),
     callbacks = [];
   const first = c.perform('cornholeThrow', {
@@ -187,11 +219,13 @@ export async function performanceTests() {
   check(() => assert.equal(c.confirmResult(first, true), false));
   c.advance(8);
   check(() => assert.deepEqual(callbacks, ['completed']));
+  check(() => assert.ok(c.runtime.evaluated.includes('recoverNegative')));
   check(() =>
     assert.ok(
       !c.snapshot().events.some((e) => e.name === 'CELEBRATION_STARTED'),
     ),
   );
+  check(() => assert.ok(large.c.runtime.evaluated.includes('recoverRest')));
   const d = make();
   let cancelled = 0;
   d.perform('look', {

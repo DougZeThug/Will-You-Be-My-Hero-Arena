@@ -1,0 +1,75 @@
+name: Cornhole visual review
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/cornhole-visual-review.yml'
+      - 'components/arena/**'
+      - 'lab/performance/**'
+      - 'lab/loongbones/assets/cornhole-side-v3/**'
+      - 'lib/arena/engine/performance/**'
+      - 'scripts/cornhole-turn-review.mjs'
+      - 'scripts/verify-ci-browser.mjs'
+      - 'tests/browser/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+concurrency:
+  group: cornhole-visual-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      CI: '1'
+      ARENA_BROWSER_EXECUTABLE: /usr/bin/google-chrome
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Locate preinstalled Chrome
+        shell: bash
+        run: |
+          browser="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$browser"
+          echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
+          "$browser" --version
+
+      - name: Verify Playwright can launch the system browser
+        run: pnpm browser:preflight
+
+      - name: Capture focused 1x character turns
+        run: pnpm review:cornhole-fast -- --label "pr-${{ github.event.pull_request.number || 'manual' }}-${{ github.run_id }}"
+
+      - name: Capture acceptance Watch match
+        run: pnpm review:cornhole-acceptance -- --label "acceptance-${{ github.event.pull_request.number || 'manual' }}-${{ github.run_id }}"
+
+      - name: Upload normal-speed review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cornhole-visual-review-${{ github.run_id }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            work/qa/turn-polish/
+            work/qa/browser/
+            work/qa/production/
+            work/qa/regression.json

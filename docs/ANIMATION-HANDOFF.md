@@ -67,7 +67,7 @@ contracts.
 
 ## Asset, profile, and recording identity
 
-- Runtime revision: `cornhole-finish-settle-v1` in
+- Runtime revision: `cornhole-distinct-recovery-v2` in
   `lab/performance/compile.ts`.
 - Character profiles:
   `lib/arena/engine/performance/profiles/dan.json` and `doug.json`, validated by
@@ -135,6 +135,20 @@ when one package genuinely needs both surfaces:
 pnpm review:cornhole-turn -- --build --label <unique-complete-label>
 ```
 
+### CI browser and evidence
+
+`.github/workflows/cornhole-visual-review.yml` uses the Chrome already present
+on GitHub's Ubuntu runner rather than downloading Playwright Chromium during the
+job. It exports the resolved path through `ARENA_BROWSER_EXECUTABLE`, runs
+`pnpm browser:preflight`, then produces both the focused 1× turns and acceptance
+Watch match. The workflow always uploads `work/qa/turn-polish`, browser reports,
+production evidence, and the aggregate regression report for human or Codex
+inspection. Keep the installed Chrome path and version in `review.json`; do not
+promote CI screenshots to reviewed baselines automatically. Do not enable
+`ARENA_BROWSER_VIDEO` in this job unless Playwright's matching FFmpeg package is
+also installed: the turn-review canvas recorder already creates the required
+Dan, Doug, and match MP4s without Playwright failure video.
+
 The `--build` flag is now explicit. Previously the package script silently
 built even with `--lab-only`: the measured failed baseline attempt took 38.961s,
 with the production build consuming about 30s before browser launch failed.
@@ -190,16 +204,43 @@ isolated from the regular game.
 
 ## Known defects and next task
 
-- Current environment limitation: Chromium is absent and the Playwright CDN
-  returned HTTP 403 on September 18, 2026. The 38.961s measurement therefore
-  ends at browser launch; it is not a successful visual review or evidence of
-  a runtime/animation failure.
-- The last documented bounded animation defect is visibility/readability of
-  bag impact against the existing `LANDING` cue after the settled finish. Do
-  not change scoring, saved contact time, target registration, release motion,
-  or artwork while investigating it.
-- **Next task:** on a Chromium-capable machine, rerun the capture above and
-  inspect the uninterrupted normal-speed real Watch match, especially visible
-  impact, the final two Doug chest contacts, arm relaxation, and return to rest.
-  Only after that current baseline exists should a separately scoped motion or
-  presentation correction begin.
+The current candidate replaces the shared scaled throw with two explicitly
+hand-authored Arena takes. Dan now settles gradually into the rear leg and lets
+pelvis, spine and shoulder carry his longer finish; Doug stays taller, commits
+later and catches a shorter finish with a more active counter-arm. Neither take
+is represented as measured footage. The authored palm path now remains inside
+the native hand limit instead of flattening at a compiler-only clamp.
+
+Recovery is selected from the actual predecessor: watch, positive response,
+negative response, or the settled end of Dan's nod / Doug's two-contact chest
+gesture. Thus the first recovery pose equals the preceding terminal pose rather
+than asking a generic crossfade to conceal a reset. Outcome selection is
+unchanged: misses do not celebrate, ordinary board scores retain the existing
+policy, Dan remains quiet, and Doug retains two contacts only when celebration
+was requested. Assets, stature, release marker, immutable recording, scoring,
+contact timing and release-hand artwork are unchanged.
+
+Authored-clock defect locations addressed in this candidate:
+
+- Dan load wrist plateau: about **1.51 s** after action start; Doug: about
+  **1.39 s**. Cause: authored palm/arm combination plus a compiler-only 90°
+  clamp. The curves were reshaped and compilation now rejects any native-limit
+  violation instead of silently clamping it.
+- Windup-through-finish sameness: approximately **1.07–2.20 s** for Dan and
+  **0.94–1.75 s** for Doug. Cause: one shared authored take with scalar profile
+  differences. The two timing and channel sequences are now independently
+  authored.
+- Response-to-recovery reset: outcome-dependent, immediately after watch,
+  positive/negative response, nod, or chest taps. Cause: every route entered a
+  fixed rest pose. Each route now has a matching recovery entry.
+
+Current environment limitation remains unresolved on **September 21, 2026**:
+Chromium is absent and `pnpm exec playwright install chromium` receives HTTP
+403 from the Playwright CDN. `review:cornhole-fast` therefore failed at browser
+launch before any current candidate frame or video was rendered. There is no
+honest normal-speed before/after or actual-match visual approval from this
+machine. On a Chromium-capable machine, run the fast and acceptance commands,
+then inspect complete Dan and Doug turns at 1×, especially planted soles, wrist
+silhouette through load/release, both recovery paths, inactive attention, bag
+impact readability, and Doug's final two contacts. The known impact-readability
+question remains unresolved because this pass did not change presentation.
