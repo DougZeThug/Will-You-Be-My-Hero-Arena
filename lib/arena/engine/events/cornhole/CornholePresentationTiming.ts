@@ -1,6 +1,6 @@
 import type { Attempt } from '../../../model';
 import type { ShotStyle } from '../../animation/AnimationTypes';
-import { surfacePoint } from '../../../equipment-layout';
+import { surfacePoint } from '../../../equipment-geometry';
 
 /** Duration between first board contact and the immutable final outcome. */
 export function surfaceTravelSeconds(attempt: Attempt, shot: ShotStyle) {
