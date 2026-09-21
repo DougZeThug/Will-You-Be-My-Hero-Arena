@@ -18,14 +18,35 @@ for (const id of ['dan', 'doug'] as const) {
         'utf8',
       ),
     )[id];
+    const dougCorrection =
+      id === 'doug'
+        ? JSON.parse(
+            await readFile(
+              'lab/loongbones/assets/cornhole-side-v3/doug_arm-material-v1.provenance.json',
+              'utf8',
+            ),
+          )
+        : undefined;
+    const skeletonFile = dougCorrection?.artifact ?? `${id}_ske.json`;
     const definition = {
       id,
       armature: `${id}_side_v3`,
-      provenance: { sample: 'side-v3', ...provenance },
+      skeleton: skeletonFile,
+      provenance: {
+        sample: 'side-v3',
+        ...provenance,
+        ...(dougCorrection
+          ? {
+              skeletonSHA256: dougCorrection.outputSha256,
+              armMaterialCorrection: dougCorrection,
+            }
+          : {}),
+        performanceInstalled: true,
+      },
     } as WeightedRigDefinition;
     const skeleton = JSON.parse(
       await readFile(
-        `lab/loongbones/assets/cornhole-side-v3/${id}_ske.json`,
+        `lab/loongbones/assets/cornhole-side-v3/${skeletonFile}`,
         'utf8',
       ),
     );
