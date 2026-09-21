@@ -76,7 +76,7 @@ function refresh() {
     `Native states started: ${state.rig.starts}`,
     `Pose updates: ${state.rig.ticks}`,
     `Clock difference: ${(state.rig.maxNativeDrift * 1000).toFixed(3)} ms`,
-    `Arm registration: ${state.rig.correctedVertices} vertices`,
+    `Arm registration: ${state.rig.correctedVertices} vertices${state.rig.armCorrectionRecipe ? ` · ${state.rig.armCorrectionRecipe}` : ''}`,
     ...state.rig.limbs
       .slice(0, 2)
       .map(

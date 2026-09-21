@@ -1,6 +1,7 @@
 import { danDefinition, dougDefinition } from '../arena/definitions';
 import type { WeightedRigDefinition } from '../arena/RigDefinition';
 import manifest from '../assets/cornhole-side-v3/provenance.json';
+import dougArmMaterial from '../assets/cornhole-side-v3/doug_arm-material-v1.provenance.json';
 export const sideDefinitions: WeightedRigDefinition[] = [
   danDefinition,
   dougDefinition,
@@ -18,7 +19,14 @@ export const sideDefinitions: WeightedRigDefinition[] = [
     scale: 371 / (id === 'dan' ? 1215 : 1191),
     layeredSource: true,
     gripAngleScale: 1,
-    hashes: info.assetsSha256,
+    skeleton: id === 'doug' ? dougArmMaterial.artifact : `${id}_ske.json`,
+    hashes:
+      id === 'doug'
+        ? {
+            ...info.assetsSha256,
+            [dougArmMaterial.artifact]: dougArmMaterial.outputSha256,
+          }
+        : info.assetsSha256,
     aliases: { ...old.aliases, arm_check: 'inspect_hand' },
     provenance: {
       sample: 'side-v3',
@@ -30,6 +38,9 @@ export const sideDefinitions: WeightedRigDefinition[] = [
       handedness: 'right',
       projection: 'near-profile, facing board',
       handArtwork: ['grip', 'open', 'relaxed'],
+      ...(id === 'doug'
+        ? { armMaterialCorrection: dougArmMaterial }
+        : undefined),
     },
     limitation:
       'New authored side-view layered rig. Three opaque hand exposures switch at semantic moments; not individual finger bones. LoongBones import pack available, editor round-trip unverified. Lab cornhole only; other events retain their existing rigs.',

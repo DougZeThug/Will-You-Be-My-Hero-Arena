@@ -44,6 +44,7 @@ const allowedLabProductionPaths = [
   /^lab\/performance\/(?:provider|LoongBonesAdapter|compile|NativeClip|math|ReleaseHands|HandMaterialRegistration)\.ts$/,
   /^lab\/performance\/assets\//,
   /^lab\/human-motion\/ArmMaterialRegistration\.ts$/,
+  /^lab\/human-motion\/ArmMaterialRecipe\.mjs$/,
   /^lab\/loongbones\/(?:NativeFactory|NativeMesh|NativeSlot|validate-export)\.ts$/,
   /^lab\/loongbones\/arena\/(?:RigDefinition|definitions)\.ts$/,
   /^lab\/loongbones\/assets\//,
