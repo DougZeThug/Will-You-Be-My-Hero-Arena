@@ -33,11 +33,16 @@ const marks = {};
 const mark = (name) => {
   marks[name] = Number(((performance.now() - startedAt) / 1000).toFixed(3));
 };
-const compiled = await readFile('lab/performance/compile.ts', 'utf8');
-const revision = option(
-  '--expected-runtime',
-  compiled.match(/PERFORMANCE_REVISION = '([^']+)'/)[1],
+const authority = await readFile(
+  'lab/performance/PerformanceAuthority.ts',
+  'utf8',
 );
+const revisionMatch = authority.match(/PERFORMANCE_REVISION = '([^']+)'/);
+assert.ok(
+  revisionMatch,
+  'PerformanceAuthority.ts must declare the shipped PERFORMANCE_REVISION',
+);
+const revision = option('--expected-runtime', revisionMatch[1]);
 await mkdir(directory, { recursive: true });
 if (args.includes('--build')) {
   execFileSync(process.execPath, ['scripts/build.mjs'], { stdio: 'inherit' });
@@ -83,6 +88,7 @@ const report = {
 };
 const hashes = {};
 for (const file of [
+  'lab/performance/PerformanceAuthority.ts',
   'lab/performance/compile.ts',
   'lib/arena/engine/performance/BodyMechanics.ts',
   'lib/arena/engine/performance/profiles/doug.json',
