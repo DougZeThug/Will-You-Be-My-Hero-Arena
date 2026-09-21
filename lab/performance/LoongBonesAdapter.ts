@@ -96,7 +96,9 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     readonly profile: PerformanceProfile,
   ) {
     this.root = scene.add.container(0, 0);
-    this.shadow = scene.add.ellipse(12, 0, 112, 10, 0x201a13, 0.24);
+    this.shadow = scene.add
+      .ellipse(12, 0, 112, 10, 0x201a13, 0.24)
+      .setScale(definition.courtDepthScale ?? 1);
     const original = scene.cache.json.get(definition.key + '-skeleton');
     validateExport(original);
     const data = structuredClone(original),

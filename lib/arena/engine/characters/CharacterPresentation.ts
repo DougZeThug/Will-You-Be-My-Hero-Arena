@@ -4,22 +4,43 @@ import type { LoadedCharacter } from '../scenes/CharacterAssetLoader';
 import { createCharacterRig } from './createCharacterRig';
 import { PaperCharacterRig } from './PaperCharacterRig';
 import type { CharacterRig } from './CharacterRig';
+import type { CharacterRigProvider } from './CharacterRig';
 import { clamp } from '../input/InputActions';
 export class CharacterPresentation {
   private rig: CharacterRig;
   private card: Phaser.GameObjects.Container;
   private glow: Phaser.GameObjects.Graphics;
   private shadow: Phaser.GameObjects.Ellipse;
+  private timelineRevision = -1;
+  private performanceAction: number | null = null;
+  private resultReported = false;
+  private releaseScale = 1;
+  private scoreAtThrow = 0;
   constructor(
     scene: Phaser.Scene,
     loaded: LoadedCharacter,
     private character: ArenaCharacter,
     private index: number,
+    provider?: CharacterRigProvider,
   ) {
-    this.rig = createCharacterRig(scene, loaded, character.profile, true);
+    this.rig =
+      provider?.create(scene, loaded, character.profile, { lane: index }) ??
+      createCharacterRig(scene, loaded, character.profile, true);
+    if (this.rig.performance) {
+      character.setPresentedHand(() => this.hand());
+      character.attach({
+        can: () => false,
+        perform: () => false,
+        update: (dt) => this.updatePerformance(dt),
+        cleanup: () => character.setPresentedHand(),
+      });
+    }
     if (this.rig instanceof PaperCharacterRig)
       this.rig.shadow.setVisible(false);
     this.shadow = scene.add.ellipse(0, 0, 80, 10, 0x201a13, 0.26);
+    this.shadow.setVisible(
+      !('performance' in this.rig && this.rig.performance),
+    );
     this.glow = scene.add.graphics();
     this.card = scene.add.container(0, 0, [
       this.glow,
@@ -39,20 +60,21 @@ export class CharacterPresentation {
     this.rig.root
       .setPosition(b.x + offset, b.y - b.z - lift)
       .setScale(
-        b.scale * (0.45 + 0.55 * ease) * b.facing,
-        b.scale * (0.45 + 0.55 * ease),
+        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * b.facing,
+        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease),
       )
       .setDepth(b.y + 20)
       .setAlpha(clamp(u * 4));
     const clip =
       c.animation.timeline.clip || c.animation.locomotion || c.animation.idle;
-    this.rig.apply(
-      c.animation.pose,
-      clip,
-      c.animation.timeline.clip
-        ? c.animation.timeline.progress
-        : (time / 2) % 1,
-    );
+    if (!this.rig.performance)
+      this.rig.apply(
+        c.animation.pose,
+        clip,
+        c.animation.timeline.clip
+          ? c.animation.timeline.progress
+          : (time / 2) % 1,
+      );
     this.shadow
       .setPosition(b.x, b.y + 2)
       .setScale(b.scale * (1 - b.z / 600), b.scale)
@@ -68,6 +90,75 @@ export class CharacterPresentation {
       this.glow
         .lineStyle(6, 0xffcf25, Math.sin(u * Math.PI) * 0.65)
         .strokeRect(-54, -143, 108, 153);
+  }
+  private updatePerformance(dt: number) {
+    const performance = this.rig.performance;
+    if (!performance) return;
+    const timeline = this.character.animation.timeline;
+    if (
+      timeline.revision !== this.timelineRevision &&
+      timeline.clip.startsWith('throw.')
+    ) {
+      this.timelineRevision = timeline.revision;
+      this.resultReported = false;
+      this.scoreAtThrow = this.character.score;
+      this.performanceAction = performance.perform('liveCornholeThrow', {
+        objectId: 'held',
+        queue: false,
+      });
+      const marker = performance.runtime.clips
+        .get('underhand')
+        ?.markers.find((m) => m.name === 'equipmentRelease')?.at;
+      const liveReleaseMarker = this.character.animation
+        .resolve(timeline.clip)
+        .markers.find((m) => m.name === 'release')?.at;
+      const liveRelease =
+        liveReleaseMarker === undefined
+          ? undefined
+          : liveReleaseMarker * timeline.duration;
+      this.releaseScale = marker && liveRelease ? marker / liveRelease : 1;
+    }
+    const snapshot = performance.snapshot();
+    performance.advance(snapshot.released ? dt : dt * this.releaseScale);
+    if (
+      this.performanceAction &&
+      !this.resultReported &&
+      this.character.substate === 'result'
+    ) {
+      this.resultReported = true;
+      performance.confirmContact(this.performanceAction);
+      performance.confirmResult(
+        this.performanceAction,
+        this.character.score > this.scoreAtThrow,
+        this.character.score > this.scoreAtThrow,
+      );
+    }
+    if (this.performanceAction && performance.snapshot().action === null)
+      this.performanceAction = null;
+    if (!this.performanceAction)
+      performance.observe({
+        mode: this.character.substate === 'waiting' ? 'prepare' : 'rest',
+        elapsed: performance.time,
+      });
+  }
+  get backend() {
+    return this.rig.backend ??
+      (this.rig instanceof PaperCharacterRig ? 'paper' : 'frames');
+  }
+  debugInfo() {
+    return this.rig.debugInfo?.();
+  }
+  get heldObjectLayer() {
+    return this.rig.heldObjectLayer;
+  }
+  hand() {
+    const local = this.rig.socketTransform?.('throwingHand') ?? {
+      ...this.rig.socket('throwingHand'),
+      angle: 0,
+    };
+    const matrix = this.rig.root.getWorldTransformMatrix();
+    const world = matrix.transformPoint(local.x, local.y);
+    return { x: world.x, y: world.y, angle: local.angle };
   }
   destroy() {
     this.rig.destroy();

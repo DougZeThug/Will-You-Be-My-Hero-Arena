@@ -4,6 +4,7 @@ import type { Intent, InputFrame } from '../input/InputActions';
 import type { ArenaCharacter } from '../characters/ArenaCharacter';
 import type { EventActionMap } from '../controllers/EventActionMap';
 import type { ClipMarker } from '../animation/AnimationEvents';
+import type { CharacterRigProvider } from '../characters/CharacterRig';
 export interface PlayerSlot {
   id: string;
   cardId: string;
@@ -103,6 +104,7 @@ export interface LiveOptions {
   onError: (e: string) => void;
   sound: boolean;
   reduced: boolean;
+  characterRigs?: CharacterRigProvider;
 }
 export type LiveInput = (
   player: string,

@@ -6,6 +6,14 @@ test('keyboard: focused physical keys charge and release through the controller'
 }, info) => {
   const failures = await openScenario(page, 'keyboard-cornhole');
   await checkpoint(page, 'ready');
+  await expect(page.locator('#arena canvas')).toHaveAttribute(
+    'data-character-backends',
+    'loongbones-performance,loongbones-performance',
+  );
+  await expect(page.locator('#arena canvas')).toHaveAttribute(
+    'data-character-runtime',
+    'cornhole-finish-settle-v1',
+  );
   await page.locator('#arena').focus();
   await page.keyboard.down('Space');
   await step(page, 60);

@@ -48,6 +48,36 @@ export function performanceActions(
       },
     ],
     [
+      'liveCornholeThrow',
+      {
+        name: 'liveCornholeThrow',
+        priority: 10,
+        requiresObject: true,
+        segments: [
+          {
+            state: 'anticipate',
+            clip: 'underhand',
+            phases: [
+              { at: 0.16, state: 'windup' },
+              { at: 0.37, state: 'drive' },
+              { at: 0.51, state: 'followThrough' },
+            ],
+          },
+          {
+            state: 'watchTarget',
+            clip: 'watch',
+            waitForResult: true,
+            interruptible: true,
+          },
+          {
+            state: 'recover',
+            clip: 'recover',
+            interruptible: true,
+          },
+        ],
+      },
+    ],
+    [
       'look',
       {
         name: 'look',

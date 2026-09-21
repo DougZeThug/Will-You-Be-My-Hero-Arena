@@ -31,13 +31,21 @@ export default function LiveStage({
   useEffect(() => {
     let mounted = true;
     import('@/lib/arena/engine/core/LiveArenaGame')
-      .then(({ LiveArenaGame }) => {
+      .then(async ({ LiveArenaGame }) => {
         if (!mounted || !host.current) return;
         try {
+          const characterRigs =
+            config.event === 'cornhole'
+              ? await (
+                  await import('../../../lab/performance/provider')
+                ).performanceMatchProvider()
+              : undefined;
+          if (!mounted || !host.current) return;
           game.current = new LiveArenaGame(host.current, {
             config,
             reduced,
             sound: false,
+            characterRigs,
             onReady: () => mounted && setReady(true),
             onSnapshot: (s) => mounted && setSnapshot(s),
             onError: (e) => mounted && setError(e),
