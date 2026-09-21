@@ -1,5 +1,6 @@
 import { test, expect, type Page } from 'playwright/test';
 import { openScenario, snapshot, step, checkpoint, artifact } from './helpers';
+import { PERFORMANCE_REVISION } from '../../lab/performance/compile';
 
 test('keyboard: focused physical keys charge and release through the controller', async ({
   page,
@@ -12,7 +13,7 @@ test('keyboard: focused physical keys charge and release through the controller'
   );
   await expect(page.locator('#arena canvas')).toHaveAttribute(
     'data-character-runtime',
-    'cornhole-finish-settle-v1',
+    PERFORMANCE_REVISION,
   );
   await page.locator('#arena').focus();
   await page.keyboard.down('Space');

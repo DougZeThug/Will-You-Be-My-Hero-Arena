@@ -1,6 +1,7 @@
 import { test, expect } from 'playwright/test';
 import { openScenario, snapshot, step, checkpoint, artifact } from './helpers';
 import type { CharacterPerformanceController } from '../../lib/arena/engine/performance/CharacterPerformanceController';
+import { PERFORMANCE_REVISION } from '../../lab/performance/compile';
 type Performance = ReturnType<CharacterPerformanceController['snapshot']>;
 test('cornhole performance: waiting attention uses the opponent lane and reconstructs across seeks', async ({
   page,
@@ -15,8 +16,11 @@ test('cornhole performance: waiting attention uses the opponent lane and reconst
   const samples = await page.evaluate(async () => {
     const api = window.__HERO_ARENA__,
       frames = [];
-    for (let i = 0; i < 150; i++) {
-      await api.step(12);
+    // Cover the same 1,800-frame match window while avoiding 150 expensive
+    // full rig snapshots. A 0.6s cadence is still shorter than the authored
+    // prepare and flight observation clips asserted below.
+    for (let i = 0; i < 50; i++) {
+      await api.step(36);
       const s = api.getState();
       frames.push({
         time: s.time,
@@ -107,7 +111,7 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   const errors = await openScenario(page, 'cornhole-performance');
   await expect(page.locator('#arena canvas')).toHaveAttribute(
     'data-character-runtime',
-    'cornhole-finish-settle-v1',
+    PERFORMANCE_REVISION,
   );
   const initial = await snapshot(page),
     hash = initial.event.recordingHash;
@@ -124,7 +128,7 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   ).toBe(8);
   for (const c of end.characters) {
     expect(c.rig).toBe('loongbones-performance');
-    expect(c.rigDetails.runtimeRevision).toBe('cornhole-finish-settle-v1');
+    expect(c.rigDetails.runtimeRevision).toBe(PERFORMANCE_REVISION);
     expect(c.rigDetails.warnings).toEqual([]);
     const p = c.rigDetails.performance as Performance;
     expect(p.state).toBe('idle');
