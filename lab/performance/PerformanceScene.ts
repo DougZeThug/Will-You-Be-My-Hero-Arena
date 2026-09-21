@@ -6,7 +6,7 @@ import {
 } from '../../lib/arena/engine/performance/PerformanceProfiles';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
-import { sideDefinitions } from '../loongbones/side-rig/definitions';
+import { performanceDefinitions } from './definitions';
 import { queueRig } from '../loongbones/arena/provider';
 import { queueReleaseHands } from './ReleaseHands';
 import { queueArenaAssets } from '../../lib/arena/engine/scenes/CharacterAssetLoader';
@@ -61,7 +61,7 @@ export class PerformanceScene extends Phaser.Scene {
   }
   preload() {
     queueReleaseHands(this);
-    sideDefinitions.forEach((d) => queueRig(this, d));
+    performanceDefinitions.forEach((d) => queueRig(this, d));
     queueArenaAssets(this);
   }
   create() {
@@ -136,7 +136,9 @@ export class PerformanceScene extends Phaser.Scene {
     this.profile = profile;
     this.action = action;
     this.outcome = options.outcome ?? this.outcome;
-    const definition = sideDefinitions.find((d) => d.id === this.selected)!;
+    const definition = performanceDefinitions.find(
+      (d) => d.id === this.selected,
+    )!;
     this.runtime = new LoongBonesAdapter(this, definition, profile);
     const base = project({ x: 1, y: 0, z: 0 });
     this.runtime.root.setPosition(base.x, base.y).setDepth(40);

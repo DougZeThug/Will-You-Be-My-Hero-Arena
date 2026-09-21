@@ -1,0 +1,20 @@
+{
+  "artifact": "doug_arm-material-v1_ske.json",
+  "derived": true,
+  "originalSkeleton": "doug_ske.json",
+  "originalSkeletonSha256": "35f761239247de3bd49bdd24d528d0bee55a6268d0f5add6520d682e9349a1aa",
+  "originalSource": "doug_source.png",
+  "originalSourceSha256": "a9ec98a336dc589e535f97645f4f49e81216cba9ca437b87a10faf801be6b5c8",
+  "originalLimbSource": "doug_limbs-source.png",
+  "originalLimbSourceSha256": "98b5c2b32e6ba19e8e52f355a519805d539f0798534d5c72e1a0994525c107cd",
+  "atlas": "doug_tex.json",
+  "atlasSha256": "0450a8a0e8c2427e703c7f0d9a7d902b5f364c68e3a9b95e0d3b07ff27ce3b55",
+  "atlasDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "generatorRecipeVersion": "doug-arm-material-v1",
+  "correctedVertexCount": 684,
+  "outputSha256": "05e11c8e8965af52318176e491f0c1916c1b77451d19c37e8e9d3aaa9d99dc78",
+  "generationCommand": "pnpm generate:doug-arm-material"
+}

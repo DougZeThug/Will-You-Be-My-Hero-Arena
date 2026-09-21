@@ -6,12 +6,12 @@ import { CharacterPerformanceController } from '../../lib/arena/engine/performan
 import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
 import { boardDepthScale } from '../../lib/arena/equipment-layout';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
-import { sideDefinitions } from '../loongbones/side-rig/definitions';
+import { performanceDefinitions } from './definitions';
 import { queueReleaseHands } from './ReleaseHands';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
 import danTexture from '../loongbones/assets/cornhole-side-v3/dan_tex.png?url';
-import dougSkeleton from '../loongbones/assets/cornhole-side-v3/doug_ske.json?url';
+import dougSkeleton from '../loongbones/assets/cornhole-side-v3/doug_arm-material-v1_ske.json?url';
 import dougAtlas from '../loongbones/assets/cornhole-side-v3/doug_tex.json?url';
 import dougTexture from '../loongbones/assets/cornhole-side-v3/doug_tex.png?url';
 const files = {
@@ -33,7 +33,7 @@ const sockets: Record<SocketName, string> = {
  * URL imports bundle the original hash-checked assets into the player build. */
 export async function performanceMatchProvider(): Promise<CharacterRigProvider> {
   await Promise.all(
-    sideDefinitions.flatMap((d) =>
+    performanceDefinitions.flatMap((d) =>
       Object.entries(files[d.id as keyof typeof files]).map(
         async ([kind, url]) => {
           const response = await fetch(url);
@@ -55,7 +55,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
   return {
     preload(scene) {
       queueReleaseHands(scene);
-      for (const d of sideDefinitions) {
+      for (const d of performanceDefinitions) {
         const urls = files[d.id as keyof typeof files];
         scene.load.json(d.key + '-skeleton', urls.skeleton);
         scene.load.json(d.key + '-atlas', urls.atlas);
@@ -63,7 +63,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
       }
     },
     create(scene, character, _profile, placement) {
-      const d = sideDefinitions.find(
+      const d = performanceDefinitions.find(
         (d) => 'card-' + d.id === character.asset.cardId,
       );
       if (!d) return undefined;

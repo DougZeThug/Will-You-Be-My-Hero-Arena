@@ -738,6 +738,9 @@ await (
 await (
   await import('./animation-upgrade-tests.mjs')
 ).testAnimationUpgrade({ check });
+await (
+  await import('./arm-material-generator-tests.mjs')
+).testArmMaterialGenerator({ check });
 checks += await (
   await import('./character-performance.test.mjs')
 ).performanceTests();
