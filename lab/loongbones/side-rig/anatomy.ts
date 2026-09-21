@@ -1,4 +1,4 @@
-import { buildSkeleton, type Joint, type Vec } from '../authoring/skeleton';
+import { buildSkeleton, type Joint, type Vec } from './skeleton';
 export type Person = 'dan' | 'doug';
 const v = (x: number, y: number): Vec => ({ x, y });
 /** Landmarks are anatomical centers inside the new near-profile source.

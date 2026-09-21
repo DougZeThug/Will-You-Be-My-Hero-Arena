@@ -1,10 +1,7 @@
 import { defineConfig } from 'playwright/test';
+import { browserLaunchOptions } from './scripts/qa-server.mjs';
 
 const baseURL = process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010';
-const executablePath = process.env.ARENA_BROWSER_EXECUTABLE;
-const channel =
-  process.env.ARENA_BROWSER_CHANNEL ??
-  (process.platform === 'win32' ? 'chrome' : 'chromium');
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -35,7 +32,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video:
       process.env.ARENA_BROWSER_VIDEO === '1' ? 'retain-on-failure' : 'off',
-    launchOptions: executablePath ? { executablePath } : { channel },
+    launchOptions: browserLaunchOptions(),
   },
   projects: [{ name: 'desktop-chromium' }],
   // scripts/browser-tests.mjs owns the direct Node server lifecycle. A shell

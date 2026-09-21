@@ -1,11 +1,9 @@
 import type { Joint, Vec } from './skeleton';
 import { clipMaterialCell } from './material-contour';
+import { clampUnit as clamp, smooth } from '../../performance/math';
+export { smooth } from '../../performance/math';
 export type Influence = Record<string, number>;
-export const clamp = (v: number) => Math.max(0, Math.min(1, v));
-export const smooth = (a: number, b: number, v: number) => {
-  const t = clamp((v - a) / (b - a));
-  return t * t * (3 - 2 * t);
-};
+export { clamp };
 export const at = (name: string): Influence => ({ [name]: 1 });
 export function blend(a: Influence, b: Influence, t: number): Influence {
   const out: Influence = {};

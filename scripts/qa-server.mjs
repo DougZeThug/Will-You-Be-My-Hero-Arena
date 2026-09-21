@@ -75,11 +75,25 @@ export async function qaServer({
   }
 }
 export function browserLaunchOptions() {
-  return process.env.ARENA_BROWSER_EXECUTABLE
+  const browser = process.env.ARENA_BROWSER_EXECUTABLE
     ? { executablePath: process.env.ARENA_BROWSER_EXECUTABLE }
     : {
         channel:
           process.env.ARENA_BROWSER_CHANNEL ??
           (process.platform === 'win32' ? 'chrome' : 'chromium'),
       };
+  // GitHub's current Linux Chrome image does not expose a hardware GL device.
+  // Chrome no longer enables SwiftShader WebGL implicitly, leaving Phaser
+  // scenes at their loading screen. Opt into the deterministic software
+  // backend only for CI; local visual review continues to use the real GPU.
+  return process.env.CI === '1' && process.platform === 'linux'
+    ? {
+        ...browser,
+        args: [
+          '--enable-unsafe-swiftshader',
+          '--use-gl=angle',
+          '--use-angle=swiftshader',
+        ],
+      }
+    : browser;
 }

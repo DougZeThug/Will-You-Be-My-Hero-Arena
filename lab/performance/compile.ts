@@ -10,7 +10,7 @@ import {
   sampleScalar,
   type Knot,
 } from '../loongbones/cornhole-motion/curves';
-import type { NativeClip } from '../human-motion/authoring/builder';
+import type { NativeClip } from './NativeClip';
 export const PERFORMANCE_REVISION = 'cornhole-distinct-recovery-v2';
 export const PERFORMANCE_HAND_LIMITS = [-35, 95] as const;
 

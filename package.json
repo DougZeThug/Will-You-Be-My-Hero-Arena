@@ -13,6 +13,7 @@
     "lint": "oxlint",
     "format": "oxfmt",
     "test": "node tests/run-tests.mjs",
+    "check:performance-provider": "node scripts/check-performance-provider-dependencies.mjs",
     "typecheck": "tsc --noEmit",
     "lab": "node node_modules/vite/bin/vite.js --config lab/vite.config.ts",
     "test:browser": "node scripts/browser-tests.mjs",
