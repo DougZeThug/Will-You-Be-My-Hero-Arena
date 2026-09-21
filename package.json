@@ -25,7 +25,8 @@
     "review:cornhole-turn": "node scripts/cornhole-turn-review.mjs",
     "review:cornhole-fast": "pnpm test:browser -- performance-tuning.spec.ts cornhole-performance-game.spec.ts && node scripts/cornhole-turn-review.mjs --lab-only",
     "review:cornhole-acceptance": "pnpm check:regression && node scripts/cornhole-turn-review.mjs --journey-only --require-fresh-build",
-    "motion:apply-profile": "node scripts/apply-performance-profile.mjs"
+    "motion:apply-profile": "node scripts/apply-performance-profile.mjs",
+    "generate:doug-arm-material": "node scripts/generate-doug-arm-material.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

@@ -11,7 +11,7 @@ import { queueReleaseHands } from './ReleaseHands';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
 import danTexture from '../loongbones/assets/cornhole-side-v3/dan_tex.png?url';
-import dougSkeleton from '../loongbones/assets/cornhole-side-v3/doug_ske.json?url';
+import dougSkeleton from '../loongbones/assets/cornhole-side-v3/doug_arm-material-v1_ske.json?url';
 import dougAtlas from '../loongbones/assets/cornhole-side-v3/doug_tex.json?url';
 import dougTexture from '../loongbones/assets/cornhole-side-v3/doug_tex.png?url';
 const files = {

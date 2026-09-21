@@ -12,6 +12,10 @@ import {
   SIDE_RIG_BONES,
 } from '../../lib/arena/engine/motion/HumanSkeleton';
 import { registerArmMaterial } from '../human-motion/ArmMaterialRegistration';
+import {
+  DOUG_ARM_MATERIAL_RECIPE,
+  readDougArmMaterialMarker,
+} from '../human-motion/ArmMaterialRecipe.mjs';
 import { RigIntegrityValidator } from '../../lib/arena/engine/motion/RigIntegrityValidator';
 import { chestContactWeight } from '../../lib/arena/engine/motion/ContactEnvelope';
 import type { AnimationGraph } from '../../lib/arena/engine/motion/AnimationGraph';
@@ -88,6 +92,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private maxDrift = 0;
   private destroyed = false;
   readonly correctedVertices: number;
+  readonly armCorrectionRecipe: string | null;
   readonly geometryBudget: ReturnType<typeof assertInterchangeBudget>;
   readonly wristBlendVertices: number;
   constructor(
@@ -111,7 +116,21 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         'Missing semantic joints: ' +
           validation.missing.map((m) => m.semantic).join(', '),
       );
-    this.correctedVertices = registerArmMaterial(definition.id, arm);
+    const correction = readDougArmMaterialMarker(arm);
+    if (correction) {
+      const armMesh = arm.skin[0].slot.find(
+        (slot: { name: string }) => slot.name === 'arm',
+      )?.display[0];
+      if (armMesh?.vertices?.length / 2 !== correction.correctedVertexCount)
+        throw Error('Doug arm material correction marker count mismatch');
+      this.correctedVertices = correction.correctedVertexCount;
+      this.armCorrectionRecipe = correction.recipe;
+    } else {
+      this.correctedVertices = registerArmMaterial(definition.id, arm);
+      this.armCorrectionRecipe = this.correctedVertices
+        ? DOUG_ARM_MATERIAL_RECIPE
+        : null;
+    }
     const library = compilePerformance(profile);
     this.clips = library.clips;
     arm.animation = library.native;
@@ -611,6 +630,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       productionInstalled:
         this.definition.provenance.performanceInstalled === true,
       correctedVertices: this.correctedVertices,
+      armCorrectionRecipe: this.armCorrectionRecipe,
       geometryBudget: this.geometryBudget,
       wristBlendVertices: this.wristBlendVertices,
       armSurfaceDepth: arm.depth,
