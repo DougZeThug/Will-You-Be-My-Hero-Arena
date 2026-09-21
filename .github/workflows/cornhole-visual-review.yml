@@ -28,7 +28,6 @@ jobs:
     env:
       CI: '1'
       ARENA_BROWSER_EXECUTABLE: /usr/bin/google-chrome
-      ARENA_BROWSER_VIDEO: '1'
 
     steps:
       - uses: actions/checkout@v4

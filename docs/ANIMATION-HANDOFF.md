@@ -144,7 +144,10 @@ job. It exports the resolved path through `ARENA_BROWSER_EXECUTABLE`, runs
 Watch match. The workflow always uploads `work/qa/turn-polish`, browser reports,
 production evidence, and the aggregate regression report for human or Codex
 inspection. Keep the installed Chrome path and version in `review.json`; do not
-promote CI screenshots to reviewed baselines automatically.
+promote CI screenshots to reviewed baselines automatically. Do not enable
+`ARENA_BROWSER_VIDEO` in this job unless Playwright's matching FFmpeg package is
+also installed: the turn-review canvas recorder already creates the required
+Dan, Doug, and match MP4s without Playwright failure video.
 
 The `--build` flag is now explicit. Previously the package script silently
 built even with `--lab-only`: the measured failed baseline attempt took 38.961s,

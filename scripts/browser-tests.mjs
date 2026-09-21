@@ -1,7 +1,11 @@
 import { spawn } from 'node:child_process';
 import { qaServer } from './qa-server.mjs';
 
-const forwarded = process.argv.slice(2);
+// pnpm preserves the conventional `--` separator in forwarded arguments.
+// Playwright treats that token as an end-of-options marker, which turns the
+// following spec paths into ignored arguments and accidentally runs the entire
+// suite. Remove only the separator; preserve every actual Playwright option.
+const forwarded = process.argv.slice(2).filter((arg) => arg !== '--');
 const update = forwarded.includes('--update-baselines');
 const visual = update || forwarded.includes('--visual');
 const args = ['node_modules/playwright/cli.js', 'test'];
