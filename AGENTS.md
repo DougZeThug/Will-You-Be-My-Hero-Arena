@@ -25,7 +25,7 @@ Do **not** route that work to:
 - `cornhole-recorded`: the earlier weighted-rig comparison, not the normal
   Watch performance installation.
 - Human Motion V2/V3 scenes: experimental multi-event research, not Watch.
-- other recorded Watch sports or live Play: separate providers/contracts that
+- other recorded Watch or live Play sports: separate providers/contracts that
   must not be migrated incidentally.
 
 Historical constraints, asset provenance, and completed-pass evidence remain
