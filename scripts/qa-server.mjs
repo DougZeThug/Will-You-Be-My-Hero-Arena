@@ -89,7 +89,11 @@ export function browserLaunchOptions() {
   return process.env.CI === '1' && process.platform === 'linux'
     ? {
         ...browser,
-        args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader-webgl'],
+        args: [
+          '--enable-unsafe-swiftshader',
+          '--use-gl=angle',
+          '--use-angle=swiftshader',
+        ],
       }
     : browser;
 }
