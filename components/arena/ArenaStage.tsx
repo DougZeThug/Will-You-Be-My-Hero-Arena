@@ -4,6 +4,7 @@ import type { ArenaOptions } from '@/lib/arena/engine/core/ArenaOptions';
 import type { ArenaGame } from '@/lib/arena/engine/core/ArenaGame';
 export type StageProps = ArenaOptions;
 export default function ArenaStage(props: StageProps) {
+  const effectiveSport = props.recording?.setup.sport ?? props.sport;
   const host = useRef<HTMLDivElement>(null),
     latest = useRef(props),
     runtime = useRef<ArenaGame | null>(null),
@@ -24,7 +25,8 @@ export default function ArenaStage(props: StageProps) {
     void import('@/lib/arena/engine/core/ArenaGame')
       .then(async ({ ArenaGame }) => {
         const characterRigs =
-          latest.current.recording?.setup.sport === 'cornhole'
+          (latest.current.recording?.setup.sport ?? latest.current.sport) ===
+          'cornhole'
             ? await (
                 await import('../../lab/performance/provider')
               ).performanceMatchProvider()
@@ -55,7 +57,13 @@ export default function ArenaStage(props: StageProps) {
       runtime.current?.destroy();
       runtime.current = null;
     };
-  }, [props.cards.join('|'), props.recording?.id, props.low, props.imported]);
+  }, [
+    props.cards.join('|'),
+    props.recording?.id,
+    effectiveSport,
+    props.low,
+    props.imported,
+  ]);
   return (
     <div ref={host} className="pixi-host phaser-host">
       {loading && (
