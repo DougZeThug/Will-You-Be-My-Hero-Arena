@@ -1,5 +1,5 @@
 import { anatomy, type Person } from '../loongbones/side-rig/anatomy';
-import { smooth } from '../loongbones/authoring/weighted-mesh';
+import { smooth } from './math';
 import { releaseHands } from './ReleaseHands';
 
 /** Feather only the internal forearm cut over its opaque hand underlay. This

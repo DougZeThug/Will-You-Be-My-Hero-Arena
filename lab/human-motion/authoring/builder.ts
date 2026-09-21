@@ -9,19 +9,14 @@ import type {
   MotionMarker,
   MotionPhase,
 } from '../../../lib/arena/engine/motion/MotionTypes';
-export type BoneTrack = {
-  name: string;
-  rotateFrame?: object[];
-  translateFrame?: object[];
-};
-export type NativeClip = {
-  name: string;
-  duration: number;
-  playTimes?: number;
-  bone?: BoneTrack[];
-  slot?: object[];
-  frame?: { duration: number; events?: { name: string; bone?: string }[] }[];
-};
+import type {
+  NativeBoneTrack as BoneTrack,
+  NativeClip,
+} from '../../performance/NativeClip';
+export type {
+  NativeBoneTrack as BoneTrack,
+  NativeClip,
+} from '../../performance/NativeClip';
 export const rotation = (
   name: string,
   keys: Knot[],

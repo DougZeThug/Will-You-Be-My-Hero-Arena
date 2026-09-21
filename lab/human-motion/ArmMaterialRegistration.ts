@@ -1,6 +1,6 @@
 import { registerLimbPoint } from '../../lib/arena/engine/motion/LimbRegistration';
 import { anatomy } from '../loongbones/side-rig/anatomy';
-import { smooth } from '../loongbones/authoring/weighted-mesh';
+import { smooth } from '../performance/math';
 
 /** Private V3.1 bind correction. Atlas pixels, native bones and source exports stay intact. */
 export function registerArmMaterial(id: string, armature: any) {
