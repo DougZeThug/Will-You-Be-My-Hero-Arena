@@ -6,7 +6,9 @@ type Performance = ReturnType<CharacterPerformanceController['snapshot']>;
 test('cornhole performance: waiting attention uses the opponent lane and reconstructs across seeks', async ({
   page,
 }) => {
-  test.setTimeout(90000);
+  // This test intentionally renders an entire 1,800-frame match. GitHub's
+  // software WebGL backend can take longer than the ordinary 90s browser cap.
+  test.setTimeout(180000);
   await openScenario(page, 'cornhole-performance');
   await page.evaluate(() =>
     window.__HERO_ARENA__.loadScenario('cornhole-performance', {
@@ -107,7 +109,9 @@ test('cornhole performance: waiting attention uses the opponent lane and reconst
 test('cornhole performance: real ArenaScene repeats, seeks and preserves authoritative results', async ({
   page,
 }, info) => {
-  test.setTimeout(90000);
+  // Full-match advancement plus three replay/resource passes is continuous
+  // motion coverage, not a direct-seek smoke test. Allow software WebGL time.
+  test.setTimeout(180000);
   const errors = await openScenario(page, 'cornhole-performance');
   await expect(page.locator('#arena canvas')).toHaveAttribute(
     'data-character-runtime',
