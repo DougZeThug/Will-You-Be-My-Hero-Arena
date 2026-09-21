@@ -47,6 +47,7 @@ type LabAPI = {
   pause(): Promise<void>;
   resume(): Promise<void>;
   step(frames: number): Promise<void>;
+  seekTime(seconds: number): Promise<void>;
   seekCheckpoint(name: string): Promise<void>;
   input(
     player: string,
@@ -95,6 +96,8 @@ export const snapshot = (page: Page) =>
   page.evaluate(() => window.__HERO_ARENA__.getState());
 export const step = (page: Page, frames: number) =>
   page.evaluate((n) => window.__HERO_ARENA__.step(n), frames);
+export const seekTime = (page: Page, seconds: number) =>
+  page.evaluate((value) => window.__HERO_ARENA__.seekTime(value), seconds);
 export const checkpoint = (page: Page, name: string) =>
   page.evaluate((value) => window.__HERO_ARENA__.seekCheckpoint(value), name);
 export async function artifact(page: Page, info: TestInfo, name: string) {

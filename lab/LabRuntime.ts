@@ -380,6 +380,19 @@ export class LabRuntime {
       await this.advance(frames);
     });
   }
+  seekTime(seconds: number) {
+    return this.enqueue(async () => {
+      this.requireReady();
+      if (!Number.isFinite(seconds) || seconds < 0)
+        throw Error('Seek time must be a finite non-negative number.');
+      if (!this.clock || !this.actor)
+        throw Error('Arbitrary time seeks require a recorded scenario.');
+      this.freeze();
+      this.clock.seek(seconds);
+      this.actor.scene.renderAt(seconds);
+      await this.render(0);
+    });
+  }
   private async advance(frames: number) {
     for (let i = 0; i < frames; i++) {
       if (this.clock) this.clock.seek(this.clock.time + 1 / 60);
