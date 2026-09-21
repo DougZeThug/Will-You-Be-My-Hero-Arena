@@ -27,8 +27,11 @@ import type {
   CharacterAnimationRuntime,
   PerformanceProfile,
 } from '../../lib/arena/engine/performance/PerformanceTypes';
-import { compilePerformance, PERFORMANCE_REVISION } from './compile';
-import { installShippedPerformanceClips } from './PerformanceClipInstallation';
+import {
+  compilePerformance,
+  installShippedPerformanceClips,
+  PERFORMANCE_REVISION,
+} from './compile';
 import { releaseHands } from './ReleaseHands';
 import { assertInterchangeBudget } from '../loongbones/side-rig/limits';
 import {

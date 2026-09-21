@@ -1,63 +1,4 @@
-import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
-import type { NativeClip } from './NativeClip';
-import type { CompiledPerformance } from './compile';
-import {
-  PERFORMANCE_ASSET_REVISION,
-  PERFORMANCE_REVISION,
-} from './PerformanceAuthority';
-
-type ArmatureData = {
-  name: string;
-  bone: unknown[];
-  slot: unknown[];
-  skin: unknown[];
-  ik: unknown[];
-  animation: NativeClip[];
-};
-
-/**
- * Installs the shipped motion authority onto the side-v3 interchange rig.
- *
- * The JSON armature remains authoritative for bind geometry, bones, slots,
- * constraints, material registration and artwork. Its embedded clips are an
- * editor-facing reference library only; they are never a second shipped clip
- * source. Runtime curves, durations, loops and markers come from
- * BodyMechanics, the selected profile and compilePerformance.
- */
-export function installShippedPerformanceClips(
-  arm: ArmatureData,
-  definition: WeightedRigDefinition,
-  compiled: CompiledPerformance,
-): void {
-  const provenance = definition.provenance;
-  if (compiled.profileId !== definition.id)
-    throw Error(
-      `Performance profile ${compiled.profileId} does not match ${definition.id}`,
-    );
-  if (compiled.compilerRevision !== PERFORMANCE_REVISION)
-    throw Error(
-      `Performance compiler revision ${compiled.compilerRevision} does not match ${PERFORMANCE_REVISION}`,
-    );
-  if (
-    provenance.sample !== 'side-v3' ||
-    provenance.attachmentRevision !== 4 ||
-    compiled.assetRevision !== PERFORMANCE_ASSET_REVISION
-  )
-    throw Error(
-      `Performance asset revision is not ${PERFORMANCE_ASSET_REVISION}`,
-    );
-  if (arm.name !== definition.armature)
-    throw Error(
-      `Performance armature ${arm.name} does not match ${definition.armature}`,
-    );
-  if (arm.animation.some((clip) => clip.name.startsWith('performance_')))
-    throw Error(
-      'Side-v3 asset must not contain an editable performance_* clip',
-    );
-
-  // Deliberately replace, rather than merge, the editor reference animations.
-  arm.animation = compiled.native;
-}
+import type { CompiledPerformance, PerformanceArmatureData } from './compile';
 
 const canonical = (value: unknown) => JSON.stringify(value);
 const keyframeAt = (track: object[] | undefined, frame: number) => {
@@ -72,8 +13,8 @@ const keyframeAt = (track: object[] | undefined, frame: number) => {
 
 /** Acceptance gate for a returned editor export and its motion package. */
 export function assertPerformanceEditorRoundTrip(
-  authoritativeArm: ArmatureData,
-  returnedArm: ArmatureData,
+  authoritativeArm: PerformanceArmatureData,
+  returnedArm: PerformanceArmatureData,
   authoritativeMotion: CompiledPerformance,
   returnedMotion: CompiledPerformance,
 ): void {

@@ -1,10 +1,10 @@
 import { expect, test } from 'playwright/test';
 import { readFile } from 'node:fs/promises';
-import { compilePerformance } from '../../lab/performance/compile';
 import {
-  assertPerformanceEditorRoundTrip,
+  compilePerformance,
   installShippedPerformanceClips,
-} from '../../lab/performance/PerformanceClipInstallation';
+} from '../../lab/performance/compile';
+import { assertPerformanceEditorRoundTrip } from '../../lab/performance/PerformanceRoundTrip';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import type { WeightedRigDefinition } from '../../lab/loongbones/arena/RigDefinition';
 
