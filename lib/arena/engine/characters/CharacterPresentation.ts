@@ -38,6 +38,9 @@ export class CharacterPresentation {
     if (this.rig instanceof PaperCharacterRig)
       this.rig.shadow.setVisible(false);
     this.shadow = scene.add.ellipse(0, 0, 80, 10, 0x201a13, 0.26);
+    this.shadow.setVisible(
+      !('performance' in this.rig && this.rig.performance),
+    );
     this.glow = scene.add.graphics();
     this.card = scene.add.container(0, 0, [
       this.glow,
@@ -144,6 +147,9 @@ export class CharacterPresentation {
   }
   debugInfo() {
     return this.rig.debugInfo?.();
+  }
+  get heldObjectLayer() {
+    return this.rig.heldObjectLayer;
   }
   hand() {
     const local = this.rig.socketTransform?.('throwingHand') ?? {

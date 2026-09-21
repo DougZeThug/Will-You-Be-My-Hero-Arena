@@ -45,8 +45,10 @@ Interactive Play route:
 2. `LiveArenaScene` preloads that provider and `CharacterPresentation` advances
    the performance controller from the fixed-step live semantic action state.
 3. Live event rules remain authoritative. The evaluated LoongBones hand supplies
-   the held-bag and release origin, while the existing input, contact, scoring,
-   pause, and turn transitions remain unchanged.
+   the held-bag and release origin, and the held sprite uses the rig's layer
+   between the torso and opaque grip fingers. The performance rig owns the one
+   lane-depth-scaled court shadow. Existing input, contact, scoring, pause, and
+   turn transitions remain unchanged.
 
 Matching review routes:
 

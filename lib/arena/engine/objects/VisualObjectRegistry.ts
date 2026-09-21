@@ -4,6 +4,7 @@ import { PROJECTILE_WIDTH, BAG_FLIGHT_FLATTEN } from '../../equipment-layout';
 
 export interface VisualPresentation {
   setVisible(value: boolean): void;
+  setLayer?(layer?: Phaser.GameObjects.Container): void;
   update(object: VisualObject): void;
 }
 type VisualFactory = (
@@ -43,9 +44,30 @@ registerVisualObject('bag', (scene, _object, team) => {
     setVisible: (visible) => {
       sprite.setVisible(visible);
     },
+    setLayer: (layer) => {
+      if (sprite.parentContainer === layer) return;
+      if (sprite.parentContainer) sprite.parentContainer.remove(sprite);
+      if (layer) layer.add(sprite);
+      else scene.add.existing(sprite);
+    },
     update: (o) => {
-      const scale=PROJECTILE_WIDTH.cornhole/sprite.width;
-      sprite.setPosition(o.x, o.y).setRotation(o.angle ?? 0).setScale(scale,scale*(o.flatten??BAG_FLIGHT_FLATTEN));
+      let x = o.x,
+        y = o.y,
+        angle = o.angle ?? 0,
+        scale = PROJECTILE_WIDTH.cornhole / sprite.width;
+      const parent = sprite.parentContainer;
+      if (parent) {
+        const matrix = parent.getWorldTransformMatrix(),
+          point = matrix.applyInverse(x, y);
+        x = point.x;
+        y = point.y;
+        scale /= Math.hypot(matrix.a, matrix.b);
+        angle -= Math.atan2(matrix.b, matrix.a);
+      }
+      sprite
+        .setPosition(x, y)
+        .setRotation(angle)
+        .setScale(scale, scale * (o.flatten ?? BAG_FLIGHT_FLATTEN));
     },
   };
 });

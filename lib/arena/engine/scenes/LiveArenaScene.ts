@@ -133,7 +133,7 @@ export class LiveArenaScene extends Phaser.Scene {
       this.options.onError(String(e));
     }
   }
-  private object(o: VisualObject) {
+  private object(o: VisualObject, layer?: Phaser.GameObjects.Container) {
     let rendered = this.objects.get(o.id);
     if (!rendered) {
       rendered = createVisualObject(
@@ -143,6 +143,7 @@ export class LiveArenaScene extends Phaser.Scene {
       );
       this.objects.set(o.id, rendered);
     }
+    rendered.setLayer?.(layer);
     rendered.setVisible(true);
     rendered.update(o);
   }
@@ -156,7 +157,11 @@ export class LiveArenaScene extends Phaser.Scene {
       const actor = this.actors[
         this.session.characters.findIndex((c) => c.id === o.owner)
       ];
-      this.object(o.id === 'held' && actor ? { ...o, ...actor.hand() } : o);
+      const held = o.id === 'held' && actor;
+      this.object(
+        held ? { ...o, ...actor.hand() } : o,
+        held ? actor.heldObjectLayer : undefined,
+      );
     });
     this.target.clear();
     if (view.target)
