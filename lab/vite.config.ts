@@ -9,6 +9,13 @@ export default defineConfig({
     port: 3010,
     strictPort: true,
     fs: { allow: [repository] },
+    // CI opens the two performance surfaces immediately after the server's
+    // HTML health check. Warm their complete module graphs first so Chromium
+    // never sits on the static "Loading character…" shell while Vite performs
+    // its first large Phaser/LoongBones transform.
+    warmup: {
+      clientFiles: ['./main.ts', './performance/main.ts'],
+    },
   },
   build: {
     outDir: fileURLToPath(new URL('../work/lab-dist', import.meta.url)),
