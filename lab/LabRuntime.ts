@@ -207,7 +207,8 @@ export class LabRuntime {
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
       const characterRigs =
-        scenario.id === 'cornhole-performance'
+        scenario.id === 'cornhole-performance' ||
+        (scenario.kind === 'live' && scenario.sport === 'cornhole')
           ? await (
               await import('./performance/provider')
             ).performanceMatchProvider()
@@ -280,6 +281,7 @@ export class LabRuntime {
             config,
             sound: false,
             reduced: false,
+            characterRigs,
             onReady: ready,
             onError: fail,
             onSnapshot: () => {},

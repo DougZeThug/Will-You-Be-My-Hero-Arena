@@ -1,7 +1,7 @@
 # Animation handoff
 
-This is the current router for Dan and Doug's **recorded-cornhole Watch**
-performance. Replace stale details here when the installed path changes; do not
+This is the current router for Dan and Doug's **recorded Watch and interactive
+Play cornhole** performance. Replace stale details here when the installed path changes; do not
 append a pass-by-pass history. Historical implementation evidence remains in
 [`CHARACTER-PERFORMANCE.md`](CHARACTER-PERFORMANCE.md).
 
@@ -37,6 +37,17 @@ Normal app route:
    immutable recorded clock. The adapter presents the evaluated rig; it does
    not own scoring or alter saved release/contact/result facts.
 
+Interactive Play route:
+
+1. `components/arena/live/LiveStage.tsx` injects the same hash-checked provider
+   only for cornhole; unsupported characters and other sports retain their
+   existing presentation rigs.
+2. `LiveArenaScene` preloads that provider and `CharacterPresentation` advances
+   the performance controller from the fixed-step live semantic action state.
+3. Live event rules remain authoritative. The evaluated LoongBones hand supplies
+   the held-bag and release origin, while the existing input, contact, scoring,
+   pause, and turn transitions remain unchanged.
+
 Matching review routes:
 
 - `/performance/`: isolated use of the same controller, adapter, profiles,
@@ -44,10 +55,12 @@ Matching review routes:
 - `/?scenario=cornhole-performance`: the same provider in the recorded Arena
   scene.
 - normal app **Watch → cornhole**: production entry and final real-match check.
+- normal app **Play → cornhole** and the `keyboard-cornhole` /
+  `controller-cornhole` scenarios: live fixed-step integration checks.
 
 These are not substitutes: `character-doug` and `character-dan` are legacy
 paper previews; `cornhole-recorded` is an earlier weighted-rig comparison;
-other Watch sports, live Play, and `/human-motion/` have separate providers and
+other Watch and Play sports and `/human-motion/` have separate providers and
 contracts.
 
 ## Asset, profile, and recording identity

@@ -32,6 +32,7 @@ export class ArenaCharacter implements ControllableEntity {
   stats: CharacterStats;
   abilities: AbilityComponent;
   private components: CharacterComponent[] = [];
+  private presentedHand?: () => { x: number; y: number };
   constructor(
     readonly id: string,
     readonly profile: CharacterProfile,
@@ -136,9 +137,13 @@ export class ArenaCharacter implements ControllableEntity {
     });
   }
   hand(time: number) {
+    if (this.presentedHand) return this.presentedHand();
     const p = this.animation.handAt(time),
       b = this.body;
     return { x: b.x + p.x * b.scale * b.facing, y: b.y - b.z + p.y * b.scale };
+  }
+  setPresentedHand(provider?: () => { x: number; y: number }) {
+    this.presentedHand = provider;
   }
   getState() {
     return this.state;

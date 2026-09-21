@@ -35,6 +35,7 @@ export class LiveBootScene extends Phaser.Scene {
       );
     });
     queueArenaAssets(this);
+    this.options.characterRigs?.preload(this);
     this.loaded = this.session.config.players.map((p, i) =>
       queueCharacter(this, p.cardId, i, p.asset),
     );
@@ -98,8 +99,22 @@ export class LiveArenaScene extends Phaser.Scene {
       this.cameraRig = new CameraManager(this.cameras.main);
       this.actors = characters.map(
         (c, i) =>
-          new CharacterPresentation(this, c, this.session.characters[i], i),
+          new CharacterPresentation(
+            this,
+            c,
+            this.session.characters[i],
+            i,
+            this.options.characterRigs,
+          ),
       );
+      const performanceRevision = this.actors
+        .map((actor) => actor.debugInfo()?.runtimeRevision)
+        .find((revision) => typeof revision === 'string');
+      if (typeof performanceRevision === 'string')
+        this.game.canvas.dataset.characterRuntime = performanceRevision;
+      this.game.canvas.dataset.characterBackends = this.actors
+        .map((actor) => actor.backend)
+        .join(',');
       this.unsubscribe = this.session.onCue((cue) => {
         this.effects.cue(cue);
         if (cue.kind === 'camera' && !this.options.reduced)
@@ -137,7 +152,12 @@ export class LiveArenaScene extends Phaser.Scene {
     const view = this.session.event.view();
     this.actors.forEach((a) => a.update(this.session.time));
     this.objects.forEach((o) => o.setVisible(false));
-    view.objects.forEach((o) => this.object(o));
+    view.objects.forEach((o) => {
+      const actor = this.actors[
+        this.session.characters.findIndex((c) => c.id === o.owner)
+      ];
+      this.object(o.id === 'held' && actor ? { ...o, ...actor.hand() } : o);
+    });
     this.target.clear();
     if (view.target)
       this.target

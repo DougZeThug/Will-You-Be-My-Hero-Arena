@@ -139,6 +139,17 @@ try {
     );
   });
   report.playReadyEvidence = await page.locator('.live-caption').innerText();
+  report.playCharacterBackends = await page
+    .locator('.live-game-host canvas')
+    .getAttribute('data-character-backends');
+  report.playCharacterRuntime = await page
+    .locator('.live-game-host canvas')
+    .getAttribute('data-character-runtime');
+  assert.equal(
+    report.playCharacterBackends,
+    'loongbones-performance,loongbones-performance',
+  );
+  assert.equal(report.playCharacterRuntime, 'cornhole-finish-settle-v1');
   await page.getByRole('button', { name: 'Pause game', exact: true }).click();
   await page
     .getByRole('button', { name: 'Resume game', exact: true })
