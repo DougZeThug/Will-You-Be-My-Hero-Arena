@@ -6,7 +6,7 @@ The existing PixiJS renderer uses one `PlaybackClock`. Pose blends, portal masks
 
 `match-timeline.ts` owns the sequence:
 
-`entrance → ready → anticipation → throw → release → bagFlight → landing → result → reset`
+`entrance → ready → anticipation → throw → release → bagFlight → boardTravel (cornhole) → landing → result → reset`
 
 The 2.65-second entrance includes card impact, charge, emergence, landing and a character pose. Players enter 0.74 seconds apart. The clock waits for both asset readiness and completion of the setup dialog's closing transition, instead of racing the dialog or relying on a timeout.
 
