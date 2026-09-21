@@ -186,6 +186,11 @@ export class ArenaScene extends Phaser.Scene {
     for (const [i, c] of this.characters.entries()) {
       c.place();
       const plan = this.director?.plan;
+      if (!rec && c.rig.performance) {
+        this.cards[i].settle();
+        this.renderPerformanceIdle(c, time);
+        continue;
+      }
       if (rec && p.sport === 'cornhole' && c.rig.performance) {
         if (time < rec.introDuration) {
           const intro = this.cards[i].entrance(
@@ -360,6 +365,12 @@ export class ArenaScene extends Phaser.Scene {
       })),
     });
     this.hud.setVisible(!p.previewAnimation);
+  }
+  private renderPerformanceIdle(c: CharacterController, time: number) {
+    const controller = c.rig.performance!;
+    controller.observe({ mode: 'rest', elapsed: time });
+    while (controller.time + 1e-9 < time)
+      controller.advance(Math.min(30, time - controller.time));
   }
   private renderPerformance(
     c: CharacterController,

@@ -188,6 +188,11 @@ try {
     'cornhole-finish-settle-v1',
     'Initial Watch cornhole lobby must use the reviewed performance runtime',
   );
+  assert.equal(
+    await page.locator('.error-box').count(),
+    0,
+    'Initial Watch cornhole lobby must finish rendering without an Arena error',
+  );
   await page.getByRole('button', { name: /Set up showdown/i }).click();
   const exhibition = page.getByRole('tab', {
     name: 'Exhibition · no points',
