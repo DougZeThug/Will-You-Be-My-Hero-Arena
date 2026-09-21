@@ -41,7 +41,7 @@ const forbiddenPaths = [
 // production island explicit: new Lab files are denied until deliberately
 // classified, rather than relying only on UI naming conventions.
 const allowedLabProductionPaths = [
-  /^lab\/performance\/(?:provider|definitions|LoongBonesAdapter|compile|NativeClip|math|ReleaseHands|HandMaterialRegistration)\.ts$/,
+  /^lab\/performance\/(?:provider|definitions|LoongBonesAdapter|compile|NativeClip|math|ReleaseHands|HandMaterialRegistration|PerformanceAuthority|PerformanceClipInstallation)\.ts$/,
   /^lab\/performance\/assets\//,
   /^lab\/human-motion\/ArmMaterialRegistration\.ts$/,
   /^lab\/human-motion\/ArmMaterialRecipe\.mjs$/,
@@ -185,6 +185,15 @@ function verifyAuditPolicy() {
   );
   for (const name of ['lab/RigInspector.ts', 'lab/performance/Tuning.ts'])
     assert.ok(forbiddenReason(name), `${name} must remain Lab-only`);
+  for (const name of [
+    'lab/performance/PerformanceAuthority.ts',
+    'lab/performance/PerformanceClipInstallation.ts',
+  ])
+    assert.equal(
+      forbiddenReason(name),
+      undefined,
+      `${name} is an explicitly reviewed shared production dependency`,
+    );
 }
 
 export function auditStageEntries() {
