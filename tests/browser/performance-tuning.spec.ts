@@ -1,11 +1,19 @@
 import { test, expect } from 'playwright/test';
 import { readFile } from 'node:fs/promises';
 
+const waitForPerformance = async (page: import('playwright/test').Page) => {
+  const status = page.getByRole('status').first();
+  await expect(status).not.toHaveText('Loading character…', {
+    timeout: 15_000,
+  });
+  await expect(status).toContainText('Doug · idle');
+};
+
 test('performance finish: both characters retain the directed arm and settle without a vertical rebound', async ({
   page,
 }) => {
   await page.goto('/performance/');
-  await expect(page.getByRole('status').first()).toContainText('Doug · idle');
+  await waitForPerformance(page);
   for (const id of ['doug', 'dan'] as const) {
     const sample = await page.evaluate((id) => {
       const api = window.__HERO_PERFORMANCE__;
@@ -65,7 +73,7 @@ test('performance tuning: real controls export, reset and reload the shared prof
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/performance/');
-  await expect(page.getByRole('status').first()).toContainText('Doug · idle');
+  await waitForPerformance(page);
   const initial = await page.evaluate(() =>
     window.__HERO_PERFORMANCE__.getState(),
   );

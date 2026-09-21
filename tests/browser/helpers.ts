@@ -74,7 +74,15 @@ export async function openScenario(page: Page, id: string) {
       failures.push(response.url() + ': HTTP ' + response.status());
   });
   await page.goto('/?scenario=' + encodeURIComponent(id));
-  await page.waitForFunction(() => window.__HERO_ARENA__?.ready);
+  await expect
+    .poll(
+      async () => {
+        if (failures.length) throw Error(failures.join('\n'));
+        return page.evaluate(() => window.__HERO_ARENA__?.ready ?? false);
+      },
+      { timeout: 15_000 },
+    )
+    .toBe(true);
   const state = await snapshot(page);
   expect(state.apiVersion).toBe(1);
   expect(state.status).toBe('ready');
