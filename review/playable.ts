@@ -7,7 +7,8 @@ const host = document.querySelector<HTMLElement>('#arena')!,
 let runtime: LiveArenaGame,
   charging = false,
   exporting = false,
-  readyResolve: () => void = () => {};
+  readyResolve: () => void = () => {},
+  startError = '';
 function start() {
   runtime?.destroy();
   runtime = new LiveArenaGame(host, {
@@ -28,7 +29,11 @@ function start() {
       status.textContent = 'Ready';
       readyResolve();
     },
-    onError: (e) => (status.textContent = e),
+    onError: (e) => {
+      status.textContent = e;
+      startError = e;
+      readyResolve();
+    },
     onSnapshot: (s) => {
       if (!exporting) status.textContent = JSON.stringify(s, null, 2);
     },
@@ -55,12 +60,14 @@ for (const [id, intent] of [
 document.querySelector('#export')!.addEventListener('click', async () => {
   if (exporting) return;
   exporting = true;
+  startError = '';
   await new Promise<void>((resolve) => {
     readyResolve = resolve;
     start();
   });
   runtime.game.loop.stop();
   try {
+    if (startError) throw Error(startError);
     for (let i = 0; i < 300; i++) {
       runtime.session.paused = false;
       runtime.game.isPaused = false;
