@@ -7,7 +7,7 @@ const host = document.querySelector<HTMLElement>('#arena')!,
 let runtime: LiveArenaGame,
   charging = false,
   exporting = false,
-  readyResolve: () => void = () => {};
+  readyResolve: (error?: string) => void = () => {};
 function start() {
   runtime?.destroy();
   runtime = new LiveArenaGame(host, {
@@ -28,7 +28,10 @@ function start() {
       status.textContent = 'Ready';
       readyResolve();
     },
-    onError: (e) => (status.textContent = e),
+    onError: (e) => {
+      status.textContent = e;
+      readyResolve(e);
+    },
     onSnapshot: (s) => {
       if (!exporting) status.textContent = JSON.stringify(s, null, 2);
     },
@@ -55,10 +58,15 @@ for (const [id, intent] of [
 document.querySelector('#export')!.addEventListener('click', async () => {
   if (exporting) return;
   exporting = true;
-  await new Promise<void>((resolve) => {
+  // A failed start leaves its error in the status and the exporter retryable.
+  const error = await new Promise<string | undefined>((resolve) => {
     readyResolve = resolve;
     start();
   });
+  if (error) {
+    exporting = false;
+    return;
+  }
   runtime.game.loop.stop();
   try {
     for (let i = 0; i < 300; i++) {
