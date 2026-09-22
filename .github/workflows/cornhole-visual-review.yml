@@ -19,31 +19,34 @@ concurrency:
   group: cornhole-visual-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+# The review used to run every step serially in one job (measured 52 minutes:
+# 17 minutes of lab-only capture, 31 minutes of browser suite, then the
+# acceptance journey). The same checks now run as parallel jobs: the focused
+# capture, the deterministic checks with production isolation, and the full
+# browser suite in three shards. The acceptance Watch match runs only after the
+# checks and every shard pass, exactly as `pnpm review:cornhole-acceptance`
+# orders them locally. Nothing is skipped; only the wall clock changes.
+env:
+  CI: '1'
+
 jobs:
-  capture:
+  focused:
+    name: Focused 1x character turns
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 40
     permissions:
       contents: read
-    env:
-      CI: '1'
-      ARENA_BROWSER_EXECUTABLE: /usr/bin/google-chrome
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
         with:
           version: 11.19.0
-
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
-
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Locate preinstalled Chrome
         shell: bash
         run: |
@@ -51,25 +54,142 @@ jobs:
           test -n "$browser"
           echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
           "$browser" --version
-
       - name: Verify Playwright can launch the system browser
         run: pnpm browser:preflight
-
       - name: Capture focused 1x character turns
         run: pnpm review:cornhole-fast -- --label "pr-${{ github.event.pull_request.number || 'manual' }}-${{ github.run_id }}"
-
-      - name: Capture acceptance Watch match
-        run: pnpm review:cornhole-acceptance -- --label "acceptance-${{ github.event.pull_request.number || 'manual' }}-${{ github.run_id }}"
-
-      - name: Upload normal-speed review evidence
+      - name: Upload focused review evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cornhole-visual-review-${{ github.run_id }}
+          name: cornhole-visual-review-${{ github.run_id }}-focused
           if-no-files-found: warn
           retention-days: 14
           path: |
             work/qa/turn-polish/
             work/qa/browser/
-            work/qa/production/
-            work/qa/regression.json
+
+  checks:
+    name: Typecheck, simulation tests, build and production isolation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Locate preinstalled Chrome
+        shell: bash
+        run: |
+          browser="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$browser"
+          echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
+          "$browser" --version
+      - name: Verify Playwright can launch the system browser
+        run: pnpm browser:preflight
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Simulation, animation and observability tests
+        run: pnpm test
+      - name: Fresh production build
+        run: pnpm build
+      - name: Production isolation (Play, Watch, save isolation)
+        run: pnpm test:production
+      - name: Upload production evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cornhole-visual-review-${{ github.run_id }}-production
+          if-no-files-found: warn
+          retention-days: 14
+          path: work/qa/production/
+
+  browser:
+    name: Browser suite shard ${{ matrix.shard }} of 3
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Locate preinstalled Chrome
+        shell: bash
+        run: |
+          browser="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$browser"
+          echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
+          "$browser" --version
+      - name: Verify Playwright can launch the system browser
+        run: pnpm browser:preflight
+      - name: Browser regression shard
+        # scripts/browser-tests.mjs forwards Playwright options unchanged.
+        run: pnpm test:browser -- --shard=${{ matrix.shard }}/3
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cornhole-visual-review-${{ github.run_id }}-browser-${{ matrix.shard }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: work/qa/browser/
+
+  acceptance:
+    name: Acceptance Watch match
+    needs: [checks, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Locate preinstalled Chrome
+        shell: bash
+        run: |
+          browser="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$browser"
+          echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
+          "$browser" --version
+      - name: Verify Playwright can launch the system browser
+        run: pnpm browser:preflight
+      - name: Fresh production build at this revision
+        run: pnpm build
+      - name: Capture acceptance Watch match
+        run: node scripts/cornhole-turn-review.mjs --journey-only --require-fresh-build --label "acceptance-${{ github.event.pull_request.number || 'manual' }}-${{ github.run_id }}"
+      - name: Upload acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cornhole-visual-review-${{ github.run_id }}-acceptance
+          if-no-files-found: warn
+          retention-days: 14
+          path: work/qa/turn-polish/

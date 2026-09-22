@@ -155,11 +155,20 @@ pnpm review:cornhole-turn -- --build --label <unique-complete-label>
 
 `.github/workflows/cornhole-visual-review.yml` uses the Chrome already present
 on GitHub's Ubuntu runner rather than downloading Playwright Chromium during the
-job. It exports the resolved path through `ARENA_BROWSER_EXECUTABLE`, runs
-`pnpm browser:preflight`, then produces both the focused 1× turns and acceptance
-Watch match. The workflow always uploads `work/qa/turn-polish`, browser reports,
-production evidence, and the aggregate regression report for human or Codex
-inspection. Keep the installed Chrome path and version in `review.json`; do not
+job. Every job exports the resolved path through `ARENA_BROWSER_EXECUTABLE` and
+runs `pnpm browser:preflight`. The same checks that `pnpm check:regression`
+runs serially on a workstation run there as parallel jobs: `focused` (the fast
+candidate review), `checks` (typecheck, deterministic tests, fresh build and
+production isolation) and `browser` (the ordinary browser suite in three
+Playwright shards, `pnpm test:browser -- --shard=n/3`). The `acceptance` Watch
+match job starts only after `checks` and every shard pass, rebuilds at the same
+revision and runs `cornhole-turn-review.mjs --journey-only --require-fresh-build`.
+The measured serial job took 52 minutes (17 minutes of lab-only capture, 31
+minutes of browser suite) before the acceptance journey could even start; the
+parallel layout bounds the wall clock by the slowest job plus the journey. Each
+job uploads its own `work/qa` evidence (turn-polish packages, browser reports
+per shard, production evidence) for human or Codex inspection; the aggregate
+`work/qa/regression.json` remains a local `pnpm check:regression` product. Keep the installed Chrome path and version in `review.json`; do not
 promote CI screenshots to reviewed baselines automatically. Do not enable
 `ARENA_BROWSER_VIDEO` in this job unless Playwright's matching FFmpeg package is
 also installed: the turn-review canvas recorder already creates the required
