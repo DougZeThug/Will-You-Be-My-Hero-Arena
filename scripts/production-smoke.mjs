@@ -348,6 +348,33 @@ try {
     path: path.join(directory, 'production-resumed.png'),
     fullPage: true,
   });
+  // Skipping only seeks the loaded recording; the live arena must survive.
+  const stageCanvas = await page
+    .locator('.phaser-host canvas')
+    .first()
+    .elementHandle();
+  await page
+    .getByRole('button', { name: 'Skip to result', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Replay same recording', exact: true })
+    .waitFor();
+  await page.waitForFunction(
+    () =>
+      Number(
+        document
+          .querySelector('[aria-label="Contest playback"]')
+          ?.getAttribute('aria-valuenow'),
+      ) === 100,
+  );
+  assert.equal(
+    await stageCanvas.evaluate((node) => node.isConnected),
+    true,
+    'Skip to result must keep the live arena canvas',
+  );
+  assert.equal(await page.locator('.arena-loading').count(), 0);
+  assert.match(await page.locator('.stage-bottom').innerText(), /FINAL SCORE/);
+  report.skipKeptArena = true;
   assert.equal(
     await page.evaluate(() => typeof window.__HERO_ARENA__),
     'undefined',
