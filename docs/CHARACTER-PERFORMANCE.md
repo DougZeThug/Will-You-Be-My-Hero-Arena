@@ -2,7 +2,9 @@
 
 ## Current pass — readable finish and settled recovery
 
-Runtime: `cornhole-finish-settle-v1`. Normal cornhole Watch now retains a
+Runtime: `cornhole-distinct-recovery-v2`, as declared by `PERFORMANCE_REVISION`
+in `lab/performance/compile.ts` (see `docs/ANIMATION-HANDOFF.md`); this pass
+first shipped as `cornhole-finish-settle-v1`. Normal cornhole Watch retains a
 softened directed finish through the landing and staggers arm relaxation and
 body recovery. Existing preparation/release keys, wrist surfaces, chest taps,
 native adapter, recording authority and automatic game flow are preserved.

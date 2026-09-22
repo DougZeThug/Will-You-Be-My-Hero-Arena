@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { shippedPerformanceRevision } from './performance-revision.mjs';
 import { sourceFingerprint } from './source-fingerprint.mjs';
 
 // One repeatable case, not an editor. All state is isolated from the user's saves.
@@ -33,13 +34,10 @@ const marks = {};
 const mark = (name) => {
   marks[name] = Number(((performance.now() - startedAt) / 1000).toFixed(3));
 };
-const compiled = await readFile('lab/performance/compile.ts', 'utf8');
-const revisionMatch = compiled.match(/PERFORMANCE_REVISION = '([^']+)'/);
-assert.ok(
-  revisionMatch,
-  'compile.ts must declare the shipped PERFORMANCE_REVISION',
+const revision = option(
+  '--expected-runtime',
+  await shippedPerformanceRevision(),
 );
-const revision = option('--expected-runtime', revisionMatch[1]);
 await mkdir(directory, { recursive: true });
 if (args.includes('--build')) {
   execFileSync(process.execPath, ['scripts/build.mjs'], { stdio: 'inherit' });
