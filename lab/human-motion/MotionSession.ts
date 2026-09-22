@@ -93,7 +93,7 @@ export class MotionSession {
           placements[i],
           this.event,
           (from, desired) => {
-            let x = Math.max(100, Math.min(1190, desired.x));
+            const x = Math.max(100, Math.min(1190, desired.x));
             if (scenario === 'fighting') {
               const bounded = { x, y: Math.max(470, Math.min(640, desired.y)) };
               const swept = this.proximity.sweep(

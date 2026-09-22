@@ -662,7 +662,7 @@ export class NativeAnimator {
       if (influence > 0) {
         const contact = this.joint('chest_contact');
         this.constraintWeight('chest_hand', influence);
-        let wrist = this.joint('rightWrist');
+        const wrist = this.joint('rightWrist');
         let palm = this.actor.socket('hand_L', 20, 0);
         let desired = {
           x: contact.x - palm.x + wrist.x,
