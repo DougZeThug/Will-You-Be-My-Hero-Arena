@@ -134,14 +134,14 @@ export class LiveArenaScene extends Phaser.Scene {
     }
   }
   private object(o: VisualObject, layer?: Phaser.GameObjects.Container) {
-    let rendered = this.objects.get(o.id);
+    const ownerIndex = this.session.characters.findIndex(
+      (c) => c.id === o.owner,
+    );
+    const key = o.kind === 'bag' ? `${o.id}:${ownerIndex % 2}` : o.id;
+    let rendered = this.objects.get(key);
     if (!rendered) {
-      rendered = createVisualObject(
-        this,
-        o,
-        this.session.characters.findIndex((c) => c.id === o.owner),
-      );
-      this.objects.set(o.id, rendered);
+      rendered = createVisualObject(this, o, ownerIndex);
+      this.objects.set(key, rendered);
     }
     rendered.setLayer?.(layer);
     rendered.setVisible(true);
@@ -154,9 +154,8 @@ export class LiveArenaScene extends Phaser.Scene {
     this.actors.forEach((a) => a.update(this.session.time));
     this.objects.forEach((o) => o.setVisible(false));
     view.objects.forEach((o) => {
-      const actor = this.actors[
-        this.session.characters.findIndex((c) => c.id === o.owner)
-      ];
+      const actor =
+        this.actors[this.session.characters.findIndex((c) => c.id === o.owner)];
       const held = o.id === 'held' && actor;
       this.object(
         held ? { ...o, ...actor.hand() } : o,

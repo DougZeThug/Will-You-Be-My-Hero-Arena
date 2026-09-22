@@ -71,6 +71,7 @@
     "blocking",
     "input buffering and expiry",
     "deterministic AI sessions",
-    "pause"
+    "pause",
+    "held-bag parity split"
   ]
 }

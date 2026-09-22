@@ -483,6 +483,66 @@ export async function testLive({ check }) {
     ),
   );
   expiry.destroy();
+  // Held-bag cache-key parity: the shared 'held' id must split by owner parity
+  // so each player gets their own correctly-colored held-bag sprite.
+  // (LiveArenaScene.object keys bags as `${o.id}:${ownerIndex % 2}`.)
+  const heldParity = new ArenaSession(config('cornhole', true, 2));
+  const heldOwners = {};
+  let heldFrames = 0;
+  while (heldFrames < 1200) {
+    heldParity.advance(1 / 60);
+    heldFrames++;
+    const snap = heldParity.snapshot();
+    if (snap.finished) break;
+    if (snap.phase === 'charging' || snap.phase === 'throwing') {
+      const heldBag = snap.objects.find((o) => o.id === 'held');
+      if (heldBag && !(heldBag.owner in heldOwners))
+        heldOwners[heldBag.owner] =
+          heldParity.characters.findIndex((c) => c.id === heldBag.owner) % 2;
+    }
+  }
+  check(() => assert.ok('p0' in heldOwners, 'p0 held the bag during charging'));
+  check(() => assert.ok('p1' in heldOwners, 'p1 held the bag during charging'));
+  check(() =>
+    assert.notEqual(
+      heldParity.characters.findIndex((c) => c.id === 'p0') % 2,
+      heldParity.characters.findIndex((c) => c.id === 'p1') % 2,
+      'p0 (index 0) and p1 (index 1) have different bag-color parities',
+    ),
+  );
+  check(() =>
+    assert.notEqual(
+      `held:${heldOwners.p0}`,
+      `held:${heldOwners.p1}`,
+      'Parity-suffixed cache keys differ — fix prevents wrong-color held-bag reuse',
+    ),
+  );
+  heldParity.destroy();
+  // 4-player cornhole: both odd-parity players (indices 1,3) share the 'held'
+  // id with even-parity players (0,2) but need different textures.
+  const heldFour = new ArenaSession(config('cornhole', true, 4));
+  const fourOwners = {};
+  let fourFrames = 0;
+  while (fourFrames < 3600 && Object.keys(fourOwners).length < 4) {
+    heldFour.advance(1 / 60);
+    fourFrames++;
+    const snap = heldFour.snapshot();
+    if (snap.finished) break;
+    if (snap.phase === 'charging' || snap.phase === 'throwing') {
+      const heldBag = snap.objects.find((o) => o.id === 'held');
+      if (heldBag && !(heldBag.owner in fourOwners))
+        fourOwners[heldBag.owner] =
+          heldFour.characters.findIndex((c) => c.id === heldBag.owner) % 2;
+    }
+  }
+  const fourParities = Object.values(fourOwners);
+  check(() =>
+    assert.ok(
+      fourParities.includes(0) && fourParities.includes(1),
+      '4P cornhole exercises both held-bag parities',
+    ),
+  );
+  heldFour.destroy();
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',
@@ -501,6 +561,7 @@ export async function testLive({ check }) {
           'input buffering and expiry',
           'deterministic AI sessions',
           'pause',
+          'held-bag parity split',
         ],
       },
       null,

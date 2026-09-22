@@ -201,3 +201,40 @@ test('controller: named checkpoint ignores current held hardware during fixture 
   expect(held.inputs[0].deviceId).toBe('gamepad:0');
   expect(held.inputs[0].values.charge).toBe(1);
 });
+
+test('keyboard: held bag in live cornhole belongs to the active player across turns', async ({
+  page,
+}) => {
+  const failures = await openScenario(page, 'keyboard-cornhole');
+  await checkpoint(page, 'ready');
+  await page.locator('#arena').focus();
+  await page.keyboard.down('Space');
+  await step(page, 60);
+  const p0 = await snapshot(page);
+  expect(p0.event.phase).toBe('charging');
+  expect(p0.event.active).toBe('p0');
+  const p0Held = p0.event.objects.find((o: { id: string }) => o.id === 'held');
+  expect(p0Held).toBeTruthy();
+  expect(p0Held.owner).toBe('p0');
+  expect(p0Held.kind).toBe('bag');
+  await page.keyboard.up('Space');
+  await step(page, 1);
+  // Advance through p0's throw → flight → result → turn advance → p1 charging.
+  // p1 is AI in keyboard-cornhole; it auto-charges after its aiming window.
+  let p1Held: { owner?: string; kind?: string } | undefined;
+  for (let i = 0; i < 15; i++) {
+    await step(page, 60);
+    const s = await snapshot(page);
+    if (s.event.phase === 'charging' && s.event.active === 'p1') {
+      p1Held = s.event.objects.find((o: { id: string }) => o.id === 'held');
+      break;
+    }
+  }
+  // The shared 'held' id with different owners confirms the cache-key collision
+  // risk that the parity-suffixed fix in LiveArenaScene.object() resolves:
+  // each parity gets its own cached sprite, so p1 shows teal, not p0's yellow.
+  expect(p1Held).toBeTruthy();
+  expect(p1Held!.owner).toBe('p1');
+  expect(p1Held!.kind).toBe('bag');
+  expect(failures).toEqual([]);
+});
