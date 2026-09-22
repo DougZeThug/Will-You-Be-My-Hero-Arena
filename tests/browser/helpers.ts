@@ -47,6 +47,7 @@ type LabAPI = {
   pause(): Promise<void>;
   resume(): Promise<void>;
   step(frames: number): Promise<void>;
+  seekTime(seconds: number): Promise<void>;
   seekCheckpoint(name: string): Promise<void>;
   input(
     player: string,
@@ -74,7 +75,15 @@ export async function openScenario(page: Page, id: string) {
       failures.push(response.url() + ': HTTP ' + response.status());
   });
   await page.goto('/?scenario=' + encodeURIComponent(id));
-  await page.waitForFunction(() => window.__HERO_ARENA__?.ready);
+  await expect
+    .poll(
+      async () => {
+        if (failures.length) throw Error(failures.join('\n'));
+        return page.evaluate(() => window.__HERO_ARENA__?.ready ?? false);
+      },
+      { timeout: 15_000 },
+    )
+    .toBe(true);
   const state = await snapshot(page);
   expect(state.apiVersion).toBe(1);
   expect(state.status).toBe('ready');
@@ -87,6 +96,8 @@ export const snapshot = (page: Page) =>
   page.evaluate(() => window.__HERO_ARENA__.getState());
 export const step = (page: Page, frames: number) =>
   page.evaluate((n) => window.__HERO_ARENA__.step(n), frames);
+export const seekTime = (page: Page, seconds: number) =>
+  page.evaluate((value) => window.__HERO_ARENA__.seekTime(value), seconds);
 export const checkpoint = (page: Page, name: string) =>
   page.evaluate((value) => window.__HERO_ARENA__.seekCheckpoint(value), name);
 export async function artifact(page: Page, info: TestInfo, name: string) {

@@ -8,6 +8,15 @@ import { bindTuning } from './Tuning';
 const element = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const select = (id: string) => element<HTMLSelectElement>(id);
+const reportBootstrapFailure = (reason: unknown) => {
+  element('status').textContent = `Performance failed: ${String(reason)}`;
+};
+window.addEventListener('error', (event) =>
+  reportBootstrapFailure(event.error),
+);
+window.addEventListener('unhandledrejection', (event) =>
+  reportBootstrapFailure(event.reason),
+);
 const scene = new PerformanceScene();
 const query = new URLSearchParams(location.search);
 if (query.get('character') === 'dan') {

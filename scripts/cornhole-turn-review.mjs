@@ -34,10 +34,12 @@ const mark = (name) => {
   marks[name] = Number(((performance.now() - startedAt) / 1000).toFixed(3));
 };
 const compiled = await readFile('lab/performance/compile.ts', 'utf8');
-const revision = option(
-  '--expected-runtime',
-  compiled.match(/PERFORMANCE_REVISION = '([^']+)'/)[1],
+const revisionMatch = compiled.match(/PERFORMANCE_REVISION = '([^']+)'/);
+assert.ok(
+  revisionMatch,
+  'compile.ts must declare the shipped PERFORMANCE_REVISION',
 );
+const revision = option('--expected-runtime', revisionMatch[1]);
 await mkdir(directory, { recursive: true });
 if (args.includes('--build')) {
   execFileSync(process.execPath, ['scripts/build.mjs'], { stdio: 'inherit' });

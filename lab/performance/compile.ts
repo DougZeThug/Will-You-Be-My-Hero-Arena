@@ -11,8 +11,19 @@ import {
   type Knot,
 } from '../loongbones/cornhole-motion/curves';
 import type { NativeClip } from './NativeClip';
+import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 export const PERFORMANCE_REVISION = 'cornhole-distinct-recovery-v2';
+export const PERFORMANCE_ASSET_REVISION = 'side-v3-attachment-r4';
 export const PERFORMANCE_HAND_LIMITS = [-35, 95] as const;
+
+export type PerformanceArmatureData = {
+  name: string;
+  bone: unknown[];
+  slot: unknown[];
+  skin: unknown[];
+  ik: unknown[];
+  animation: NativeClip[];
+};
 
 const map = {
   hips: 'pelvis',
@@ -28,7 +39,57 @@ const map = {
 type Pose = Record<BodyChannel, number>;
 /** One full-body pose compiler. Action owns articulated support, spine and arms;
  * the adapter then applies bounded gaze, native contact IK and hand exposure. */
-export function compilePerformance(p: PerformanceProfile) {
+export interface CompiledPerformance {
+  profileId: string;
+  compilerRevision: string;
+  assetRevision: string;
+  native: NativeClip[];
+  clips: Map<string, MotionClip>;
+}
+
+/** Validate the side-v3/profile/compiler contract before replacing reference clips. */
+export function installShippedPerformanceClips(
+  arm: PerformanceArmatureData,
+  definition: WeightedRigDefinition,
+  compiled: CompiledPerformance,
+): void {
+  const provenance = definition.provenance;
+  if (compiled.profileId !== definition.id)
+    throw Error(
+      `Performance profile ${compiled.profileId} does not match ${definition.id}`,
+    );
+  if (compiled.compilerRevision !== PERFORMANCE_REVISION)
+    throw Error(
+      `Performance compiler revision ${compiled.compilerRevision} does not match ${PERFORMANCE_REVISION}`,
+    );
+  if (
+    provenance.sample !== 'side-v3' ||
+    provenance.attachmentRevision !== 4 ||
+    compiled.assetRevision !== PERFORMANCE_ASSET_REVISION
+  )
+    throw Error(
+      `Performance asset revision is not ${PERFORMANCE_ASSET_REVISION}`,
+    );
+  if (arm.name !== definition.armature)
+    throw Error(
+      `Performance armature ${arm.name} does not match ${definition.armature}`,
+    );
+  if (arm.animation.some((clip) => clip.name.startsWith('performance_')))
+    throw Error(
+      'Side-v3 asset must not contain an editable performance_* clip',
+    );
+
+  // Replace rather than merge: embedded clips are editor references, not a
+  // second shipped source for curves, durations, loops, or semantic markers.
+  arm.animation = compiled.native;
+}
+
+/**
+ * Sole compiler for shipped cornhole motion. BodyMechanics supplies authored
+ * curves, the validated profile supplies character timing/personality, and
+ * this function owns native durations, loop counts and semantic markers.
+ */
+export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
   const native: NativeClip[] = [],
     clips = new Map<string, MotionClip>();
   const emit = (
@@ -395,5 +456,11 @@ export function compilePerformance(p: PerformanceProfile) {
       ],
     },
   );
-  return { native, clips };
+  return {
+    profileId: p.id,
+    compilerRevision: PERFORMANCE_REVISION,
+    assetRevision: PERFORMANCE_ASSET_REVISION,
+    native,
+    clips,
+  };
 }

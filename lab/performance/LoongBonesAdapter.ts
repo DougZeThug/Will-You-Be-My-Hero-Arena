@@ -27,7 +27,11 @@ import type {
   CharacterAnimationRuntime,
   PerformanceProfile,
 } from '../../lib/arena/engine/performance/PerformanceTypes';
-import { compilePerformance, PERFORMANCE_REVISION } from './compile';
+import {
+  compilePerformance,
+  installShippedPerformanceClips,
+  PERFORMANCE_REVISION,
+} from './compile';
 import { releaseHands } from './ReleaseHands';
 import { assertInterchangeBudget } from '../loongbones/side-rig/limits';
 import {
@@ -133,7 +137,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     }
     const library = compilePerformance(profile);
     this.clips = library.clips;
-    arm.animation = library.native;
+    installShippedPerformanceClips(arm, definition, library);
     const art = releaseHands[definition.id as keyof typeof releaseHands];
     arm.slot.push({ name: 'releaseHand', parent: 'root', color: { aM: 0 } });
     arm.skin[0].slot.push({

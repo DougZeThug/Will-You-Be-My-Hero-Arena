@@ -12,6 +12,7 @@ export type ArenaLabAPI = Pick<
   | 'pause'
   | 'resume'
   | 'step'
+  | 'seekTime'
   | 'seekCheckpoint'
   | 'input'
   | 'setGamepad'
@@ -32,6 +33,7 @@ export function createLabAPI(lab: LabRuntime): Readonly<ArenaLabAPI> {
     pause: lab.pause.bind(lab),
     resume: lab.resume.bind(lab),
     step: lab.step.bind(lab),
+    seekTime: lab.seekTime.bind(lab),
     seekCheckpoint: lab.seekCheckpoint.bind(lab),
     input: lab.input.bind(lab),
     setGamepad: lab.setGamepad.bind(lab),
