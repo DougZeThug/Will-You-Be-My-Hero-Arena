@@ -412,6 +412,12 @@ export async function testLive({ check }) {
   function humanShot(held) {
     const s = new ArenaSession(config('cornhole', false));
     advance(s, 1.6);
+    check(() =>
+      assert.ok(
+        s.snapshot().objects.some((o) => o.id === 'held'),
+        'held bag rendered while aiming',
+      ),
+    );
     s.inject('p0', 'charge', 1);
     s.advance(1 / 60);
     advance(s, held);
