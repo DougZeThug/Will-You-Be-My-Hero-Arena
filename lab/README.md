@@ -37,6 +37,7 @@ interface HeroArenaLabV1 {
   pause(): Promise<void>;
   resume(): Promise<void>;
   step(frames: number): Promise<void>;
+  seekTime(seconds: number): Promise<void>;
   seekCheckpoint(name: string): Promise<void>;
   input(
     player: string,
