@@ -26,7 +26,7 @@ export class AttachmentManager {
     this.interactions = [...this.interactions, event].slice(-24);
     this.onInteraction?.(event);
   }
-  private history: AnchorSample[] = [];
+  private history: (AnchorSample & { provisional?: boolean })[] = [];
   attached: string | null = null;
   anchor = 'rightHand';
   private interactions: { name: string; anchor: string; time: number }[] = [];
@@ -52,15 +52,21 @@ export class AttachmentManager {
     this.history = [];
     this.emit('transfer');
   }
-  sample(s: AnchorSample) {
+  /** A provisional sample presents the evaluated hand at a caller's partial
+   * substep (a frame ending between clock boundaries). It is the current
+   * sample until the next one arrives, which replaces it, so the release fit
+   * only ever sees clock-grid and marker samples and cannot depend on how the
+   * caller partitioned its advances. */
+  sample(s: AnchorSample, provisional = false) {
     if (!this.attached) return;
     if (!Object.values(s).every(Number.isFinite))
       throw Error('Non-finite attachment sample');
+    if (this.history.at(-1)?.provisional) this.history.pop();
     if (this.history.length && s.time <= this.history.at(-1)!.time) {
       if (s.time === this.history.at(-1)!.time) this.history.pop();
       else this.history = [];
     }
-    this.history.push({ ...s });
+    this.history.push(provisional ? { ...s, provisional } : { ...s });
     this.history = this.history
       .filter((p) => s.time - p.time <= 0.085)
       .slice(-10);

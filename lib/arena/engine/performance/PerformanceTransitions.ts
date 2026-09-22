@@ -19,6 +19,20 @@ export const performanceTransitions: Record<
   celebrate: ['recover'],
   recover: [],
 };
+/** Entry into an action's first segment. Declared external preparation stands
+ * in for settle only; it never admits windup, drive or release from idle. */
+export function permitsActionEntry(
+  from: PerformanceState,
+  to: PerformanceState,
+  preparation?: 'external',
+) {
+  return (
+    permitsPerformanceTransition(from, to) ||
+    (preparation === 'external' &&
+      from === 'idle' &&
+      performanceTransitions.settle.includes(to))
+  );
+}
 export function permitsPerformanceTransition(
   from: PerformanceState,
   to: PerformanceState,

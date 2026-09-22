@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 export async function performanceTests() {
-  const { CharacterPerformanceController } =
+  const { CharacterPerformanceController, alignedSubstep } =
     await import('../.test-build/engine/performance/CharacterPerformanceController.mjs');
   const { performanceProfiles, validatePerformanceProfile } =
     await import('../.test-build/engine/performance/PerformanceProfiles.mjs');
@@ -342,6 +342,130 @@ export async function performanceTests() {
       1,
     ),
   );
+  // The action clock samples the hand on an absolute 1/120 s grid, so the
+  // fitted release velocity cannot depend on how a caller partitions advance().
+  // The default fixture's hand path is exactly quadratic, which any cadence
+  // fits exactly; a curved path makes partition dependence observable.
+  class CurvedRuntime extends Runtime {
+    attachment() {
+      return {
+        x: 10 + 30 * Math.sin(3 * this.time),
+        y: 50 - 9 * Math.cos(2 * this.time),
+        angle: this.time * 0.1,
+      };
+    }
+  }
+  const launch = (steps) => {
+    const c = new CharacterPerformanceController(
+      new CurvedRuntime(),
+      performanceProfiles.doug,
+    );
+    c.perform('cornholeThrow', { objectId: 'bag' });
+    for (const step of steps) c.advance(step);
+    return c.snapshot().events.find((e) => e.name === 'OBJECT_RELEASED')
+      .release;
+  };
+  const whole = launch([4]),
+    sixty = launch(Array(240).fill(1 / 60)),
+    odd = launch(Array(292).fill(0.0137));
+  for (const other of [sixty, odd])
+    check(() => {
+      assert.ok(Math.abs(other.time - whole.time) < 1e-8);
+      assert.ok(Math.abs(other.velocity.x - whole.velocity.x) < 1e-6);
+      assert.ok(Math.abs(other.velocity.y - whole.velocity.y) < 1e-6);
+    });
+  check(() =>
+    assert.deepEqual(
+      [alignedSubstep(0, 1), alignedSubstep(1 / 120, 1), alignedSubstep(0.005, 1)],
+      [1 / 120, 1 / 120, 1 / 120 - 0.005],
+    ),
+  );
+  check(() => assert.equal(alignedSubstep(0.5, 0.001), 0.001));
+  check(() => assert.ok(alignedSubstep(2.2713333333333288, 0.08) > 1e-6));
+
+  // Live Play owns preparation: the player's charge stages the ritual, and the
+  // live throw is time-scaled onto the live release marker. Its declared
+  // external preparation admits the anticipation entry from idle; nothing else.
+  const states = (events) =>
+    events.filter((e) => e.name === 'STATE_CHANGED').map((e) => e.state);
+  const live = make(),
+    liveEvents = [];
+  live.onEvent((e) => {
+    liveEvents.push(e);
+    if (e.name === 'OBJECT_RELEASED') live.confirmResult(e.actionId, true);
+  });
+  check(() =>
+    assert.notEqual(
+      live.perform('liveCornholeThrow', { objectId: 'held', queue: false }),
+      null,
+    ),
+  );
+  check(() => assert.equal(live.state, 'anticipate'));
+  check(() =>
+    assert.deepEqual(
+      liveEvents.map((e) => e.name).slice(0, 4),
+      ['ACTION_STARTED', 'OBJECT_ATTACHED', 'STATE_CHANGED', 'ANTICIPATION_STARTED'],
+    ),
+  );
+  live.advance(12);
+  check(() => assert.equal(live.state, 'idle'));
+  check(() =>
+    assert.equal(
+      liveEvents.filter((e) => e.name === 'OBJECT_RELEASED').length,
+      1,
+    ),
+  );
+  check(() =>
+    assert.equal(
+      liveEvents.filter((e) => e.name === 'ACTION_COMPLETED').length,
+      1,
+    ),
+  );
+  check(() =>
+    assert.ok(!liveEvents.some((e) => e.name === 'VALIDATION_WARNING')),
+  );
+  check(() =>
+    assert.deepEqual(states(large.events).slice(0, 3), [
+      'notice',
+      'settle',
+      'anticipate',
+    ]),
+  );
+  check(() =>
+    assert.deepEqual(states(liveEvents), states(large.events).slice(2)),
+  );
+  const bare = (name, extra, segments) =>
+    new CharacterPerformanceController(
+      new Runtime(),
+      performanceProfiles.doug,
+      new Map([[name, { name, priority: 10, ...extra, segments }]]),
+    );
+  check(() =>
+    assert.throws(
+      () =>
+        bare('bareThrow', {}, [{ state: 'anticipate', clip: 'underhand' }]).perform(
+          'bareThrow',
+        ),
+      /Invalid performance transition idle → anticipate/,
+    ),
+  );
+  for (const state of ['windup', 'drive', 'release'])
+    check(() =>
+      assert.throws(
+        () =>
+          bare('skip', { preparation: 'external' }, [
+            { state, clip: 'underhand' },
+          ]).perform('skip'),
+        new RegExp(`idle → ${state}`),
+      ),
+    );
+  const late = bare('late', { preparation: 'external' }, [
+    { state: 'notice', clip: 'look', duration: 0.2 },
+    { state: 'anticipate', clip: 'underhand' },
+  ]);
+  late.perform('late');
+  check(() => assert.throws(() => late.advance(1), /notice → anticipate/));
+
   console.log(
     `Character performance: ${checks} lifecycle, release and regression checks passed.`,
   );

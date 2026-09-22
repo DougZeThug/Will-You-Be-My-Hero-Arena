@@ -91,6 +91,10 @@ export interface PerformanceAction {
   name: string;
   priority: number;
   requiresObject?: boolean;
+  /** The caller already owns notice/settle (live input stages the ritual
+   * before release). Only the FIRST segment may then begin from idle, and
+   * only in a state a settled body enters. */
+  preparation?: 'external';
   segments: PerformanceSegment[];
 }
 /** No Phaser, bone names, timers, scene objects or scoring in this contract. */

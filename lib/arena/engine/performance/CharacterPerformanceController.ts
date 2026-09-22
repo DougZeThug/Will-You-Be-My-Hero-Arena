@@ -2,7 +2,10 @@ import { AnimationGraph } from '../motion/AnimationGraph';
 import { AttachmentManager } from '../equipment/AttachmentManager';
 import { performanceActions } from './Choreography';
 import { validatePerformanceProfile } from './PerformanceProfiles';
-import { permitsPerformanceTransition } from './PerformanceTransitions';
+import {
+  permitsActionEntry,
+  permitsPerformanceTransition,
+} from './PerformanceTransitions';
 import type {
   CharacterAnimationRuntime,
   PerformanceAction,
@@ -14,6 +17,17 @@ import type {
   PerformanceState,
   PerformanceObservation,
 } from './PerformanceTypes';
+
+export const PERFORMANCE_SUBSTEP = 1 / 120;
+/** Substep ending on the next absolute 1/120 s boundary of the performance
+ * clock, so hand sampling (and the release velocity fitted from it) never
+ * depends on how a caller partitions its advances: step(a) then step(b)
+ * reconstructs exactly what one step(a + b) does. Always positive. */
+export function alignedSubstep(time: number, left: number) {
+  const next =
+    (Math.floor(time / PERFORMANCE_SUBSTEP + 1e-7) + 1) * PERFORMANCE_SUBSTEP;
+  return Math.min(left, next - time);
+}
 
 type Pending = {
   id: number;
@@ -114,9 +128,16 @@ export class CharacterPerformanceController {
       this.dispatching = previousDispatch;
     }
   }
-  private enter(state: PerformanceState) {
+  private enter(state: PerformanceState, entry = false) {
     if (state === this.state) return;
-    if (!permitsPerformanceTransition(this.state, state))
+    const permitted = entry
+      ? permitsActionEntry(
+          this.state,
+          state,
+          this.active?.definition.preparation,
+        )
+      : permitsPerformanceTransition(this.state, state);
+    if (!permitted)
       throw Error(`Invalid performance transition ${this.state} → ${state}`);
     this.state = state;
     this.emit('STATE_CHANGED');
@@ -203,7 +224,7 @@ export class CharacterPerformanceController {
     }
     a.segmentTime = 0;
     this.graph.request({ ...source, layer: 'action', priority: 10 }, true);
-    this.enter(segment.state);
+    this.enter(segment.state, a.index === 0);
     // Pose/hand exposure follows attachment before the next visible frame.
     this.runtime.evaluate(
       this.graph,
@@ -214,12 +235,12 @@ export class CharacterPerformanceController {
     );
     this.sampleAttachment();
   }
-  private sampleAttachment() {
+  private sampleAttachment(provisional = false) {
     if (this.attachments.attached)
-      this.attachments.sample({
-        ...this.runtime.attachment('rightHand'),
-        time: this.time,
-      });
+      this.attachments.sample(
+        { ...this.runtime.attachment('rightHand'), time: this.time },
+        provisional,
+      );
   }
   confirmResult(id: number, success: boolean, celebrate = success) {
     const a = this.active;
@@ -321,7 +342,10 @@ export class CharacterPerformanceController {
     let left = seconds;
     while (left > 1e-9) {
       if (!this.active && this.queue.length) this.start(this.queue.shift()!);
-      let dt = Math.min(left, 1 / 120);
+      // Substeps end on the absolute clock grid, at markers and at segment
+      // boundaries regardless of the caller's cadence; a caller's own partial
+      // frame is evaluated for presentation but its sample stays provisional.
+      let dt = alignedSubstep(this.time, 30);
       dt = this.graph.untilNextMarker(dt);
       const a = this.active;
       if (a) {
@@ -339,6 +363,8 @@ export class CharacterPerformanceController {
           if (until > 1e-9) dt = Math.min(dt, until);
         }
       }
+      const provisional = left + 1e-9 < dt;
+      dt = Math.min(dt, left);
       this.time += dt;
       const markers = this.graph.advance(dt, this.time);
       if (a) a.segmentTime += dt;
@@ -349,7 +375,7 @@ export class CharacterPerformanceController {
         a?.request.target ?? this.observation?.target,
         !!this.attachments.attached,
       );
-      this.sampleAttachment();
+      this.sampleAttachment(provisional);
       for (const marker of markers) {
         if (
           marker.name === 'equipmentRelease' &&

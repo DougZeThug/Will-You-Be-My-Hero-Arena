@@ -1,5 +1,8 @@
 import * as Phaser from 'phaser';
-import { CharacterPerformanceController } from '../../lib/arena/engine/performance/CharacterPerformanceController';
+import {
+  CharacterPerformanceController,
+  alignedSubstep,
+} from '../../lib/arena/engine/performance/CharacterPerformanceController';
 import {
   performanceProfiles,
   validatePerformanceProfile,
@@ -165,7 +168,7 @@ export class PerformanceScene extends Phaser.Scene {
       throw Error('Step accepts 0–15 seconds');
     let left = seconds;
     while (left > 1e-9) {
-      const dt = Math.min(left, 1 / 120);
+      const dt = alignedSubstep(this.controller.time, left);
       if (!this.initiated && this.controller.time >= 0.6 - 1e-9) {
         this.initiated = true;
         if (this.action === 'cornholeThrow') this.playback!.start();
