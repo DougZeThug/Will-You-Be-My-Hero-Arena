@@ -317,6 +317,41 @@ export async function testLive({ check }) {
       'Combat vocabulary is registered before a game is mounted',
     ),
   );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({ ...doug, name: undefined }),
+      ['name must be a non-empty string of at most 80 characters.'],
+      'A missing character name is rejected at the profile gate',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({ ...doug, name: 42 }),
+      ['name must be a non-empty string of at most 80 characters.'],
+      'A non-string character name is rejected at the profile gate',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({ ...doug, name: '' }),
+      ['name must be a non-empty string of at most 80 characters.'],
+      'An empty character name is rejected at the profile gate',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({ ...doug, name: 'x'.repeat(81) }),
+      ['name must be a non-empty string of at most 80 characters.'],
+      'An over-long character name is rejected at the profile gate',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({ ...doug, name: 'x'.repeat(80) }),
+      [],
+      'An 80-character name is the accepted upper bound',
+    ),
+  );
 
   const outcomes = [];
   for (const event of ['cornhole', 'running', 'fighting']) {

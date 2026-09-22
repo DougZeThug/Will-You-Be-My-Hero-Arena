@@ -549,6 +549,15 @@ check(() =>
     performancePack.manifest.performance.pools,
   ),
 );
+const namelessPerformancePack = structuredClone(performancePack);
+delete namelessPerformancePack.manifest.performance.name;
+check(() =>
+  assert.throws(
+    () => packs.validateCharacterPack(namelessPerformancePack),
+    /name must be a non-empty string/,
+    'A portable pack missing the profile name is rejected at the gate',
+  ),
+);
 const foreignProfile = structuredClone(performancePack);
 foreignProfile.manifest.performance.id = 'card-other';
 check(() =>

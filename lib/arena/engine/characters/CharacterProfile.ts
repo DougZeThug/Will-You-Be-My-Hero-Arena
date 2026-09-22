@@ -59,6 +59,8 @@ export function validateProfile(input: unknown) {
     ids = new Set(animations().map((c) => c.id));
   if (!p.id || p.version !== 1)
     errors.push('A version 1 character id is required.');
+  if (typeof p.name !== 'string' || !p.name.trim() || p.name.length > 80)
+    errors.push('name must be a non-empty string of at most 80 characters.');
   for (const name of [
     'confidence',
     'showmanship',
