@@ -88,7 +88,10 @@ contracts.
   68-inch stature, right-handed semantics, depth scaling, and hand surfaces.
 - Skeleton SHA-256: Dan
   `5c6d58cc12733bff662e54108b4586461bae7b9e7f4de1192e95480bb773d28e`;
-  Doug `35f761239247de3bd49bdd24d528d0bee55a6268d0f5add6520d682e9349a1aa`.
+  Doug `05e11c8e8965af52318176e491f0c1916c1b77451d19c37e8e9d3aaa9d99dc78`
+  (runtime derivative `doug_arm-material-v1_ske.json`, produced by
+  `pnpm generate:doug-arm-material`; the authoritative source `doug_ske.json`
+  is `35f761239247de3bd49bdd24d528d0bee55a6268d0f5add6520d682e9349a1aa`).
 - Texture SHA-256: Dan
   `3ab18b381a7f534c8b4971910952ea71a649a6f60d3e1982f61e5aaa579953fb`;
   Doug `c558fcd634ea998d4c9c97a27135b0003239a9f9f0de1bdae551de69675e5f4d`.
