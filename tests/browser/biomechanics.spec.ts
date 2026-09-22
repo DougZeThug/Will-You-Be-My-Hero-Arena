@@ -184,19 +184,47 @@ test('review controls seek semantic poses and slow the same authored clock', asy
   if (!released.ready) throw Error('Not ready');
   expect(released.seconds).toBeCloseTo(released.rig.releaseMarker, 8);
   expect(released.playing).toBe(false);
+  // Deterministic leg: step() advances the authored clock in seconds; the
+  // review speed scales only real-time playback, never the authored clip.
+  await page.locator('#reset').click();
+  const stepped = await page.evaluate(() => {
+    const api = window.__HERO_WEIGHTED_RIG__;
+    api.setPlaybackRate(0.25);
+    api.step(0.4);
+    return api.getState();
+  });
+  if (!stepped.ready) throw Error('Not ready');
+  expect(stepped.playing).toBe(false);
+  expect(stepped.playbackRate).toBe(0.25);
+  expect(stepped.seconds).toBeCloseTo(0.4, 8);
+  const seconds = () =>
+    page.evaluate(() => {
+      const s = window.__HERO_WEIGHTED_RIG__.getState();
+      return s.ready ? s.seconds : -1;
+    });
   for (const rate of [0.25, 0.5, 1]) {
     await page.locator('#reset').click();
     await page.locator('#speed').selectOption(String(rate));
+    expect(await seconds()).toBe(0);
+    const started = Date.now();
     await page.locator('#play').click();
-    await page.waitForTimeout(450);
+    // Real-time leg through the DOM controls. Poll instead of a fixed sleep:
+    // software-rendered frames arrive slowly, but each one must advance the
+    // authored clock at the selected rate, and the clock can never outrun the
+    // wall clock (each frame adds at most min(delta, 0.1 s) × rate).
+    await expect
+      .poll(seconds, { timeout: 15_000, intervals: [50, 100, 250] })
+      .toBeGreaterThan(0.2 * rate);
     await page.locator('#pause').click();
+    const wall = (Date.now() - started) / 1000;
     const s = await page.evaluate(() =>
       window.__HERO_WEIGHTED_RIG__.getState(),
     );
     if (!s.ready) throw Error('Not ready');
+    expect(s.playing).toBe(false);
     expect(s.playbackRate).toBe(rate);
-    expect(s.seconds / rate).toBeGreaterThan(0.2);
-    expect(s.seconds / rate).toBeLessThan(1.2);
+    expect(s.seconds).toBeGreaterThan(0.2 * rate);
+    expect(s.seconds).toBeLessThanOrEqual((wall + 0.1) * rate + 1e-3);
   }
   await page.locator('#silhouette').check();
   await page.locator('#mirrored').check();

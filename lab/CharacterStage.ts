@@ -49,11 +49,21 @@ export class CharacterStage extends Phaser.Scene {
     this.events.once('shutdown', () => this.character?.destroy());
   }
   renderAt(seconds: number) {
+    const clip = animation(this.scenario.animation!);
+    // Stepped and real-time review share one clock rule: a throw samples real
+    // production seconds, while every other clip cycles on its timeline
+    // (locomotion without a settling pause, gestures holding through theirs).
+    // Without this, frame stepping froze a gait at its final pose after one
+    // cycle although real-time playback kept looping it.
+    if (!clip.id.startsWith('throw_'))
+      seconds %= characterTimeline(
+        this.scenario.character!,
+        this.scenario.animation!,
+      ).cycleDuration;
     this.seconds = seconds;
     const c = this.character;
     if (!c) return;
     c.place(640, 625, 1.65);
-    const clip = animation(this.scenario.animation!);
     if (clip.id.startsWith('throw_')) {
       const a = previewAttempt('cornhole', c.personality);
       const d: DirectedAction = {
@@ -74,14 +84,8 @@ export class CharacterStage extends Phaser.Scene {
     this.inspector?.render();
   }
   update(_time: number, delta: number) {
-    const cycleDuration = characterTimeline(
-      this.scenario.character!,
-      this.scenario.animation!,
-    ).cycleDuration;
     this.renderAt(
-      this.playing
-        ? (this.seconds + Math.min(0.1, delta / 1000)) % cycleDuration
-        : this.seconds,
+      this.playing ? this.seconds + Math.min(0.1, delta / 1000) : this.seconds,
     );
   }
 }

@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { artifact, openScenario, snapshot } from './helpers';
+import { artifact, openScenario, snapshot, step } from './helpers';
 
 for (const character of ['dan', 'doug']) {
   test(`${character}: rig inspection shows actual joints and restores original rendering`, async ({
@@ -141,13 +141,35 @@ test('gait inspection loops without inserting the action settling pause', async 
   );
   const timeline = (await snapshot(page)).event.timeline;
   expect(timeline.cycleDuration).toBe(timeline.duration);
+  const progress = async () =>
+    (await snapshot(page)).characters[0].animation.progress;
+  // Real-time leg: the loop advances under the Lab's real clock and holds on
+  // pause. Poll rather than sleep so software rendering cannot starve it.
+  const before = await progress();
   await page.evaluate(() => window.__HERO_ARENA__.resume());
-  const samples = [];
-  for (let i = 0; i < 10; i++) {
-    await page.waitForTimeout(90);
-    samples.push((await snapshot(page)).characters[0].animation.progress);
-  }
+  await expect.poll(progress, { timeout: 15_000 }).not.toBe(before);
   await page.evaluate(() => window.__HERO_ARENA__.pause());
-  expect(samples.every((p) => p < 1)).toBe(true);
+  const paused = await progress();
+  await page.waitForTimeout(150);
+  expect(await progress()).toBe(paused);
+  // Deterministic leg: exact gait phase per stepped frame. A settling pause
+  // would show up as a phase delta that is not the plain cycle fraction.
+  const samples: number[] = [];
+  for (let i = 0; i < 12; i++) {
+    await step(page, 4);
+    samples.push(await progress());
+  }
+  expect(
+    samples.filter((p) => !(p >= 0 && p < 1)),
+    `gait phase samples ${JSON.stringify(samples)}`,
+  ).toEqual([]);
   expect(Math.max(...samples) - Math.min(...samples)).toBeGreaterThan(0.5);
+  const phaseStep = 4 / 60 / timeline.duration;
+  const deltas = samples
+    .slice(1)
+    .map((p, i) => (p - samples[i] + 1) % 1);
+  expect(
+    deltas.filter((delta) => Math.abs(delta - phaseStep) > 1e-6),
+    `phase deltas ${JSON.stringify(deltas)} should each be ${phaseStep}`,
+  ).toEqual([]);
 });
