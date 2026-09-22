@@ -208,12 +208,15 @@ export function directBattle(rec: Recording): BattlePlan {
         99,
       ).id,
   ) as [string, string];
-  cues.push({
-    id: 'victory',
-    actor: rec.winner ?? 0,
-    time: completionTime(rec),
-    name: 'victory',
-  });
+  // A draw has no victor, so it gets no fanfare (the finale above already
+  // gives both actors a reaction instead of a celebration).
+  if (rec.winner !== null)
+    cues.push({
+      id: 'victory',
+      actor: rec.winner,
+      time: completionTime(rec),
+      name: 'victory',
+    });
   return {
     version: 1,
     seed: rec.setup.seed,

@@ -134,14 +134,14 @@ export class LiveArenaScene extends Phaser.Scene {
     }
   }
   private object(o: VisualObject, layer?: Phaser.GameObjects.Container) {
-    let rendered = this.objects.get(o.id);
+    // Factories bake the owner's team into the presentation (e.g. bag colour),
+    // and ids like 'held' pass between owners, so cache per id and owner.
+    const team = this.session.characters.findIndex((c) => c.id === o.owner),
+      key = o.id + ':' + team;
+    let rendered = this.objects.get(key);
     if (!rendered) {
-      rendered = createVisualObject(
-        this,
-        o,
-        this.session.characters.findIndex((c) => c.id === o.owner),
-      );
-      this.objects.set(o.id, rendered);
+      rendered = createVisualObject(this, o, team);
+      this.objects.set(key, rendered);
     }
     rendered.setLayer?.(layer);
     rendered.setVisible(true);

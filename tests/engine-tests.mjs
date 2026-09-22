@@ -27,6 +27,7 @@ export async function testEngine({check,setup,m,s,a}){
   const rec=s.simulate(setup('cornhole','engine-'+i)),serialized=JSON.stringify(rec);
   const first=director.directBattle(rec),second=director.directBattle(rec);
   check(()=>assert.deepEqual(first,second));check(()=>assert.deepEqual(s.validateRecording(rec),[]));
+  check(()=>assert.equal(first.cues.filter(c=>c.name==='victory').length,rec.winner===null?0:1,'Only a decided match plays the victory fanfare'));
   check(()=>assert.equal(JSON.stringify(rec),serialized,'Directing does not mutate simulated results'));
   plans.push(first.actions.map(d=>[d.shot,d.ritual,d.reaction]).join('|'));
   const engine=new director.BattleDirector(rec),events=[];
@@ -47,6 +48,8 @@ export async function testEngine({check,setup,m,s,a}){
   }
  }
  check(()=>assert.ok(new Set(plans.slice(0,10)).size>=9,'Ten matches produce at least nine distinct performance plans'));
+ const drawn=director.directBattle({...s.simulate(setup('cornhole','engine-draw')),winner:null});
+ check(()=>assert.ok(!drawn.cues.some(c=>c.name==='victory'),'A draw emits no victory cue'));
  const blocker={id:'old',position:{x:8.95,y:.33,z:0},score:1};
  const push=board.resolveBoard([blocker],'new',{x:9.25,y:.39,z:0},0,'push');
  check(()=>assert.equal(push.interactions.length,1));check(()=>assert.equal(push.interactions[0].after,3));check(()=>assert.equal(push.delta,5,'Pushed blocker adds two points plus the thrown hole'));
