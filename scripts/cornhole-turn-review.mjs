@@ -351,7 +351,16 @@ async function userJourney() {
   await page
     .getByRole('button', { name: 'Start showdown', exact: true })
     .click();
-  await page.locator('.setup-dialog').waitFor({ state: 'hidden' });
+  // Starting the match boots a fresh Phaser WebGL game. Under CI's software
+  // renderer that boot compiles every shader synchronously on the main thread
+  // (profiled: about 31 s in getShaderParameter, checkFramebufferStatus and
+  // getProgramParameter against 2.9 s with a GPU), during which the dialog
+  // cannot close and no in-page wait can observe it. The production smoke
+  // only avoids this because its earlier Play session warmed the shader
+  // cache. The budget covers that compile; it is not a match-time change.
+  await page
+    .locator('.setup-dialog')
+    .waitFor({ state: 'hidden', timeout: 120_000 });
   await page.locator('.arena-loading').waitFor({ state: 'detached' });
   await page
     .getByRole('button', { name: 'Pause playback', exact: true })
