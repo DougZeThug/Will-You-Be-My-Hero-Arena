@@ -3,10 +3,7 @@ import type {
   EventContext,
   LiveView,
 } from '../../core/LiveTypes';
-import type {
-  ArenaCharacter,
-  CharacterComponent,
-} from '../../characters/ArenaCharacter';
+import type { ArenaCharacter } from '../../characters/ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
 import { clamp, type InputFrame } from '../../input/InputActions';
