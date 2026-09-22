@@ -317,6 +317,19 @@ export async function testLive({ check }) {
       'Combat vocabulary is registered before a game is mounted',
     ),
   );
+  check(() => assert.deepEqual(validateProfile(doug), []));
+  const nameless = structuredClone(doug);
+  delete nameless.name;
+  for (const profile of [
+    nameless,
+    ...[null, 42, '', '   ', 'x'.repeat(81)].map((name) => ({ ...doug, name })),
+  ])
+    check(() =>
+      assert.ok(
+        validateProfile(profile).some((e) => e.includes('name')),
+        'Profiles need a display name: ' + JSON.stringify(profile.name),
+      ),
+    );
 
   const outcomes = [];
   for (const event of ['cornhole', 'running', 'fighting']) {
