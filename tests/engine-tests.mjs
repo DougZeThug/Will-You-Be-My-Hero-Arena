@@ -47,6 +47,33 @@ export async function testEngine({check,setup,m,s,a}){
   }
  }
  check(()=>assert.ok(new Set(plans.slice(0,10)).size>=9,'Ten matches produce at least nine distinct performance plans'));
+ for(const sport of m.SPORTS){
+  let drawRec,winRec;
+  for(let i=0;i<1000&&(!drawRec||!winRec);i++){
+   const rec=s.simulate(setup(sport,'victory-cue-'+sport+'-'+i));
+   if(!drawRec&&rec.winner===null)drawRec=rec;
+   if(!winRec&&rec.winner!==null)winRec=rec;
+  }
+  check(()=>assert.ok(drawRec,'Found a draw recording for '+sport));
+  check(()=>assert.ok(winRec,'Found a winner recording for '+sport));
+  const drawPlan=director.directBattle(drawRec);
+  check(()=>assert.equal(drawPlan.cues.filter(c=>c.name==='victory').length,0,'Draw recording for '+sport+' must not include a victory cue in its plan, cues='+JSON.stringify(drawPlan.cues.map(c=>c.name))));
+  const drawEngine=new director.BattleDirector(drawRec),drawEmitted=[];
+  drawEngine.seek(0);
+  for(let play=0;play<2;play++)for(let time=1/60;time<drawRec.duration+2;time+=1/60)drawEngine.advance(time,c=>drawEmitted.push(c));
+  check(()=>assert.equal(drawEmitted.filter(c=>c.name==='victory').length,0,'Draw playback for '+sport+' must not emit a victory cue even across same-director replays'));
+  check(()=>assert.deepEqual(s.validateRecording(drawRec),[]));
+  const winPlan=director.directBattle(winRec),winCues=winPlan.cues.filter(c=>c.name==='victory');
+  check(()=>assert.equal(winCues.length,1,'Winner recording for '+sport+' emits exactly one victory cue'));
+  check(()=>assert.equal(winCues[0].actor,winRec.winner,'Victory cue actor matches the resolved winner for '+sport));
+  const winEngine=new director.BattleDirector(winRec),winEmitted=[];
+  winEngine.seek(0);
+  for(let time=1/60;time<winRec.duration;time+=1/60)winEngine.advance(time,c=>winEmitted.push(c));
+  const winVictory=winEmitted.filter(c=>c.name==='victory');
+  check(()=>assert.equal(winVictory.length,1,'Winner playback for '+sport+' emits exactly one victory cue'));
+  check(()=>assert.equal(winVictory[0].actor,winRec.winner,'Emitted victory cue actor matches the winner for '+sport));
+  check(()=>assert.deepEqual(s.validateRecording(winRec),[]));
+ }
  const blocker={id:'old',position:{x:8.95,y:.33,z:0},score:1};
  const push=board.resolveBoard([blocker],'new',{x:9.25,y:.39,z:0},0,'push');
  check(()=>assert.equal(push.interactions.length,1));check(()=>assert.equal(push.interactions[0].after,3));check(()=>assert.equal(push.delta,5,'Pushed blocker adds two points plus the thrown hole'));

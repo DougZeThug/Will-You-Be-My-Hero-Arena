@@ -208,12 +208,14 @@ export function directBattle(rec: Recording): BattlePlan {
         99,
       ).id,
   ) as [string, string];
-  cues.push({
-    id: 'victory',
-    actor: rec.winner ?? 0,
-    time: completionTime(rec),
-    name: 'victory',
-  });
+  if (rec.winner !== null) {
+    cues.push({
+      id: 'victory',
+      actor: rec.winner,
+      time: completionTime(rec),
+      name: 'victory',
+    });
+  }
   return {
     version: 1,
     seed: rec.setup.seed,
