@@ -383,6 +383,26 @@ try {
   assert.equal(await page.locator('.arena-loading').count(), 0);
   assert.match(await page.locator('.stage-bottom').innerText(), /FINAL SCORE/);
   report.skipKeptArena = true;
+  // The exported save must match storage: a skipped result is not resumable.
+  await page
+    .getByRole('button', { name: 'Arena settings', exact: true })
+    .click();
+  const [saveDownload] = await Promise.all([
+    page.waitForEvent('download'),
+    page
+      .getByRole('button', { name: 'Export local save', exact: true })
+      .click(),
+  ]);
+  const exportedSave = JSON.parse(
+    await readFile(await saveDownload.path(), 'utf8'),
+  );
+  assert.equal(
+    exportedSave.active,
+    null,
+    'A save exported after Skip to result must not mark the match resumable',
+  );
+  await page.keyboard.press('Escape');
+  report.skipExportCurrent = true;
   assert.equal(
     await page.evaluate(() => typeof window.__HERO_ARENA__),
     'undefined',
