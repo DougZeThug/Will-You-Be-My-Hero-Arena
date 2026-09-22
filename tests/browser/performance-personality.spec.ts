@@ -133,6 +133,17 @@ test('Measured comparison follows the shared scrub and frame-step clock', async 
     '/human-motion/?event=cornhole&actor=doug&take=primaryAction&focus=doug&seek=1.11',
   );
   await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  // data-source-time is the committed H.264 review video's own clock. The
+  // system Chrome CI uses decodes it; Playwright's bundled Chromium cannot,
+  // so there this comparison is a skip, never a fabricated pass.
+  test.skip(
+    !(await page.evaluate(() =>
+      document
+        .createElement('video')
+        .canPlayType('video/mp4; codecs="avc1.42E01E"'),
+    )),
+    'This browser build lacks H.264 decoding; run with the system Chrome (ARENA_BROWSER_EXECUTABLE) for the video comparison.',
+  );
   await page.locator('#reference-comparison summary').click();
   await expect
     .poll(async () =>
