@@ -565,6 +565,14 @@ check(() =>
     /Spine exports/,
   ),
 );
+const namelessProfile = structuredClone(performancePack);
+delete namelessProfile.manifest.performance.name;
+check(() =>
+  assert.throws(
+    () => packs.validateCharacterPack(namelessProfile),
+    /name must be/,
+  ),
+);
 for (const mutate of [
   (p) => {
     p.card.id = 'card-dan';
