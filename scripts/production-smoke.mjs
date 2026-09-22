@@ -211,7 +211,15 @@ try {
   await page
     .getByRole('button', { name: 'Start showdown', exact: true })
     .click();
-  await page.locator('.setup-dialog').waitFor({ state: 'hidden' });
+  // Starting the match boots a fresh Phaser WebGL game. Under CI's software
+  // renderer that boot compiles shaders synchronously on the main thread
+  // (profiled for the acceptance journey: about 31 s against 2.9 s with a
+  // GPU), so the dialog cannot finish closing inside the default 30 s. The
+  // earlier Play session only sometimes warms the cache enough. The budget
+  // covers that compile; it is not a match-time change.
+  await page
+    .locator('.setup-dialog')
+    .waitFor({ state: 'hidden', timeout: 120_000 });
   await page.locator('.arena-loading').waitFor({ state: 'detached' });
   await page.waitForFunction(() => {
     const round =
