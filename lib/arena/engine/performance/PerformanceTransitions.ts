@@ -5,7 +5,7 @@ export const performanceTransitions: Record<
   PerformanceState,
   readonly PerformanceState[]
 > = {
-  idle: ['notice', 'settle', 'celebrate', 'recover'],
+  idle: ['notice', 'settle', 'celebrate', 'recover', 'anticipate'],
   notice: ['settle', 'recover'],
   settle: ['anticipate', 'recover'],
   anticipate: ['windup'],

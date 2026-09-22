@@ -342,6 +342,71 @@ export async function performanceTests() {
       1,
     ),
   );
+  // Regression: liveCornholeThrow's first segment is `anticipate`, entered from
+  // `idle`. The transition table must permit idle → anticipate, otherwise
+  // CharacterPerformanceController.startSegment → enter('anticipate') throws
+  // synchronously on the first live bag release (CharacterPresentation), which
+  // terminates Phaser's rAF loop and freezes live cornhole.
+  const { permitsPerformanceTransition } =
+    await import('../.test-build/engine/performance/PerformanceTransitions.mjs');
+  check(() => assert.ok(permitsPerformanceTransition('idle', 'anticipate')));
+  check(() => assert.ok(permitsPerformanceTransition('settle', 'anticipate')));
+  check(() =>
+    assert.ok(
+      !permitsPerformanceTransition('notice', 'anticipate'),
+      'notice → anticipate stays rejected',
+    ),
+  );
+  const runLive = (step, result = true) => {
+    const c = make(),
+      events = [];
+    c.onEvent((e) => {
+      events.push(e);
+      if (e.name === 'OBJECT_RELEASED' && result)
+        c.confirmResult(e.actionId, true);
+    });
+    const id = c.perform('liveCornholeThrow', {
+      objectId: 'bag',
+      target: { x: 1000, y: 500 },
+    });
+    check(() => assert.ok(typeof id === 'number' && id > 0));
+    for (let t = 0; t < 12 - 1e-8; t += step) c.advance(Math.min(step, 12 - t));
+    return { c, events };
+  };
+  const liveLarge = runLive(12),
+    liveSmall = runLive(1 / 60);
+  check(() => assert.equal(liveLarge.c.state, 'idle'));
+  check(() => assert.equal(liveLarge.c.attachments.attached, null));
+  for (const name of [
+    'OBJECT_RELEASED',
+    'ACTION_COMPLETED',
+    'ANTICIPATION_STARTED',
+    'WINDUP_STARTED',
+    'FOLLOW_THROUGH_STARTED',
+    'REACTION_STARTED',
+    'CELEBRATION_STARTED',
+    'CELEBRATION_COMPLETED',
+  ])
+    check(() =>
+      assert.equal(
+        liveLarge.events.filter((e) => e.name === name).length,
+        1,
+        `${name} should fire exactly once for liveCornholeThrow`,
+      ),
+    );
+  check(() =>
+    assert.deepEqual(
+      liveLarge.events.map((e) => e.name),
+      liveSmall.events.map((e) => e.name),
+    ),
+  );
+  check(() =>
+    assert.ok(
+      liveLarge.events.every(
+        (e, i) => Math.abs(e.time - liveSmall.events[i].time) < 1e-6,
+      ),
+    ),
+  );
   console.log(
     `Character performance: ${checks} lifecycle, release and regression checks passed.`,
   );
