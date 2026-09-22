@@ -4,6 +4,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { qaServer, browserLaunchOptions } from './qa-server.mjs';
 import { auditProductionAssets } from './production-assets.mjs';
+import { shippedPerformanceRevision } from './performance-revision.mjs';
 
 const directory = 'work/qa/production';
 await mkdir(directory, { recursive: true });
@@ -20,6 +21,10 @@ const report = {
 };
 let server, browser;
 try {
+  // The reviewed runtime is whatever the motion compiler currently ships;
+  // a stale literal here would fail every later Play/Watch/save check.
+  const revision = await shippedPerformanceRevision();
+  report.expectedRuntime = revision;
   async function scan(folder) {
     for (const entry of await readdir(folder, { withFileTypes: true })) {
       const file = path.join(folder, entry.name);
@@ -149,7 +154,7 @@ try {
     report.playCharacterBackends,
     'loongbones-performance,loongbones-performance',
   );
-  assert.equal(report.playCharacterRuntime, 'cornhole-finish-settle-v1');
+  assert.equal(report.playCharacterRuntime, revision);
   await page.getByRole('button', { name: 'Pause game', exact: true }).click();
   await page
     .getByRole('button', { name: 'Resume game', exact: true })
@@ -185,7 +190,7 @@ try {
   );
   assert.equal(
     report.watchLobbyCharacterRuntime,
-    'cornhole-finish-settle-v1',
+    revision,
     'Initial Watch cornhole lobby must use the reviewed performance runtime',
   );
   assert.equal(
@@ -248,7 +253,7 @@ try {
   };
   assert.equal(
     report.watchReadyEvidence.characterRuntime,
-    'cornhole-finish-settle-v1',
+    revision,
     'Production cornhole must use the reviewed performance runtime',
   );
   report.watch = true;

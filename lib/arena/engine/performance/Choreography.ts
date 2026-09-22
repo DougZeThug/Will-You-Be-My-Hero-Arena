@@ -53,6 +53,11 @@ export function performanceActions(
         name: 'liveCornholeThrow',
         priority: 10,
         requiresObject: true,
+        // Live Play owns preparation: the player's charge stages the ritual
+        // clip (PrecisionEvent), and CharacterPresentation time-scales this
+        // clip so its release marker meets the live release marker. A settle
+        // segment here would both delay the throw and break that scaling.
+        preparation: 'external',
         segments: [
           {
             state: 'anticipate',

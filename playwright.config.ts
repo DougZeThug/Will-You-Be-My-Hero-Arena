@@ -28,7 +28,13 @@ export default defineConfig({
     locale: 'en-US',
     timezoneId: 'UTC',
     contextOptions: { reducedMotion: 'no-preference' },
-    trace: 'retain-on-failure',
+    // Failure traces keep actions, DOM snapshots and console output. Their
+    // per-action screenshots are off: the failure screenshot below and each
+    // spec's own captures already show the rendered canvas, and on software
+    // WebGL those extra captures cost about a tenth of a capture-heavy spec
+    // (rendered-arm opacity test: 50 s with them, 46 s without, 32 s with
+    // tracing off entirely, the rest being DOM snapshots that stay on).
+    trace: { mode: 'retain-on-failure', screenshots: false },
     screenshot: 'only-on-failure',
     video:
       process.env.ARENA_BROWSER_VIDEO === '1' ? 'retain-on-failure' : 'off',

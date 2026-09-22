@@ -1,5 +1,8 @@
 import type { Attempt, Recording } from '../../../model';
-import type { CharacterPerformanceController } from '../../performance/CharacterPerformanceController';
+import {
+  alignedSubstep,
+  type CharacterPerformanceController,
+} from '../../performance/CharacterPerformanceController';
 import type { ReleaseKinematics } from '../../equipment/AttachmentManager';
 import type { ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
@@ -87,7 +90,10 @@ export class CornholePerformancePlayback {
       );
     const target = this.origin! + relative;
     while (this.character.time + 1e-9 < target) {
-      let dt = Math.min(1 / 120, target - this.character.time);
+      let dt = alignedSubstep(
+        this.character.time,
+        target - this.character.time,
+      );
       // Split on the saved result boundary; replay reconstructs presentation only.
       const untilResult =
         this.origin! +

@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { chromium } from 'playwright';
 import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { shippedPerformanceRevision } from './performance-revision.mjs';
 import { sourceFingerprint } from './source-fingerprint.mjs';
 
 // One repeatable case, not an editor. All state is isolated from the user's saves.
@@ -33,13 +34,10 @@ const marks = {};
 const mark = (name) => {
   marks[name] = Number(((performance.now() - startedAt) / 1000).toFixed(3));
 };
-const compiled = await readFile('lab/performance/compile.ts', 'utf8');
-const revisionMatch = compiled.match(/PERFORMANCE_REVISION = '([^']+)'/);
-assert.ok(
-  revisionMatch,
-  'compile.ts must declare the shipped PERFORMANCE_REVISION',
+const revision = option(
+  '--expected-runtime',
+  await shippedPerformanceRevision(),
 );
-const revision = option('--expected-runtime', revisionMatch[1]);
 await mkdir(directory, { recursive: true });
 if (args.includes('--build')) {
   execFileSync(process.execPath, ['scripts/build.mjs'], { stdio: 'inherit' });
@@ -353,7 +351,16 @@ async function userJourney() {
   await page
     .getByRole('button', { name: 'Start showdown', exact: true })
     .click();
-  await page.locator('.setup-dialog').waitFor({ state: 'hidden' });
+  // Starting the match boots a fresh Phaser WebGL game. Under CI's software
+  // renderer that boot compiles every shader synchronously on the main thread
+  // (profiled: about 31 s in getShaderParameter, checkFramebufferStatus and
+  // getProgramParameter against 2.9 s with a GPU), during which the dialog
+  // cannot close and no in-page wait can observe it. The production smoke
+  // only avoids this because its earlier Play session warmed the shader
+  // cache. The budget covers that compile; it is not a match-time change.
+  await page
+    .locator('.setup-dialog')
+    .waitFor({ state: 'hidden', timeout: 120_000 });
   await page.locator('.arena-loading').waitFor({ state: 'detached' });
   await page
     .getByRole('button', { name: 'Pause playback', exact: true })

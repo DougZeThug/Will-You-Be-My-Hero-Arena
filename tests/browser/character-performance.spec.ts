@@ -109,6 +109,12 @@ test('performance: release exposure and draw order survive seek, then reactions 
 test('performance: rendered throwing-arm joins stay opaque across hand changes and chest contacts', async ({
   page,
 }, info) => {
+  // Seventeen seeked checkpoints, each with a real WebGL capture and pixel
+  // probe. Measured with the clipped capture below: 27 s on a workstation
+  // without GPU flags, 15 s with the CI SwiftShader flags, and the hosted
+  // runner renders about twice as slowly, so the 45 s default left no margin
+  // (the full-canvas capture alone took 1.6 s of every 2.2 s checkpoint).
+  test.setTimeout(90_000);
   await page.goto('/performance/');
   await expect(page.getByRole('status').first()).toContainText('idle');
   await page.getByRole('checkbox', { name: 'Silhouette', exact: true }).check();
@@ -139,15 +145,22 @@ test('performance: rendered throwing-arm joins stay opaque across hand changes a
         name: 'second-contact',
         time: checkpoints.find((c) => c.name === 'celebrate')!.time + 0.3,
       });
-    for (const checkpoint of checkpoints) {
-      await page.evaluate(
-        (time) => window.__HERO_PERFORMANCE__.seek(time),
-        checkpoint.time,
-      );
-      const s = await state(page);
-      const png = await page.locator('#stage canvas').screenshot();
-      const cores = await page.evaluate(
-        async ({ src, joints }) => {
+    // The probed joints are three points on the throwing arm. Capturing only
+    // that region keeps the assertion identical (same joint-to-pixel mapping)
+    // while avoiding a full-canvas PNG round trip per checkpoint, which was
+    // the dominant cost: about 1.6 s of a 2.2 s checkpoint on this hardware.
+    const canvasBox = () => page.locator('#stage canvas').boundingBox();
+    const initialBox = (await canvasBox())!;
+    const canvasWidth = Math.round(initialBox.width),
+      canvasHeight = Math.round(initialBox.height);
+    const probeJoints = ['rightShoulder', 'rightElbow', 'rightWrist'];
+    const probe = (
+      png: Buffer,
+      joints: Record<string, { x: number; y: number }>,
+      origin: { x: number; y: number },
+    ) =>
+      page.evaluate(
+        async ({ src, joints, origin, canvasWidth, canvasHeight, names }) => {
           const image = new Image();
           image.src = src;
           await image.decode();
@@ -161,7 +174,7 @@ test('performance: rendered throwing-arm joins stay opaque across hand changes a
               // These exposed joint centers lie inside the artwork. Far-side
               // skeleton landmarks are occluded/projection guides and are not
               // valid pixel-core samples; their material has separate tests.
-              ['rightShoulder', 'rightElbow', 'rightWrist'].includes(name),
+              names.includes(name),
             )
             .map(([name, p]) => {
               const pixels = [
@@ -172,8 +185,8 @@ test('performance: rendered throwing-arm joins stay opaque across hand changes a
                 [0, 0.6],
               ].map(([dx, dy]) => {
                 const data = ctx.getImageData(
-                  Math.round(((p.x + dx) * image.width) / 1280),
-                  Math.round(((p.y + dy) * image.height) / 760),
+                  Math.round(((p.x + dx) * canvasWidth) / 1280) - origin.x,
+                  Math.round(((p.y + dy) * canvasHeight) / 760) - origin.y,
                   1,
                   1,
                 ).data;
@@ -188,10 +201,85 @@ test('performance: rendered throwing-arm joins stay opaque across hand changes a
         },
         {
           src: 'data:image/png;base64,' + png.toString('base64'),
-          joints: s.rig.joints,
+          joints,
+          origin,
+          canvasWidth,
+          canvasHeight,
+          names: probeJoints,
         },
       );
-      samples.push({ character, checkpoint, cores });
+    for (const checkpoint of checkpoints) {
+      // Per-phase timings ride along with the samples so a slow environment
+      // (software WebGL in CI) can be attributed rather than guessed at.
+      const startedAt = performance.now();
+      await page.evaluate(
+        (time) => window.__HERO_PERFORMANCE__.seek(time),
+        checkpoint.time,
+      );
+      const s = await state(page);
+      // seek() updates the scene; the WebGL frame is drawn by the next
+      // animation frame. Two frames guarantee the capture shows this pose.
+      await page.evaluate(
+        () =>
+          new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(resolve)),
+          ),
+      );
+      const seekMs = performance.now() - startedAt;
+      const points = probeJoints.map((name) => s.rig.joints[name]);
+      const margin = 16;
+      const region = {
+        x: Math.max(
+          0,
+          Math.floor((Math.min(...points.map((p) => p.x)) * canvasWidth) / 1280) -
+            margin,
+        ),
+        y: Math.max(
+          0,
+          Math.floor((Math.min(...points.map((p) => p.y)) * canvasHeight) / 760) -
+            margin,
+        ),
+      };
+      // page.screenshot clips relative to the current viewport, and an
+      // element screenshot may scroll the page, so measure the box each time.
+      const box = (await canvasBox())!;
+      const clip = {
+        x: box.x + region.x,
+        y: box.y + region.y,
+        width:
+          Math.min(
+            canvasWidth,
+            Math.ceil((Math.max(...points.map((p) => p.x)) * canvasWidth) / 1280) +
+              margin,
+          ) - region.x,
+        height:
+          Math.min(
+            canvasHeight,
+            Math.ceil((Math.max(...points.map((p) => p.y)) * canvasHeight) / 760) +
+              margin,
+          ) - region.y,
+      };
+      const png = await page.screenshot({ clip });
+      const screenshotMs = performance.now() - startedAt - seekMs;
+      const cores = await probe(png, s.rig.joints, region);
+      if (checkpoint === checkpoints[0]) {
+        // One full-canvas capture per character proves the clipped mapping
+        // samples the same pixels as the whole-canvas capture the assertion
+        // was written for.
+        const whole = await page.locator('#stage canvas').screenshot();
+        const opaque = (probed: { name: string; opaque: number }[]) =>
+          probed.map(({ name, opaque }) => ({ name, opaque }));
+        expect(opaque(await probe(whole, s.rig.joints, { x: 0, y: 0 }))).toEqual(
+          opaque(cores),
+        );
+      }
+      const probeMs = performance.now() - startedAt - seekMs - screenshotMs;
+      samples.push({
+        character,
+        checkpoint,
+        cores,
+        timing: { seekMs, screenshotMs, probeMs },
+      });
       for (const core of cores)
         expect(
           core.opaque,

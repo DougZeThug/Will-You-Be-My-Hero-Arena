@@ -1,5 +1,9 @@
 import { test, expect } from 'playwright/test';
 import fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { referenceCatalog } from '../../lab/human-motion/ReferenceCatalog';
 
 for (const id of ['dan', 'doug'])
   test(`V3.1 ${id} reverses direction with planted opposite-view feet`, async ({
@@ -174,22 +178,60 @@ for (const [event, reference] of [
     await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
     await page.locator('#reference-comparison summary').click();
     await expect(page.locator('#reference-choice')).toHaveValue(reference);
-    await expect
-      .poll(() =>
-        page.locator('#reference-comparison').getAttribute('data-source-time'),
-      )
-      .not.toBeNull();
+    // The measured frames are committed JSON and load without the review video.
     await page.locator('#demo-reference').click();
     await expect(page.locator('#reference-status')).toContainText(
       'measured frames loaded',
-    );
-    await expect(page.locator('#comparison-status')).not.toContainText(
-      'unavailable',
     );
     expect(errors).toEqual([]);
     await page
       .locator('#reference-comparison')
       .screenshot({ path: info.outputPath('reference.png') });
+  });
+
+// Source-time synchronization needs the actual review video. Only cornhole's is
+// committed; the others are local development files under ignored work/qa, and
+// Playwright's bundled Chromium cannot decode their H.264 stream at all. The
+// attribute is written from the real video clock, so it is never fabricated:
+// without a decodable local video this leg reports a skip, not a pass.
+for (const [event, reference, seek] of [
+  ['cornhole', 'cornhole', '1.11'],
+  ['running', 'running', '.8'],
+  ['basketball', 'basketball', '.8'],
+  ['fighting', 'jab', '.8'],
+] as const)
+  test(`V3.1 ${event} synchronizes its local review video`, async ({
+    page,
+  }) => {
+    const entry = referenceCatalog.find((r) => r.id === reference)!;
+    const video = fileURLToPath(entry.video);
+    test.skip(
+      !existsSync(video),
+      `Local review video absent (${path.relative(process.cwd(), video)}); prepare it under work/qa/v31-reference/review before running this comparison.`,
+    );
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto(`/human-motion/?event=${event}&seek=${seek}`);
+    await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+    test.skip(
+      !(await page.evaluate(() =>
+        document
+          .createElement('video')
+          .canPlayType('video/mp4; codecs="avc1.42E01E"'),
+      )),
+      'This browser build lacks H.264 decoding; run with the system Chrome (ARENA_BROWSER_EXECUTABLE) for the video comparison.',
+    );
+    await page.locator('#reference-comparison summary').click();
+    await expect(page.locator('#reference-choice')).toHaveValue(reference);
+    await expect
+      .poll(() =>
+        page.locator('#reference-comparison').getAttribute('data-source-time'),
+      )
+      .not.toBeNull();
+    await expect(page.locator('#comparison-status')).not.toContainText(
+      'unavailable',
+    );
+    expect(errors).toEqual([]);
   });
 
 test('V3.1 opposite clothing preserves source alpha, face and limb pixels', async ({
