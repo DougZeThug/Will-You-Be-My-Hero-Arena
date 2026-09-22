@@ -349,7 +349,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
                 ...flightPosition(this.flight),
               },
             ]
-          : ['charging', 'throwing'].includes(this.state)
+          : ['aiming', 'charging', 'throwing'].includes(this.state)
             ? [
                 {
                   id: 'held',
