@@ -385,11 +385,10 @@ export class LabRuntime {
       this.requireReady();
       if (!Number.isFinite(seconds) || seconds < 0)
         throw Error('Seek time must be a finite non-negative number.');
-      if (!this.clock || !this.actor)
+      if (!this.clock || !this.recorded)
         throw Error('Arbitrary time seeks require a recorded scenario.');
       this.freeze();
       this.clock.seek(seconds);
-      this.actor.scene.renderAt(seconds);
       await this.render(0);
     });
   }
