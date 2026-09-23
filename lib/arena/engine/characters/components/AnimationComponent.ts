@@ -92,6 +92,7 @@ export class AnimationComponent {
           ? this.gaitPhase
           : (time / clip.duration) % 1,
       !this.timeline.clip,
+      this.timeline.clip ? this.timeline.duration : clip.duration,
     );
     if (this.timeline.active && this.locomotion) {
       const lower = this.resolve(this.locomotion);

@@ -17,6 +17,32 @@ const guard: Pose = {
   footRX: 48,
   hipY: -167,
 };
+/** Like `clip`, with optional accent eases per key. */
+function clipEased(
+  id: string,
+  category: AnimationCategory,
+  duration: number,
+  poses: [number, Pose, string?][],
+  markers: AnimationMarker[] = [],
+) {
+  registerAnimation({
+    id,
+    category,
+    duration,
+    tags: id.split('.'),
+    weight: 1,
+    intensity: 0.5,
+    markers,
+    motion: {
+      label: id,
+      keys: poses.map(([at, pose, ease]) => ({
+        at,
+        pose: { ...REST, ...pose },
+        ...(ease ? { ease } : {}),
+      })),
+    },
+  });
+}
 function clip(
   id: string,
   category: AnimationCategory,
@@ -40,17 +66,28 @@ function clip(
     },
   });
 }
+/** Cartoon strike: slow wind-up, accelerate into contact, overshoot past
+ * the strike pose, settle back and recover (was a symmetric ease into a
+ * dead hold). */
+const overshoot = (strike: Pose): Pose =>
+  Object.fromEntries(
+    Object.entries(strike).map(([key, value]) => {
+      const rest = guard[key as keyof Pose] ?? REST[key as keyof PuppetPose];
+      return [key, rest + (value! - rest) * 1.1];
+    }),
+  );
 const attack = (id: string, duration: number, anticipate: Pose, strike: Pose) =>
-  clip(
+  clipEased(
     id,
     'interaction',
     duration,
     [
       [0, guard],
-      [0.22, { ...guard, ...anticipate }],
-      [0.38, { ...guard, ...strike }],
-      [0.54, { ...guard, ...strike }],
-      [0.83, guard],
+      [0.21, { ...guard, ...anticipate }, 'power2.out'],
+      [0.38, { ...guard, ...strike }, 'power2.in'],
+      [0.44, { ...guard, ...overshoot(strike) }],
+      [0.58, { ...guard, ...strike }],
+      [0.84, guard],
       [1, guard],
     ],
     [

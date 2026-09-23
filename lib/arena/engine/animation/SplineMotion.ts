@@ -1,5 +1,6 @@
 import {REST,type Choreography,type PuppetPose} from '../../puppet-motion';
 import {animationEase} from '../../animation-easing';
+import {puppetOverlap} from './PuppetOverlap';
 type Sampled={at:number;pose:PuppetPose;ease?:string};
 const cache=new WeakMap<Choreography,Sampled[]>();
 /** Explicit accents (`power2.out`, `power3.in`, `sine.out`…) retime their
@@ -14,7 +15,16 @@ const accent=(ease?:string)=>!!ease&&ease!=='none'&&ease!=='linear'&&!ease.endsW
  * at reversals and holds, so wrists and planted feet cannot overshoot a key.
  * Looping clips (idles, gaits) take their end tangents across the seam, so the
  * cycle never decelerates to a stop where it wraps. */
-export function splineMotion(definition:Choreography|undefined,progress:number,loop=false):PuppetPose{
+/** `duration` (seconds of playback) enables baked cartoon overlap: head drag,
+ * body settle and a trailing free hand (see PuppetOverlap). */
+export function splineMotion(definition:Choreography|undefined,progress:number,loop=false,duration?:number):PuppetPose{
+ const pose=sampleSpline(definition,progress,loop);
+ if(!definition||!duration)return pose;
+ const o=puppetOverlap(definition,p=>sampleSpline(definition,p,loop),progress,duration,loop);
+ pose.head+=o.head;pose.body+=o.body;pose.handLX+=o.handLX;pose.handLY+=o.handLY;
+ return pose;
+}
+function sampleSpline(definition:Choreography|undefined,progress:number,loop:boolean):PuppetPose{
  if(!definition)return {...REST};
  let keys=cache.get(definition);if(!keys){let pose={...REST};keys=definition.keys.map(k=>{pose={...pose,...k.pose};return{at:k.at,pose:{...pose},ease:k.ease};});cache.set(definition,keys);}
  const t=Math.max(0,Math.min(1,progress)),i=keys.findIndex((k,j)=>j>0&&t<=k.at);
