@@ -436,6 +436,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     // enters the two-bone singularity near full extension (where a pixel of
     // hip drop swings the knee by ~8°). Feet and IK targets stay fixed.
     const pelvis = this.bones.get('pelvis')!;
+    // WorldClock.advanceTime(0) is a no-op, so zero-length evaluations (the
+    // release re-evaluation, seeks) would still read last frame's lowered
+    // hips. Refresh the skeleton from the reset offsets before measuring.
+    this.actor.armature.advanceTime(0);
     this.kneeDrop = softReachDrop(
       (['L', 'R'] as const).map((side) => ({
         hip: this.local('thigh_' + side),
