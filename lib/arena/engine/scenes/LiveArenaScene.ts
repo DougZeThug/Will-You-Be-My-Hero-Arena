@@ -108,6 +108,7 @@ export class LiveArenaScene extends Phaser.Scene {
             this.session.characters[i],
             i,
             this.options.characterRigs,
+            this.options.reduced,
           ),
       );
       const performanceRevision = this.actors

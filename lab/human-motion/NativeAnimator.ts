@@ -96,6 +96,10 @@ export class NativeAnimator {
       forwardKnees?: boolean;
       stance?: { right: number; left: number };
       directional?: boolean;
+      /** Extra authored clips for a host event (e.g. Play's running slide). */
+      extend?: Parameters<typeof buildMotionLibrary>[2];
+      /** Host gait tuning (Play strides and arm swing). */
+      gait?: Parameters<typeof buildMotionLibrary>[3];
     } = {},
   ) {
     this.performance = new OrganicMotion(
@@ -146,6 +150,8 @@ export class NativeAnimator {
     this.library = buildMotionLibrary(
       definition.id as 'dan' | 'doug',
       arm.animation,
+      options.extend,
+      options.gait,
     );
     compileHandExposures(this.library);
     // Event stance places effectors relative to the pelvis. Skin bind matrices,

@@ -13,10 +13,26 @@ import {
   type LibraryBuilder,
 } from './builder';
 
+/** Host tuning for the measured gaits. The Lab proofs use the defaults.
+ * `strideScale` lengthens every stride (foot sweep and travel metadata
+ * together, so planted feet still match ground speed); `armBias` swings the
+ * upper arms further back (degrees, + = behind) and `armGain` widens them. */
+export interface GaitTuning {
+  strideScale?: number;
+  armBias?: number;
+  armGain?: number;
+}
 /** Observed angular gait → character-length FK → bounded effector curves → native foot IK.
  * Travel metadata and foot sweep use the same source units. Authored walking is separate.
  */
-export function addGaits(library: LibraryBuilder, id: 'dan' | 'doug') {
+export function addGaits(
+  library: LibraryBuilder,
+  id: 'dan' | 'doug',
+  tuning: GaitTuning = {},
+) {
+  const strideScale = tuning.strideScale ?? 1,
+    armBias = tuning.armBias ?? 0,
+    armGain = tuning.armGain ?? 1;
   const rig = anatomy(id),
     signature = motionSignatures[id];
   const scale = 371 / (id === 'dan' ? 1215 : 1191);
@@ -25,12 +41,13 @@ export function addGaits(library: LibraryBuilder, id: 'dan' | 'doug') {
       reference.channels[name].map(([t, v]) => [t, v] as Knot),
       u,
     );
-  for (const [name, seconds, stride, lift, stance] of [
+  for (const [name, seconds, authoredStride, lift, stance] of [
     ['walk', 1.05, 76, 24, 0.6],
     ['jog', 0.84, 112, 100, 0.46],
     ['run', 0.73, 143, 148, 0.43],
     ['sprint', 0.66, 170, 180, 0.39],
   ] as const) {
+    const stride = authoredStride * strideScale;
     const d = Math.round(seconds * 60 * (1 + (signature.rhythm - 1) * 0.6));
     const tracks: BoneTrack[] = [];
     for (const side of ['L', 'R']) {
@@ -89,7 +106,7 @@ export function addGaits(library: LibraryBuilder, id: 'dan' | 'doug') {
         // now supports the backward swing.
         // Right foot contact pairs with a trailing right upper arm. Poses are
         // authored contact/push/passing breakdowns, not a larger sinusoid.
-        const shoulder =
+        const authoredShoulder =
           name === 'walk'
             ? -(arm + 20) * 0.65
             : sampleScalar(
@@ -112,6 +129,10 @@ export function addGaits(library: LibraryBuilder, id: 'dan' | 'doug') {
                     ],
                 u,
               );
+        const shoulder =
+          name === 'walk'
+            ? authoredShoulder
+            : authoredShoulder * armGain + armBias;
         arms.push([f, shoulder]);
         elbows.push([
           f,

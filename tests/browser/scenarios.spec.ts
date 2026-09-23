@@ -79,6 +79,31 @@ for (const id of ['running-live', 'fighting-live']) {
   });
 }
 
+test('running-live: Dan and Doug run in profile on the side-view motion rig', async ({
+  page,
+}, info) => {
+  const failures = await openScenario(page, 'running-live');
+  const canvas = page.locator('#arena canvas');
+  await expect(canvas).toHaveAttribute(
+    'data-character-backends',
+    'loongbones-side-motion,loongbones-side-motion',
+  );
+  await expect(canvas).toHaveAttribute(
+    'data-character-runtime',
+    'play-side-motion-v1',
+  );
+  // Through the start, strides, a jump and a stumble: the simulation keeps
+  // running and nothing in the native rig throws.
+  await step(page, 300);
+  const state = await snapshot(page);
+  expect(state.errors).toEqual([]);
+  expect(
+    state.characters.every((c: Record<string, any>) => c.body.x > 300),
+  ).toBe(true);
+  await artifact(page, info, 'running-live-profile');
+  expect(failures).toEqual([]);
+});
+
 test('scenario lifecycle: one canvas, detached snapshots and no save writes', async ({
   page,
 }, info) => {

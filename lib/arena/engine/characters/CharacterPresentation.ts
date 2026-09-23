@@ -37,16 +37,20 @@ export class CharacterPresentation {
   private facing?: number;
   private flipFrom = 1;
   private flipAt = -Infinity;
+  private drivenAt?: number;
   constructor(
     scene: Phaser.Scene,
     loaded: LoadedCharacter,
     private character: ArenaCharacter,
     private index: number,
     provider?: CharacterRigProvider,
+    private reduced = false,
   ) {
     this.rig =
-      provider?.create(scene, loaded, character.profile, { lane: index }) ??
-      createCharacterRig(scene, loaded, character.profile, true);
+      provider?.create(scene, loaded, character.profile, {
+        lane: index,
+        scale: character.body.scale,
+      }) ?? createCharacterRig(scene, loaded, character.profile, true);
     if (this.rig.performance) {
       character.setPresentedHand(() => this.hand());
       character.attach({
@@ -105,6 +109,7 @@ export class CharacterPresentation {
    * pose are drawn between the previous and current step. `hold` is the
    * remaining hit-stop; the fighter who was just hit shivers through it. */
   update(time: number, alpha = 1, hold = 0) {
+    if (this.rig.drive) return this.drive(time, alpha);
     const c = this.character,
       b = presentedBody(c, alpha),
       shown = time - (1 - alpha) / 60,
@@ -150,6 +155,44 @@ export class CharacterPresentation {
       this.glow
         .lineStyle(6, 0xffcf25, Math.sin(u * Math.PI) * 0.65)
         .strokeRect(-54, -143, 108, 153);
+  }
+  /** A side-view motion rig animates and places itself from the presented
+   * body; its velocity is the simulation's own step displacement. */
+  private drive(time: number, alpha: number) {
+    const c = this.character,
+      b = presentedBody(c, alpha),
+      p = c.previous?.body ?? c.body,
+      shown = time - (1 - alpha) / 60;
+    this.rig.drive!({
+      x: b.x,
+      y: b.y,
+      z: b.z,
+      vx: (c.body.x - p.x) * 60,
+      vy: (c.body.y - p.y) * 60,
+      facing: b.facing,
+      scale: b.scale,
+      time: shown,
+      dt: this.drivenAt === undefined ? 1 / 60 : shown - this.drivenAt,
+      clip: c.animation.timeline.clip,
+      clipRevision: c.animation.timeline.revision,
+      clipDuration: c.animation.timeline.duration,
+      substate: c.substate,
+      reduced: this.reduced,
+    });
+    this.drivenAt = shown;
+    this.shadow
+      .setPosition(b.x, b.y + 2)
+      .setScale(b.scale * (1 - b.z / 600), b.scale)
+      .setDepth(b.y - 2)
+      .setAlpha(0.27 * Math.max(0.2, 1 - b.z / 150));
+    // The card trails its runner but sorts behind the runner in the next lane
+    // up (lanes are 62 px apart), so it never hides a profile stride.
+    this.card
+      .setPosition(b.x - 83, b.y - 8)
+      .setDepth(b.y - 45)
+      .setScale(0.74)
+      .setAlpha(0.8);
+    this.glow.clear();
   }
   /**
    * Live cornhole clock. The charge plays the take's settle and backswing at
