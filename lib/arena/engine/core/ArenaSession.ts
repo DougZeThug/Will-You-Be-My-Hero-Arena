@@ -3,6 +3,7 @@ import type {
   LiveSnapshot,
   PlayableArenaEvent,
   ArenaCue,
+  VisualObject,
 } from './LiveTypes';
 import { playableEvent } from './EventRegistry';
 import { InputManager } from '../input/InputManager';
@@ -21,6 +22,8 @@ import assets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { seeded } from './Random';
 import type { InputFrame, Intent } from '../input/InputActions';
+/** Identity of a presented object across fixed steps ('held' passes owners). */
+export const objectKey = (o: VisualObject) => o.id + ':' + (o.owner ?? '');
 export class ArenaSession {
   readonly input = new InputManager();
   readonly characters: ArenaCharacter[];
@@ -209,6 +212,11 @@ export class ArenaSession {
     this.accumulator += Math.min(0.1, Math.max(0, delta));
     while (this.accumulator >= 1 / 60 && !this.paused) {
       this.accumulator -= 1 / 60;
+      // Presentation interpolates from this step's starting state.
+      for (const c of this.characters) c.capturePrevious();
+      this.previousObjects = new Map(
+        this.event.view().objects.map((o) => [objectKey(o), o]),
+      );
       this.time += 1 / 60;
       for (const c of this.controllers) {
         const frame = this.poll(c.id);
@@ -235,6 +243,14 @@ export class ArenaSession {
       this.event.update(1 / 60);
     }
   }
+  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
+   * characters and objects between their previous and current step so motion
+   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
+  get alpha() {
+    return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
+  }
+  /** Object state at the start of the latest fixed step, keyed by objectKey. */
+  previousObjects = new Map<string, VisualObject>();
   snapshot(): LiveSnapshot {
     const view = this.event.view();
     return {

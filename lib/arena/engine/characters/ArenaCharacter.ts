@@ -1,5 +1,6 @@
 import type { CharacterProfile } from './CharacterProfile';
 import type { PuppetAsset } from '../../puppet-geometry';
+import type { PuppetPose } from '../../puppet-motion';
 import type {
   ControllableEntity,
   ActionPayload,
@@ -33,6 +34,13 @@ export class ArenaCharacter implements ControllableEntity {
   abilities: AbilityComponent;
   private components: CharacterComponent[] = [];
   private presentedHand?: () => { x: number; y: number };
+  private lastX?: number;
+  /** Ground speed from actual displacement (px/s). Fighters move by intent,
+   * not velocity, and aiming shuffles have no velocity at all; driving the
+   * gait from `vx` left feet sliding under a slow or frozen cycle. */
+  groundSpeed = 0;
+  /** Body and pose at the start of the latest fixed step (render interpolation). */
+  previous?: { body: ArenaCharacter['body']; pose: PuppetPose };
   constructor(
     readonly id: string,
     readonly profile: CharacterProfile,
@@ -50,6 +58,9 @@ export class ArenaCharacter implements ControllableEntity {
       ],
     );
     this.animation.idle = this.personality.choose('idle');
+  }
+  capturePrevious() {
+    this.previous = { body: { ...this.body }, pose: { ...this.animation.pose } };
   }
   attach(component: CharacterComponent) {
     this.components.push(component);
@@ -86,9 +97,9 @@ export class ArenaCharacter implements ControllableEntity {
       (c) => c.can(action) && c.perform(action, payload),
     );
   }
-  startAction(clip: string) {
+  startAction(clip: string, duration?: number) {
     this.state = 'action';
-    this.animation.start(clip);
+    this.animation.start(clip, duration);
   }
   cancelAction() {
     this.animation.cancel();
@@ -121,8 +132,11 @@ export class ArenaCharacter implements ControllableEntity {
     if (this.health <= 0) this.state = 'disabled';
   }
   update(dt: number, time: number, emit: (marker: ClipMarker) => void) {
+    if (this.lastX !== undefined && dt > 0)
+      this.groundSpeed = Math.abs(this.body.x - this.lastX) / dt;
+    this.lastX = this.body.x;
     for (const c of this.components) c.update?.(dt);
-    this.animation.update(dt, time, Math.abs(this.body.vx), (m) => {
+    this.animation.update(dt, time, this.groundSpeed, (m) => {
       const revision = this.animation.timeline.revision;
       for (const c of this.components) c.marker?.(m);
       emit(m);
@@ -132,7 +146,8 @@ export class ArenaCharacter implements ControllableEntity {
         revision === this.animation.timeline.revision
       ) {
         this.state = 'idle';
-        this.animation.timeline.cancel();
+        // Blend out of the finished action instead of snapping to idle.
+        this.animation.cancel();
       }
     });
   }

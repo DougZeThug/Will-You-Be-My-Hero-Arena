@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import type { ArenaSession } from '../core/ArenaSession';
+import { objectKey, type ArenaSession } from '../core/ArenaSession';
 import type { LiveOptions, VisualObject } from '../core/LiveTypes';
 import {
   queueArenaAssets,
@@ -7,7 +7,10 @@ import {
   prepareCharacterTextures,
   type LoadedCharacter,
 } from './CharacterAssetLoader';
-import { CharacterPresentation } from '../characters/CharacterPresentation';
+import {
+  CharacterPresentation,
+  presentedBody,
+} from '../characters/CharacterPresentation';
 import { CameraManager } from '../camera/CameraManager';
 import { EffectsManager } from '../effects/EffectsManager';
 import {
@@ -150,16 +153,27 @@ export class LiveArenaScene extends Phaser.Scene {
   update(_time: number, delta: number) {
     if (!this.cameraRig) return;
     this.session.advance(delta / 1000);
-    const view = this.session.event.view();
-    this.actors.forEach((a) => a.update(this.session.time));
+    const view = this.session.event.view(),
+      alpha = this.session.alpha;
+    this.actors.forEach((a) => a.update(this.session.time, alpha));
     this.objects.forEach((o) => o.setVisible(false));
     view.objects.forEach((o) => {
       const actor = this.actors[
         this.session.characters.findIndex((c) => c.id === o.owner)
       ];
       const held = o.id === 'held' && actor;
+      // Flying objects are drawn between steps like the characters.
+      const before = this.session.previousObjects.get(objectKey(o));
+      const shown =
+        before && alpha < 1
+          ? {
+              ...o,
+              x: before.x + (o.x - before.x) * alpha,
+              y: before.y + (o.y - before.y) * alpha,
+            }
+          : o;
       this.object(
-        held ? { ...o, ...actor.hand() } : o,
+        held ? { ...o, ...actor.hand() } : shown,
         held ? actor.heldObjectLayer : undefined,
       );
     });
@@ -182,7 +196,11 @@ export class LiveArenaScene extends Phaser.Scene {
         );
     if (!this.session.paused) {
       this.effects.update(delta / 1000, this.options.reduced);
-      this.cameraRig.update(view, this.session.characters, delta / 1000);
+      this.cameraRig.update(
+        view,
+        this.session.characters.map((c) => presentedBody(c, alpha).x),
+        delta / 1000,
+      );
     }
     this.hud.update({
       event: this.session.config.event as ArenaEventStyle,

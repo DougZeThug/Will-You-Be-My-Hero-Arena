@@ -6,6 +6,22 @@ import { PaperCharacterRig } from './PaperCharacterRig';
 import type { CharacterRig } from './CharacterRig';
 import type { CharacterRigProvider } from './CharacterRig';
 import { clamp } from '../input/InputActions';
+import { mixPuppet } from '../../puppet-motion';
+/** Body transform between the previous and current fixed step. Facing is not
+ * interpolated (a flip is a discrete event). */
+export function presentedBody(c: ArenaCharacter, alpha: number) {
+  const b = c.body,
+    p = c.previous?.body;
+  if (!p || alpha >= 1) return b;
+  const at = (a: number, z: number) => a + (z - a) * alpha;
+  return {
+    ...b,
+    x: at(p.x, b.x),
+    y: at(p.y, b.y),
+    z: at(p.z, b.z),
+    scale: at(p.scale, b.scale),
+  };
+}
 export class CharacterPresentation {
   private rig: CharacterRig;
   private card: Phaser.GameObjects.Container;
@@ -50,9 +66,11 @@ export class CharacterPresentation {
       scene.add.image(0, -68, loaded.cardKey).setDisplaySize(86, 126),
     ]);
   }
-  update(time: number) {
+  /** `alpha` is the session's fraction into the next fixed step: body and
+   * pose are drawn between the previous and current step. */
+  update(time: number, alpha = 1) {
     const c = this.character,
-      b = c.body,
+      b = presentedBody(c, alpha),
       u = clamp((time - this.index * 0.2) / 1.05),
       ease = u * u * (3 - 2 * u),
       offset = (1 - ease) * -55,
@@ -69,7 +87,9 @@ export class CharacterPresentation {
       c.animation.timeline.clip || c.animation.locomotion || c.animation.idle;
     if (!this.rig.performance)
       this.rig.apply(
-        c.animation.pose,
+        alpha < 1 && c.previous
+          ? mixPuppet(c.previous.pose, c.animation.pose, alpha)
+          : c.animation.pose,
         clip,
         c.animation.timeline.clip
           ? c.animation.timeline.progress

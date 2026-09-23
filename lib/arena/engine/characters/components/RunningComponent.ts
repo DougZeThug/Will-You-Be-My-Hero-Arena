@@ -1,6 +1,10 @@
 import type { ArenaCharacter, CharacterComponent } from '../ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
-import type { RunnerMotion } from '../../events/running/RunningPhysics';
+import {
+  RUN_GRAVITY,
+  type RunnerMotion,
+} from '../../events/running/RunningPhysics';
+const JUMP_SPEED = 300;
 export class RunningComponent implements CharacterComponent {
   constructor(
     private c: ArenaCharacter,
@@ -47,8 +51,10 @@ export class RunningComponent implements CharacterComponent {
     if (c.stamina < 8) return false;
     c.stamina -= 8;
     if (action === 'jump') {
-      c.startAction('athletic.jump');
-      c.body.vz = 300;
+      c.body.vz = JUMP_SPEED;
+      // Fit the clip to the physical airtime so the landing reach meets the
+      // ground instead of straightening mid-air.
+      c.startAction('athletic.jump', (2 * JUMP_SPEED) / RUN_GRAVITY);
       return true;
     }
     if (action === 'slide' || action === 'dodge') {

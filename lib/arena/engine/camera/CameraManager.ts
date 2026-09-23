@@ -1,13 +1,13 @@
 import type * as Phaser from 'phaser';
-import type { ArenaCharacter } from '../characters/ArenaCharacter';
 import type { LiveView } from '../core/LiveTypes';
 export class CameraManager {
   private x = 640;
   private zoom = 1;
   constructor(private camera: Phaser.Cameras.Scene2D.Camera) {}
-  update(view: LiveView, characters: ArenaCharacter[], dt: number) {
-    const xs = characters.map((c) => c.body.x),
-      min = Math.min(...xs),
+  /** `xs` are the presented (step-interpolated) character positions, so the
+   * camera and the characters move in the same continuous time. */
+  update(view: LiveView, xs: number[], dt: number) {
+    const min = Math.min(...xs),
       max = Math.max(...xs);
     let center = 640,
       zoom = 1;
