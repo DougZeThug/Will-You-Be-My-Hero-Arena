@@ -198,6 +198,22 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
         y: at('compression', f),
       }),
     );
+    // Footwork: the front (R) and back (L) IK targets follow the take. The
+    // side rig faces +x with the front foot on foot_target_R.
+    for (const [bone, x, y] of [
+      ['foot_target_R', 'frontFootX', 'frontFootY'],
+      ['foot_target_L', 'backFootX', 'backFootY'],
+    ] as const)
+      if (series[x].some((v) => v !== 0) || series[y].some((v) => v !== 0))
+        bones.push({
+          name: bone,
+          translateFrame: Array.from({ length: end + 1 }, (_, f) => ({
+            duration: f === end ? 0 : 1,
+            tweenEasing: 0,
+            x: series[x][f],
+            y: series[y][f],
+          })),
+        });
     native.push({
       name: 'performance_' + id,
       duration: end,

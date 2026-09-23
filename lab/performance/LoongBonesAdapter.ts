@@ -72,6 +72,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private setup = new Map<string, number>();
   private widths = new Map<string, { indices: number[]; width: number }>();
   private planted = new Map<string, Vec2>();
+  /** Bind positions of the planted IK targets; a take's footwork moves them. */
+  private plantTargets = new Map<string, Vec2>();
   private soleSamples: {
     side: string;
     mesh: NativeMesh;
@@ -290,6 +292,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       const b = this.bones.get(name)!.globalTransformMatrix;
       this.planted.set(name, { x: b.tx, y: b.ty });
     }
+    for (const side of ['L', 'R'])
+      this.plantTargets.set(side, this.local('foot_target_' + side));
     // Validate painted sole material as well as anatomical foot landmarks.
     // Samples come from opaque atlas pixels close to each heel-to-toe contact.
     const body = this.meshes.find((m) => m.name === 'body')!;
@@ -568,8 +572,17 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         };
       }),
     );
-    const feet = [...this.planted].map(([name, anchor]) => {
-      const p = this.local(name);
+    // A foot is planted relative to its IK target: an authored or captured
+    // step moves the target; drift away from it is still a support error.
+    const stepped = (side: string) => {
+      const bind = this.plantTargets.get(side)!,
+        now = this.local('foot_target_' + side);
+      return { x: now.x - bind.x, y: now.y - bind.y };
+    };
+    const feet = [...this.planted].map(([name, bind]) => {
+      const p = this.local(name),
+        step = stepped(name.slice(-1)),
+        anchor = { x: bind.x + step.x, y: bind.y + step.y };
       return {
         name,
         anchor,
@@ -579,7 +592,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       };
     });
     const soles = ['L', 'R'].map((side) => {
-      const samples = this.soleSamples.filter((s) => s.side === side);
+      const samples = this.soleSamples.filter((s) => s.side === side),
+        step = stepped(side);
       return {
         side,
         samples: samples.length,
@@ -587,8 +601,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
           ...samples.map((s) => {
             const v = s.mesh.vertices[s.index];
             return (
-              Math.hypot(v.vx - s.anchor.x, v.vy - s.anchor.y) *
-              this.definition.scale
+              Math.hypot(
+                v.vx - s.anchor.x - step.x,
+                v.vy - s.anchor.y - step.y,
+              ) * this.definition.scale
             );
           }),
         ),

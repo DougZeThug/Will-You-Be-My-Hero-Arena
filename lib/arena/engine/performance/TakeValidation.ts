@@ -18,7 +18,17 @@ export const TAKE_CHANNELS = [
   'counterElbow',
   'gaze',
 ] as const;
+/** Optional footwork (rig px offsets of the planted IK targets from their
+ * stance). Absent = planted. Captured steps, hops and heel-to-toe transfer
+ * arrive here; the adapter then checks feet against their moving targets. */
+export const TAKE_FOOT_CHANNELS = [
+  'frontFootX',
+  'frontFootY',
+  'backFootX',
+  'backFootY',
+] as const;
 export type TakeChannel = (typeof TAKE_CHANNELS)[number];
+export type TakeFootChannel = (typeof TAKE_FOOT_CHANNELS)[number];
 export const TAKE_MARKERS = [
   'anticipate',
   'windup',
@@ -43,7 +53,8 @@ export interface PerformanceTake {
   duration: number;
   markers: Record<TakeMarker, number>;
   times: number[];
-  channels: Record<TakeChannel, number[]>;
+  channels: Record<TakeChannel, number[]> &
+    Partial<Record<TakeFootChannel, number[]>>;
 }
 /** Native hand_L limit; the wrist channel is that joint's local rotation. */
 export const TAKE_WRIST_LIMITS = [-35, 95] as const;
@@ -86,6 +97,13 @@ export function validateTake(input: unknown): PerformanceTake {
     if (!Array.isArray(values) || values.length !== t.times.length)
       fail(`channel ${name} must match the time grid`);
     if (!values.every(Number.isFinite)) fail(`channel ${name} is not finite`);
+  }
+  for (const name of TAKE_FOOT_CHANNELS) {
+    const values = t.channels[name];
+    if (values === undefined) continue;
+    if (!Array.isArray(values) || values.length !== t.times.length)
+      fail(`foot channel ${name} must match the time grid`);
+    if (!values.every(Number.isFinite)) fail(`foot channel ${name} is not finite`);
   }
   for (const w of t.channels.wrist)
     if (w < TAKE_WRIST_LIMITS[0] || w > TAKE_WRIST_LIMITS[1])

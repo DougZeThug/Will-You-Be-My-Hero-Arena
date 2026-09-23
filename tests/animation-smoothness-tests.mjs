@@ -66,6 +66,34 @@ export async function testAnimationSmoothness({ check }) {
     }
   }
 
+  // Take contract: shipped takes validate; optional footwork must match the
+  // grid; times and the release land on 60 Hz frames.
+  const { validateTake } =
+    await import('../.test-build/engine/performance/TakeValidation.mjs');
+  for (const id of ['dan', 'doug']) {
+    const take = (
+      await import(`../.test-build/engine/performance/takes/${id}-underhand.mjs`)
+    ).default;
+    check(() => assert.doesNotThrow(() => validateTake(take)));
+    check(() => assert.equal(take.provenance.kind, 'authored'));
+    const zeros = take.times.map(() => 0);
+    check(() =>
+      assert.doesNotThrow(() =>
+        validateTake({ ...take, channels: { ...take.channels, frontFootX: zeros } }),
+      ),
+    );
+    check(() =>
+      assert.throws(() =>
+        validateTake({ ...take, channels: { ...take.channels, backFootY: [0] } }),
+      ),
+    );
+    check(() =>
+      assert.throws(() =>
+        validateTake({ ...take, times: take.times.map((t, i) => (i === 3 ? t + 0.004 : t)) }),
+      ),
+    );
+  }
+
   // Soft reach: identity below the start, C1 at the start, bounded above.
   check(() => assert.equal(softReach(0.9), 0.9));
   check(() => assert.equal(softReach(SOFT_REACH_START), SOFT_REACH_START));

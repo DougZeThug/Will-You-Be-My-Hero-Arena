@@ -15,7 +15,11 @@ export type BodyChannel =
   | 'palm'
   | 'counterArm'
   | 'counterElbow'
-  | 'gaze';
+  | 'gaze'
+  | 'frontFootX'
+  | 'frontFootY'
+  | 'backFootX'
+  | 'backFootY';
 export interface BodyTake {
   seconds: number;
   times: number[];
@@ -122,6 +126,11 @@ export function underhandMechanics(p: PerformanceProfile): BodyTake {
       counterArm: [...c.counterArm],
       counterElbow: [...c.counterElbow],
       gaze: [...c.gaze],
+      // Planted unless the take carries footwork.
+      frontFootX: [...(c.frontFootX ?? c.gaze.map(() => 0))],
+      frontFootY: [...(c.frontFootY ?? c.gaze.map(() => 0))],
+      backFootX: [...(c.backFootX ?? c.gaze.map(() => 0))],
+      backFootY: [...(c.backFootY ?? c.gaze.map(() => 0))],
     },
   };
 }
