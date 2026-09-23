@@ -148,6 +148,34 @@ export async function testAnimationSmoothness({ check }) {
     lastFront = w.front;
   }
 
+  // Presented time never runs backward and holds through a hit-stop at any
+  // refresh rate: alpha still rises between held steps on fast displays and
+  // falls back when one is consumed, but presentation must not advance.
+  const { presentedTime } =
+    await import('../.test-build/engine/characters/PresentationClock.mjs');
+  {
+    let previous;
+    const step = (time, alpha, hold) => {
+      const next = presentedTime(previous, time, alpha, hold);
+      if (previous !== undefined)
+        check(() => assert.ok(next.time >= previous, 'presented time is monotonic'));
+      previous = next.time;
+      return next;
+    };
+    step(1, 0.5, 0);
+    check(() => assert.ok(step(1, 0.9, 0).dt > 0, 'advances between steps'));
+    const t = 1 + 1 / 60;
+    step(t, 0.1, 0);
+    // A 4-step hold rendered at 240 Hz: alpha rises, wraps, rises again.
+    for (const alpha of [0.25, 0.5, 0.75, 0, 0.25, 0.5, 0.75, 0, 0.25])
+      check(() => assert.equal(step(t, alpha, 3).dt, 0, 'frozen through hit-stop'));
+    const after = step(t + 1 / 60, 0.3, 0);
+    check(() => assert.ok(after.dt > 0 && after.dt < 2 / 60, 'resumes smoothly'));
+    check(() => assert.equal(step(t + 1 / 60, 1, 0).dt > 0, true));
+    // Paused: alpha is pinned to 1 and the clock does not move.
+    check(() => assert.equal(step(t + 1 / 60, 1, 0).dt, 0, 'paused holds'));
+  }
+
   // Frontal knees: a bent knee foreshortens toward the camera instead of
   // bowing sideways; hip and ankle are unchanged.
   const { frontLeg, solveLimb, FRONT_KNEE_SPLAY } =

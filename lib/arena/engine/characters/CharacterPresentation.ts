@@ -8,6 +8,7 @@ import type { CharacterRigProvider } from './CharacterRig';
 import { clamp } from '../input/InputActions';
 import { mixPuppet } from '../../puppet-motion';
 import { squashOffset, squashScale } from '../motion/SquashStretch';
+import { presentedTime } from './PresentationClock';
 import {
   chooseView,
   viewWidths,
@@ -43,7 +44,9 @@ export class CharacterPresentation {
   private facing?: number;
   private flipFrom = 1;
   private flipAt = -Infinity;
-  private drivenAt?: number;
+  /** Monotonic presented time (see PresentationClock). */
+  private shownAt?: number;
+  private driven = false;
   /** The front-view puppet beside a side-view rig (camera-facing beats). */
   private front?: CharacterRig;
   private view?: CharacterView;
@@ -125,10 +128,14 @@ export class CharacterPresentation {
    * pose are drawn between the previous and current step. `hold` is the
    * remaining hit-stop; the fighter who was just hit shivers through it. */
   update(time: number, alpha = 1, hold = 0) {
-    if (!this.rig.drive) return this.puppet(this.rig, time, alpha, hold);
-    const widths = viewWidths(this.frontness(time - (1 - alpha) / 60));
-    this.drive(time, alpha, widths.side, hold);
-    if (this.front) this.puppet(this.front, time, alpha, hold, widths.front);
+    const clock = presentedTime(this.shownAt, time, alpha, hold);
+    this.shownAt = clock.time;
+    if (!this.rig.drive)
+      return this.puppet(this.rig, time, alpha, hold, clock.time);
+    const widths = viewWidths(this.frontness(clock.time));
+    this.drive(time, alpha, widths.side, hold, clock);
+    if (this.front)
+      this.puppet(this.front, time, alpha, hold, clock.time, widths.front);
   }
   /** 0 = profile, 1 = front, turning over VIEW_TURN_SECONDS of session time. */
   private frontness(time: number) {
@@ -155,11 +162,11 @@ export class CharacterPresentation {
     time: number,
     alpha: number,
     hold: number,
+    shown: number,
     width = 1,
   ) {
     const c = this.character,
       b = presentedBody(c, alpha),
-      shown = time - (1 - alpha) / 60,
       u = clamp((time - this.index * 0.2) / 1.05),
       ease = u * u * (3 - 2 * u),
       offset = (1 - ease) * -55,
@@ -215,12 +222,20 @@ export class CharacterPresentation {
         .strokeRect(-54, -143, 108, 153);
   }
   /** A side-view motion rig animates and places itself from the presented
-   * body; its velocity is the simulation's own step displacement. */
-  private drive(time: number, alpha: number, width: number, hold: number) {
+   * body; its velocity is the simulation's own step displacement. It holds
+   * still (dt 0) through a hit-stop at any refresh rate; its first drive
+   * steps once so the rig is placed before it is drawn. */
+  private drive(
+    time: number,
+    alpha: number,
+    width: number,
+    hold: number,
+    clock: { time: number; dt: number },
+  ) {
     const c = this.character,
       b = presentedBody(c, alpha),
       p = c.previous?.body ?? c.body,
-      shown = time - (1 - alpha) / 60,
+      shown = clock.time,
       shiver = hold > 0 && c.beats.hit === time ? (hold % 2 ? 3 : -3) : 0;
     this.rig.setViewWidth?.(width);
     this.rig.drive!({
@@ -232,7 +247,7 @@ export class CharacterPresentation {
       facing: b.facing,
       scale: b.scale,
       time: shown,
-      dt: this.drivenAt === undefined ? 1 / 60 : shown - this.drivenAt,
+      dt: this.driven ? clock.dt : 1 / 60,
       clip: c.animation.timeline.clip,
       clipRevision: c.animation.timeline.revision,
       clipDuration: c.animation.timeline.duration,
@@ -240,7 +255,7 @@ export class CharacterPresentation {
       reduced: this.reduced,
       squash: this.reduced ? { x: 1, y: 1 } : this.squash(shown),
     });
-    this.drivenAt = shown;
+    this.driven = true;
     this.shadow
       .setPosition(b.x, b.y + 2)
       .setScale(b.scale * (1 - b.z / 600), b.scale)

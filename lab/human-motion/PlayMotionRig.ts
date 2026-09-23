@@ -75,7 +75,8 @@ export class PlayMotionRig implements CharacterRig {
   private airborneSpeed = 0;
   private width = 1;
   private squash = { x: 1, y: 1 };
-  private displayScale = 0;
+  /** Absolute scale of the native actor (source units → world px). */
+  private actorScale = 0;
   constructor(
     private scene: Phaser.Scene,
     readonly definition: WeightedRigDefinition,
@@ -90,7 +91,7 @@ export class PlayMotionRig implements CharacterRig {
     const id = this.definition.id as 'dan' | 'doug';
     const scale =
       (this.definition.scale * PLAY_RIG_HEIGHT * this.scale) / 371;
-    this.displayScale = scale;
+    this.actorScale = scale;
     this.animator = new NativeAnimator(
       this.scene,
       { ...this.definition, scale },
@@ -104,6 +105,7 @@ export class PlayMotionRig implements CharacterRig {
       },
     );
     this.animator.organicEnabled = !frame.reduced;
+    // Ratio to the 371 px Lab reference: motor and stride fitting only.
     const display = scale / this.definition.scale;
     this.motor = new CharacterMotor(motionProfiles[id], {
       x: frame.x,
@@ -244,11 +246,11 @@ export class PlayMotionRig implements CharacterRig {
     if (!this.animator || !this.motor) return;
     // Scales about the actor origin on the ground line, so feet stay down.
     this.animator.actor.scaleX =
-      this.displayScale *
+      this.actorScale *
       this.motor.facing *
       this.squash.x *
       Math.max(0.001, this.width);
-    this.animator.actor.scaleY = this.displayScale * this.squash.y;
+    this.animator.actor.scaleY = this.actorScale * this.squash.y;
     this.animator.actor.setVisible(this.width > 0.01);
   }
   apply() {
