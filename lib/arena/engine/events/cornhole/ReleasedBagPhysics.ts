@@ -36,7 +36,7 @@ export function ballisticFlight(
   touch: { x: number; y: number },
   air: number,
 ) {
-  const tau = Math.min(0.15, 0.3 * air),
+  const tau = Math.min(0.22, 0.35 * air),
     dx = touch.x - release.x,
     dy = touch.y - release.y,
     reference = 9.8 * COURT_PX_PER_METRE_Y * (release.scale ?? 1),

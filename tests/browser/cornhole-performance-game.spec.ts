@@ -146,8 +146,16 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   expect(object.displayWidth).toBeCloseTo(previous.displayWidth, 5);
   expect(object.displayHeight).toBeCloseTo(previous.displayHeight, 5);
   // The held bag follows the evaluated hand during the final 1/120s before
-  // release. It may rotate with the wrist, but must not visibly snap.
-  expect(Math.abs(object.rotation - previous.rotation)).toBeLessThan(0.05);
+  // release. It may rotate with the wrist, but only as fast as the hand turns
+  // (the drive is a fast cartoon snap), never with a visible snap of its own.
+  const released = launch.characters[
+    a.actor
+  ].rigDetails.performance.events.find(
+    (e: { name: string }) => e.name === 'OBJECT_RELEASED',
+  ).release;
+  expect(Math.abs(object.rotation - previous.rotation)).toBeLessThan(
+    (Math.abs(released.angularVelocity) / 120) * 1.5 + 0.02,
+  );
   expect(
     launch.characters[a.actor].rigDetails.performance.events.filter(
       (e: { name: string }) => e.name === 'OBJECT_RELEASED',

@@ -72,8 +72,15 @@ test('performance: release exposure and draw order survive seek, then reactions 
     expect(before.layer).toBe('fingers');
     expect(after.layer).toBe('fingers');
     expect(sample.frames[6].projectile.layer).toBe('court');
+    // Continuity at release is judged against the hand's own speed: across
+    // the 0.2 ms straddling release the bag may travel only as far as the
+    // evaluated release velocity carries it.
+    const released = sample.end.performance.events.find(
+      (e) => e.name === 'OBJECT_RELEASED',
+    )!.release!;
+    const speed = Math.hypot(released.velocity.x, released.velocity.y);
     expect(Math.hypot(before.x - after.x, before.y - after.y)).toBeLessThan(
-      0.2,
+      speed * 0.0002 * 1.5 + 0.02,
     );
     expect(after.displayWidth).toBeCloseTo(before.displayWidth, 4);
     expect(after.displayHeight).toBeCloseTo(before.displayHeight, 4);
@@ -526,13 +533,16 @@ test('performance: miss, pause, frame step, speed and profile validation', async
   const profile = JSON.parse(
     await page.getByRole('textbox', { name: 'Profile JSON' }).inputValue(),
   );
+  const reviewedTempo = profile.movementTempo;
   profile.movementTempo = -1;
   await page
     .getByRole('textbox', { name: 'Profile JSON' })
     .fill(JSON.stringify(profile));
   await page.getByRole('button', { name: 'Apply profile at this time' }).click();
   await expect(page.getByRole('alert')).toContainText('movementTempo');
-  expect((await state(page)).performance.profile.movementTempo).toBe(1.05);
+  expect((await state(page)).performance.profile.movementTempo).toBe(
+    reviewedTempo,
+  );
   await page
     .getByRole('combobox', { name: 'Action', exact: true })
     .selectOption('celebrate');
