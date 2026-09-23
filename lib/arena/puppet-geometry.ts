@@ -8,6 +8,7 @@ export interface JoinedSkin {rect:[number,number,number,number];hip:[number,numb
 export interface PuppetAsset {version:1|2;url:string;width:number;height:number;keyColor?:[number,number,number];pieces:Record<PuppetPart,PuppetPiece>;arm:[number,number];leg:[number,number];headSize:[number,number];torsoSize:[number,number];footSize:[number,number];choreography?:CharacterChoreography;skin?:Record<'head'|'torso'|'armL'|'armR'|'legL'|'legR',SkinPiece>;joined?:JoinedSkin}
 export interface JointPoint{x:number;y:number}
 const rad=Math.PI/180;
+const STANCE_BEND=3;
 /** Calibrate the rest silhouette without moving its image-space bind markers.
  * The collar stays centered; the shoulder line slopes down toward each arm. */
 export function joinedBodyPoint(skin:JoinedSkin,x:number,y:number):JointPoint{
@@ -31,7 +32,9 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
  // Soft knee reach: lower the pelvis smoothly as a planted leg nears full
  // extension instead of letting the two-bone knee snap straight (a pop). The
  // crouch floor leaves room for real anticipation dips and landings.
- const raw={x:p.hipX,y:Math.min(-140-lift,p.hipY-lift)},legLength=asset.leg[0]+asset.leg[1];
+ // A slight athletic knee bend keeps rest out of the saturated reach zone, so
+ // breathing and stand-tall beats still move the hips.
+ const raw={x:p.hipX,y:Math.min(-140-lift,p.hipY-lift)+STANCE_BEND},legLength=asset.leg[0]+asset.leg[1];
  const soften=softReachDrop([{hip:{x:raw.x-23,y:raw.y+6},ankle:{x:p.footLX,y:p.footLY},length:legLength},{hip:{x:raw.x+23,y:raw.y+6},ankle:{x:p.footRX,y:p.footRY},length:legLength}]);
  const hip={x:raw.x,y:Math.max(raw.y+soften,floorLimit(p.footLX,p.footLY,-23),floorLimit(p.footRX,p.footRY,23))},body=(x:number,y:number)=>{const local=asset.joined?joinedBodyPoint(asset.joined,x,y):{x,y},q=rotatePoint({x:local.x*p.turn,y:local.y},p.body);return{x:hip.x+q.x,y:hip.y+q.y};};
  const shoulderY=asset.version===2?-100:-88;
