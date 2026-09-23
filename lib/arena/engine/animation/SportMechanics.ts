@@ -48,8 +48,10 @@ export function sportThrowMotion(sport: Sport, shot: ShotStyle = 'standard', spe
     setup = { handRX: 31, handRY: -249, handLX: -1, handLY: -244, head: -4, wristR: -15 };
     load = { handRX: 61, handRY: -324, handLX: -38, handLY: -232, hipX: -9, hipY: -165, body: -11, turn: .94, wristR: -24, palmR: .77 };
     release = { handRX: r.x, handRY: r.y, handLX: -26, handLY: -225, hipX: drive * 1.3, hipY: -174, body: 5, wristR: 24, palmR: .74, head: -5 };
-    follow = { ...release, handRX: 111, handRY: -249, handLX: -31, handLY: -210, body: 11, hipY: -170, wristR: 51, palmR: .65 };
-    hold = { ...follow, handRX: 21, handRY: -193, wristR: 18, body: 5 };
+    // A quarterback's throwing hand finishes across the body toward the
+    // opposite hip with the chest turned to the target, not on its own hip.
+    follow = { ...release, handRX: 111, handRY: -249, handLX: -31, handLY: -210, body: 11, hipY: -170, turn: .9, wristR: 51, palmR: .65 };
+    hold = { ...follow, handRX: -12, handRY: -178, handLX: -52, handLY: -168, wristR: 18, body: 7, turn: .88 };
   } else {
     setup = { handRX: 58, handRY: -244, handLX: -32, handLY: -178, head: -4, wristR: -15 };
     load = { handRX: 67, handRY: -270, handLX: -32, handLY: -178, wristR: -30, palmR: .82, body: -3, hipX: -3, hipY: -168, head: -5 };

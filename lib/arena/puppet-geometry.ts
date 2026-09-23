@@ -29,6 +29,8 @@ export function solveLimb(root:JointPoint,target:JointPoint,l1:number,l2:number,
  * and the knee tracks slightly out over the toes. Drawing the whole bend
  * sideways bowed every crouch, stride and landing into a squat. */
 export const FRONT_KNEE_SPLAY=.3;
+/** Share of an outward frontal elbow bend drawn sideways (see puppetJoints). */
+export const FRONT_ELBOW_WING=.55;
 /** Two-bone frontal leg. Hip and ankle are exactly those of `solveLimb`; the
  * knee keeps its height along the leg and FRONT_KNEE_SPLAY of its sideways
  * offset (`bend` picks the outward side). */
@@ -66,7 +68,12 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
    // bend passes smoothly through straight, without reversing either bone or
    // letting the elbow coincide with the palm at a pole-vector singularity.
    const span=Math.max(Math.abs(asset.arm[0]-asset.arm[1])+.001,Math.min(reach-.001,d)),along=(asset.arm[0]**2-asset.arm[1]**2+span**2)/(2*span),height=Math.sqrt(Math.max(0,asset.arm[0]**2-along**2)),lift=Math.max(0,Math.min(1,-dy/45)),raised=lift*lift*(3-2*lift),bend=Math.tanh(dx/25)*(1-raised)+side*raised,ux=dx/Math.max(.001,d),uy=dy/Math.max(.001,d);
-   const joint={x:root.x+ux*along-uy*height*bend,y:root.y+uy*along+ux*height*bend};
+   // An elbow bending outward mostly travels back, away from the camera: draw
+   // FRONT_ELBOW_WING of it sideways and foreshorten the rest. The full
+   // sideways bend read as chicken wings whenever a hand came in front of
+   // the body.
+   const wing=bend*side<0?FRONT_ELBOW_WING:1;
+   const joint={x:root.x+ux*along-uy*height*bend*wing,y:root.y+uy*along+ux*height*bend*wing};
    joint.x=root.x+side*Math.max(-5,side*(joint.x-root.x));
    const foreX=joint.x-end.x,foreY=joint.y-end.y,limit=Math.sqrt(Math.max(0,asset.arm[1]**2-foreX**2));
    if(Math.abs(foreX)<=asset.arm[1]&&Math.abs(foreY)>limit)joint.y=end.y+Math.sign(foreY)*limit;
