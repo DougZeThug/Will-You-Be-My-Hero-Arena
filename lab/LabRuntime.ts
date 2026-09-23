@@ -216,10 +216,11 @@ export class LabRuntime {
             ? await (
                 await import('./loongbones/arena/provider')
               ).weightedMatchProvider()
-            : scenario.kind === 'live' && scenario.sport === 'running'
+            : scenario.kind === 'live' &&
+                (scenario.sport === 'running' || scenario.sport === 'fighting')
               ? await (
                   await import('./human-motion/provider')
-                ).sideMotionProvider()
+                ).sideMotionProvider(scenario.sport)
               : undefined;
       await new Promise<void>((resolve, reject) => {
         timeout = setTimeout(

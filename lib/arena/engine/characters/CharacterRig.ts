@@ -35,10 +35,14 @@ export interface RigDriveFrame {
   clipDuration: number;
   substate: string;
   reduced: boolean;
+  /** Presentation-only whole-figure squash (volume-preserving scales). */
+  squash: { x: number; y: number };
 }
 export interface CharacterRig {
   readonly root: Phaser.GameObjects.Container;
   drive?(frame: RigDriveFrame): void;
+  /** Horizontal draw width during a view turn (1 = open, 0 = edge-on). */
+  setViewWidth?(width: number): void;
   readonly backend?: string;
   readonly performance?: CharacterPerformanceController;
   readonly heldObjectLayer?: Phaser.GameObjects.Container;

@@ -1,6 +1,6 @@
 import type { CharacterRigProvider } from '../../lib/arena/engine/characters/CharacterRig';
 import { sideDefinitions } from '../loongbones/side-rig/definitions';
-import { PlayMotionRig } from './PlayMotionRig';
+import { PlayMotionRig, type PlayMotionEvent } from './PlayMotionRig';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
 import danTexture from '../loongbones/assets/cornhole-side-v3/dan_tex.png?url';
@@ -18,11 +18,13 @@ const files = {
 const rear = { dan: danRear, doug: dougRear };
 
 /**
- * Side-view motion rigs for Play running: Dan and Doug run in profile on
- * their original, hash-checked side-v3 art; any other character keeps its
- * puppet. URL imports bundle the same files the Lab serves.
+ * Side-view motion rigs for Play running and fighting: Dan and Doug move in
+ * profile on their original, hash-checked side-v3 art; any other character
+ * keeps its puppet. URL imports bundle the same files the Lab serves.
  */
-export async function sideMotionProvider(): Promise<CharacterRigProvider> {
+export async function sideMotionProvider(
+  event: PlayMotionEvent,
+): Promise<CharacterRigProvider> {
   await Promise.all(
     sideDefinitions.flatMap((d) =>
       Object.entries(files[d.id as keyof typeof files]).map(
@@ -61,7 +63,7 @@ export async function sideMotionProvider(): Promise<CharacterRigProvider> {
         (d) => 'card-' + d.id === character.asset.cardId,
       );
       if (!d) return undefined;
-      return new PlayMotionRig(scene, d, placement.scale ?? 0.7);
+      return new PlayMotionRig(scene, d, placement.scale ?? 0.7, event);
     },
   };
 }

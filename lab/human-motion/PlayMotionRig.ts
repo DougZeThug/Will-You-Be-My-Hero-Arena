@@ -47,6 +47,23 @@ const PLAY_GAIT = { strideScale: 2, armBias: 14, armGain: 1.1 };
  * animator reads, so the gait is fitted to the real ground speed (planted
  * feet do not slide) and actions start from the simulation's own clip starts.
  */
+export type PlayMotionEvent = 'running' | 'fighting';
+/** Play combat actions → the Human Motion combat vocabulary. The proof has a
+ * near-arm jab and heavy punch; the bigger Play attacks reuse the heavy. */
+const COMBAT: Record<string, string> = {
+  'combat.jab': 'jab',
+  'combat.cross': 'jab',
+  'combat.heavy': 'heavy',
+  'combat.uppercut': 'heavy',
+  'combat.finisher': 'heavy',
+  'combat.special': 'heavy',
+  'combat.grapple': 'heavy',
+  'combat.dodge': 'dodge',
+  'combat.block': 'block',
+  'combat.hit': 'hit',
+  'combat.heavyHit': 'hit',
+  'combat.defeat': 'failure',
+};
 export class PlayMotionRig implements CharacterRig {
   readonly root: Phaser.GameObjects.Container;
   readonly backend = 'loongbones-side-motion';
@@ -56,10 +73,14 @@ export class PlayMotionRig implements CharacterRig {
   private contacts = new MotionContacts();
   private revision = -1;
   private airborneSpeed = 0;
+  private width = 1;
+  private squash = { x: 1, y: 1 };
+  private displayScale = 0;
   constructor(
     private scene: Phaser.Scene,
     readonly definition: WeightedRigDefinition,
     private scale: number,
+    readonly event: PlayMotionEvent = 'running',
   ) {
     // The native actor is placed in world space (its foot locks are world
     // points); the root stays at the origin so socket() is world space too.
@@ -69,6 +90,7 @@ export class PlayMotionRig implements CharacterRig {
     const id = this.definition.id as 'dan' | 'doug';
     const scale =
       (this.definition.scale * PLAY_RIG_HEIGHT * this.scale) / 371;
+    this.displayScale = scale;
     this.animator = new NativeAnimator(
       this.scene,
       { ...this.definition, scale },
@@ -76,7 +98,9 @@ export class PlayMotionRig implements CharacterRig {
         forwardKnees: true,
         directional: true,
         extend: (library) => addPlayRunning(library),
-        gait: PLAY_GAIT,
+        // Fighters close distance in short guarded steps (the proof's own
+        // tuning); only runners need the long Play stride.
+        gait: this.event === 'running' ? PLAY_GAIT : undefined,
       },
     );
     this.animator.organicEnabled = !frame.reduced;
@@ -91,6 +115,15 @@ export class PlayMotionRig implements CharacterRig {
       this.motor.profile,
       display,
     );
+    if (this.event === 'fighting') {
+      // Guard stance and guard-carrying gaits; facing follows the opponent.
+      this.motor.steerFacing = false;
+      this.planner.idle = 'combatNeutral';
+      this.planner.locomotionVariants = Object.fromEntries(
+        ['walk', 'jog', 'run', 'sprint'].map((id) => [id, 'combat.' + id]),
+      );
+      this.planner.request('combatNeutral', true);
+    }
   }
   /** Start the rig's action for a new simulation clip. */
   private start(clip: string, substate: string, duration: number) {
@@ -109,10 +142,13 @@ export class PlayMotionRig implements CharacterRig {
       }
     } else if (clip === 'running.slide') planner.request('slide', true);
     else if (clip === 'running.stumble') planner.request('hit', true);
-    else if (substate === 'finished') planner.request('success', true);
+    else if (COMBAT[clip]) planner.request(COMBAT[clip], true);
+    else if (substate === 'finished' || substate === 'celebrating')
+      planner.request('success', true);
   }
   drive(frame: RigDriveFrame) {
     if (!this.animator) this.build(frame);
+    this.squash = frame.squash;
     const animator = this.animator!,
       planner = this.planner!,
       motor = this.motor!;
@@ -120,8 +156,14 @@ export class PlayMotionRig implements CharacterRig {
       this.revision = frame.clipRevision;
       this.start(frame.clip, frame.substate, frame.clipDuration);
     }
+    // A held guard ends when the simulation lets go of the block.
+    if (
+      planner.graph.get('action')?.clip.id === 'block' &&
+      frame.clip !== 'combat.block'
+    )
+      planner.graph.remove('action');
     // Paused or held (hit-stop): keep the pose.
-    if (!(frame.dt > 0)) return;
+    if (!(frame.dt > 0)) return this.applyWidth();
     const dt = Math.min(0.1, frame.dt),
       wasGrounded = motor.grounded;
     motor.acceleration = {
@@ -190,6 +232,24 @@ export class PlayMotionRig implements CharacterRig {
     );
     // Sort with the other lane objects by ground line, as the puppet does.
     animator.actor.setDepth(frame.y + 20);
+    this.applyWidth();
+  }
+  setViewWidth(width: number) {
+    this.width = width;
+    this.applyWidth();
+  }
+  /** Close the profile toward edge-on during a turn to the front view, and
+   * apply the presentation squash. */
+  private applyWidth() {
+    if (!this.animator || !this.motor) return;
+    // Scales about the actor origin on the ground line, so feet stay down.
+    this.animator.actor.scaleX =
+      this.displayScale *
+      this.motor.facing *
+      this.squash.x *
+      Math.max(0.001, this.width);
+    this.animator.actor.scaleY = this.displayScale * this.squash.y;
+    this.animator.actor.setVisible(this.width > 0.01);
   }
   apply() {
     throw Error('The side-view motion rig is driven by the simulated body');

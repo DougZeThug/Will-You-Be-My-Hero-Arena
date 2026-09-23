@@ -85,6 +85,9 @@ const CASES = [
       [250, 'move', { x: 0, y: 0 }],
     ],
   },
+  // View turns: camera-facing before the start, profile once under way.
+  { id: 'running-start', scenario: 'running-live', start: 0, frames: 150 },
+  { id: 'fighting-start', scenario: 'fighting-live', start: 0, frames: 150 },
   {
     id: 'fighting-play',
     scenario: 'fighting-live',

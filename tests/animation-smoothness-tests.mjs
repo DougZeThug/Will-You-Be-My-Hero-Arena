@@ -128,6 +128,49 @@ export async function testAnimationSmoothness({ check }) {
   check(() => assert.ok(fast.along <= 1.35 + 1e-12));
   check(() => assert.ok(Math.abs(fast.along * fast.across ** 2 - 1) < 1e-12));
 
+  // View angle: profile for travel and exchanges, front for camera-facing
+  // beats; a turn closes one drawing to edge-on before the other opens.
+  const { chooseView, viewWidths } =
+    await import('../.test-build/engine/characters/CharacterView.mjs');
+  check(() => assert.equal(chooseView({ substate: 'ready' }), 'front'));
+  check(() => assert.equal(chooseView({ substate: 'finished' }), 'front'));
+  for (const substate of ['running', 'sprinting', 'airborne', 'neutral', 'attacking', 'hitstun'])
+    check(() => assert.equal(chooseView({ substate }), 'side'));
+  check(() => assert.deepEqual(viewWidths(0), { side: 1, front: 0 }));
+  check(() => assert.deepEqual(viewWidths(1), { side: 0, front: 1 }));
+  let lastSide = 1,
+    lastFront = 0;
+  for (let f = 0; f <= 1.0001; f += 0.02) {
+    const w = viewWidths(f);
+    check(() => assert.ok(w.side === 0 || w.front === 0, 'one drawing at a time'));
+    check(() => assert.ok(w.side <= lastSide + 1e-12 && w.front >= lastFront - 1e-12));
+    lastSide = w.side;
+    lastFront = w.front;
+  }
+
+  // Frontal knees: a bent knee foreshortens toward the camera instead of
+  // bowing sideways; hip and ankle are unchanged.
+  const { frontLeg, solveLimb, FRONT_KNEE_SPLAY } =
+    await import('../.test-build/puppet-geometry.mjs');
+  for (const hipY of [-190, -170, -150]) {
+    const hip = { x: -23, y: hipY },
+      foot = { x: -40, y: -22 },
+      full = solveLimb(hip, foot, 90, 88, 1),
+      leg = frontLeg(hip, foot, 90, 88, 1);
+    check(() => assert.deepEqual(leg.end, full.end));
+    const lateral = (j) => {
+      const dx = foot.x - hip.x,
+        dy = foot.y - hip.y,
+        n = Math.hypot(dx, dy);
+      return ((j.x - hip.x) * dy - (j.y - hip.y) * dx) / n;
+    };
+    check(() =>
+      assert.ok(
+        Math.abs(lateral(leg.joint) - FRONT_KNEE_SPLAY * lateral(full.joint)) < 1e-9,
+      ),
+    );
+  }
+
   // Soft reach: identity below the start, C1 at the start, bounded above.
   check(() => assert.equal(softReach(0.9), 0.9));
   check(() => assert.equal(softReach(SOFT_REACH_START), SOFT_REACH_START));

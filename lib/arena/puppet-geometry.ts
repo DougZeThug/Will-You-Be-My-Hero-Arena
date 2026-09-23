@@ -24,6 +24,20 @@ export function solveLimb(root:JointPoint,target:JointPoint,l1:number,l2:number,
  const along=(l1*l1-l2*l2+d*d)/(2*d),cross=Math.sqrt(Math.max(0,l1*l1-along*along))*bend;
  return {root,joint:{x:root.x+ux*along-uy*cross,y:root.y+uy*along+ux*cross},end:{x:root.x+ux*d,y:root.y+uy*d},reachable:Math.abs(d-raw)<.001};
 }
+/** Share of a frontal knee bend drawn as sideways knee travel. A real knee
+ * flexes toward the camera in a front view: the thigh and shin foreshorten
+ * and the knee tracks slightly out over the toes. Drawing the whole bend
+ * sideways bowed every crouch, stride and landing into a squat. */
+export const FRONT_KNEE_SPLAY=.3;
+/** Two-bone frontal leg. Hip and ankle are exactly those of `solveLimb`; the
+ * knee keeps its height along the leg and FRONT_KNEE_SPLAY of its sideways
+ * offset (`bend` picks the outward side). */
+export function frontLeg(root:JointPoint,target:JointPoint,l1:number,l2:number,bend:number){
+ const full=solveLimb(root,target,l1,l2,bend),d=Math.hypot(full.end.x-root.x,full.end.y-root.y);
+ if(d<1e-6)return full;
+ const along=(l1*l1-l2*l2+d*d)/(2*d),line={x:root.x+(full.end.x-root.x)*along/d,y:root.y+(full.end.y-root.y)*along/d};
+ return{...full,joint:{x:line.x+(full.joint.x-line.x)*FRONT_KNEE_SPLAY,y:line.y+(full.joint.y-line.y)*FRONT_KNEE_SPLAY}};
+}
 export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'version'|'joined'>){
  const reach=asset.leg[0]+asset.leg[1]-.1;
  const floorLimit=(footX:number,footY:number,offset:number)=>footY-Math.sqrt(Math.max(0,reach*reach-(footX-p.hipX-offset)**2))-6;
@@ -69,7 +83,7 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
   const joint={x:root.x+ux*along+px/pole*cross,y:root.y+uy*along+py/pole*cross};
   return {root,end,joint,reachable:d<=reach+.001};
  };
- return {hip,neck,shoulderL,shoulderR,leftArm:arm(shoulderL,{x:p.handLX,y:p.handLY},-1),rightArm:arm(shoulderR,{x:p.handRX,y:p.handRY},1),leftLeg:solveLimb(hipL,{x:p.footLX,y:p.footLY},...asset.leg,1),rightLeg:solveLimb(hipR,{x:p.footRX,y:p.footRY},...asset.leg,-1)};
+ return {hip,neck,shoulderL,shoulderR,leftArm:arm(shoulderL,{x:p.handLX,y:p.handLY},-1),rightArm:arm(shoulderR,{x:p.handRX,y:p.handRY},1),leftLeg:frontLeg(hipL,{x:p.footLX,y:p.footLY},...asset.leg,1),rightLeg:frontLeg(hipR,{x:p.footRX,y:p.footRY},...asset.leg,-1)};
 }
 export function puppetAssetErrors(input:unknown):string[]{
  if(!input||typeof input!=='object'||Array.isArray(input))return ['puppet must be an articulated asset object.'];

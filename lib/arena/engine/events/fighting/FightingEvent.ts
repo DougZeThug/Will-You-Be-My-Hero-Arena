@@ -8,6 +8,7 @@ import type { InputFrame } from '../../input/InputActions';
 import { FightingActionMap } from './FightingActionMap';
 import { CombatComponent } from '../../characters/components/CombatComponent';
 import { moveFighter, combatHits } from './CombatPhysics';
+const BODY_SPACING = 88;
 export class FightingEvent implements PlayableArenaEvent {
   id = 'fighting';
   private ctx!: EventContext;
@@ -72,8 +73,10 @@ export class FightingEvent implements PlayableArenaEvent {
         const a = this.ctx.characters[i],
           b = this.ctx.characters[j],
           dx = b.body.x - a.body.x;
-        if (a.health > 0 && b.health > 0 && Math.abs(dx) < 70) {
-          const push = (70 - Math.abs(dx)) / 2,
+        // Bodies cannot overlap: in profile, torsos closer than ~0.55 m
+        // interpenetrate. Stay inside the shortest attack range (grapple 92).
+        if (a.health > 0 && b.health > 0 && Math.abs(dx) < BODY_SPACING) {
+          const push = (BODY_SPACING - Math.abs(dx)) / 2,
             sign = Math.sign(dx) || 1;
           a.body.x -= sign * push;
           b.body.x += sign * push;

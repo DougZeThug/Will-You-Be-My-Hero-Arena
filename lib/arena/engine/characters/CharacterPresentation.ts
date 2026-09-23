@@ -8,6 +8,12 @@ import type { CharacterRigProvider } from './CharacterRig';
 import { clamp } from '../input/InputActions';
 import { mixPuppet } from '../../puppet-motion';
 import { squashOffset, squashScale } from '../motion/SquashStretch';
+import {
+  chooseView,
+  viewWidths,
+  VIEW_TURN_SECONDS,
+  type CharacterView,
+} from './CharacterView';
 /** Body transform between the previous and current fixed step. Facing is not
  * interpolated (a flip is a discrete event). */
 export function presentedBody(c: ArenaCharacter, alpha: number) {
@@ -38,6 +44,11 @@ export class CharacterPresentation {
   private flipFrom = 1;
   private flipAt = -Infinity;
   private drivenAt?: number;
+  /** The front-view puppet beside a side-view rig (camera-facing beats). */
+  private front?: CharacterRig;
+  private view?: CharacterView;
+  private viewFrom = 0;
+  private viewAt = -Infinity;
   constructor(
     scene: Phaser.Scene,
     loaded: LoadedCharacter,
@@ -59,6 +70,11 @@ export class CharacterPresentation {
         update: (dt) => this.updatePerformance(dt),
         cleanup: () => character.setPresentedHand(),
       });
+    }
+    if (this.rig.drive) {
+      this.front = createCharacterRig(scene, loaded, character.profile, true);
+      if (this.front instanceof PaperCharacterRig)
+        this.front.shadow.setVisible(false);
     }
     if (this.rig instanceof PaperCharacterRig)
       this.rig.shadow.setVisible(false);
@@ -109,7 +125,38 @@ export class CharacterPresentation {
    * pose are drawn between the previous and current step. `hold` is the
    * remaining hit-stop; the fighter who was just hit shivers through it. */
   update(time: number, alpha = 1, hold = 0) {
-    if (this.rig.drive) return this.drive(time, alpha);
+    if (!this.rig.drive) return this.puppet(this.rig, time, alpha, hold);
+    const widths = viewWidths(this.frontness(time - (1 - alpha) / 60));
+    this.drive(time, alpha, widths.side, hold);
+    if (this.front) this.puppet(this.front, time, alpha, hold, widths.front);
+  }
+  /** 0 = profile, 1 = front, turning over VIEW_TURN_SECONDS of session time. */
+  private frontness(time: number) {
+    const view = chooseView(this.character),
+      value = () => {
+        const to = this.view === 'front' ? 1 : 0,
+          u = clamp((time - this.viewAt) / VIEW_TURN_SECONDS);
+        return this.viewFrom + (to - this.viewFrom) * u;
+      };
+    if (this.view === undefined) {
+      this.view = view;
+      this.viewFrom = view === 'front' ? 1 : 0;
+    } else if (view !== this.view) {
+      this.viewFrom = value();
+      this.viewAt = time;
+      this.view = view;
+    }
+    return value();
+  }
+  /** The front-view cut-out puppet, drawn `width` wide (1 = fully open, 0 =
+   * edge-on during a view turn). */
+  private puppet(
+    rig: CharacterRig,
+    time: number,
+    alpha: number,
+    hold: number,
+    width = 1,
+  ) {
     const c = this.character,
       b = presentedBody(c, alpha),
       shown = time - (1 - alpha) / 60,
@@ -120,18 +167,24 @@ export class CharacterPresentation {
       q = this.rig.performance ? { x: 1, y: 1 } : this.squash(shown),
       facing = this.rig.performance ? b.facing : this.turn(b.facing, shown),
       shiver = hold > 0 && c.beats.hit === time ? (hold % 2 ? 3 : -3) : 0;
-    this.rig.root
+    rig.root
       .setPosition(b.x + offset + shiver, b.y - b.z - lift)
       .setScale(
-        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * facing * q.x,
-        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * q.y,
+        (rig.performance ? 1 : b.scale) *
+          (0.45 + 0.55 * ease) *
+          facing *
+          q.x *
+          Math.max(0.001, width),
+        (rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * q.y,
       )
       .setDepth(b.y + 20)
-      .setAlpha(clamp(u * 4));
+      .setAlpha(clamp(u * 4))
+      .setVisible(width > 0.01);
+    if (width <= 0.01) return;
     const clip =
       c.animation.timeline.clip || c.animation.locomotion || c.animation.idle;
-    if (!this.rig.performance)
-      this.rig.apply(
+    if (!rig.performance)
+      rig.apply(
         alpha < 1 && c.previous
           ? mixPuppet(c.previous.pose, c.animation.pose, alpha)
           : c.animation.pose,
@@ -140,6 +193,8 @@ export class CharacterPresentation {
           ? c.animation.timeline.progress
           : (time / 2) % 1,
       );
+    // Alongside a side-view rig, drive() owns the shadow and card.
+    if (rig !== this.rig) return;
     this.shadow
       .setPosition(b.x, b.y + 2)
       .setScale(b.scale * (1 - b.z / 600) * q.x, b.scale)
@@ -150,6 +205,9 @@ export class CharacterPresentation {
       .setDepth(b.y - 1)
       .setScale(0.74)
       .setAlpha(0.8);
+    this.entranceGlow(u);
+  }
+  private entranceGlow(u: number) {
     this.glow.clear();
     if (u < 1)
       this.glow
@@ -158,13 +216,15 @@ export class CharacterPresentation {
   }
   /** A side-view motion rig animates and places itself from the presented
    * body; its velocity is the simulation's own step displacement. */
-  private drive(time: number, alpha: number) {
+  private drive(time: number, alpha: number, width: number, hold: number) {
     const c = this.character,
       b = presentedBody(c, alpha),
       p = c.previous?.body ?? c.body,
-      shown = time - (1 - alpha) / 60;
+      shown = time - (1 - alpha) / 60,
+      shiver = hold > 0 && c.beats.hit === time ? (hold % 2 ? 3 : -3) : 0;
+    this.rig.setViewWidth?.(width);
     this.rig.drive!({
-      x: b.x,
+      x: b.x + shiver,
       y: b.y,
       z: b.z,
       vx: (c.body.x - p.x) * 60,
@@ -178,6 +238,7 @@ export class CharacterPresentation {
       clipDuration: c.animation.timeline.duration,
       substate: c.substate,
       reduced: this.reduced,
+      squash: this.reduced ? { x: 1, y: 1 } : this.squash(shown),
     });
     this.drivenAt = shown;
     this.shadow
@@ -192,7 +253,7 @@ export class CharacterPresentation {
       .setDepth(b.y - 45)
       .setScale(0.74)
       .setAlpha(0.8);
-    this.glow.clear();
+    this.entranceGlow(clamp((time - this.index * 0.2) / 1.05));
   }
   /**
    * Live cornhole clock. The charge plays the take's settle and backswing at
@@ -324,6 +385,7 @@ export class CharacterPresentation {
     return { x: world.x, y: world.y, angle: local.angle };
   }
   destroy() {
+    this.front?.destroy();
     this.rig.destroy();
     this.card.destroy(true);
     this.shadow.destroy();
