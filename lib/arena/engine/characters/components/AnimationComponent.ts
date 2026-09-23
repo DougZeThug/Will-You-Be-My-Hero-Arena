@@ -79,12 +79,13 @@ export class AnimationComponent {
       this.timeline.clip
         ? this.timeline.progress
         : ((time * rate) / clip.duration) % 1,
+      !this.timeline.clip,
     );
     if (this.timeline.active && this.locomotion) {
       const lower = this.resolve(this.locomotion);
       pose = blendLayer(
         pose,
-        splineMotion(lower.motion, ((time * rate) / lower.duration) % 1),
+        splineMotion(lower.motion, ((time * rate) / lower.duration) % 1, true),
         'lower',
         0.8,
       );

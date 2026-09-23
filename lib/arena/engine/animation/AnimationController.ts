@@ -6,12 +6,12 @@ import type {DirectedAction} from '../core/BattlePlan';
 import {animation} from './AnimationRegistry';
 import {splineMotion} from './SplineMotion';
 import {sportThrowPose} from './SportMechanics';
-export function sampleClip(id:string,progress:number,profile:CharacterProfile,reduced=false){
- const clip=animation(id),pose=splineMotion(profile.overrides?.[id]??clip.motion,progress);
+export function sampleClip(id:string,progress:number,profile:CharacterProfile,reduced=false,loop=false){
+ const clip=animation(id),pose=splineMotion(profile.overrides?.[id]??clip.motion,progress,loop);
  return reduced?mixPuppet(REST,pose,.2):pose;
 }
 export function idlePose(id:string,time:number,profile:CharacterProfile,waiting=false,reduced=false):PuppetPose{
- const clip=animation(id),phase=((time/clip.duration)%1+1)%1,pose=sampleClip(id,phase,profile,reduced);
+ const clip=animation(id),phase=((time/clip.duration)%1+1)%1,pose=sampleClip(id,phase,profile,reduced,true);
  const mixed=waiting?mixPuppet(REST,pose,.28):pose;
  // Breathing and target attention are additive, bounded layers. Feet remain on
  // their authored plant positions. No per-frame random values or drift.
