@@ -5,7 +5,6 @@ import { cardById, type Recording } from '../../model';
 import { revealed, project } from '../../simulation';
 import {
   completionTime,
-  clamp01,
   TIMING,
   attemptLength,
 } from '../../match-timeline';
@@ -240,10 +239,26 @@ export class ArenaScene extends Phaser.Scene {
             : 0,
         );
         if (status?.complete) {
-          const progress = clamp01((time - completionTime(rec!)) / 1.7);
-          c.clip(plan!.finale[i], progress, p.reduced);
+          c.finale(
+            plan!.finale[i],
+            time - completionTime(rec!),
+            plan!.actions.findLast((a) => a.actor === i)?.idle ??
+              plan!.idle[i],
+            time,
+            p.reduced,
+          );
         } else if (active?.actor === i) {
-          c.throw(active, direction!, time, p.reduced);
+          c.throw(
+            active,
+            direction!,
+            time,
+            p.reduced,
+            undefined,
+            plan?.actions.findLast(
+              (a, j) =>
+                a.actor === i && rec!.attempts[j].end <= active.start,
+            )?.idle ?? plan?.idle[i],
+          );
           if (time < active.releaseAt) {
             const hand = c.hand(),
               ritual = ritualDuration(active, direction!),

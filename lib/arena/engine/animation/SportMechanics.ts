@@ -59,12 +59,25 @@ export function sportThrowMotion(sport: Sport, shot: ShotStyle = 'standard', spe
   cache.set(key, motion); return motion;
 }
 
-export function sportThrowPose(sport: Sport, shot: ShotStyle, elapsed: number, lead: number, speed: number) {
-  const duration = lead + .86, key = `${sport}:${shot}:${speed}:${lead}`;
+/** `holdUntil` (seconds after the throw clip starts): keep the finish held
+ * — a slow, relaxing follow-through tracking the flight — until the result,
+ * instead of returning to rest while the ball is still in the air. */
+export function sportThrowPose(sport: Sport, shot: ShotStyle, elapsed: number, lead: number, speed: number, holdUntil?: number) {
+  const held = holdUntil !== undefined, tail = held ? Math.max(.5, holdUntil - lead) : .86;
+  const duration = lead + tail, key = `${sport}:${shot}:${speed}:${lead}:${held ? tail.toFixed(4) : ''}`;
   let timed = timedCache.get(key);
   if (!timed) {
     const source = sportThrowMotion(sport, shot, speed);
-    timed = { ...source, keys: source.keys.map(k => ({ ...k, at: (k.at <= THROW_RELEASE ? k.at / THROW_RELEASE * lead : k.at <= .70 ? lead + (k.at - THROW_RELEASE) / .12 * .18 : k.at <= .80 ? lead + .18 + (k.at - .70) / .10 * .22 : lead + .40 + (k.at - .80) / .20 * .46) / duration })) };
+    const keys = held
+      ? [
+          ...source.keys.slice(0, 4).map(k => ({ ...k, at: k.at / THROW_RELEASE * lead / duration })),
+          { ...source.keys[4], at: (lead + .16) / duration },
+          { ...source.keys[5], at: (lead + Math.min(.36, tail * .45)) / duration },
+          // Relaxing hold: the arm drifts down a little and the lean eases.
+          { at: 1, pose: { ...source.keys[5].pose, handRY: (source.keys[5].pose.handRY ?? REST.handRY) + 12, body: (source.keys[5].pose.body ?? 0) * .6, head: (source.keys[5].pose.head ?? 0) - 2 } },
+        ]
+      : source.keys.map(k => ({ ...k, at: (k.at <= THROW_RELEASE ? k.at / THROW_RELEASE * lead : k.at <= .70 ? lead + (k.at - THROW_RELEASE) / .12 * .18 : k.at <= .80 ? lead + .18 + (k.at - .70) / .10 * .22 : lead + .40 + (k.at - .80) / .20 * .46) / duration }));
+    timed = { ...source, keys };
     if (timedCache.size >= 128) timedCache.delete(timedCache.keys().next().value!);
     timedCache.set(key, timed);
   }
