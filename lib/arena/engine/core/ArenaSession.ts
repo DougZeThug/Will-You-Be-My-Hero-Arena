@@ -38,6 +38,7 @@ export class ArenaSession {
   private frames = new Map<string, InputFrame>();
   private awaitingNeutral = new Set<string>();
   private fixedSteps = 0;
+  private stopSteps = 0;
   private recentMarkers: {
     player: string;
     time: number;
@@ -92,6 +93,9 @@ export class ArenaSession {
       time: () => this.time,
       random,
       emit: (c) => this.emit(c),
+      hitStop: (steps) => {
+        this.stopSteps = Math.max(this.stopSteps, Math.round(steps));
+      },
       options: config.options ?? {},
     });
     this.event.createParticipants();
@@ -217,7 +221,11 @@ export class ArenaSession {
       this.previousObjects = new Map(
         this.event.view().objects.map((o) => [objectKey(o), o]),
       );
-      this.time += 1 / 60;
+      // Hit-stop holds the clock: nothing moves, but input is still sampled
+      // so a press made during the hold is buffered rather than lost.
+      const held = this.stopSteps > 0;
+      if (held) this.stopSteps--;
+      else this.time += 1 / 60;
       for (const c of this.controllers) {
         const frame = this.poll(c.id);
         if (this.paused) break;
@@ -225,6 +233,7 @@ export class ArenaSession {
       }
       if (this.paused) break;
       this.fixedSteps++;
+      if (held) continue;
       for (const c of this.characters)
         c.update(1 / 60, this.time, (m) => {
           this.recentMarkers.push({
@@ -246,6 +255,10 @@ export class ArenaSession {
   /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
    * characters and objects between their previous and current step so motion
    * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
+  /** Remaining hit-stop steps (0 when the clock is running). */
+  get hitStopSteps() {
+    return this.stopSteps;
+  }
   get alpha() {
     return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
   }

@@ -214,11 +214,13 @@ export class PrecisionEvent implements PlayableArenaEvent {
         });
         this.ctx.emit({
           kind: 'effect',
-          name: 'impact',
+          name: bag.points === 3 ? 'hole' : bag.points ? 'impact' : 'miss',
           x: bag.x,
           y: bag.y,
           intensity: 0.3,
         });
+        if (bag.points === 3)
+          this.ctx.emit({ kind: 'camera', name: 'hole', intensity: 0.5 });
       }
     }
     if (this.state === 'result' && time - this.phaseAt > 1.2) {

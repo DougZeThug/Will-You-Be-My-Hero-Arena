@@ -52,6 +52,7 @@ export class RunningComponent implements CharacterComponent {
     c.stamina -= 8;
     if (action === 'jump') {
       c.body.vz = JUMP_SPEED;
+      c.beat('takeoff', this.time());
       // Fit the clip to the physical airtime so the landing reach meets the
       // ground instead of straightening mid-air.
       c.startAction('athletic.jump', (2 * JUMP_SPEED) / RUN_GRAVITY);

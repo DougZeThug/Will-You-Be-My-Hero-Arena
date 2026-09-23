@@ -30,6 +30,7 @@ import { handFrame } from '../../hand-geometry';
 import { sportRelease } from '../animation/SportMechanics';
 import type { ReleaseFrame } from '../events/ArenaEvent';
 import { smooth } from '../../match-timeline';
+import { squashScale } from '../motion/SquashStretch';
 export class CharacterController {
   readonly rig: CharacterRig;
   readonly base: { x: number; y: number };
@@ -318,8 +319,13 @@ export class CharacterController {
       },
     });
   }
-  place(x = this.base.x, y = this.base.y, scale = 1, alpha = 1) {
-    this.rig.root.setPosition(x, y).setScale(scale).setAlpha(alpha);
+  /** `squash` is a cartoon vertical offset (see SquashStretch); area is kept. */
+  place(x = this.base.x, y = this.base.y, scale = 1, alpha = 1, squash = 0) {
+    const s = squashScale(squash);
+    this.rig.root
+      .setPosition(x, y)
+      .setScale(scale * s.x, scale * s.y)
+      .setAlpha(alpha);
   }
   destroy() {
     this.rig.destroy();

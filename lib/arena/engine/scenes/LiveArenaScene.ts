@@ -155,7 +155,9 @@ export class LiveArenaScene extends Phaser.Scene {
     this.session.advance(delta / 1000);
     const view = this.session.event.view(),
       alpha = this.session.alpha;
-    this.actors.forEach((a) => a.update(this.session.time, alpha));
+    this.actors.forEach((a) =>
+      a.update(this.session.time, alpha, this.session.hitStopSteps),
+    );
     this.objects.forEach((o) => o.setVisible(false));
     view.objects.forEach((o) => {
       const actor = this.actors[

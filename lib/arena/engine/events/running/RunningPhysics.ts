@@ -20,6 +20,7 @@ export interface Obstacle {
 }
 export const RUNNING_LENGTH = 2400;
 export const RUN_GRAVITY = 590;
+/** Advances one runner. Returns true on the step the runner touches down. */
 export function runPhysics(
   c: ArenaCharacter,
   m: RunnerMotion,
@@ -28,7 +29,8 @@ export function runPhysics(
   mode: string,
 ) {
   const b = c.body;
-  if (m.finished) return;
+  let landed = false;
+  if (m.finished) return landed;
   m.slide = Math.max(0, m.slide - dt);
   m.stumble = Math.max(0, m.stumble - dt);
   m.laneClock = Math.max(0, m.laneClock - dt);
@@ -64,7 +66,11 @@ export function runPhysics(
   if (b.z > 0 || b.vz > 0) {
     b.vz -= RUN_GRAVITY * dt;
     b.z = Math.max(0, b.z + b.vz * dt);
-    if (!b.z) b.vz = 0;
+    if (!b.z) {
+      b.vz = 0;
+      landed = true;
+      c.beat('land', time);
+    }
   }
   c.score = Math.round(
     Math.min(100, ((b.x - 170) / (RUNNING_LENGTH - 170)) * 100),
@@ -95,6 +101,7 @@ export function runPhysics(
             ? 'locomotion.run'
             : 'locomotion.walk';
   if (!c.animation.timeline.active) c.state = 'moving';
+  return landed;
 }
 export function obstacleCollision(
   c: ArenaCharacter,

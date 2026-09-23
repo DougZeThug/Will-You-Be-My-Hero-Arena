@@ -52,8 +52,8 @@
         69
       ],
       "commands": [
-        802,
-        799
+        841,
+        838
       ],
       "buffered": [
         8,
@@ -70,6 +70,7 @@
     "combat active windows",
     "blocking",
     "input buffering and expiry",
+    "hit-stop holds the clock without dropping input",
     "deterministic AI sessions",
     "pause"
   ]

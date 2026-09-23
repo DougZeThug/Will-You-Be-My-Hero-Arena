@@ -7,6 +7,7 @@ import type { CharacterRig } from './CharacterRig';
 import type { CharacterRigProvider } from './CharacterRig';
 import { clamp } from '../input/InputActions';
 import { mixPuppet } from '../../puppet-motion';
+import { squashOffset, squashScale } from '../motion/SquashStretch';
 /** Body transform between the previous and current fixed step. Facing is not
  * interpolated (a flip is a discrete event). */
 export function presentedBody(c: ArenaCharacter, alpha: number) {
@@ -33,6 +34,9 @@ export class CharacterPresentation {
   private liveRelease: number | null = null;
   private rate = 1;
   private scoreAtThrow = 0;
+  private facing?: number;
+  private flipFrom = 1;
+  private flipAt = -Infinity;
   constructor(
     scene: Phaser.Scene,
     loaded: LoadedCharacter,
@@ -67,20 +71,55 @@ export class CharacterPresentation {
       scene.add.image(0, -68, loaded.cardKey).setDisplaySize(86, 126),
     ]);
   }
+  /** Cartoon beats from the simulation: stretch on takeoff, squash on
+   * landing, recoil on a hit. Evaluated from the beat times, so it is
+   * deterministic and follows pause and hit-stop. */
+  private squash(time: number) {
+    const beats = this.character.beats,
+      pulses = [];
+    if (beats.takeoff !== undefined)
+      pulses.push({ at: beats.takeoff, amount: 0.12, settle: 0.22, frequency: 2.4 });
+    if (beats.land !== undefined)
+      pulses.push({ at: beats.land, amount: -0.16, settle: 0.3, frequency: 4 });
+    if (beats.hit !== undefined)
+      pulses.push({ at: beats.hit, amount: -0.1, settle: 0.26, frequency: 5 });
+    return squashScale(squashOffset(pulses, time));
+  }
+  /** Facing turns as a quick paper flip (~0.1 s) instead of a one-frame
+   * mirror. */
+  private turn(facing: number, time: number) {
+    if (this.facing !== undefined && facing !== this.facing) {
+      this.flipFrom = this.shownFacing(time);
+      this.flipAt = time;
+    }
+    this.facing = facing;
+    return this.shownFacing(time);
+  }
+  private shownFacing(time: number) {
+    const facing = this.facing ?? 1,
+      u = clamp((time - this.flipAt) / 0.1),
+      f = this.flipFrom + (facing - this.flipFrom) * u * u * (3 - 2 * u);
+    return u >= 1 ? facing : Math.sign(f || facing) * Math.max(0.04, Math.abs(f));
+  }
   /** `alpha` is the session's fraction into the next fixed step: body and
-   * pose are drawn between the previous and current step. */
-  update(time: number, alpha = 1) {
+   * pose are drawn between the previous and current step. `hold` is the
+   * remaining hit-stop; the fighter who was just hit shivers through it. */
+  update(time: number, alpha = 1, hold = 0) {
     const c = this.character,
       b = presentedBody(c, alpha),
+      shown = time - (1 - alpha) / 60,
       u = clamp((time - this.index * 0.2) / 1.05),
       ease = u * u * (3 - 2 * u),
       offset = (1 - ease) * -55,
-      lift = Math.sin(ease * Math.PI) * 26;
+      lift = Math.sin(ease * Math.PI) * 26,
+      q = this.rig.performance ? { x: 1, y: 1 } : this.squash(shown),
+      facing = this.rig.performance ? b.facing : this.turn(b.facing, shown),
+      shiver = hold > 0 && c.beats.hit === time ? (hold % 2 ? 3 : -3) : 0;
     this.rig.root
-      .setPosition(b.x + offset, b.y - b.z - lift)
+      .setPosition(b.x + offset + shiver, b.y - b.z - lift)
       .setScale(
-        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * b.facing,
-        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease),
+        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * facing * q.x,
+        (this.rig.performance ? 1 : b.scale) * (0.45 + 0.55 * ease) * q.y,
       )
       .setDepth(b.y + 20)
       .setAlpha(clamp(u * 4));
@@ -98,7 +137,7 @@ export class CharacterPresentation {
       );
     this.shadow
       .setPosition(b.x, b.y + 2)
-      .setScale(b.scale * (1 - b.z / 600), b.scale)
+      .setScale(b.scale * (1 - b.z / 600) * q.x, b.scale)
       .setDepth(b.y - 2)
       .setAlpha(0.27 * Math.max(0.2, 1 - b.z / 150));
     this.card

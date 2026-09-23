@@ -9,6 +9,11 @@ import {
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
 import { surfaceTravelSeconds } from './CornholePresentationTiming';
+import {
+  squashOffset,
+  squashScale,
+  velocityStretch,
+} from '../../motion/SquashStretch';
 export {
   firstImpactTime,
   surfaceTravelSeconds,
@@ -164,13 +169,42 @@ export function releasedBag(
   const startScale = release.scale ?? 1;
   const depth =
     startScale + (boardDepthScale(a.actor) - startScale) * clamp01(t / air);
+  // Cartoon deformation (performance releases only): the bag stretches along
+  // its velocity in flight and squashes flat on touchdown, then settles.
+  let stretch = 1;
+  if (ballistic) {
+    if (elapsed < air) {
+      const speed = Math.hypot(vx, vy),
+        along = velocityStretch(speed, 1100, 0.2),
+        d = Math.atan2(vy, vx) - angle,
+        c = Math.cos(d) ** 2,
+        // Grow in after release (the held bag is unstretched: no pop at the
+        // hand) and relax before touchdown.
+        ease =
+          smooth(clamp01(t / 0.1)) *
+          (1 - smooth(clamp01((t / air - 0.8) / 0.2)));
+      const sx = along.across + (along.along - along.across) * c,
+        sy = along.across + (along.along - along.across) * (1 - c);
+      stretch = 1 + (sx - 1) * ease;
+      flatten *= 1 + (sy / sx - 1) * ease;
+    }
+    const impact = squashOffset(
+      [{ at: air, amount: -0.28, settle: 0.34, frequency: 4.5 }],
+      elapsed,
+    );
+    if (impact) {
+      const q = squashScale(impact);
+      stretch *= q.x;
+      flatten *= q.y / q.x;
+    }
+  }
   return {
     x,
     y,
     angle,
     flatten,
     alpha,
-    scale: depth * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
+    scale: depth * stretch * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
     ...(a.contact === 'hole' && elapsed >= a.duration
       ? {
           occlusion: {

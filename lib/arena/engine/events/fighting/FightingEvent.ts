@@ -92,6 +92,10 @@ export class FightingEvent implements PlayableArenaEvent {
       } else {
         component.interrupt();
         hit.target.takeHit(hit.damage, hit.impulse);
+        hit.target.beat('hit', time);
+        // Play-only hit-stop: the session holds the clock for a few steps so
+        // a landed blow reads. Heavier hits hold longer.
+        this.ctx.hitStop?.(hit.damage >= 15 ? 5 : 3);
       }
       hit.attacker.score += hit.damage;
       this.message = hit.blocked
@@ -103,6 +107,11 @@ export class FightingEvent implements PlayableArenaEvent {
         x: hit.target.body.x,
         y: hit.target.body.y - 190,
         intensity: hit.damage / 30,
+      });
+      this.ctx.emit({
+        kind: 'camera',
+        name: hit.blocked ? 'block' : 'hit',
+        intensity: hit.blocked ? 0.2 : Math.min(1, 0.3 + hit.damage / 25),
       });
       this.ctx.emit({
         kind: 'audio',

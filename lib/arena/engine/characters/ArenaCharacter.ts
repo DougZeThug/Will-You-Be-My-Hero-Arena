@@ -41,6 +41,9 @@ export class ArenaCharacter implements ControllableEntity {
   groundSpeed = 0;
   /** Body and pose at the start of the latest fixed step (render interpolation). */
   previous?: { body: ArenaCharacter['body']; pose: PuppetPose };
+  /** Session times of the latest physical beats. Rules record them; only
+   * presentation reads them (squash, dust), so they never affect results. */
+  beats: Partial<Record<'takeoff' | 'land' | 'hit', number>> = {};
   constructor(
     readonly id: string,
     readonly profile: CharacterProfile,
@@ -113,6 +116,9 @@ export class ArenaCharacter implements ControllableEntity {
   celebrate(importance = 0.3) {
     this.state = 'celebrating';
     this.animation.start(this.personality.choose('celebration', importance));
+  }
+  beat(name: keyof ArenaCharacter['beats'], time: number) {
+    this.beats[name] = time;
   }
   applyImpulse(x: number, y = 0) {
     this.body.vx += x;

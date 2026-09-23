@@ -94,6 +94,40 @@ export async function testAnimationSmoothness({ check }) {
     );
   }
 
+  // Squash & stretch: silent outside the pulse, no pop at either end, capped,
+  // volume-preserving, and a pure function of time (seek/pause safe).
+  const { squashOffset, squashScale, velocityStretch, MAX_SQUASH } =
+    await import('../.test-build/engine/motion/SquashStretch.mjs');
+  const pulse = [{ at: 1, amount: -0.16, settle: 0.3, frequency: 4 }];
+  check(() => assert.equal(squashOffset(pulse, 0.99), 0));
+  check(() => assert.equal(squashOffset(pulse, 1), 0));
+  check(() => assert.equal(squashOffset(pulse, 1.3), 0));
+  check(() => assert.equal(squashOffset(pulse, 1.31), 0));
+  check(() => assert.ok(Math.abs(squashOffset(pulse, 1.299)) < 1e-3));
+  let peak = 0,
+    step = 0,
+    last = 0;
+  for (let t = 0.95; t <= 1.35; t += 1 / 240) {
+    const o = squashOffset(pulse, t);
+    peak = Math.min(peak, o);
+    step = Math.max(step, Math.abs(o - last));
+    last = o;
+    check(() => assert.equal(squashOffset(pulse, t), o));
+  }
+  check(() => assert.ok(peak < -0.1, 'the landing squash reads'));
+  check(() => assert.ok(step < 0.05, 'no single-frame scale pop'));
+  const stacked = Array.from({ length: 6 }, () => pulse[0]);
+  for (let t = 1; t <= 1.3; t += 0.01)
+    check(() => assert.ok(Math.abs(squashOffset(stacked, t)) <= MAX_SQUASH));
+  for (const o of [-0.2, -0.1, 0, 0.12, 0.2]) {
+    const q = squashScale(o);
+    check(() => assert.ok(Math.abs(q.x * q.x * q.y - 1) < 1e-12));
+  }
+  check(() => assert.deepEqual(squashScale(0), { x: 1, y: 1 }));
+  const fast = velocityStretch(5000, 900, 0.35);
+  check(() => assert.ok(fast.along <= 1.35 + 1e-12));
+  check(() => assert.ok(Math.abs(fast.along * fast.across ** 2 - 1) < 1e-12));
+
   // Soft reach: identity below the start, C1 at the start, bounded above.
   check(() => assert.equal(softReach(0.9), 0.9));
   check(() => assert.equal(softReach(SOFT_REACH_START), SOFT_REACH_START));

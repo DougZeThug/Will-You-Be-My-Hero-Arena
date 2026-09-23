@@ -3,6 +3,8 @@ import type { LiveView } from '../core/LiveTypes';
 export class CameraManager {
   private x = 640;
   private zoom = 1;
+  /** Punch-in from the latest impact cue; decays over ~0.25 s. */
+  private punch = 0;
   constructor(private camera: Phaser.Cameras.Scene2D.Camera) {}
   /** `xs` are the presented (step-interpolated) character positions, so the
    * camera and the characters move in the same continuous time. */
@@ -25,9 +27,16 @@ export class CameraManager {
     const ease = 1 - Math.exp(-dt * 4);
     this.x += (center - this.x) * ease;
     this.zoom += (zoom - this.zoom) * ease;
-    this.camera.setZoom(this.zoom).centerOn(this.x, 360);
+    this.punch *= Math.exp(-dt * 11);
+    this.camera
+      .setZoom(this.zoom * (1 + 0.045 * this.punch))
+      .centerOn(this.x, 360);
   }
+  /** Impact: a cartoon shake (a few px, longer for bigger hits) and a quick
+   * punch-in. Presentation only; callers skip it for reduced motion. */
   cue(intensity = 0.2) {
-    this.camera.shake(70, 0.001 * Math.min(1, intensity));
+    const i = Math.max(0, Math.min(1, intensity));
+    this.camera.shake(90 + 110 * i, 0.0015 + 0.0045 * i);
+    this.punch = Math.max(this.punch, i);
   }
 }
