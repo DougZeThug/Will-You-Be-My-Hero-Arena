@@ -5,6 +5,8 @@ import {
 } from '../../lib/arena/engine/performance/BodyMechanics';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import type { MotionClip } from '../../lib/arena/engine/motion/MotionTypes';
+import { NATIVE_LIMITS } from '../../lib/arena/engine/performance/NativeLimits';
+import { bakeOverlap } from '../../lib/arena/engine/motion/OverlapSprings';
 import {
   scalarTrack,
   sampleScalar,
@@ -12,9 +14,9 @@ import {
 } from '../loongbones/cornhole-motion/curves';
 import type { NativeClip } from './NativeClip';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
-export const PERFORMANCE_REVISION = 'cornhole-distinct-recovery-v2';
+export const PERFORMANCE_REVISION = 'cornhole-cartoon-take-v1';
 export const PERFORMANCE_ASSET_REVISION = 'side-v3-attachment-r4';
-export const PERFORMANCE_HAND_LIMITS = [-35, 95] as const;
+export const PERFORMANCE_HAND_LIMITS = NATIVE_LIMITS.hand_L;
 
 export type PerformanceArmatureData = {
   name: string;
@@ -37,6 +39,7 @@ const map = {
   counterElbow: 'forearm_R',
 } as const;
 type Pose = Record<BodyChannel, number>;
+const TORSO = ['hips', 'lowerSpine', 'upperSpine', 'chest'] as const;
 /** One full-body pose compiler. Action owns articulated support, spine and arms;
  * the adapter then applies bounded gaze, native contact IK and hand exposure. */
 export interface CompiledPerformance {
@@ -84,10 +87,21 @@ export function installShippedPerformanceClips(
   arm.animation = compiled.native;
 }
 
+/** Cartoon follow-through: children trail and overshoot their parents. Baked
+ * per frame from the authored/captured signal, so playback stays exact under
+ * seek and the result exports to the editor like any other curve. */
+const OVERLAP = {
+  head: { frequency: 2.3, damping: 0.38, gain: 0.55, limit: 7 },
+  chest: { frequency: 2.8, damping: 0.42, gain: 0.35, limit: 3 },
+  counterArm: { frequency: 1.7, damping: 0.34, gain: 0.8, limit: 14 },
+  wrist: { frequency: 3.4, damping: 0.45, gain: 0.14, limit: 9 },
+};
+
 /**
- * Sole compiler for shipped cornhole motion. BodyMechanics supplies authored
- * curves, the validated profile supplies character timing/personality, and
- * this function owns native durations, loop counts and semantic markers.
+ * Sole compiler for shipped cornhole motion. The character's take supplies
+ * the curves (authored now, captured later), the validated profile supplies
+ * timing/amplitude gains, and this function owns native per-frame curves,
+ * durations, loop counts, overlap and semantic markers.
  */
 export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
   const native: NativeClip[] = [],
@@ -97,30 +111,83 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     take: BodyTake,
     options: Partial<MotionClip> = {},
   ) => {
-    const end = Math.round(take.seconds * 60);
-    const tracks = Object.fromEntries(
-      Object.entries(take.channels).map(([key, values]) => [
-        key,
-        values.map((v, i): Knot => [Math.round(take.times[i] * end), v]),
-      ]),
+    const end = Math.round(take.seconds * 60),
+      loop = options.loop === true;
+    // Sample each channel at every native frame. Knots stay at fractional
+    // frames (tempo changes never snap them to uneven whole frames); a loop
+    // borrows its neighbours across the seam so the cycle never stalls there.
+    const series = Object.fromEntries(
+      Object.entries(take.channels).map(([key, values]) => {
+        let knots: Knot[] = values.map((v, i) => [take.times[i] * end, v]);
+        if (loop && knots.length > 2)
+          knots = [
+            [knots.at(-2)![0] - end, knots.at(-2)![1]],
+            ...knots,
+            [knots[1][0] + end, knots[1][1]],
+          ];
+        return [
+          key,
+          Array.from({ length: end + 1 }, (_, f) => sampleScalar(knots, f)),
+        ];
+      }),
+    ) as Record<BodyChannel, number[]>;
+    const at = (key: BodyChannel, f: number) => series[key][f];
+    const torsoAt = (f: number) => TORSO.reduce((n, k) => n + at(k, f), 0);
+    const torso = series.hips.map((_, f) => torsoAt(f));
+    // Overlap layers (degrees), from the pre-overlap parent signals.
+    const lower = series.hips.map((h, f) => h + series.lowerSpine[f]);
+    const swing = series.hips.map(
+      (_, f) => torso[f] + at('shoulder', f) + at('upperArm', f),
     );
-    const at = (key: string, f: number) => sampleScalar(tracks[key], f);
-    const torso = (f: number) =>
-      ['hips', 'lowerSpine', 'upperSpine', 'chest'].reduce(
-        (n, k) => n + at(k, f),
-        0,
-      );
-    const bake = (fn: (f: number) => number) =>
+    const headLag = bakeOverlap(torso, 60, OVERLAP.head, loop),
+      chestLag = bakeOverlap(lower, 60, OVERLAP.chest, loop),
+      counterLag = bakeOverlap(torso, 60, OVERLAP.counterArm, loop),
+      wristLag = bakeOverlap(swing, 60, OVERLAP.wrist, loop);
+    const chest = series.chest.map((v, f) => v + chestLag[f]);
+    const fullTorso = (f: number) => torso[f] - series.chest[f] + chest[f];
+    const local: Record<string, number[]> = {
+      pelvis: series.hips,
+      spine_lower: series.lowerSpine,
+      spine_mid: series.upperSpine,
+      chest,
+      clavicle_L: series.shoulder,
+      upper_arm_L: series.upperArm,
+      forearm_L: series.elbow,
+      upper_arm_R: series.counterArm.map((v, f) => v + counterLag[f]),
+      forearm_R: series.counterElbow,
+      // The world hand target is authored; its local rotation is what remains
+      // after every parent, then trails the swing slightly (wrist lag/snap).
+      hand_L: series.palm.map(
+        (palm, f) =>
+          palm -
+          fullTorso(f) -
+          at('shoulder', f) -
+          at('upperArm', f) -
+          at('elbow', f) +
+          wristLag[f],
+      ),
+      // Head leads/drags: it keeps only part of the counter-rotation that used
+      // to pin it level, and overshoots when the torso stops.
+      neck: torso.map((t) => -0.5 * t),
+      head: torso.map((t, f) => at('gaze', f) - 0.3 * t + headLag[f]),
+    };
+    for (const [bone, values] of Object.entries(local)) {
+      const limit = NATIVE_LIMITS[bone];
+      if (!limit) continue;
+      const outside = values.find((v) => v < limit[0] || v > limit[1]);
+      if (outside !== undefined)
+        throw Error(
+          `${p.id} ${id} authors ${bone} outside native limits: ${outside.toFixed(2)}`,
+        );
+    }
+    const bake = (values: number[]) =>
       scalarTrack(
-        Array.from({ length: end + 1 }, (_, f): Knot => [f, fn(f)]),
+        values.map((v, f): Knot => [f, v]),
         end,
         'rotate',
       );
-    const bones: NonNullable<NativeClip['bone']> = Object.entries(map).map(
-      ([semantic, name]) => ({
-        name,
-        rotateFrame: scalarTrack(tracks[semantic], end, 'rotate'),
-      }),
+    const bones: NonNullable<NativeClip['bone']> = Object.entries(local).map(
+      ([name, values]) => ({ name, rotateFrame: bake(values) }),
     );
     bones.find((b) => b.name === 'pelvis')!.translateFrame = Array.from(
       { length: end + 1 },
@@ -131,39 +198,10 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
         y: at('compression', f),
       }),
     );
-    const handRequests = Array.from(
-      { length: end + 1 },
-      (_, f) =>
-        at('palm', f) -
-        torso(f) -
-        at('shoulder', f) -
-        at('upperArm', f) -
-        at('elbow', f),
-    );
-    const outside = handRequests.find(
-      (rotation) =>
-        rotation < PERFORMANCE_HAND_LIMITS[0] ||
-        rotation > PERFORMANCE_HAND_LIMITS[1],
-    );
-    if (outside !== undefined)
-      throw Error(
-        `${p.id} ${id} authors hand_L outside native limits: ${outside.toFixed(2)}`,
-      );
-    bones.push(
-      {
-        name: 'hand_L',
-        rotateFrame: bake((f) => handRequests[f]),
-      },
-      { name: 'neck', rotateFrame: bake((f) => -0.72 * torso(f)) },
-      {
-        name: 'head',
-        rotateFrame: bake((f) => at('gaze', f) - 0.28 * torso(f)),
-      },
-    );
     native.push({
       name: 'performance_' + id,
       duration: end,
-      playTimes: options.loop ? 0 : 1,
+      playTimes: loop ? 0 : 1,
       bone: bones,
     });
     const metadata: MotionClip = {
@@ -181,12 +219,27 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     return metadata;
   };
   const take = underhandMechanics(p);
-  const ready = Object.fromEntries(
-    Object.entries(take.channels).map(([key, values]) => [key, values[0]]),
-  ) as Pose;
-  const finish = Object.fromEntries(
-    Object.entries(take.channels).map(([key, values]) => [key, values.at(-1)!]),
-  ) as Pose;
+  const endFrames = Math.round(take.seconds * 60);
+  const frame = (key: BodyChannel, u: number) =>
+    sampleScalar(
+      take.channels[key].map((v, i): Knot => [take.times[i] * endFrames, v]),
+      u * endFrames,
+    );
+  const poseAt = (u: number) =>
+    Object.fromEntries(
+      Object.keys(take.channels).map((key) => [
+        key,
+        frame(key as BodyChannel, u),
+      ]),
+    ) as Pose;
+  const ready = poseAt(0),
+    finish = poseAt(1);
+  const torsoOf = (pose: Pose) => TORSO.reduce((n, k) => n + pose[k], 0);
+  /** Keep the hand at a local wrist angle: palm is the world hand target. */
+  const wrist = (pose: Pose, angle: number): Pose => ({
+    ...pose,
+    palm: angle + torsoOf(pose) + pose.shoulder + pose.upperArm + pose.elbow,
+  });
   const neutral = Object.fromEntries(
     Object.keys(ready).map((key) => [key, 0]),
   ) as Pose;
@@ -209,6 +262,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
       {
         seconds,
         release: 0,
+        markers: {},
         times: rows.map((r) => r[0]),
         channels: Object.fromEntries(
           Object.keys(ready).map((key) => [
@@ -219,16 +273,42 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
       },
       options,
     );
+  // Alive idle: breath, a weight shift and a glance, looped seamlessly.
+  const idleEnergy = 0.6 + p.idleEnergy;
   pose(
     'idle',
     3.8,
     [
       [0, neutral],
       [
-        0.38,
-        { ...neutral, chest: 0.6 * p.idleEnergy, gaze: 0.2 * p.idleEnergy },
+        0.22,
+        {
+          ...neutral,
+          chest: 1.4 * idleEnergy,
+          compression: neutral.compression + 2,
+          gaze: 0.6 * idleEnergy,
+        },
       ],
-      [0.68, { ...neutral, chest: 0.2 * p.idleEnergy }],
+      [
+        0.5,
+        {
+          ...neutral,
+          weightX: neutral.weightX + 4 * idleEnergy,
+          hips: 0.6,
+          chest: 0.5 * idleEnergy,
+          counterArm: -7,
+          gaze: -1.2 * idleEnergy,
+        },
+      ],
+      [
+        0.74,
+        {
+          ...neutral,
+          chest: 1.1 * idleEnergy,
+          compression: neutral.compression + 1.5,
+          gaze: 0.3,
+        },
+      ],
       [1, neutral],
     ],
     { layer: 'base', priority: 0, loop: true, fade: 0.24 },
@@ -284,70 +364,92 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     ],
     background,
   );
-  const prepared = {
-    ...ready,
-    compression: 5,
-    weightX: -3,
-    upperArm: -4,
-    elbow: -12,
-    gaze: -1,
-  };
+  // Notice flows straight into the take's opening pose (no dwell).
   pose('look', 0.28 + (1 - p.confidence) * 0.18, [
     [0, { ...neutral, elbow: -6 }],
-    [0.7, prepared],
-    [1, prepared],
-  ]);
-  pose('settle', 0.34, [
-    [0, prepared],
-    [0.75, ready],
+    [0.55, { ...ready, compression: (neutral.compression + ready.compression) / 2 }],
     [1, ready],
   ]);
-  const release = Math.round(take.release * Math.round(take.seconds * 60)) / 60;
+  // Standalone settle action (the throw carries its own settle beat).
+  pose('settle', 0.34, [
+    [0, neutral],
+    [1, ready],
+  ]);
+  const markerAt = (name: string) =>
+    Math.round((take.markers[name] ?? 0) * endFrames) / 60;
   emit('underhand', take, {
-    markers: [{ name: 'equipmentRelease', at: release }],
+    markers: [
+      { name: 'anticipate', at: markerAt('anticipate') },
+      { name: 'windup', at: markerAt('windup') },
+      { name: 'windupPeak', at: markerAt('windupPeak') },
+      { name: 'equipmentRelease', at: markerAt('equipmentRelease') },
+      { name: 'finish', at: markerAt('finish') },
+      { name: 'holdEnd', at: markerAt('holdEnd') },
+    ],
     technique: 'underhand',
   });
-  const watch = {
-    ...finish,
-    weightX: finish.weightX * 0.94,
-    upperArm: finish.upperArm * 0.84,
-    elbow: -8,
-    palm: 42,
-    gaze: -1.5,
-  };
+  // The take already holds the finish through the flight and relaxes; watch
+  // keeps tracking the board with breath until the result arrives.
+  const watch = wrist(
+    {
+      ...finish,
+      weightX: finish.weightX * 0.94,
+      upperArm: finish.upperArm * 0.9,
+      elbow: -10,
+      gaze: -1.5,
+    },
+    58,
+  );
   pose(
     'watch',
-    1.1,
+    1.6,
     [
       [0, finish],
-      [
-        0.55,
-        { ...watch, upperArm: finish.upperArm * 0.94, elbow: -10, palm: 36 },
-      ],
+      [0.4, wrist({ ...watch, chest: finish.chest + 0.6, gaze: -1.9 }, 60)],
       [1, watch],
     ],
     { fade: 0.18 },
   );
-  const response = {
-    ...watch,
-    hips: 1.2,
-    lowerSpine: 1.2,
-    upperSpine: 1.3,
-    chest: 1.4,
-    upperArm: watch.upperArm * 0.8,
-    elbow: -16,
-    palm: 44,
-    gaze: -1,
-  };
+  const response = wrist(
+    {
+      ...watch,
+      hips: 1.2,
+      lowerSpine: 1.4,
+      upperSpine: 1.5,
+      chest: 1.6,
+      upperArm: watch.upperArm * 0.7,
+      elbow: -16,
+      gaze: -1,
+    },
+    60,
+  );
   pose('positive', p.celebration === 'chestTap' ? 0.25 : 0.3, [
     [0, watch],
-    [0.55, { ...response, chest: 0.4, shoulder: -1.5, gaze: -2.5 }],
+    [
+      0.55,
+      wrist(
+        { ...response, chest: 0.4, shoulder: -2, gaze: -3.5, compression: response.compression + 3 },
+        62,
+      ),
+    ],
     [1, response],
   ]);
-  const negativeEnd = { ...response, elbow: -12, gaze: 3 };
-  pose('negative', 0.4, [
+  const negativeEnd = wrist({ ...response, elbow: -12, gaze: 3 }, 60);
+  pose('negative', 0.46, [
     [0, watch],
-    [0.4, { ...watch, chest: 2.8, gaze: 4 * p.reactionIntensity }],
+    [
+      0.35,
+      wrist(
+        {
+          ...watch,
+          chest: 4.5,
+          upperSpine: 3,
+          compression: watch.compression + 5,
+          gaze: 6 * p.reactionIntensity,
+        },
+        64,
+      ),
+    ],
     [1, negativeEnd],
   ]);
   const rest = {
@@ -403,14 +505,14 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
       0.34,
       {
         ...response,
-        gaze: 6 + 4 * p.reactionIntensity,
-        chest: 2.3,
-        compression: 16,
+        gaze: 8 + 5 * p.reactionIntensity,
+        chest: 3.2,
+        compression: 18,
         upperArm: -2,
         elbow: -10,
       },
     ],
-    [0.6, { ...response, gaze: -0.7, chest: 1, upperArm: -1, elbow: -8 }],
+    [0.6, { ...response, gaze: -1.2, chest: 1, upperArm: -1, elbow: -8 }],
     [1, rest],
   ]);
   // Two brief chest-relative contacts with a visible withdrawal between them.

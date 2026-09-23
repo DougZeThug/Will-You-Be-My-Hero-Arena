@@ -84,6 +84,9 @@ export interface PerformanceSegment {
   clip: string;
   duration?: number;
   interruptible?: boolean;
+  /** May be cancelled until its object is released (a live charge that the
+   * player abandons), even though the committed swing is not interruptible. */
+  cancellableBeforeRelease?: boolean;
   waitForResult?: boolean;
   phases?: { at: number; state: PerformanceState }[];
 }

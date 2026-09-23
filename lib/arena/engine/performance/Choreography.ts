@@ -1,9 +1,21 @@
 import type { PerformanceAction, PerformanceProfile } from './PerformanceTypes';
+import { underhandMechanics } from './BodyMechanics';
 
 /** Sport supplies an action name. These reusable beats supply body intent. */
 export function performanceActions(
   profile: PerformanceProfile,
 ): Map<string, PerformanceAction> {
+  // Phase boundaries come from the character's take (clip-normalised).
+  const m = underhandMechanics(profile).markers;
+  const throwPhases = [
+    { at: m.anticipate, state: 'anticipate' as const },
+    { at: m.windup, state: 'windup' as const },
+    { at: m.windupPeak, state: 'drive' as const },
+    {
+      at: (m.equipmentRelease + m.finish) / 2,
+      state: 'followThrough' as const,
+    },
+  ];
   return new Map([
     [
       'cornholeThrow',
@@ -18,20 +30,12 @@ export function performanceActions(
             duration: 0.28 + (1 - profile.confidence) * 0.18,
             interruptible: true,
           },
+          // The take opens with its own settle beat, so notice flows into the
+          // swing without a separate clip (and its stop) in between.
           {
             state: 'settle',
-            clip: 'settle',
-            duration: 0.34,
-            interruptible: true,
-          },
-          {
-            state: 'anticipate',
             clip: 'underhand',
-            phases: [
-              { at: 0.16, state: 'windup' },
-              { at: 0.37, state: 'drive' },
-              { at: 0.51, state: 'followThrough' },
-            ],
+            phases: throwPhases,
           },
           {
             state: 'watchTarget',
@@ -53,20 +57,16 @@ export function performanceActions(
         name: 'liveCornholeThrow',
         priority: 10,
         requiresObject: true,
-        // Live Play owns preparation: the player's charge stages the ritual
-        // clip (PrecisionEvent), and CharacterPresentation time-scales this
-        // clip so its release marker meets the live release marker. A settle
-        // segment here would both delay the throw and break that scaling.
+        // Live Play owns preparation: the charge drives the take's settle and
+        // backswing, and CharacterPresentation times the drive so the take's
+        // release marker lands on the live release step.
         preparation: 'external',
         segments: [
           {
             state: 'anticipate',
             clip: 'underhand',
-            phases: [
-              { at: 0.16, state: 'windup' },
-              { at: 0.37, state: 'drive' },
-              { at: 0.51, state: 'followThrough' },
-            ],
+            phases: throwPhases.slice(1),
+            cancellableBeforeRelease: true,
           },
           {
             state: 'watchTarget',

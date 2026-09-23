@@ -297,10 +297,14 @@ export class CharacterPerformanceController {
       this.notifyComplete(this.queue.splice(queued, 1)[0].request, 'cancelled');
       return true;
     }
+    const segment = this.active?.segments[this.active.index];
     if (
       !this.active ||
       this.active.id !== id ||
-      !this.active.segments[this.active.index].interruptible
+      !(
+        segment!.interruptible ||
+        (segment!.cancellableBeforeRelease && !this.active.released)
+      )
     )
       return false;
     this.finish('cancelled');
@@ -458,6 +462,16 @@ export class CharacterPerformanceController {
           }[s.clip] ?? next.clip;
       this.startSegment();
     }
+  }
+  /** Cheap per-step reads for live clocks (snapshot() deep-clones). */
+  get released() {
+    return !!this.active?.released;
+  }
+  get segmentTime() {
+    return this.active?.segmentTime ?? 0;
+  }
+  get segmentClip() {
+    return this.active ? this.active.segments[this.active.index].clip : null;
   }
   snapshot() {
     return structuredClone({

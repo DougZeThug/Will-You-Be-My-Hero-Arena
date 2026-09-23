@@ -30,7 +30,8 @@ export class CharacterPresentation {
   private timelineRevision = -1;
   private performanceAction: number | null = null;
   private resultReported = false;
-  private releaseScale = 1;
+  private liveRelease: number | null = null;
+  private rate = 1;
   private scoreAtThrow = 0;
   constructor(
     scene: Phaser.Scene,
@@ -111,53 +112,113 @@ export class CharacterPresentation {
         .lineStyle(6, 0xffcf25, Math.sin(u * Math.PI) * 0.65)
         .strokeRect(-54, -143, 108, 153);
   }
+  /**
+   * Live cornhole clock. The charge plays the take's settle and backswing at
+   * authored speed and eases into a hold at the top of the backswing. The
+   * release input then plays the drive so the take's release marker lands on
+   * the live release step: at authored speed after a normal charge (holding
+   * any spare time at the top), faster only when the player skips the charge.
+   * The playback rate is smoothed so the swing never changes speed in a step.
+   * (It used to play the whole pre-release take at ~3x, then snap to 1x.)
+   */
   private updatePerformance(dt: number) {
     const performance = this.rig.performance;
     if (!performance) return;
-    const timeline = this.character.animation.timeline;
+    const c = this.character,
+      timeline = c.animation.timeline;
+    const underhand = performance.runtime.clips.get('underhand');
+    const marker = (name: string) =>
+      underhand?.markers.find((m) => m.name === name)?.at;
+    const releaseAt = marker('equipmentRelease') ?? 0,
+      peakAt = marker('windupPeak') ?? releaseAt;
+    const start = () => {
+      if (performance.state === 'recover') performance.cancel();
+      this.performanceAction = performance.perform('liveCornholeThrow', {
+        objectId: 'held',
+        queue: false,
+      });
+      this.resultReported = false;
+      this.scoreAtThrow = c.score;
+      this.liveRelease = null;
+      this.rate = 1;
+    };
+    if (c.substate === 'charging' && this.performanceAction === null) start();
     if (
       timeline.revision !== this.timelineRevision &&
       timeline.clip.startsWith('throw.')
     ) {
       this.timelineRevision = timeline.revision;
-      this.resultReported = false;
-      this.scoreAtThrow = this.character.score;
-      this.performanceAction = performance.perform('liveCornholeThrow', {
-        objectId: 'held',
-        queue: false,
-      });
-      const marker = performance.runtime.clips
-        .get('underhand')
-        ?.markers.find((m) => m.name === 'equipmentRelease')?.at;
-      const liveReleaseMarker = this.character.animation
+      if (this.performanceAction === null || performance.released) start();
+      const liveMarker = c.animation
         .resolve(timeline.clip)
         .markers.find((m) => m.name === 'release')?.at;
-      const liveRelease =
-        liveReleaseMarker === undefined
-          ? undefined
-          : liveReleaseMarker * timeline.duration;
-      this.releaseScale = marker && liveRelease ? marker / liveRelease : 1;
+      this.liveRelease =
+        liveMarker === undefined ? null : liveMarker * timeline.duration;
     }
-    const snapshot = performance.snapshot();
-    performance.advance(snapshot.released ? dt : dt * this.releaseScale);
+    // An abandoned charge (pause, blur) lets go of the unreleased swing.
+    if (
+      this.performanceAction !== null &&
+      this.liveRelease === null &&
+      !performance.released &&
+      c.substate !== 'charging'
+    ) {
+      performance.cancel(this.performanceAction);
+      this.performanceAction = null;
+    }
+    let target = 1;
+    if (
+      this.performanceAction !== null &&
+      !performance.released &&
+      performance.segmentClip === 'underhand'
+    ) {
+      const t = performance.segmentTime;
+      if (this.liveRelease === null)
+        // Charging: ease into a held top of the backswing.
+        target = Math.max(0, Math.min(1, (peakAt + 0.05 - t) / 0.2));
+      else {
+        const remaining = releaseAt - t,
+          left = this.liveRelease - timeline.time;
+        // Hold spare time at the top, then drive at authored speed; compress
+        // only when the charge was skipped. The last step lands exactly.
+        target =
+          left <= dt
+            ? remaining / dt
+            : remaining >= left
+              ? remaining / left
+              : t < peakAt
+                ? 1
+                : left - remaining > dt
+                  ? 0
+                  : remaining / left;
+        target = Math.max(0, Math.min(6, target));
+      }
+    }
+    const exact =
+      this.liveRelease !== null &&
+      !performance.released &&
+      this.liveRelease - timeline.time <= dt;
+    this.rate = exact ? target : this.rate + (target - this.rate) * 0.35;
+    performance.advance(dt * this.rate);
     if (
       this.performanceAction &&
       !this.resultReported &&
-      this.character.substate === 'result'
+      c.substate === 'result'
     ) {
       this.resultReported = true;
       performance.confirmContact(this.performanceAction);
       performance.confirmResult(
         this.performanceAction,
-        this.character.score > this.scoreAtThrow,
-        this.character.score > this.scoreAtThrow,
+        c.score > this.scoreAtThrow,
+        c.score > this.scoreAtThrow,
       );
     }
-    if (this.performanceAction && performance.snapshot().action === null)
+    if (this.performanceAction && performance.segmentClip === null) {
       this.performanceAction = null;
+      this.liveRelease = null;
+    }
     if (!this.performanceAction)
       performance.observe({
-        mode: this.character.substate === 'waiting' ? 'prepare' : 'rest',
+        mode: c.substate === 'waiting' ? 'prepare' : 'rest',
         elapsed: performance.time,
       });
   }
