@@ -516,6 +516,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       this.definition.scale * squash.x,
       this.definition.scale * squash.y,
     );
+    // The held object lives inside the actor for draw order. Undo the squash
+    // on its layer (both matrices are pure scales), so the bag keeps its own
+    // shape in the hand and leaves it without a size jump.
+    this.heldObjectLayer.setScale(1 / squash.x, 1 / squash.y);
     this.contactError = 0;
     if (action?.clip.id === 'chestTap') {
       const influence = chestContactWeight(
