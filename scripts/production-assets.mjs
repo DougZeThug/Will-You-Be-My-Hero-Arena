@@ -48,15 +48,35 @@ export async function auditProductionAssets() {
   }
   const performanceAssets = Object.entries(manifest)
     .filter(([source]) =>
-      /^lab\/(loongbones\/assets\/cornhole-side-v3|performance\/assets)\//.test(
+      /^lab\/(loongbones\/assets\/cornhole-side-v3|performance\/assets|human-motion\/assets)\//.test(
         source,
       ),
     )
     .map(([source, entry]) => ({ source, file: entry.file }));
-  assert.equal(
-    performanceAssets.length,
-    8,
-    'Both skeletons, atlases, textures and release hands must ship',
+  // Cornhole ships Doug's derived arm-material skeleton; Play running and
+  // fighting ship the original side skeleton (the Human Motion animator
+  // applies that correction at runtime) plus the hand sheet and the
+  // rear-garment sources.
+  const side = 'lab/loongbones/assets/cornhole-side-v3/';
+  assert.deepEqual(
+    performanceAssets.map((a) => a.source).sort(),
+    [
+      ...[
+        'dan_ske.json',
+        'dan_tex.json',
+        'dan_tex.png',
+        'doug_arm-material-v1_ske.json',
+        'doug_ske.json',
+        'doug_tex.json',
+        'doug_tex.png',
+      ].map((f) => side + f),
+      'lab/human-motion/assets/directional/dan-rear-source.png',
+      'lab/human-motion/assets/directional/doug-rear-source.png',
+      'lab/human-motion/assets/hands/hand-sheet-v1.png',
+      'lab/performance/assets/dan-release.png',
+      'lab/performance/assets/doug-release.png',
+    ].sort(),
+    'Side rigs, atlases, textures, release hands and side-motion art must ship',
   );
   for (const { source, file } of performanceAssets)
     assert.deepEqual(
