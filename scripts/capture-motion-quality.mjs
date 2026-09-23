@@ -28,7 +28,8 @@ const labUrl = process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3030';
 const ffmpeg =
   process.env.ARENA_FFMPEG ?? '/opt/pw-browsers/ffmpeg-1011/ffmpeg-linux';
 
-/** Each case: scenario, start (checkpoint name or seconds), frames, inputs. */
+/** Each case: scenario, start (checkpoint name or seconds), optional skip
+ * (uncaptured frames), frames, inputs. */
 const CASES = [
   {
     id: 'cornhole-watch',
@@ -88,6 +89,8 @@ const CASES = [
   // View turns: camera-facing before the start, profile once under way.
   { id: 'running-start', scenario: 'running-live', start: 0, frames: 150 },
   { id: 'fighting-start', scenario: 'fighting-live', start: 0, frames: 150 },
+  // The AI runner reaches the line and turns to the camera to celebrate.
+  { id: 'running-finish', scenario: 'running-live', start: 0, skip: 780, frames: 240 },
   {
     id: 'fighting-play',
     scenario: 'fighting-live',
@@ -216,6 +219,9 @@ try {
       );
     else if (c.start > 0)
       await page.evaluate((t) => window.__HERO_ARENA__.seekTime(t), c.start);
+    // Live scenarios cannot seek: advance uncaptured frames instead.
+    if (c.skip)
+      await page.evaluate((n) => window.__HERO_ARENA__.step(n), c.skip);
     const frames = path.join(directory, c.id);
     await mkdir(frames, { recursive: true });
     const samples = [];
