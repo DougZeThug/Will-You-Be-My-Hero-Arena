@@ -17,6 +17,8 @@ import {
   readDougArmMaterialMarker,
 } from '../human-motion/ArmMaterialRecipe.mjs';
 import { RigIntegrityValidator } from '../../lib/arena/engine/motion/RigIntegrityValidator';
+import { NATIVE_LIMITS } from '../../lib/arena/engine/performance/NativeLimits';
+import { softReachDrop } from '../../lib/arena/engine/performance/KneeReach';
 import { chestContactWeight } from '../../lib/arena/engine/motion/ContactEnvelope';
 import type { AnimationGraph } from '../../lib/arena/engine/motion/AnimationGraph';
 import type {
@@ -48,18 +50,7 @@ const segments = [
   ['leftThigh', 'thigh_R', 'shin_R'],
   ['leftShin', 'shin_R', 'foot_R'],
 ] as const;
-const limits: Record<string, [number, number]> = {
-  upper_arm_L: [-95, 65],
-  forearm_L: [-145, 15],
-  hand_L: [-35, 95],
-  clavicle_L: [-12, 12],
-  pelvis: [-8, 8],
-  spine_lower: [-10, 10],
-  spine_mid: [-10, 10],
-  chest: [-12, 12],
-  head: [-15, 15],
-  neck: [-15, 15],
-};
+const limits = NATIVE_LIMITS;
 
 /** The only mutable native-rig boundary for character performances.
  * Native states persist. Game time drives blends and playheads together. All
@@ -89,6 +80,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   }[] = [];
   private wristSamples: { mesh: NativeMesh; index: number }[] = [];
   private gaze = 0;
+  private kneeDrop = 0;
   private warnings = new Set<string>();
   private contactError = 0;
   private starts = 0;
@@ -440,6 +432,23 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         this.warnings.add('Clamped ' + name);
       }
     }
+    // Soft knee reach: lower the pelvis just enough that neither planted leg
+    // enters the two-bone singularity near full extension (where a pixel of
+    // hip drop swings the knee by ~8°). Feet and IK targets stay fixed.
+    const pelvis = this.bones.get('pelvis')!;
+    this.kneeDrop = softReachDrop(
+      (['L', 'R'] as const).map((side) => ({
+        hip: this.local('thigh_' + side),
+        ankle: this.local('foot_target_' + side),
+        length:
+          this.bones.get('thigh_' + side)!.boneData.length +
+          this.bones.get('shin_' + side)!.boneData.length,
+      })),
+    );
+    if (this.kneeDrop > 0) {
+      pelvis.offset.y = this.kneeDrop;
+      pelvis.invalidUpdate();
+    }
     const head = this.world('skull_center');
     const desire = target
       ? Math.max(
@@ -627,8 +636,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         'bounded local channels',
         'filtered gaze',
         'chest-relative native IK',
+        'soft knee reach',
         'opaque hand exposure',
       ],
+      kneeDrop: this.kneeDrop,
       source: this.definition.provenance,
       derivedRuntimeMotion: true,
       productionInstalled:

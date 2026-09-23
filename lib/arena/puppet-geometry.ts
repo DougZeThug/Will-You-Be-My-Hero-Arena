@@ -1,4 +1,5 @@
 import {type PuppetPose,type CharacterChoreography} from './puppet-motion';
+import {softReachDrop} from './engine/performance/KneeReach';
 export const PUPPET_PARTS=['head','torso','upperL','upperR','foreL','foreR','thighL','thighR','shinL','shinR','footL','footR'] as const;
 export type PuppetPart=typeof PUPPET_PARTS[number];
 export interface PuppetPiece {rect:[number,number,number,number];pivot:[number,number];span?:number}
@@ -27,7 +28,12 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
  const floorLimit=(footX:number,footY:number,offset:number)=>footY-Math.sqrt(Math.max(0,reach*reach-(footX-p.hipX-offset)**2))-6;
  // Fit the pelvis to planted ankles instead of letting a tall pose lift a sole.
  const lift=asset.joined?.posture?.hipLift??0;
- const hip={x:p.hipX,y:Math.max(Math.min(-158-lift,p.hipY-lift),floorLimit(p.footLX,p.footLY,-23),floorLimit(p.footRX,p.footRY,23))},body=(x:number,y:number)=>{const local=asset.joined?joinedBodyPoint(asset.joined,x,y):{x,y},q=rotatePoint({x:local.x*p.turn,y:local.y},p.body);return{x:hip.x+q.x,y:hip.y+q.y};};
+ // Soft knee reach: lower the pelvis smoothly as a planted leg nears full
+ // extension instead of letting the two-bone knee snap straight (a pop). The
+ // crouch floor leaves room for real anticipation dips and landings.
+ const raw={x:p.hipX,y:Math.min(-140-lift,p.hipY-lift)},legLength=asset.leg[0]+asset.leg[1];
+ const soften=softReachDrop([{hip:{x:raw.x-23,y:raw.y+6},ankle:{x:p.footLX,y:p.footLY},length:legLength},{hip:{x:raw.x+23,y:raw.y+6},ankle:{x:p.footRX,y:p.footRY},length:legLength}]);
+ const hip={x:raw.x,y:Math.max(raw.y+soften,floorLimit(p.footLX,p.footLY,-23),floorLimit(p.footRX,p.footRY,23))},body=(x:number,y:number)=>{const local=asset.joined?joinedBodyPoint(asset.joined,x,y):{x,y},q=rotatePoint({x:local.x*p.turn,y:local.y},p.body);return{x:hip.x+q.x,y:hip.y+q.y};};
  const shoulderY=asset.version===2?-100:-88;
  const registered=(point:[number,number])=>body((point[0]-asset.joined!.hip[0])*asset.joined!.scale,(point[1]-asset.joined!.hip[1])*asset.joined!.scale);
  const shoulderL=asset.joined?registered(asset.joined.arms[0].root):body(-39,shoulderY+p.shrug),shoulderR=asset.joined?registered(asset.joined.arms[1].root):body(39,shoulderY+p.shrug),neck=asset.joined?registered(asset.joined.neck):body(0,-106),hipL={x:hip.x-23,y:hip.y+6},hipR={x:hip.x+23,y:hip.y+6};
