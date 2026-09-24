@@ -259,7 +259,7 @@ Status is one of `not started`, `drafted`, or `verified`.
 | Document | Status |
 | --- | --- |
 | glossary.md | drafted |
-| bug-triage.md | not started |
+| bug-triage.md | drafted |
 | verification/ (5 checklists) | not started |
 | play/cornhole.md | drafted |
 | foundations/input-model.md | drafted |
