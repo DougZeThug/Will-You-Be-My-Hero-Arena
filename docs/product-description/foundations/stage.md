@@ -68,7 +68,7 @@ Both are checkboxes in [Arena settings](../club/arena-settings.md). They apply a
 | | Reduced motion | Lower graphics quality |
 |---|---|---|
 | Watch | No contact effects, camera punch or shake, and no burst or dust as the characters land from their entrances. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects and camera punch and shake are removed, as for Reduced motion; the entrance effects and character motion are unchanged. |
-| Play | The match **restarts** from its entrances. Camera punches are skipped, impact effects are not drawn at all, and squash and stretch is off. | No effect: Play ignores it. |
+| Play | The match **restarts** from its entrances. Camera punches and shakes are skipped, impact effects are not drawn at all, and squash and stretch is off. | No effect: Play ignores it. |
 | The collection | Previews use reduced clips. On a cornhole court, though, Dan and Doug always show the same performance idle, whatever the setting. | The preview stage is rebuilt. The preview has no contact or camera effects to tone down, so the rebuild is the only visible change. |
 | The page itself | Transitions are turned off, card hover lift is disabled, and spinners stop spinning. This follows the operating system's preference, not the checkbox. | No effect. |
 

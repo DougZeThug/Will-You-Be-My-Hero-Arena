@@ -133,7 +133,7 @@ Nothing on the page can import an exported save or recording back. The bindings 
 
 **Watch and Play separation.** Watch writes the Arena save. Play writes only the bindings. The two never write each other's data.
 
-**Devices and players.** The bindings are saved per Play slot number, not per device or person, but only slots 1 and 2 are read back. Changing a slot's **Controls** replaces its bindings with that device's defaults. In practice a saved remap reaches a later match only for player 1, left on the device it had. See [controls and remapping](../play/controls-and-remapping.md).
+**Devices and players.** The bindings are saved per Play slot number, not per device or person, but only slots 1 and 2 are read back. Changing a slot's **Controls** replaces its bindings with that device's defaults. In practice a saved remap reaches a later match only for player 1 on **Keyboard · WASD**. See [controls and remapping](../play/controls-and-remapping.md).
 
 **Sound.** Not saved.
 

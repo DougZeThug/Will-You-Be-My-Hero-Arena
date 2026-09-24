@@ -8,8 +8,7 @@ The cornhole throw is how a player sends one bag at the board in a Play Cornhole
 - 0 off it
 
 The throw happens on the Play tab, in a *live match* started from [Play setup](play-setup.md) with **Cornhole** selected. At any moment exactly one player is the *active player*. Several things tell everyone whose turn it is:
-- that player's tile in the *score strip* is highlighted
-- their in-canvas status reads **AIMING** or **CHARGING**
+- their nameplate's status line reads **AIMING** or **CHARGING**
 - a target reticle shows on the board
 - the *caption* reads "{name}: aim, hold charge, then release"
 
@@ -24,9 +23,9 @@ When the match opens, both cards walk on for about a second and a half (**Cards 
 
 Moving left or right shifts the thrower along the throwing line. The aim keys or stick move the reticle.
 
-The player presses and holds the charge button: Space on keyboard 1. The **Release timing** meter appears over the stage with a marker sliding right and a green band, and the character plays a short pre-throw ritual. The caption reads **Release in the green window**. The player lets go while the marker is in the green. The caption reads **Perfect release**, the character throws, and a moment later the bag leaves the hand and arcs onto the board.
+The player presses and holds the charge button: Space on keyboard 1. The **RELEASE TIMING** meter appears at the bottom left of the stage, with a marker sliding right and a teal band that the caption calls the green window, and the character plays a short pre-throw ritual. The caption reads **Release in the green window**. The player lets go while the marker is in the green. The caption reads **Perfect release**, the character throws, and a moment later the bag leaves the hand and arcs onto the board.
 
-When the bag lands, the result is announced ("Doug: on the board — one point") and the thrower reacts. The score strip updates. After a short pause the next player's turn begins with the reticle re-centred. When every player has thrown four bags, the caption reads **Final score**, and the result shows "{name} wins", or **Session complete** on a tie. The result offers **Play again** and **Choose another event**.
+When the bag lands, the result is announced ("Doug: on the board — one point") and the thrower reacts. The nameplates update. After a short pause the next player's turn begins with the reticle re-centred. When every player has thrown four bags, the caption reads **Final score**, and the result shows "{name} wins", or **Session complete** on a tie. The result offers **Play again** and **Choose another event**.
 
 ## The interaction, event by event
 
@@ -50,7 +49,7 @@ A turn starts 1.2 seconds after the previous bag landed, or 1.45 seconds after t
 
 - **The shot is reset** to this character's default shot (see [shots](#shots)). The reticle returns to the centre of the board. The thrower's spot along the line is *not* reset; it is wherever this character last stood.
 - **The caption** changes to "{name}: aim, hold charge, then release".
-- **The status labels change.** The in-canvas status for the active player reads **4 BAGS LEFT · AIMING**, counting down each turn. Every other player reads **WAITING**.
+- **The status labels change.** The active player's nameplate status line reads **4 BAGS LEFT · AIMING**, counting down each turn. Every other player reads **WAITING**.
 - **Only the active player can act.** Presses from other players do nothing, except **Celebrate** (C on keyboard 1), which plays a celebration for that player's own character.
 
 While aiming, the active player can:
@@ -81,7 +80,7 @@ The throw commits when the charge press is accepted. That is a key press, a trig
   - **The release window** is ±0.035, plus up to 0.045 more for the card's skill with the selected shot, plus 0.035 in precision mode, plus 0.025 for a *clutch performer* on their last bag.
 
   At the starting spot a perfect release is about 1.05 seconds into the charge.
-- **The caption** reads **Release in the green window**. The in-canvas status reads **CHARGING**.
+- **The caption** reads **Release in the green window**. Their nameplate's status line reads **CHARGING**.
 - **The character plays a pre-throw ritual** from its personality, such as a bag squeeze or a stare at the board.
 
 Committing fixes nothing else. Position, aim, shot and precision mode can all still change: see [while charging](#while-charging).
@@ -156,7 +155,7 @@ Each turn starts on the character's most frequent style:
 | Input device | **Keyboard 1** charges with Space, and **keyboard 2** with Enter. A **controller** charges with the right trigger (RT or R2). The trigger is analog, so a half pull counts once it passes 0.2 and releases below 0.1. **Touch** charges with a tap on **Hold / release**, which then reads **Release**. A second tap throws. An **AI player** charges 0.4 s after its turn starts, and lets go near the ideal, offset by up to 0.03 in a fixed pattern that depends on how many bags have been thrown in the match ([AI players](../cross-cutting/ai-players.md)). | The device cannot be changed during a match. Adding on-screen taps to a keyboard or controller merges the two: see [input device changes](#cancel-and-interrupt). |
 | Event and action combinations | **J/K/L/E** choose the shot. **Right modifier** (left Ctrl, right Ctrl for keyboard 2, RB or R1) turns on precision mode while aiming or charging. It costs 15 stamina, lasts 3 s, and then has a 10 s cooldown; with less than 15 stamina it does nothing. The caption shows **Precision mode**. The **left modifier** (Shift, LB or L1) does nothing in cornhole. **Celebrate** (C) plays a celebration for any player at any time their character is not already mid-animation. J during the result pause does the same for the thrower. | The shot can still be changed; the latest choice before release wins. Precision mode can be turned on mid-charge, and the green band widens at once. It only narrows scatter if it is still active when the bag leaves the hand, 3 s after activation. Moving mid-charge moves the green band. |
 | Contest kind | Always Play practice. The caption shows **Practice / no club points**. Exhibition, counted entry and replay are Watch-only and do not apply. | Not applicable: practice cannot become anything else. |
-| Character card | The card's accuracy sets the scatter: Dan 0.76, Doug 0.68. Its shot skills set the window width (see [shots](#shots)). Its default shot sets the starting style. **Dan** is a clutch performer, so his window is 0.025 wider on his fourth bag. Both built-in cards have precision mode. An installed character without a connected rig cannot start a match: see [interactions](#interactions-with-other-systems). | Not applicable: cards are chosen in setup. |
+| Character card | The character's Play accuracy sets the scatter: Dan 0.76, Doug 0.68. It is not the card's printed **Accuracy** bar (Dan 64, Doug 68). Its shot skills set the window width (see [shots](#shots)). Its default shot sets the starting style. **Dan** is a clutch performer, so his window is 0.025 wider on his fourth bag. Both built-in cards have precision mode. An installed character without a connected rig cannot start a match: see [interactions](#interactions-with-other-systems). | Not applicable: cards are chosen in setup. |
 | Presentation settings | **Reduced motion** skips the camera punch on a hole, draws no impact effects at all, and turns off squash and stretch. **Lower graphics quality** has no effect in Play. The **clean spectator view** is Watch-only. Play's sound switch reads **Sound on** and starts off. Turned on, it plays a release tone, a hole tone and a board-impact tone. | Toggling **Reduced motion** in Arena settings restarts the whole match: see [settings change underneath](#cancel-and-interrupt). The sound switch takes effect on the next cue. |
 | Screen size and orientation | The stage scales to fit and stays centred. The hole, the board and every distance above are in stage pixels, so window size does not change the difficulty. The on-screen pads measure from their own centre, whatever their size. | Resizing or rotating rescales the stage mid-throw. Nothing pauses and the charge continues. |
 | Saved state | The throw reads nothing from this browser's save. The only saved thing that matters is the bindings last saved by **Start**, which decide which keys are J/K/L/E and charge. | No effect. |
@@ -214,7 +213,7 @@ After an interrupt the player stays in the match unless they navigated away or r
 - **Charge pressed too early.** Pressed during the entrances or during another player's result pause, it is ignored entirely rather than buffered. The player must press again once their turn starts.
 - **The on-screen Release button** returns to **Hold / release** by itself when the throw is released automatically, and when the turn passes.
 - **The held bag** is drawn in the thrower's hand from the start of their turn until the release point. **In-flight bags** are drawn in the air. **Board bags** stay drawn until the match closes.
-- **The in-canvas status** counts **BAGS LEFT** for each player. A bag in flight is not subtracted until it has landed.
+- **The nameplates' status lines** count **BAGS LEFT** for each player. A bag in flight is not subtracted until it has landed.
 
 ## Open questions and verification
 

@@ -175,7 +175,7 @@ After any interrupt before **Start**, the player is either still on the setup wi
 
 See [accessibility](../cross-cutting/accessibility.md).
 
-**Installed characters.** Installed cards appear in every **Character** list once the character library has loaded, with their own card image. The setup does not check their rig. If the pack has no connected rig, the match shows an error instead of opening: "{name} needs a connected character rig for direct play. Its existing poses remain available in Watch." ([Install character](../collection/install-character.md)).
+**Installed characters.** Installed cards appear in every **Character** list once the character library has loaded, with their own card image. The setup does not check their rig. If the pack has no connected rig, the match shows an error instead of opening: "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." ([Install character](../collection/install-character.md)).
 
 **Multiple tabs.** Each tab has its own setup. They share only the saved bindings, and the last **Start** in any tab wins.
 

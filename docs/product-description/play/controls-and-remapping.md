@@ -204,7 +204,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 ## Open questions and verification
 
 - Read from `components/arena/live/PlayableArena.tsx`, `lib/arena/engine/input/InputBindings.ts`, `KeyboardDevice.ts`, `GamepadDevice.ts`, `ArenaSession.ts` and the three action maps. No test drives the remapping section; `tests/browser/input.spec.ts` uses default bindings in the Lab. Nothing here has been checked on the production page.
-- **Saved remapping rarely survives.** Saving is by slot and reading is into slots 1 and 2 only (`PlayableArena.tsx`, lines 35–49). Every **Controls** change resets the slot (lines 150–159). Together they mean a saved remap reaches a later match only for player 1 on **Keyboard · WASD**. This looks like a bug. [This browser's save](../foundations/saved-data.md#interactions-with-other-systems) says player 2's remapped keys apply to the next player 2; they do not reach a match.
+- **Saved remapping rarely survives.** Saving is by slot and reading is into slots 1 and 2 only (`PlayableArena.tsx`, lines 35–49). Every **Controls** change resets the slot (lines 150–159). Together they mean a saved remap reaches a later match only for player 1 on **Keyboard · WASD**. This looks like a bug.
 - **No conflict check.** An action bound to the same player's pause key is silently lost, because the pause is handled before the action (`ArenaSession.ts`, lines 204–205 and 230–231). Whether that is acceptable is a product call.
 - **No reset control.** Restoring defaults needs a round trip through another device.
 - **The number fields.** How the fields behave while typing, for example whether clearing one shows "0" at once, has not been tried in a browser.

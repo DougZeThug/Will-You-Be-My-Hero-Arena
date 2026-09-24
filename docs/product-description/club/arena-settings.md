@@ -28,7 +28,7 @@ Ticking **Reduced motion** or **Lower graphics quality** needs no save. The chan
 
 | Control | What it does | Saved |
 | --- | --- | --- |
-| **Reduced motion** | Calmer stage effects in Watch, Play and The collection. Restarts a running Play match. | No. Each visit starts from the operating system's setting. |
+| **Reduced motion** | Removes contact effects and camera punch and shake in Watch. In Play it removes camera punches and shakes, impact effects, and squash and stretch. The collection uses reduced clips. Restarts a running Play match ([the stage](../foundations/stage.md#reduced-motion-and-lower-graphics-quality)). | No. Each visit starts from the operating system's setting. |
 | **Lower graphics quality** | Rebuilds the Watch stage and removes its contact effects and camera punch and shake. It also rebuilds The collection's preview, which has no such effects, so the rebuild is all that shows there. Play ignores it. | No. Each visit starts unticked. |
 | **Win**, **Draw**, **Loss**, **Entries / User** | Number fields holding the draft points for a win, a draw and a loss, and the allowance. | Only by **Save for future entries**. |
 | **Counted entries enabled** | Part of the draft. When saved unticked, no counted entry can be started. | Only by **Save for future entries**. |

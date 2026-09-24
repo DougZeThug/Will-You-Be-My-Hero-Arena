@@ -8,7 +8,7 @@ An AI player never pauses the match and never resumes it. It exists only in Play
 
 ## The simple case
 
-With the defaults, player 2 is Dan as an **AI player**. He has no control panel under the stage, and his tile in the *score strip* ends in "· AI".
+With the defaults, player 2 is Dan as an **AI player**. He has no control panel under the stage, and his tile in the *score strip*, which only screen readers get, ends in "· AI".
 - **In cornhole**, Dan's turn starts, and 0.4 s later he begins to charge from wherever he stands, aimed at the centre of the board. He lets go close to the ideal power, and the caption reads **Perfect release**.
 - **In Clubhouse Dash**, Dan runs straight down his lane from the start, sprinting whenever he has the stamina, and jumps or slides as each obstacle in his lane comes up.
 - **In Backyard Brawl**, Dan walks toward his opponent until he is in range. Then, a few times a second, he picks a light attack, a heavy attack, a dodge, a power strike, or a block if his opponent is attacking.
@@ -36,7 +36,7 @@ stateDiagram-v2
 
 When the match opens, each AI slot is given an AI device instead of a keyboard, controller or on-screen controls. At that instant:
 - **No control panel** is drawn for it, and it needs no stage focus, bindings or [neutral](../foundations/input-model.md#neutral).
-- **Its tile** shows "· AI" as its device. The HUD nameplates and the result show only the character's name.
+- **Its tile** shows "· AI" as its device. The nameplates and the result show only the character's name.
 - **On every game step** from then on, the event is asked what this player wants to press, given the game as it is at that step.
 
 During the entrances the AI either presses nothing or presses things the event refuses, such as a sprint before the race starts.
@@ -89,7 +89,7 @@ Once the event is over, every action it presses is refused. It can still be the 
 | Contest kind | Play practice only. Watch contests have no AI players: both sides are simulated before playback ([contests and recordings](../foundations/contests-and-recordings.md)). | Not applicable: practice cannot become anything else. |
 | Character card | The card's stats and abilities work for the AI as for a person: scatter, speed, damage, stamina drain. In cornhole the card's default shot is the only one it throws. In the Brawl the card's personality sets how often it blocks; a more intense, showier card blocks less. | Not applicable: cards are fixed for the match. |
 | Presentation settings | No effect on what the AI decides. | Toggling **Reduced motion** restarts the match, and the AI starts over with it ([the match shell](../play/match-shell.md)). |
-| Screen size and orientation | No effect on the AI. At 720 px wide and below, the tile's "· AI" is hidden. | No effect. |
+| Screen size and orientation | No effect on the AI. At 720 px wide and below, the tile's "· AI" is removed, even for screen readers. | No effect. |
 | Saved state | No effect. The AI reads nothing from this browser's save. An AI slot's bindings are saved at **Start** like the others, but never used. | No effect. |
 
 ## Cancel and interrupt
@@ -120,13 +120,13 @@ Once the event is over, every action it presses is refused. It can still be the 
 
 **Watch and Play separation.** Only Play has AI players. In Watch, both sides of a contest are simulated in full before playback, and nobody is driven live ([contests and recordings](../foundations/contests-and-recordings.md)).
 
-**Devices and players.** Any number of slots can be AI, up to the event's four players, or two in the Brawl. A match of AI players only is allowed and plays itself, with no control panels. With no person holding a pause key, only the toolbar and overlay buttons, or leaving the window, can pause it ([Play setup](../play/play-setup.md)).
+**Devices and players.** Any number of slots can be AI, up to the event's four players, or two in the Brawl. A match of AI players only is allowed and plays itself, with no control panels. With no person holding a pause key, only the toolbar's **Pause game**, or leaving the window, can pause it ([Play setup](../play/play-setup.md)).
 
 **Sound.** An AI's actions make the same sounds as a person's. It has no controller, so it never rumbles ([sound](sound.md)).
 
 **Reduced motion and graphics quality.** No effect on what the AI decides.
 
-**Accessibility.** Nothing tells a screen-reader user which players are AI; the tile's "· AI" is plain small text. The caption announces an AI's results like anyone's, for example "Dan: on the board — one point" ([accessibility](accessibility.md)).
+**Accessibility.** Only the score strip's "· AI", which screen readers get above 720 px wide, says which players are AI. Sighted players can tell only from the missing control panel. The caption announces an AI's results like anyone's, for example "Dan: on the board — one point" ([accessibility](accessibility.md)).
 
 **Installed characters.** An installed card can be an AI player if its pack has a connected rig. In cornhole it throws its "standard" default style. In the Brawl its blocking follows the personality in its pack ([Install character](../collection/install-character.md)).
 

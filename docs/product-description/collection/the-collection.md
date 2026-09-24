@@ -47,7 +47,7 @@ Opening the tab shows the previewed card. On a fresh visit that is Dan's. Otherw
 
 The card's subtitle, rarity, specialty and colour are not shown as text. They appear only where the card image itself prints them.
 
-The preview stage loads under the yellow **UNFOLDING THE ARENA…** cover ([the stage](../foundations/stage.md#loading-and-rebuilding)). It draws the previewed card twice, one copy in each lane. The court is the event selected in the [Watch lobby](../watch/lobby.md), unless the Motion preview is one of the four sport clips, which bring their own court. The court's in-canvas sign reads **CHOOSE A MATCHUP**, and both name panels read **READY**.
+The preview stage loads under the yellow **UNFOLDING THE ARENA…** cover ([the stage](../foundations/stage.md#loading-and-rebuilding)). It draws the previewed card twice, one copy in each lane. The court is the event selected in the [Watch lobby](../watch/lobby.md), unless the Motion preview is one of the four sport clips, which bring their own court. The court's sign reads **CHOOSE A MATCHUP**, and both nameplates read **READY**.
 
 Clicking a card in the grid makes it the previewed card. Its outline and check move, the detail pane changes at once, and the preview stage rebuilds. The Motion preview choice is kept.
 
@@ -86,7 +86,7 @@ Leaving the tab tears the preview stage down. What survives depends on where the
 | **Frustration** | The lobby's event | The card's first miss reaction, looping |
 | **special**, **Match victory** | The lobby's event | The same celebration as **Celebration** |
 
-**Dan and Doug on the cornhole court.** On a cornhole court, Dan and Doug are drawn by their *cornhole performance rig*, the side-view figure used for Watch cornhole. On the preview stage that rig only ever stands in its rest idle. So whenever the court is cornhole, every Motion preview, every Animation library clip and every motion-style draft shows the same idle for Dan and Doug. The court is cornhole by default, because the lobby opens on Cornhole. Only **football**, **pong** and **basketball**, or a lobby event other than Cornhole, show their other clips. Installed characters have no such rig and show every clip on every court.
+**Dan and Doug on the cornhole court.** On a cornhole court, Dan and Doug are drawn by their cornhole *side-view rig*, the figure used for Watch cornhole. On the preview stage that rig only ever stands in its rest idle. So whenever the court is cornhole, every Motion preview, every Animation library clip and every motion-style draft shows the same idle for Dan and Doug. The court is cornhole by default, because the lobby opens on Cornhole. Only **football**, **pong** and **basketball**, or a lobby event other than Cornhole, show their other clips. Installed characters have no such rig and show every clip on every court.
 
 > Technical note: `ArenaScene.renderAt` sends a character with a performance rig to `renderPerformanceIdle` whenever no recording is loaded (line 188). That check comes before the preview clip, the library clip or the draft is considered. The cornhole rig provider gives that rig only to `card-dan` and `card-doug`.
 
@@ -95,7 +95,7 @@ Leaving the tab tears the preview stage down. What survives depends on where the
 The **Animation library** picker sits between **Explore motion styles** and the stage. Its first option is **Use motion preview above**. The rest is every clip in the shared animation library except the personality styles, labelled "{category} · {name}", for example **throw · airmail**, **ritual · bag flip** or **celebration · fist pump**. Choosing one:
 - plays it on both copies from its beginning, looping with a 0.4 s rest
 - plays entrance clips out of the card portals, throws the court's bag or ball for throw clips, and keeps a bag in the hand for ritual clips
-- hides the court's in-canvas sign and name panels
+- hides the court's sign and nameplates
 - overrides the Motion preview and any motion-style draft
 
 **Use motion preview above** cannot be chosen again once another clip has been picked: the picker ignores it. The library clip clears only when the player leaves for Watch or Play, or reloads.
@@ -122,7 +122,7 @@ The preview stage always rebuilds on return.
 | Input device | A mouse, touch or the keyboard. The cards are buttons named "Select {card name}", with a pressed state. The pickers, the **Explore motion styles** summary and the actions are reachable with Tab. Game keys do nothing here. | No effect. |
 | Event and action combinations | The event selected in the Watch lobby sets the court for every clip except the four sport clips. With **01 Cornhole** selected, the default, Dan and Doug show only their cornhole idle. | The lobby's event cannot change from this tab. The agent tool that changes it also leaves the tab. |
 | Contest kind | Not applicable: nothing here is a contest. A Watch recording left loaded stays paused and does not affect the preview. | Not applicable. |
-| Character card | Dan and Doug use their built-in figures, and their cornhole performance rig on the cornhole court. An installed character uses its pack's art on every court. An attached asset mapping for the card changes its personality text and what the preview draws ([asset mapping](asset-mapping.md)). | Clicking another card rebuilds the stage. |
+| Character card | Dan and Doug use their built-in figures, and their cornhole side-view rig on the cornhole court. An installed character uses its pack's art on every court. An attached asset mapping for the card changes its personality text and what the preview draws ([asset mapping](asset-mapping.md)). | Clicking another card rebuilds the stage. |
 | Presentation settings | **Reduced motion** plays the clips in their reduced form and drops the entrance's burst and puff. **Lower graphics quality** only rebuilds the stage: the preview has none of the contact or camera effects it tones down. The clean spectator view cannot be on here, because it hides the tabs. The preview is silent whatever either sound switch says. | Toggling **Reduced motion** in Arena settings applies at once, without a rebuild. Toggling **Lower graphics quality** rebuilds the stage. |
 | Screen size and orientation | At 900 px wide and below, the cards shrink to 175 px. At 640 px and below, the collection actions move under the heading. At 600 px and below, the grid and the detail pane stack, the cards are 145 px, and the preview stage grows to 380 px high. The court is fitted and centred in the stage box. | Reflows and rescales at once; nothing reloads. |
 | Saved state | Installed cards come from the character library. If it cannot open, only Dan and Doug are listed. An attached mapping for the previewed card changes its personality text and its preview. A corrupt Arena save leaves the tab working, without any mappings. | Any reload of the Arena save rebuilds the preview stage: saving the scoring policy, attaching a mapping, **Reset demo**, or another tab's write. A reset also removes mappings, so the personality text returns to the card's own. |

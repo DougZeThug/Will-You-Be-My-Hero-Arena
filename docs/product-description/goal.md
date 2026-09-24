@@ -104,14 +104,18 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - the imported mappings, which in practice means every re-read of the save, including another tab's writes
 
   **Lower graphics quality** is ignored by Play. **Restore arena** reloads a loaded recording paused at the same second. With nothing loaded, it toggles **Lower graphics quality**.
-- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. Only the stage's sound and clean-view buttons, the progress bar and the result panel remain.
+- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. Only the stage's sound and clean-view buttons, the progress bar and the result panel remain. It does not hide the resume banner or the error box.
 - **Exports and storage.**
   - **Export local save** exports the save as this tab shows it. Any loaded-but-unfinished or waiting recording is left out with its awards, exhibitions included.
   - The Arena save cannot be imported back.
   - Installed characters live in IndexedDB. They are not touched by **Reset demo**, and there is no uninstall.
   - If IndexedDB cannot open, the Arena save is never read and Watch cannot start a contest.
-- **What the viewer sees on the Watch stage.** At desktop widths the stage's drawing covers the page's own "Live score" scoreboard and the lobby's stage label. The visible score is the drawing's *nameplates* and *sign*, and the scoreboard exists only for screen readers.
-- **Hiding across tabs.** Every tab hides the contest the save lists as waiting to resume, so a tab with nothing loaded also hides a counted entry being played in another tab. Loading another recording does not write the old one's position. The new recording takes over the waiting slot, and the old contest's points are revealed.
+- **What the viewer sees on the stage.** `public/assets/arena-interface.css` loads after `globals.css`. At every width it shrinks four things to one-pixel boxes that only screen readers get: the page's Watch "Live score" scoreboard, the lobby's stage label, Play's score strip, and Play's **Release in green** meter. Sighted players see what the stage draws instead:
+  - the nameplates and sign
+  - in cornhole, a **RELEASE TIMING** meter at the bottom left, with a teal window
+
+  The same stylesheet puts the Watch sound and clean-view buttons at the stage's bottom right, keeps the stage 16:9, underlines the active tab, and moves the side station under the stage at 720 px.
+- **Hiding across tabs.** A tab with *no recording loaded* hides the contest the save lists as waiting to resume. So an idle tab also hides a counted entry being played in another tab. Loading another recording does not write the old one's position. The new recording takes over the waiting slot, and the old contest's points are revealed.
 - **Watch lifecycle ownership.** [Contests and recordings](foundations/contests-and-recordings.md) owns the definitions and the single lifecycle diagram. Each state then has one owning document:
 
   | State | Owning document |

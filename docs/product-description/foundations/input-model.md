@@ -32,7 +32,7 @@ A second person can use **Keyboard · TFGH + numpad** on the same keyboard, or p
 | **Keyboard · WASD** (keyboard 1) | W A S D | Arrow keys | J, K, L, E, Space, left Shift, left Ctrl, C | Escape |
 | **Keyboard · TFGH + numpad** (keyboard 2) | T F G H | Numpad 8 / 4 / 5 / 6 | Numpad 1, 2, 3, 0, Enter, right Shift, right Ctrl, numpad decimal | Backspace |
 | **Controller 1–4** | Left stick, plus the D-pad | Right stick | A, X, B, Y (Cross, Square, Circle, Triangle); RT/R2; LB/L1; RB/R1; View/Share | Menu / Options |
-| **Touch / on-screen** | **Move** pad | **Aim** pad (cornhole only) | One button per action | The toolbar and overlay buttons only |
+| **Touch / on-screen** | **Move** pad | **Aim** pad (cornhole only) | One button per action | **Pause game** on the toolbar only; the overlay's **Resume game** only resumes |
 | **AI player** | Decided by the event | Decided by the event | Decided by the event | Never pauses |
 
 The named inputs map to keys and buttons like this. The action names are the ones the remapping section shows:

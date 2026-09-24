@@ -10,7 +10,7 @@ The Brawl is *practice*. It never awards points, and nothing about a bout is sav
 
 ## The simple case
 
-By default player 1 is Doug on **Keyboard · WASD** and player 2 is Dan as an **AI player**. When the match opens, both cut-out figures glide in facing the camera, with Doug on the left and Dan on the right, 620 stage pixels apart. The caption reads **Step into the ring**. After 1.5 seconds the caption changes to **Fight — light, light, heavy chains into a finisher**. Both fighters turn side-on to each other with a quick paper-flip, and the fight begins.
+By default player 1 is Doug on **Keyboard · WASD** and player 2 is Dan as an **AI player**. When the match opens, both characters glide in as front-view puppets facing the camera, with Doug on the left and Dan on the right, 620 stage pixels apart. The caption reads **Step into the ring**. After 1.5 seconds the caption changes to **Fight — light, light, heavy chains into a finisher**. Both fighters turn side-on to each other with a quick paper-flip, and the fight begins.
 
 The player walks Doug toward Dan with D. As they close, the camera zooms in slightly. Once Dan is within reach, J throws a light attack. If it lands, a yellow star bursts on Dan, the camera shakes, and the game freezes for an instant (*hit-stop*). Dan reels back a few pixels, his **HP** drops by 9, and the caption reads "Doug hits Dan". When Dan swings, holding left Shift raises Doug's guard. A blocked punch shows a teal ring, costs Doug 2 health and 8 energy, and the caption reads "Doug blocks".
 
@@ -104,7 +104,7 @@ When the blow connects, there are four possible outcomes.
 
 **It lands.**
 
-- **Damage.** The defender loses the attack's damage, set by the attacker's card. Counter stance, if it is still running, cuts it to 65%, rounded. The **HP** numbers drop at once, both in the canvas panel and in the score strip.
+- **Damage.** The defender loses the attack's damage, set by the attacker's card. Counter stance, if it is still running, cuts it to 65%, rounded. The health number on the defender's nameplate drops at once.
 - **Knockback.** The defender slides back in the direction of the blow: about 13 stage pixels for a light attack and up to 44 for a power strike. They stop at the stage walls, at x = 105 and x = 1175.
 - **Hit reaction.** The defender reels and cannot act or walk. The reaction lasts 0.38 s for less than 15 damage and 0.72 s for 15 or more. Any attack of theirs is lost, and any guard drops.
 - **Hit-stop.** The game clock holds for 3 steps (0.05 s) on a blow under 15 damage and 5 steps (0.08 s) on a heavier one. Nothing moves, and the struck fighter shivers from side to side. Presses made during the freeze are still read: they wait in the buffer, and the buffer does not age while the clock holds.
@@ -200,7 +200,7 @@ After an interrupt the player stays in the match unless they navigated away or r
 
 **Watch and Play separation.** Watch has no fighting sport ([the four sports](../watch/the-four-sports.md)). The Brawl is simulated live from each input. Each match gets a fresh random seed, which decides the AI's choices and which entrance and celebration each character plays. Hit-stop exists only in Play.
 
-**Devices and players.** Exactly two players. Setup offers no **Add player** or **Remove player** for the Brawl, and switching to it from an event with more players keeps the first two. Two people can share one keyboard, using keyboard 1 and keyboard 2. Two players may not share a keyboard layout or a controller, and two AI players can fight each other while the player watches. The AI walks in until it is about 112 px away and decides what to press every 0.26–0.54 s, acting only within 160 px. It usually blocks when its opponent is attacking, and otherwise throws light, heavy or power attacks or dodges. It never grapples, uses counter stance or taunts, though its random presses can fall into a J, J, K finisher ([AI players](../cross-cutting/ai-players.md), [the input model](../foundations/input-model.md)).
+**Devices and players.** Exactly two players. Setup offers no **Add player** or **Remove player** for the Brawl, and switching to it from an event with more players keeps the first two. Two people can share one keyboard, using keyboard 1 and keyboard 2. Two players may not share a keyboard layout or a controller, and two AI players can fight each other while the player watches. An AI fighter walks into range, then attacks, blocks and dodges on its own, and never grapples, uses counter stance or taunts ([AI players](../cross-cutting/ai-players.md), [the input model](../foundations/input-model.md)).
 
 **Sound.** Off by default in every match. With **Sound on**, three short synthesized tones play: a low punch on a landed hit, a higher one on a block, and a bright victory tone at the end. Watch's sound switch has no effect here ([sound](../cross-cutting/sound.md)).
 
@@ -208,7 +208,7 @@ After an interrupt the player stays in the match unless they navigated away or r
 
 **Accessibility.** The caption is an `aria-live` region. It announces **Fight — light, light, heavy chains into a finisher**, each "{attacker} hits {defender}" or "{defender} blocks", and the result. The same message twice in a row is not announced again, so a run of hits by one fighter is read once. Health is in the score strip as text, "{N} HP", and as a progress bar labelled "{name} health". Energy is text only. The on-screen buttons are real buttons, and **Block** reports its pressed state ([accessibility](../cross-cutting/accessibility.md)).
 
-**Installed characters.** An installed card can be chosen in setup. If its pack has no connected rig, the match fails to open with "{name} needs a connected character rig for direct play. Its existing poses remain available in Watch." An installed card that does open fights as its cut-out figure, not on a side-view rig. Unless its pack sets its own values, it uses defaults: 170 px/s walking, damage of 8 light, 16 heavy, 23 finisher, 26 power strike and 18 grapple, and Doug's quicker cross as its heavy. A pack whose abilities leave out power strike cannot use **Power strike** ([Install character](../collection/install-character.md)).
+**Installed characters.** An installed card can be chosen in setup. If its pack has no connected rig, the match fails to open with "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." An installed card that does open fights as its front-view puppet, not on a side-view rig. Unless its pack sets its own values, it uses defaults: 170 px/s walking, damage of 8 light, 16 heavy, 23 finisher, 26 power strike and 18 grapple, and Doug's quicker cross as its heavy. A pack whose abilities leave out power strike cannot use **Power strike** ([Install character](../collection/install-character.md)).
 
 **Multiple tabs.** Each tab runs its own bout, and leaving a tab pauses the bout in it. The only shared thing is the saved bindings; the last **Start** in any tab wins.
 
@@ -226,8 +226,8 @@ After an interrupt the player stays in the match unless they navigated away or r
 - **Power strike during its cooldown** does nothing. The press waits 0.23 s and is dropped. The cooldown is not shown anywhere.
 - **A finisher short of energy** does not fall back to a heavy attack. The K press does nothing unless 20 energy is available within 0.23 s.
 - **The clock** in the caption counts up from 0, not down. The bout ends when it reaches 60, which includes the 1.5 s entrance, so there are 58.5 s of fighting. Hit-stop and pauses do not count. The caption keeps counting after the result appears.
-- **Health** is shown in two places: a large number and bar in each top corner of the stage, with **HP · ENERGY {N}**, and the score strip below. Neither tile is highlighted, because there is no turn.
-- **The hint under the stage** for keyboard 1 reads "W A S D move · Move into range, attack, guard or dodge. Chain light, light, heavy." It does not mention the grapple, the special combo or the double-tap dodge.
+- **Health** is shown on the nameplates: a large number and bar in each top corner of the stage, with **HP · ENERGY {N}**. The score strip holds the same figures for screen readers only.
+- **The control panel's hint** for keyboard 1 reads "W A S D move · Move into range, attack, guard or dodge. Chain light, light, heavy." It does not mention the grapple, the special combo or the double-tap dodge.
 - **After the result**, key presses still reach the stage. **Taunt** plays another celebration for a fighter who was not knocked out.
 
 ## Open questions and verification

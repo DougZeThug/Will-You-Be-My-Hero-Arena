@@ -7,7 +7,7 @@ Clubhouse Dash is the Play running race. Two to four runners start together on t
 - jump, slide, dodge into another lane, burst sprint, brake and celebrate
 - change lanes or steer, depending on the **Course controls** chosen in setup
 
-The race happens on the Play tab, in a *live match* started from [Play setup](play-setup.md) with **Clubhouse Dash** selected. Everyone runs at once; there are no turns. Each runner's tile in the *score strip* shows their progress as a percentage of the course and their stamina. The race ends when every runner has crossed the line, 6 seconds after the first runner crosses, or 40 seconds after the match opened, whichever comes first.
+The race happens on the Play tab, in a *live match* started from [Play setup](play-setup.md) with **Clubhouse Dash** selected. Everyone runs at once; there are no turns. Each runner's nameplate shows their progress as a percentage of the course, and in a two-runner race their stamina. The race ends when every runner has crossed the line, 6 seconds after the first runner crosses, or 40 seconds after the match opened, whichever comes first.
 
 The Dash is *practice*. It never awards points, and nothing about a race is saved.
 
@@ -19,7 +19,7 @@ With the defaults, player 1 is Doug on keyboard 1 and player 2 is Dan, an AI pla
 
 The caption reads **Take your mark**. After a second and a half it reads **Go — jump hurdles, slide under bars**. Both runners turn side-on and start running to the right by themselves, and the camera follows the pack.
 
-The player holds Space to sprint, and watches Doug's stamina bar drain in the score strip. As a yellow hurdle comes up in Doug's lane they press J to jump it; for a teal bar they press K to slide under it. W and S move Doug one lane up or down the screen. Touching an obstacle is a crash: Doug stumbles, slows almost to a walk for a moment, and loses 10 stamina. The camera shakes.
+The player holds Space to sprint, and watches the stamina bar on Doug's nameplate drain. As a yellow hurdle comes up in Doug's lane they press J to jump it; for a teal bar they press K to slide under it. W and S move Doug one lane up or down the screen. Touching an obstacle is a crash: Doug stumbles, slows almost to a walk for a moment, and loses 10 stamina. The camera shakes.
 
 When Doug reaches the post, the caption reads "Doug crosses the line", and he stops, turns to face the camera and celebrates. The AI Dan crosses at about 13.4 seconds on the caption's clock. When both are across, or 6 seconds after the first one crossed, the caption reads **Finish — race complete**. The result shows "{name} wins" with **Play again** and **Choose another event**.
 
@@ -63,7 +63,7 @@ During the countdown only **Celebrate** does anything, and only once the entranc
 
 At 1.5 seconds the race starts:
 - **The caption** changes to **Go — jump hurdles, slide under bars**, and the sign to **RUNNING · PRACTICE**.
-- **The runners turn side-on**, with a quick card-flip turn.
+- **The runners turn side-on**, with a quick paper-flip turn.
 - **With Auto forward**, every runner starts running at once. From standing, Doug reaches 90% of his cruising speed of 172 stage pixels per second in about 0.4 s; Dan reaches 168 in about 0.5 s.
 - **With Free steering**, nobody moves until they push right.
 - **Stamina** is 100, the maximum, for everyone.
@@ -83,7 +83,7 @@ Jumps, slides and dodges cannot be backed out of at all. Once one is accepted, i
 The sprint commits on the first game step that the held Sprint is accepted while the race is running and stamina is above 5. From that instant:
 - **Top speed rises** by 65 stage pixels per second, scaled by how far a trigger is pulled. At full press that is 237 for Doug and 233 for Dan. Speed eases up toward it; Doug gets 90% of the way in about 0.4 s, Dan in about 0.5 s. The stride lengthens into a sprint.
 - **Stamina drains** at 18 per second, however far past 0.2 a trigger is pulled. Dan drains at 12 per second, because he has *iron stamina*. From full, Doug's sprint lasts 5.3 s before stamina is down to 5; Dan's lasts 7.9 s.
-- **Nothing on screen names the sprint.** The only signs are the speed-up and the stamina bar and number falling in the score strip, and on the runner's nameplate in a two-runner race.
+- **Nothing on screen names the sprint.** The only signs are the speed-up and, in a two-runner race, the stamina bar falling on the runner's nameplate. The score strip gives screen readers the number.
 
 Committing fixes nothing else. The runner can still steer, jump, slide, dodge, burst and brake: see [while sprinting](#while-sprinting). Stamina already spent is never returned.
 
@@ -127,7 +127,7 @@ The race ends at the first of these:
 - 6 seconds after the first runner crossed
 - 40 seconds on the caption's clock, which includes the 1.5-second countdown, so there are 38.5 seconds of racing
 
-At the end, every runner still on the course stops where they stand and turns to face the camera, keeping their percentage. The sign reads **FINISHED · PRACTICE**. The caption reads **Finish — race complete** if anyone crossed, or **Time limit** if nobody did. The result reads "{name} wins" for the first runner across. There is only ever one winner. **Session complete** appears only when nobody crossed within 40 seconds. The result panel and its buttons belong to [the match shell](match-shell.md). Nothing is written anywhere.
+At the end, every runner still on the course stops where they stand and turns to face the camera, keeping their percentage. The sign reads **FINISHED · PRACTICE**. The caption reads **Finish — race complete** if anyone crossed, or **Time limit** if nobody did. The result reads "{name} wins" for the first runner across. There is only ever one winner. **Session complete** appears only when nobody crossed within 40 seconds. The Play result and its buttons belong to [the match shell](match-shell.md). Nothing is written anywhere.
 
 ## The course
 
@@ -168,7 +168,7 @@ Before **Go**, and for a runner who has crossed the line, every move except **Ce
 
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
-| Input device | **Keyboard 1** sprints with Space, and **keyboard 2** with Enter; keys always sprint at full strength. A **controller** sprints with the right trigger. The bonus scales with the pull (a half pull gives about half), but stamina drains at the full rate for any pull past 0.2. **Touch** uses the **Sprint** and **Brake** toggles, one-tap buttons for the rest, and a **Move** pad; there is no **Aim** pad. An **AI player** always runs forward and sprints while its stamina is above 18. It jumps or slides when an obstacle is within 88 stage pixels ahead in its lane, and presses Burst sprint during seconds 4, 12, 20, 28 and 36. It never changes lane, dodges, brakes or celebrates. Its fixed trigger distance slides too early at cruising speed and jumps too late at full speed, so it crashes about twice a race ([AI players](../cross-cutting/ai-players.md)). | The device cannot be changed during a match. On-screen taps merge with a keyboard or controller at any time: see [input device changes](#cancel-and-interrupt). |
+| Input device | **Keyboard 1** sprints with Space, and **keyboard 2** with Enter; keys always sprint at full strength. A **controller** sprints with the right trigger. The bonus scales with the pull (a half pull gives about half), but stamina drains at the full rate for any pull past 0.2. **Touch** uses the **Sprint** and **Brake** toggles, one-tap buttons for the rest, and a **Move** pad; there is no **Aim** pad. An **AI player** runs forward in its own lane, sprints while it has the stamina, and jumps or slides at a fixed distance from each obstacle, so it still crashes about twice a race ([AI players](../cross-cutting/ai-players.md)). | The device cannot be changed during a match. On-screen taps merge with a keyboard or controller at any time: see [input device changes](#cancel-and-interrupt). |
 | Event and action combinations | **Course controls** decides movement for every runner: **Auto forward / change lanes** runs automatically and moves lane by lane, while **Free steering / control acceleration** makes each runner push right to run and steer freely. It is chosen only in setup and kept for **Play again**. **Right modifier** (Ctrl, RB or R1) and **Aim** do nothing in the Dash. There are no chords, combos or double-taps. Two of Jump, Slide and Dodge pressed together do only one of them; the other is dropped. **Celebrate** mid-race blocks Jump, Slide and Dodge until the celebration ends, 0.65–1.5 s later. | Everything in [moves](#moves) can be added mid-sprint. Brake overrides the sprint without ending it, and a burst taken during Brake is wasted. In **Free steering**, easing off the forward push scales the sprint and burst bonuses down with it. |
 | Contest kind | Always Play practice. The caption shows **Practice / no club points**. Exhibition, counted entry and replay are Watch-only and do not apply. | Not applicable: practice cannot become anything else. |
 | Character card | **Doug**: cruising 172, sprinting 237, the quicker to change speed, sprint drain 18 per second. **Dan**: cruising 168, sprinting 233, a little slower to change speed, and *iron stamina* (sprint drain 12 per second). Both have **Burst sprint**. An **installed character** runs at 168 with drain 18 and has Burst sprint, unless its pack carries its own profile with other values. The cards' printed bars (accuracy, consistency, composure) play no part. | Not applicable: cards are chosen in setup. |
@@ -212,7 +212,7 @@ After an interrupt the player stays in the race unless they navigated away or re
 
 **Accessibility.** The caption is an `aria-live` region. It announces **Take your mark**, the start, each runner crossing the line and the finish. Crashes, lane changes, bursts and approaching obstacles are visual only. Nothing warns a player who cannot see the track that a hurdle or bar is coming. The progress percentage is plain text, and stamina is a progress bar labelled "{name} stamina". The on-screen buttons are real buttons: **Sprint** and **Brake** report their on or off state, and the **Move** pad takes arrow keys when focused ([accessibility](../cross-cutting/accessibility.md)).
 
-**Installed characters.** An installed card can be chosen in setup. If its pack has no connected rig, the match fails to open with "{name} needs a connected character rig for direct play. Its existing poses remain available in Watch." One that opens runs with its own puppet rather than the side-view art Dan and Doug use, and with the default running values in [modifiers](#modifiers) ([Install character](../collection/install-character.md)).
+**Installed characters.** An installed card can be chosen in setup. If its pack has no connected rig, the match fails to open with "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." One that opens runs as its front-view puppet rather than on the side-view rig Dan and Doug use, and with the default running values in [modifiers](#modifiers) ([Install character](../collection/install-character.md)).
 
 **Multiple tabs.** Each tab runs its own race. The only shared thing is the saved bindings; the last **Start** in any tab wins.
 
@@ -220,7 +220,7 @@ After an interrupt the player stays in the race unless they navigated away or re
 
 ## Edge cases
 
-- **Player 4** starts 95 pixels behind the start line, so their tile reads a negative progress, down to -4%, for the first moment of the race.
+- **Player 4** starts 95 pixels behind the start line, so their progress reads negative, down to -4%, for the first moment of the race.
 - **Doing nothing** in **Auto forward** still finishes: the runner crashes into every obstacle in its lane and crosses at about 17.8 s. In **Free steering**, doing nothing leaves the runner at 0% until the race ends.
 - **Free steering creeps.** Braking or stumbling moves a runner forward at 45 pixels per second even when nothing is pushed right.
 - **Hurdles count as 52 pixels tall** though they are drawn 42 pixels tall. A runner can clip one while visibly above it.

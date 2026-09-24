@@ -104,12 +104,12 @@ A personality also has an energy, a tempo and a variation number. The mixer cann
 
 ## Dan and Doug on the cornhole court
 
-On a cornhole court, the preview draws Dan and Doug with their cornhole performance rig, which only stands in its rest idle ([the collection](the-collection.md#motion-preview-clips)). So for Dan and Doug:
+On a cornhole court, the preview draws Dan and Doug with their cornhole side-view rig, which only stands in its rest idle ([the collection](the-collection.md#motion-preview-clips)). So for Dan and Doug:
 - With the lobby on Cornhole, the default, no choice here changes the stage. Only the detail pane's text changes.
 - With another lobby event, the entrance, idle, celebration and miss choices show on that court.
 - A **Throw style** can never be seen. Choosing one always moves the preview to the cornhole court, where the rig only idles.
 
-Installed characters have no performance rig, so every choice shows, and **Throw style** plays a cornhole throw at that style's pace.
+Installed characters have no side-view rig, so every choice shows, and **Throw style** plays a cornhole throw at that style's pace.
 
 ## Modifiers
 

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Accessibility is how far the Arena can be used without a mouse, without seeing the canvas, and with less motion. The page has no accessibility mode. What it offers is built into the ordinary controls: every page control is a real button, link, list or checkbox reachable with Tab; dialogs take and trap focus; the Watch *narration* and the Play *caption* are live regions; and **Reduced motion** calms the stage.
+Accessibility is how far the Arena can be used without a mouse, without seeing the canvas, and with less motion. The page has no accessibility mode. What it offers is built into the ordinary controls: every page control is a real button, link, list or checkbox reachable with Tab; dialogs take and trap focus; the Watch *narration* and the Play *caption* are live regions; and **Reduced motion** removes the stage's camera punches, shakes and impact effects.
 
 This document owns keyboard reach, focus handling, labels, live regions, what is visual only, reduced motion, contrast and target sizes. Each feature document answers its own accessibility row in a line and links here.
 
@@ -40,7 +40,7 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 - Pause, speed and skip vanish when playback completes, whether by watching or by **Skip to result**.
 - **Next showdown** and **Replay same recording** vanish with the result panel.
 
-**Stage focus in Play.** Keyboard players' keys count only while focus is inside the Play stage ([the input model](../foundations/input-model.md)). The stage is a Tab stop labelled "Playable arena. Focus here for keyboard controls." It takes focus when the match finishes loading, and again after **Pause game**, **Resume game** or an on-screen action button. Closing a dialog does *not* return focus to the stage: it returns to the gear or footer link that opened the dialog. A keyboard player must tab back, four stops from the gear, or click the stage.
+**Stage focus in Play.** Keyboard players' keys count only while focus is inside the Play stage ([the input model](../foundations/input-model.md)). The stage is a Tab stop labelled "Playable arena. Focus here for keyboard controls." It takes focus when the match finishes loading, and again after **Pause game**, **Resume game** or an on-screen action button. Closing a dialog does *not* return focus to the stage: it returns to the gear or footer link that opened the dialog. A keyboard player must tab back, four stops from the gear, or use **Pause game** then **Resume game**. Clicking the stage does not give it focus ([the input model](../foundations/input-model.md#starting)).
 
 **The focus ring.** Keyboard focus draws a 3-pixel teal outline on page buttons and links. The Play stage and Play's buttons use a lighter teal. The stage's ring appears only for keyboard focus, so it usually does not show after a click.
 
@@ -71,23 +71,22 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 - **Play.**
   - The **Release timing** meter, its green window and marker, and the reticle. The caption announces **Release in the green window** and the grade afterwards, but nothing says where the marker is ([the cornhole throw](../play/cornhole.md)).
   - Positions, obstacles and distances in the Dash and the Brawl.
-  - The highlight on the active player's tile.
+  - Whose turn it is in cornhole, which the nameplates' status lines show. The active tile's highlight in the score strip is clipped out of sight with the strip.
   - The **PAUSED** overlay: pausing changes the pause button's name, but nothing announces it.
 - **Sound.** Watch and Play play only short synthesized tones. Nothing is spoken ([sound](sound.md)).
 
 ## Reduced motion
 
 - **The checkbox.** **Reduced motion** in [Arena settings](../club/arena-settings.md) starts from the operating system's "reduce motion" preference, read once when the page loads. It is not saved. Changing the system preference during a visit does not change the checkbox until the page is reloaded.
-- **The stage.** Reduced motion calms Watch and Play effects and camera moves, and toggling it restarts a Play match ([the stage](../foundations/stage.md)).
+- **The stage.** Reduced motion removes camera punches and shakes and impact effects in Watch and Play, and squash and stretch in Play. Toggling it restarts a Play match ([the stage](../foundations/stage.md#reduced-motion-and-lower-graphics-quality)).
 - **The page.** The page's own styling follows the system preference directly, at any time, whatever the checkbox says: transitions are turned off, card hover lift is disabled and spinners stop. The dialogs' 0.1-second fade and zoom still play, because they are animations rather than transitions.
 - **Watch.** Only **Pause playback** stops the Watch stage moving.
 
 ## Colour, contrast and target sizes
 
-- **Text contrast.** The main text colours checked measure 5:1 or better against their backgrounds. The small print is the weak point: the scoreboard's unit and mode lines are 8–9 px, and the bottom bar is 10 px (8 px at 600 px wide and below).
+- **Text contrast.** The main text colours checked measure 5:1 or better against their backgrounds. The small print is the weak point: the bottom bar is 9 px at every width. The scoreboard's 8–9 px unit and mode lines are clipped out of sight, so only screen readers get them.
 - **Colour and position only.** These cues are shown only by colour or position. The narration names the thrower; the others have no text equivalent:
   - which card is throwing
-  - which Play tile is active
   - whether a contact burst means a score (yellow) or not (orange)
   - which beer-pong rack is whose (yellow or orange)
 - **The Play focus ring** measures about 2.6:1 against the page background, below the usual 3:1 for focus indicators. The Watch and menu ring measures about 4:1.
@@ -95,11 +94,12 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 
   | Target | Size |
   |---|---|
-  | Playback buttons, the gear, Play's toolbar buttons | 44 px |
+  | The gear | 44 px (34 × 36 px at 600 px and below) |
+  | Play's toolbar buttons | 44 px tall |
+  | Playback buttons | 39 px at every width |
   | Play's on-screen action buttons | at least 82 × 55 px |
   | Play's pads | 82 px round (76 px at 720 px wide and below) |
-  | The stage's sound and clean-view buttons | 36 px (34 px at 600 px and below) |
-  | Playback buttons at 600 px and below | 34 × 38 px |
+  | The stage's sound and clean-view buttons | 31 px at every width |
   | The × on a dialog | 28 px |
   | The footer's **House rules** and **History**, and **House rules** under the stage | 12 px text with no padding, well under 24 px tall |
 
@@ -150,7 +150,7 @@ When playback is complete, the narration announces the winner. The pause, speed 
 | Event and action combinations | Cornhole's narration is the most detailed: it names each shot and the slide on the board. Beer pong never says which cups remain. In Play, cornhole's meter is visual only, and held actions become toggles that report pressed. | Not applicable: the sport is fixed once locked. |
 | Contest kind | Counted or exhibition is shown as text on the scoreboard, the station note and the result. Play shows "Practice / no club points". | Not applicable. |
 | Character card | Card images carry their card's name as a description. Narration uses first names while an attempt is under way and full names in the commentary. | Not applicable. |
-| Presentation settings | **Reduced motion**, above. **Lower graphics quality** only tones down effects. The **clean spectator view** removes the narration and controls. Sound is tones only. | Each applies at once. Turning on the clean view mid-contest silences the narration until it is turned off. |
+| Presentation settings | **Reduced motion**, above. **Lower graphics quality** removes Watch's contact and camera effects, and does nothing in Play. The **clean spectator view** removes the narration and controls. Sound is tones only. | Each applies at once. Turning on the clean view mid-contest silences the narration until it is turned off. |
 | Screen size and orientation | Browser zoom enlarges the page, which reflows at several widths ([the app shell](../foundations/app-shell.md)). At 600 px and below, the tabs and several buttons shrink (see target sizes). | Reflows at once; focus stays where it was. |
 | Saved state | Nothing about accessibility is saved. Reduced motion starts from the system preference on every visit. | No effect. |
 
@@ -203,7 +203,7 @@ When playback is complete, the narration announces the winner. The pause, speed 
 
 ## Open questions and verification
 
-- Read from `Game.tsx`, `Panels.tsx`, `SetupDialog.tsx`, `Controls.tsx`, `components/ui/dialog.tsx` and Base UI's dialog focus manager, `PlayableArena.tsx`, `LiveStage.tsx`, `TouchControls.tsx`, `LiveArenaGame.ts`, `KeyboardDevice.ts`, `ArenaGame.ts`, `app/globals.css` and `app/live-arena.css`. No screen reader, keyboard-only pass or contrast tool has been run on the production page.
+- Read from `Game.tsx`, `Panels.tsx`, `SetupDialog.tsx`, `Controls.tsx`, `components/ui/dialog.tsx` and Base UI's dialog focus manager, `PlayableArena.tsx`, `LiveStage.tsx`, `TouchControls.tsx`, `LiveArenaGame.ts`, `KeyboardDevice.ts`, `ArenaGame.ts`, `app/globals.css`, `app/live-arena.css` and `public/assets/arena-interface.css`, which loads last and overrides several sizes. No screen reader, keyboard-only pass or contrast tool has been run on the production page.
 - **Shift+Tab rebinds a key.** In **Controls and remapping**, a key field takes any key except Tab. Pressing Shift to begin Shift+Tab therefore rebinds that action to left Shift before focus moves (`PlayableArena.tsx`, lines 264–276). This looks like a bug.
 - **Space may not press buttons during a match.** The keyboard player's device cancels the release of every bound key anywhere on the page, including Space, and a button pressed with Space activates on release (`KeyboardDevice.ts`, lines 23–31). If so, Space on **Pause game**, **Back to setup** or an on-screen button does nothing while a keyboard 1 player is in the match. Enter still works. This looks like a bug; it has not been tried.
 - **"Live score"** is set on a box with no role. Many screen readers ignore a name on such a box (`Game.tsx`, line 53). The same may apply to the Play stage's label on a plain focusable box, and to the canvas label.

@@ -14,7 +14,7 @@ Controller rumble is independent of both switches; it is described in [the input
 
 ## The simple case
 
-On the Watch tab, the player clicks the speaker button at the top right of the stage. It shows a crossed-out speaker and is labelled "Enable sound". The icon changes to a speaker with sound waves, labelled "Mute sound", and the footer changes from **Sound off** to **Sound on**. The player starts a contest and hears:
+On the Watch tab, the player clicks the speaker button at the bottom right of the stage, just above the bottom bar. It shows a crossed-out speaker and is labelled "Enable sound". The icon changes to a speaker with sound waves, labelled "Mute sound", and the footer changes from **Sound off** to **Sound on**. The player starts a contest and hears:
 - **The entrances.** As the cards walk on, a low two-note chord for each card, then a low thump as each one lands.
 - **Each attempt.** A short falling tone on each release, and in cornhole a low double thud at each bag's first landing, whether on the board or the ground.
 - **Each result.** A bright two-note chime when the attempt scores, or a low thud when it scores nothing.
@@ -36,7 +36,7 @@ stateDiagram-v2
     sounding --> on : the tone ends
     on --> off : switch pressed again
     sounding --> off : switch pressed again (Watch cuts the tone)
-    on --> off : Play only: the match ends
+    on --> off : Play only: the match is closed
     off --> [*] : reload
 ```
 
@@ -50,7 +50,7 @@ Pressing the switch again before anything has sounded turns it back off. Watch s
 
 ### Committing
 
-Sound is never saved, and turning it off is always free. The only lasting effect of the first press is the audio output, which stays for the rest of the visit in Watch and until the match ends in Play. In the tables below, "before committing" means the switch is off, and "while committed" means it is on.
+Sound is never saved, and turning it off is always free. The only lasting effect of the first press is the audio output, which stays for the rest of the visit in Watch and until the match is closed in Play. In the tables below, "before committing" means the switch is off, and "while committed" means it is on.
 
 ### While sound is on
 
@@ -61,13 +61,13 @@ Sound is never saved, and turning it off is always free. The only lasting effect
 ### Turning it off, or leaving
 
 - **Watch.** Turning it off silences at once. Left on, it stays on for every later contest until the page is reloaded.
-- **Play.** The audio output is closed when the match ends: **Play again**, **Back to setup**, **Choose another event**, a main tab, or the logo. The next match starts off.
+- **Play.** The audio output is closed with the match: **Play again**, **Back to setup**, **Choose another event**, a main tab, or the logo. The next match starts off.
 
 ## The two switches
 
 | | Watch | Play |
 |---|---|---|
-| Where | The speaker button at the top right of the Watch stage, in the lobby and during playback, and still there in the clean spectator view | **Sound on** or **Mute** in the [match shell](../play/match-shell.md)'s toolbar |
+| Where | The speaker button at the bottom right of the Watch stage, in the lobby and during playback, and still there in the clean spectator view | **Sound on** or **Mute** in the [match shell](../play/match-shell.md)'s toolbar |
 | Label | An icon, named "Enable sound" when off and "Mute sound" when on | Text: **Sound on** when off, **Mute** when on |
 | Shown elsewhere | The footer reads **Sound off** or **Sound on** | Nowhere |
 | Starts | Off on every page load | Off at the start of every match |
@@ -113,12 +113,12 @@ Cornhole has no sound for the end of the match.
 
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
-| Input device | Both switches are ordinary buttons, reached with Tab and pressed with Enter or Space. Neither has a keyboard shortcut. After a click on Play's button, focus stays on it, so a keyboard player's Space or Enter presses it again ([the match shell](../play/match-shell.md#cancel-and-interrupt)). | No effect. |
+| Input device | Both switches are ordinary buttons, reached with Tab and pressed with Enter or Space. Neither has a keyboard shortcut. After a click on Play's button, focus stays on it, so a keyboard player's Enter presses it again ([the match shell](../play/match-shell.md#cancel-and-interrupt)). Space may do nothing there ([the input model](../foundations/input-model.md#edge-cases)). | No effect. |
 | Event and action combinations | The sport or event decides which sounds exist: see [what makes sound](#what-makes-sound). | Not applicable: fixed for the contest or match. |
 | Contest kind | Exhibitions, counted entries and replays sound the same. A replay plays every sound again. Practice uses the Play switch. | No effect. |
 | Character card | No effect on which tones play. A card's rituals and celebrations decide when Watch's extra thuds fall. | Not applicable: cards are fixed for the contest or match. |
 | Presentation settings | Reduced motion and Lower graphics quality do not change sound. The clean spectator view hides the footer's indicator but keeps the stage's speaker button. | Toggling **Reduced motion** during a Play match restarts it and turns its sound off, while the button still reads **Mute**. In Watch it has no effect on sound. |
-| Screen size and orientation | No effect. At 600 px wide and below the Watch speaker button is smaller. | No effect. |
+| Screen size and orientation | No effect. The Watch speaker button is 31 px at every width. | No effect. |
 | Saved state | Not saved. Every visit starts with both switches off, whatever this browser's save holds. | No effect. |
 
 ## Cancel and interrupt

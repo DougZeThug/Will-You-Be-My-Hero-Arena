@@ -14,7 +14,7 @@ The vocabulary used across these documents. When a document uses one of these wo
 
 **Play.** The tab for interactive practice, where people and AI players control characters directly in one of three *Play events*. Play never awards points.
 
-**Lobby.** The Watch tab when no *recording* is loaded. It shows the event dock (**Choose your event**), the *club points chip*, the *duel cards*, **Set up showdown**, and sometimes the *resume banner*. See [the lobby](watch/lobby.md).
+**Lobby.** The Watch tab when no *recording* is loaded. It shows the *event dock* (**CHOOSE YOUR EVENT**), the *club points chip*, the *duel cards*, **Set up showdown**, and sometimes the *resume banner*. See [the lobby](watch/lobby.md).
 
 **Play setup.** The Play tab when no match is running. It shows the three event cards, the player slots and **Start {event}**. See [Play setup](play/play-setup.md).
 
@@ -111,6 +111,14 @@ The default is 3 for a win, 1 for a draw, 0 for a loss, an allowance of 4, and c
 
 **Push and collect.** In Watch cornhole, a later bag moving the same card's earlier bags on the board. Collect is the case where it carries them into the hole. Play cornhole has its own push rule; see [the cornhole throw](play/cornhole.md).
 
+**Finale.** The 2.6 s after the last attempt, in which the winner celebrates and, with sound on, a fanfare plays. A draw has no fanfare. Playback is already *complete* during the finale, and **Skip to result** skips it.
+
+**Waiting slot.** The save's single place for the contest *waiting to resume*. Whichever recording last wrote a playback position holds it.
+
+**Ability.** A card's named power in Play.
+- **Active abilities** are used with an input and have a cost, a duration and a cooldown: precision mode, burst sprint and power strike.
+- **Passive abilities** always apply: iron stamina, clutch performer and quick release.
+
 ## State
 
 **Committed.** An action is committed from the moment backing out stops being free. What that means depends on the kind of action:
@@ -130,7 +138,7 @@ A read-only dialog never commits. The five phases in [the interaction](#the-inte
 **Playing.** A recording is loaded in Watch and its playback clock is advancing.
 
 **Paused.**
-- **In Watch:** the playback clock is stopped by the pause button, by leaving the tab, or by a WebGL loss. The stage label shows **PAUSED** only when the pause button caused it.
+- **In Watch:** the playback clock is stopped by the pause button, by leaving the tab, or by a WebGL loss. The *bottom bar* shows **PAUSED** after the pause button or a main-tab switch, but not after a WebGL loss or while the browser tab is hidden.
 - **In Play:** the session is stopped and the **PAUSED** overlay is showing. It stays stopped until the player resumes.
 
 **Complete.** A Watch playback is complete when the clock reaches the end of the last attempt. The result panel appears, and a counted entry's points are revealed. A finale of about 2.6 seconds may still be animating on the stage.
@@ -173,7 +181,7 @@ Every action is described in the same five phases.
 
 **Shot.** The cornhole throwing style the active player has chosen: **Hole runner**, **Slide**, **Roll** or **Airmail**. A character starts each turn with a default shot that may not be one of these four. See [the cornhole throw](play/cornhole.md#shots).
 
-**Release window.** The green band on the cornhole **Release timing** meter. Letting go while the marker is inside it is a **Perfect release**.
+**Release window.** The band on the cornhole *release timing meter*. The caption and hints call it green; the stage draws it teal. Letting go while the marker is inside it is a **Perfect release**.
 
 **Buffer.** A short grace period after a press that could not act yet. If the action becomes possible before the buffer runs out, it happens then, as though the press had arrived on time. It lasts 0.14 s in cornhole, 0.18 s in the Dash and 0.23 s in the Brawl, and holds at most four presses. See [the input model](foundations/input-model.md#buffered-presses).
 
@@ -183,9 +191,9 @@ Every action is described in the same five phases.
 
 **Entrances.** The opening of a contest or match in which the characters walk on. They take 2.65 s in Watch, 1.45 s in Play cornhole, and 1.5 s in the Dash and the Brawl.
 
-**Stamina.** In Play, each player's 0–100 reserve, shown as the bar in the score strip.
+**Stamina.** In Play, each player's 0–100 reserve, shown as the bar on their *nameplate* (and in the screen-reader-only score strip).
 - **Cornhole** spends it on precision mode and never gives it back.
-- **The Dash** spends it on sprinting, jumping, sliding, dodging, burst sprint and crashes. It comes back whenever Sprint is not held.
+- **The Dash** spends it on sprinting, jumping, sliding, dodging, burst sprint and crashes. It comes back whenever the runner is not sprinting, including while Sprint is held with 5 stamina or less.
 - **The Brawl** calls it **Energy**.
 
 **Energy.** The Brawl's name for stamina. It pays for attacks, dodges and counter stance, and a blocked hit costs 8. It comes back at 11 per second, or 3 per second while blocking.
@@ -205,6 +213,18 @@ Every action is described in the same five phases.
 **Hit reaction.** After a Brawl hit lands, the fighter reels and cannot act or walk: for 0.38 s under 15 damage, or 0.72 s at 15 or more.
 
 **Knockback.** The slide a Brawl hit causes in the direction of the blow. It is about 13 to 44 stage pixels, or roughly a fifth of that when blocked.
+
+**Game step.** One 1/60 s step of Play game time. Input is read once per step.
+
+**Precision mode.** The cornhole active ability, on the right modifier while aiming or charging. It costs 15 stamina, lasts 3 s and has a 10 s cooldown. It narrows scatter to 40% and widens the release window by 0.035.
+
+**Combo and finisher.** A combo is a timed sequence of presses in the Brawl. Light, light, heavy within 1.15 s makes a *finisher*. Down, forward, special within 0.65 s makes a power strike, the same move as special alone.
+
+**Grapple.** The Brawl *chord*: right modifier held, then primary. A grapple cannot be blocked.
+
+**Double-tap.** Two presses of the same input within 0.26 s. Only the Brawl uses it: a double-tap left or right is a dodge.
+
+**Obstacle, hurdle and bar.** The Dash's obstacles. A hurdle must be jumped and a bar slid under. Each occupies one lane.
 
 ## Input
 
@@ -253,7 +273,7 @@ Two players may not share a keyboard layout or a controller. Any number may use 
 
 **Binding.** The key or controller button assigned to a *named input* for one *player slot*. The defaults are listed above. Only the action keys, the controller buttons and the controller's stick axes can be changed, and only in [controls and remapping](play/controls-and-remapping.md). Keyboard movement and aim keys, and the pause key, are fixed.
 
-**Stage focus.** Keyboard input counts only while keyboard focus is inside the Play stage's box. The stage takes focus when a match finishes loading, and again when the toolbar's pause buttons or an on-screen action button are used, or when the player presses Tab to reach it. Clicking elsewhere on the page, or pressing a **Move** or **Aim** pad, moves focus away, and presses then do nothing. Clicking the stage's drawing does *not* give it focus. A key that was already held can still be let go, though.
+**Stage focus.** Keyboard input counts only while keyboard focus is inside the Play stage's box. The stage takes focus when a match finishes loading, and again when the toolbar's **Pause game** or **Resume game**, the overlay's **Resume game**, or an on-screen action button is used, or when the player presses Tab to reach it. Clicking elsewhere on the page, or pressing a **Move** or **Aim** pad, moves focus away, and presses then do nothing. Clicking the stage's drawing does *not* give it focus. A key that was already held can still be let go, though.
 
 **Press and release thresholds.** A button or trigger counts as pressed above 0.2 of its travel, and as released below 0.1. Keys are either 0 or 1.
 
@@ -368,7 +388,7 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Resume banner.** **Saved at N seconds. Your result is waiting.** with a **Resume contest** button. It shows in the lobby while a contest is waiting to resume.
 
-**Scoreboard.** The page's own Watch score box, labelled "Live score". It shows each card's revealed score and attempts done out of total, the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. At desktop widths it sits under the stage's drawing and cannot be seen, so only screen readers get it. The visible score is on the *nameplates*.
+**Scoreboard.** The page's own Watch score box, labelled "Live score". It shows each card's revealed score and attempts done out of total, the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. A second stylesheet, `public/assets/arena-interface.css`, shrinks it to a one-pixel box at every width, so only screen readers get it. The visible score is on the *nameplates*.
 
 **Nameplate.** A label drawn by the stage in each top corner of the court, in Watch and in Play. It shows a character's first name, score (or health in the Brawl), pips for attempts left, and a status line such as **4 BAGS LEFT · WAITING**, **READY** or the current phase.
 
@@ -382,11 +402,11 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Error box.** A red message under the Watch stage with a **Restore arena** button, used for Watch errors and save failures.
 
-**Score strip.** The row of player tiles laid over the top centre of the Play stage. Each shows a name, a score, and one bar. The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
+**Score strip.** The page's row of Play player tiles, for screen readers only: `public/assets/arena-interface.css` shrinks it to a one-pixel box. Sighted players see the same facts on the *nameplates*. Each tile has a name, a score, one bar, and the device family, such as "· AI". The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
 
-**Caption.** The line under the Play stage. It shows the event's current message and **Ns · Practice / no club points**.
+**Caption.** The line under the Play stage. (The line under the Watch stage is the *floor caption*.) It shows the event's current message and **Ns · Practice / no club points**.
 
-**Release timing meter.** The cornhole charge meter over the Play stage. It has a moving marker and a green release window, labelled **Release in green**.
+**Release timing meter.** The cornhole charge meter, drawn by the stage at its bottom left, labelled **RELEASE TIMING**. It has a gold fill, a cream marker and a teal release window, and shows only while charging. The page also has its own copy labelled **Release in green**, which is visually hidden and read only by screen readers.
 
 **Played.** The Standings column counting a user's revealed counted entries, whether won, drawn or lost. Exhibitions never count.
 
@@ -401,6 +421,27 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 **Commentary.** The line stored with each Watch attempt. The narration shows it once the attempt's score appears, and **The contest, as it happened** lists it.
 
 **Clean spectator view.** The Watch stage button that hides everything but the stage, the progress bar and the result panel: the header, the title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer.
+
+**Bottom bar.** The dark strip along the bottom of the Watch stage. It is page text over the drawing, and stays in the clean spectator view.
+- **Left:** **CARDS TO COURT**, **ROUND n** or **FINAL SCORE**.
+- **Right:** **● LIVE**, **PAUSED**, **HEAT CHECK / COSMETIC** or **FULL TIME**.
+- **In the lobby** it shows placeholder text.
+
+**Side station.** The column beside the Watch stage, headed **ON THE CARD** or **THE MATCH CARD**. It moves under the stage at 720 px and below. It holds the duel cards, the narration, the playback controls and a note: "Points post once. Replay as often as you like." or "EXHIBITION / NO LEADERBOARD POINTS".
+
+**Event dock.** The lobby's four event buttons, **01 Cornhole** to **04 Basketball**, under **CHOOSE YOUR EVENT**. That label is hidden at 1000 px and below.
+
+**Floor caption.** The line under the Watch stage, with a **House rules** link. In the lobby it reads "GROSS POINTS. EQUAL ATTEMPTS. SETTLE IT ON THE COURT.". During playback it reads "COLLECTIONS: {user} / {user} / {mode}", where the mode is the code's word: `ranked` or `exhibition`.
+
+**Review strip.** The summary at the bottom of the setup dialog: mode, points, who throws first, and the estimated length.
+
+**Stamp.** The lobby's "{N} {UNITS} EACH / ~{S} SEC" under **Set up showdown**.
+
+**Pip.** A dot on a nameplate, one per attempt left.
+
+**Reticle.** The cornhole aim mark drawn on the board while the active player aims or charges.
+
+**Card grid and detail pane.** The two halves of The collection: the cards to choose from, and the chosen card's traits, signature, personality and previews.
 
 ## Units
 
