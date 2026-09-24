@@ -10,14 +10,14 @@ Nothing here is decided during playback. The whole recording, every landing spot
 
 The viewer picks **03 Beer pong** in the lobby and starts an exhibition, Dan's card against Doug's. After the entrances, Dan's card stands in the near lane at the lower left with a rack of six yellow cups at the far end of its table. Doug's card stands in the far lane, higher up and drawn smaller, with six orange cups. The nameplates in the stage's top corners show Dan and Doug, each with a score of 0 and six pips.
 
-Dan's card lines up, and the narration says "Dan lines up the next throw." The ball leaves the hand ("Dan sends it."), arcs down the table and drops into a cup. That cup vanishes from Dan's rack. A moment later Dan's nameplate shows 1 and loses a pip, and the narration reads "In the cup. That one leaves the rack." Dan's card celebrates, and then Doug's card takes its turn. After six balls each, the narration names the winner, and the result panel appears.
+Dan's card lines up, and the narration says "Dan lines up the next throw." The ball leaves the hand ("Dan sends it."), arcs down the table and drops into a cup. That cup vanishes from Dan's rack. A moment later Dan's nameplate shows 1 and loses a pip, and the narration reads "In the cup. That one leaves the rack." Dan's card celebrates, and then Doug's card takes its turn. After six shots each, the narration names the winning user and card, and the result panel appears.
 
 ## The four sports at a glance
 
 | | Cornhole | Football | Beer pong | Basketball |
 |---|---|---|---|---|
-| Attempts each | 4 bags | 5 throws | 6 balls | 5 shots |
-| Scoreboard count | "n/4 bags" | "n/5 throws" | "n/6 balls" | "n/5 shots" |
+| Attempts each | 4 bags | 5 throws | 6 shots | 5 shots |
+| Scoreboard count | "n/4 bags" | "n/5 throws" | "n/6 shots" | "n/5 shots" |
 | Nameplate on the court | **N BAGS LEFT** | **N THROWS LEFT** | **N SHOTS LEFT** | **N SHOTS LEFT** |
 | Equipment in each lane | A board with a hole | A target wall with rings painted **3**, **2** and **1** | A table with a six-cup rack: yellow cups for the first card, orange for the second | A hoop with a backboard |
 | Scoring | Hole 3, bag resting on the board 1, anything else 0 | Inner ring 3, middle 2, outer 1, outside 0 | 1 per cup made | 1 per make |
@@ -29,7 +29,7 @@ Dan's card lines up, and the narration says "Dan lines up the next throw." The b
 Each attempt takes about 2 to 4.5 seconds from the start of the card's turn to the end of its reaction. A contest with no extra pairs runs from about half a minute (cornhole, football) to about three quarters of a minute (beer pong).
 
 **House rules** shows the selected sport's three rules; the rest of that dialog belongs to [House rules](../club/house-rules.md). The rules read:
-- **Cornhole:** "Quick arcade preset: four alternating throws each. Gross scoring, without cancellation." "Hole = 3, bag resting on the board = 1, floor = 0. Slides can push earlier bags; airmails can collect bags into the hole." "Separate identical boards. Board contacts and displacements are recorded before playback. Starting order is locked."
+- **Cornhole:** "Quick arcade preset: four alternating throws each. Gross scoring, without cancellation." "Hole = 3, bag resting on the board = 1, floor = 0. Most board shots can push earlier bags, a cut kicks one aside, a roll curls around them, and an airmail or collect bag that drops in can carry bags into the hole with it." "Separate identical boards. Board contacts and displacements are recorded before playback. Starting order is locked."
 - **Football:** "Five alternating throws each at identical target walls." "Concentric targets score 3, 2, or 1. Outside the outer circle = 0. A boundary belongs to its inner, higher-value zone." "The ball spirals to its recorded impact. There are no catches or bonus points."
 - **Beer pong:** "Six alternating direct shots each, with a separate six-cup water rack. One point per cup made." "Made cups leave that player’s rack. The controller targets only remaining cups." "Direct shots only. A center crossing inside the cup opening scores; bounce shots and rim-outs score zero."
 - **Basketball:** "Five alternating shots from identical marked positions. Every make is one point." "A descending ball clearing the inner hoop opening scores. Rim-outs, backboard misses, and airballs score zero." "The hoop and shooting distance are the same for both competitors."
@@ -103,7 +103,7 @@ The card then reacts: a celebration if the attempt added points, a disappointed 
 
 **The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare.
 
-**Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and **+N**.
+**Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and the points, signed: "+3", "+1", "+0", or "−1" for a cornhole bag that lowered its thrower's score.
 
 ## What each sport shows
 
@@ -112,6 +112,7 @@ The card then reacts: a celebration if the attempt added points, a disappointed 
 **Gross scoring, with moving bags.** A card's score is always the total of its own bags as they lie right now: 3 for each in the hole, 1 for each resting on the board. Nothing cancels, and the opponent's bags are on a separate board. The difference from the simple sum is that a later bag can move the same card's earlier bags:
 - **A push.** A bag that lands on the board or in the hole can push up to two earlier board bags lying in its path. They slide forward a short way. A pushed bag can drop into the hole (1 becomes 3), stay on the board, or go off the back of the board (1 becomes 0).
 - **A collect.** An airmail, or Dan's collect bag, that drops into the hole can carry earlier board bags lying near the hole in with it.
+- **A kick.** A cut shot pushes like the others, but also knocks the bag a little to the side.
 - **No contact.** Blockers, soft-touch bags, high arcs and roll bags never move other bags. A roll bag goes around them.
 
 So a single bag can change the score by more than 3, or by less than its own value. When bags move, the commentary replaces the usual line: "{card name} moves the bags already on the board. Net +1." or "{card name} collects another bag into the hole. Net +5." "Net" is the change in the card's total. Pushed bags slide to their new spot over about a third of a second around the moment of contact, and a bag that leaves the board or drops in fades out.
@@ -151,7 +152,7 @@ Every shot is a jump shot from the same spot, and a painted ellipse marks the sh
 | Cornhole bag sliding on the board | "{first name} watches the bag travel across the board." |
 | Contact, for 0.16 s | Cornhole: "{first name} waits for the bag to settle." Other sports: "{first name} watches the result." |
 | Score, reaction | The attempt's commentary, below |
-| Complete | "{card's full name} takes it.", or "Honors shared. The rivalry continues." |
+| Complete | "{user} takes it with {card's full name}’s card.", for example "Doug takes it with Dan Weidensaul’s card.", or "Honors shared. The rivalry continues." |
 
 | Result | Commentary |
 |---|---|
@@ -178,9 +179,9 @@ The last scheduled attempt of the contest adds "Final scheduled attempt." before
 
 The card's personality sets its entrance, rituals, reactions and tempo, so the same sport runs at a different pace with different cards.
 
-**The heat check** (exhibition only) applies to round three, the third attempt of each card. Throughout both of those attempts, the bottom bar's right side reads **HEAT CHECK / COSMETIC**, even while paused. Round three counts as a bigger moment, so the cards lean toward showier rituals and reactions. No other stage effect is drawn, and no score changes.
+**The heat check** (exhibition only) applies to round three, the third attempt of each card. The setup option is **Heat check · cosmetic round label**. Throughout both of those attempts, the bottom bar's right side reads **HEAT CHECK / COSMETIC**, except while paused, when it reads **PAUSED**. Round three counts as a bigger moment, so the cards lean toward showier rituals and reactions. No other stage effect is drawn, and no score changes. House rules says: "Heat check is a cosmetic round label on round three, for exhibitions only. It never adds points, and rarity gives no power bonus."
 
-**The tie rule.** With **Finish as a draw**, a tie after the scheduled attempts ends as **HONORS SHARED.** With **Up to 3 extra equal pairs**, the contest adds one more attempt for each card, in the same order, while it stays tied, up to three pairs. The bottom bar keeps counting (**ROUND 5** in cornhole), cornhole's extra bags join the same boards, and beer pong continues on the cups left. A contest still tied after three extra pairs ends as a draw. The result then adds "/ Unresolved draw after three extra pairs". House rules says: "Default ties are draws. Optional sudden death allows at most three extra pairs; both players always receive an attempt. A remaining tie is recorded as a draw."
+**The tie rule.** With **Finish as a draw**, a tie after the scheduled attempts ends as **HONORS SHARED.** With **Up to 3 extra equal pairs**, the contest adds one more attempt for each card, in the same order, while it stays tied, up to three pairs. The bottom bar keeps counting (**ROUND 5** in cornhole), cornhole's extra bags join the same boards, and beer pong continues on the cups left. The nameplates' pips and "N BAGS LEFT", and the hidden scoreboard's "n/N", count only the regulation attempts until the first extra pair begins. Then both cards' totals grow by one for each extra pair that has started, so the count never gives away a coming tie. A contest still tied after three extra pairs ends as a draw. The result then adds "/ Unresolved draw after three extra pairs". House rules says: "Default ties are draws. With **Up to 3 extra equal pairs**, a tie is followed by at most three extra pairs of attempts; both players always receive an attempt. A remaining tie is recorded as a draw."
 
 ## Modifiers
 
@@ -199,15 +200,15 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Event | Before committing | While committed |
 | --- | --- | --- |
 | Escape or click outside | No effect on the attempt; Escape only closes a dialog. | No effect on the attempt. |
-| Pause or resume | The card freezes mid-wind-up. The bottom bar reads **PAUSED** (except in the heat-check round) and the sign reads "ROUND n · PAUSED". Resuming continues the same wind-up. | The object hangs in the air, or the bag stops mid-slide. Any sound stops. Resuming continues the same flight; the landing never changes. |
+| Pause or resume | The card freezes mid-wind-up. The bottom bar reads **PAUSED**, in the heat-check round too, and the sign reads "ROUND n · PAUSED". Resuming continues the same wind-up. | The object hangs in the air, or the bag stops mid-slide. Any sound stops. Resuming continues the same flight; the landing never changes. |
 | Repeated or rapid input | Speed changes only change how fast the wind-up plays. | At **2×** the 0.16 s contact line lasts 0.08 s; at **0.5×** every beat is twice as long. |
 | A panel opens on top | The attempt continues behind the dialog. | The same. **Attempt history** lists it once it has made contact. |
-| Navigating away | Switching tab pauses mid-wind-up. On return the stage rebuilds and shows the same frame. | The same, mid-flight. The logo leaves the contest waiting to resume at that second. Another recording takes over the waiting slot without writing this one's position. |
+| Navigating away | Switching tab pauses mid-wind-up. On return the stage rebuilds and shows the same frame. | The same, mid-flight. On a first viewing, the logo leaves the contest waiting to resume at that second; a replay is not kept. Another recording leaves a first viewing waiting at its last written second. |
 | Forced finish | **Skip entrances** jumps to the first attempt's ready. **Skip to result** jumps past every remaining attempt and the finale. | **Skip to result** shows the final scores, boards and racks at once. |
 | Focus leaves the game | Hiding the browser tab stops the wind-up until it is visible again. Window blur has no effect. | The same, mid-flight. |
-| Reload, close, or back/forward cache | The position is written. **Resume contest** reopens paused at that moment, mid-wind-up. | The same. The bags on the board and the missing cups are rebuilt from the recording. |
+| Reload, close, or back/forward cache | On a first viewing, the position is written. **Resume contest** reopens paused at that moment, mid-wind-up. A replay is not kept. | The same. The bags on the board and the missing cups are rebuilt from the recording. |
 | Settings or saved data change underneath | Toggling **Reduced motion** calms effects at once. **Reset demo** unloads the recording. | The same. |
-| Graphics or storage failure | A lost graphics context pauses mid-attempt; **Restore arena** reloads the same second. If the cornhole side-view art fails its check, the cornhole stage does not open and the error box shows the reason. | The same, mid-flight. |
+| Graphics or storage failure | A lost graphics context pauses mid-attempt; **Reload the arena** rebuilds the stage at the same second, still paused. If the cornhole side-view art fails its check, the cornhole stage does not open and the error box shows the reason, with **Reload the arena**. | The same, mid-flight. |
 | Input device changes | Not applicable. | Not applicable. |
 
 ## Interactions with other systems
@@ -234,13 +235,13 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 
 ## Edge cases
 
-- **The nameplates give away extra pairs.** Each card's pips and "{N} BAGS LEFT" count the recording's total attempts from the entrances on. A cornhole contest that will need one extra pair shows five pips from its first second, which tells the viewer that the scheduled bags will end level. The hidden scoreboard reads "0/5 bags" for the same reason.
+- **Extra pairs appear when they begin.** A cornhole contest that will need one extra pair shows four pips and "0/4 bags" until the first card's fifth bag begins. Then both cards gain a pip and the totals read out of 5, at the same moment, so the second card's nameplate goes from 0 to 1 bag left before its turn.
 - **"Final scheduled attempt."** marks the second card's last scheduled attempt even when extra pairs follow. When that bag moves other bags, the push or collect line replaces the whole commentary, prefix included.
-- **A cornhole bag can lower its thrower's score.** Pushing an earlier bag off the back of the board can make the net change 0 or negative. The commentary then reads, for example, "Net -1."
+- **A cornhole bag can lower its thrower's score.** Pushing an earlier bag off the back of the board can make the net change 0 or negative. The commentary then reads, for example, "Net -1.", and **Attempt history** shows "−1".
 - **"another bag"** is used even when an airmail collects two.
-- **Beer pong's units disagree.** The scoreboard and lobby say balls, the nameplates say **SHOTS LEFT**, and the narration says "lines up the next throw."
+- **Beer pong's narration says throw.** The page and the nameplates count shots, for example "6 SHOTS EACH" and **6 SHOTS LEFT**, but the narration says "lines up the next throw."
 - **An empty rack in extra pairs.** If both cards make all six cups and tie 6–6, every extra ball is a miss, and the contest ends as an unresolved draw.
-- **The heat-check label hides PAUSED.** Pausing during round three leaves **HEAT CHECK / COSMETIC** in the bottom bar; only the court's sign says "PAUSED".
+- **Pausing in the heat-check round** shows **PAUSED** in the bottom bar, as in any other round. **HEAT CHECK / COSMETIC** returns on resume.
 - **Heat check changes timing, not scores.** The same seed with and without the heat check gives the same attempts and scores. The acting from round three on, and so the contest's length, can differ.
 - **"Reset. Next throw."** appears only in a gap between attempts. Recordings leave none, so it is not normally seen.
 - **An imported asset mapping** for Dan or Doug does not change how they look in cornhole, where the side-view rig is drawn instead ([asset mapping](../collection/asset-mapping.md)).
@@ -248,12 +249,13 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 ## Open questions and verification
 
 - Read from `lib/arena/model.ts` (`EVENTS`), `simulation.ts` (`contactScore`, `simulate`), `CornholeBoard.ts`, `match-timeline.ts`, `MatchNarration.ts`, `ArenaScene.ts`, `ArenaHud.ts`, `Equipment.ts`, `ImpactEffects.ts`, `CameraEffects.ts`, `BattleDirector.ts`, `Game.tsx` and `Panels.tsx`. Durations, draw rates and the heat-check timing difference were checked by running the simulation in a disposable bundle. Nothing has been checked on the production page. `tests/engine-tests.mjs`, `tests/sport-mechanics-tests.mjs` and `tests/browser/presentation.spec.ts` run against the engine or the Lab.
-- **Spoiler in the attempt count.** The scoreboard and nameplate totals include extra pairs from the start (`Game.tsx`, line 53; `ArenaScene.ts`, lines 362–368). This looks like a bug.
-- **Negative net in attempt history.** A cornhole attempt with a negative net shows "+-1" in **The contest, as it happened**, because the entry always prefixes "+" (`Panels.tsx`, line 13). This looks like a bug.
-- **Beer pong unit.** The nameplate unit **SHOTS** (`ArenaTheme.ts`, lines 33–38) disagrees with "balls" (`model.ts`, line 33). This looks like an oversight.
-- **House rules undersells pushes.** It says slides push and airmails collect. In the recording, flat hole-runners, fast bags, cut shots, push shots and standard bags also push, and a collect needs the airmail itself to drop in (`CornholeBoard.ts`, lines 91–108). The rules text may need updating; this is a product call.
-- **"Cosmetic stage effect".** The setup option promises a stage effect, but the only visible changes are the bottom-bar label and livelier acting (`Game.tsx`, line 54; `BattleDirector.ts`, line 81).
+- Fixed: the scoreboard and nameplate totals count extra pairs only once they begin (B-31).
+- Fixed: attempt history signs negative scores as "−1" instead of "+-1" (B-36).
+- Fixed: beer pong's page unit is shots, matching the nameplates (B-36). The narration's "next throw" is unchanged.
+- Fixed: House rules now says most board shots push, a cut kicks a bag aside, a roll curls around them, and an airmail or collect bag that drops in can carry bags into the hole with it, matching the recording (`CornholeBoard.ts`, lines 91–108) (B-36).
+- Fixed: the setup option is now **Heat check · cosmetic round label**, which matches what is drawn: the bottom-bar label and livelier acting (B-36).
+- Fixed: pausing in the heat-check round shows **PAUSED** (B-35).
 - **The vanishing cup.** A made cup appears to disappear the instant the ball arrives, before the ball has sunk. This has not been watched at normal speed.
 - **The mapping and the side-view rig.** Whether an imported mapping for Dan or Doug is really invisible in cornhole is read from the rig choice by card, and has not been tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

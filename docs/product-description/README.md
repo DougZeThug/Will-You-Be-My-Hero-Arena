@@ -147,8 +147,8 @@ For each document:
 Drafting reads the code. Verification watches the product.
 
 - **Checklists.** The `verification/` directory holds one checklist per cluster of documents. Each item is a single observable claim with setup, steps, the expected result, a priority, and the device it needs.
-- **Running a pass.** A tester runs the items against the production build in a fresh browser profile. They record `pass`, `fail` or `blocked` in the Result column, and file every failure in `bug-triage.md` with the item's ID.
-- **Moving to verified.** A document moves from `drafted` to `verified` in the coverage table only when every P1 and P2 item for it has passed or been filed.
+- **Running a pass.** A tester runs the items against the production build in a fresh browser profile. They record `pass`, `partial`, `fail` or `blocked` in the Result column, and file every failure in `bug-triage.md` with the item's ID.
+- **Moving to verified.** A document moves from `drafted` to `verified` in the coverage table only when every P1 and P2 item for it has passed (not `partial`) or been filed.
 
 `bug-triage.md` is the other half. It lists every behaviour the documents flagged as a likely defect, with duplicates merged. Each entry has:
 
@@ -157,7 +157,7 @@ Drafting reads the code. Verification watches the product.
 - a severity
 - the decision the product owner needs to make
 
-Entries confirmed on the running page carry a Status line.
+Entries confirmed on the running page carry a Status line. All 36 entries have since been fixed, and each carries a **Fixed in** line naming the commit.
 
 ### Order of work
 
@@ -177,7 +177,7 @@ Progress is tracked in the [coverage table](#coverage) below.
 
   They never ship in the production build, and `scripts/production-smoke.mjs` checks that. They can get their own description later.
 - **Adding a character in Codex is excluded.** The saved `arena-card-to-character` workflow that turns a card into a character pack runs outside the Arena. Only what happens once a pack reaches **Install character** is described here.
-- **The source is pinned.** Every document cites commit `3b4ec62` of this repository, the tip of the branch when this description began. The description itself only adds files under `docs/product-description/`. The Arena it describes is therefore the one at `3b4ec62`, even as later commits add these documents.
+- **The source is pinned.** Every document cites commit `364e3c1` of this repository. The description was first written against `3b4ec62`, the tip of the branch when it began. All 36 [bug triage](bug-triage.md) entries were then fixed, in commits up to `364e3c1`, and the documents were revised to match. Later commits that only touch `docs/product-description/` do not change the Arena being described.
 - **Recorded sports are described by what the viewer sees.** Watch contests are simulated before playback, so the four Watch sports share one document, [the four sports](watch/the-four-sports.md). It covers their rules, units and what each shows, not the simulation's physics.
 - **Controllers are described inside [the input model](foundations/input-model.md).** Gamepad detection, deadzones, disconnects and returning to neutral apply to every Play action, so they have one owner rather than a separate document that would drift.
 - **Sound, accessibility, AI players and the agent tools** each have one cross-cutting document. Each feature document also answers the matching row of its "Interactions with other systems" section in a line.
@@ -210,14 +210,14 @@ foundations/
   saved-data.md                  what this browser keeps, the journal, integrity check, exports,
                                  other tabs, and the absence of a backend
   stage.md                       the 1280×720 stage and its scaling, reduced motion, lower graphics,
-                                 WebGL loss and Restore arena, the error box
+                                 WebGL loss, Reload the arena, the error box
 
 watch/
   lobby.md                       the Watch tab before a contest: event dock, points chip, duel cards
   setup-dialog.md                choosing mode, users, cards, strategy and tie rule; locking the contest
   playback-controls.md           pause, speed, skip, skip entrances, attempt history, clean view, narration
   result-and-replay.md           the result panel, points shown, Next showdown, Replay same recording
-  resume-a-contest.md            the saved playback position and the resume banner
+  resume-a-contest.md            the first viewing's saved position and the resume banner
   the-four-sports.md             cornhole, football, beer pong and basketball as the viewer sees them
 
 play/
@@ -296,7 +296,7 @@ Status is one of `not started`, `drafted`, or `verified`.
 
 ## Reference
 
-The source of truth is this repository (`Will-You-Be-My-Hero-Arena`) at commit `3b4ec62`. The relevant locations are:
+The source of truth is this repository (`Will-You-Be-My-Hero-Arena`) at commit `364e3c1`. The relevant locations are:
 
 - **The surface this project describes:**
   - `app/page.tsx` and `app/layout.tsx`, the single production page at `/`

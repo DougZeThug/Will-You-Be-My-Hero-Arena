@@ -13,7 +13,7 @@ There is no uninstall. An installed character stays until the browser's site dat
 The player clicks **Install character**. The dialog shows a yellow box headed **MAKE YOUR NEXT COMPETITOR**, with "Upload a card in Codex and say:" and the quote "“Make this card an arena character.”". Under it is a dashed drop zone, **Choose character pack**, "or drop the .arena-character.json file here".
 
 They drop the pack onto the zone. A spinner and "Checking the card, six poses and alignment…" show for a moment. Then the dialog shows the review:
-- **The card image**, tilted, beside **YOUR NEXT COMPETITOR**, the character's name and description, and a badge reading **Four sports · Six poses**.
+- **The card image**, tilted, beside **YOUR NEXT COMPETITOR**, the character's name and description, and a badge reading **Four Watch sports · Six poses · Watch only, not Play**.
 - **The six poses** on a checkerboard, captioned **Ready**, **Backswing**, **Release**, **Football**, **Basketball** and **Celebrate**.
 - **The status** "All six poses checked. Ready to install."
 - **Two buttons**, **Choose another pack** and **Install & preview**.
@@ -28,8 +28,8 @@ The action narrated here is installing a pack, from opening the dialog until it 
 stateDiagram-v2
     [*] --> waiting : Install character (last review or error still shown)
     waiting --> checking : file chosen or dropped (busy)
-    checking --> review : every check passed
-    checking --> waiting : a check failed (reason shown)
+    checking --> review : every check passed, ID free
+    checking --> waiting : a check failed or ID in use (reason shown)
     review --> checking : Choose another pack, file chosen (review discarded)
     review --> saving : Install & preview (commit, busy)
     saving --> [*] : saved (card installed and selected, dialog closes)
@@ -45,7 +45,7 @@ The dialog opens as it was last left, as long as the player has stayed on The co
 Choosing a file starts the check. The player either clicks the drop zone, which opens the browser's file picker filtered to `.json` files, or drops a file onto the dashed zone. At that instant:
 - Any pack under review and any error are cleared.
 - The dialog becomes busy. The drop zone greys out, and the status line shows a spinner and "Checking the card, six poses and alignment…".
-- The checks run in the order in [what is checked](#what-is-checked), and stop at the first failure.
+- The checks run in the order in [what is checked](#what-is-checked), and stop at the first failure. The last one compares the pack with the characters already installed in this tab, before "Ready to install." is shown.
 
 ### Backing out at once
 
@@ -58,7 +58,7 @@ A pack that has passed its checks is held only in the open page. Nothing is writ
 **Install & preview** commits. The dialog becomes busy again, with "Saving your character…" and a spinner. Both review buttons are disabled.
 
 The pack is checked once more against what is already installed:
-- **In this tab.** If a card with the same character ID is already installed with a different revision, the install is refused: "This character ID is already in use. Ask Codex for a new pack ID."
+- **In this tab.** If a card with the same character ID has been installed with a different revision since the review, the install is refused: "This character ID is already in use. Ask Codex for a new pack ID." The same check already ran at review time.
 - **In the character library.** If the library holds a different pack under the same ID, for example one installed from another tab, the install is refused: "A different pack uses this character ID. Existing characters and saved matches were kept."
 - **The identical pack.** Installing it again succeeds without adding a second card. It simply selects it.
 
@@ -75,7 +75,7 @@ Saving normally takes a moment. The dialog stays busy and refuses to close until
 - It becomes the previewed card, and the **Motion preview** returns to **Personality idle**. The preview stage rebuilds with two copies of it.
 - It becomes your card in [the setup dialog](../watch/setup-dialog.md), so the Watch lobby shows it as the first duel card.
 - **Replayable showcase seed** is unticked.
-- The Arena save is read again. Nothing is written to it.
+- The Arena save is read again. Nothing is written to it. If the save cannot be read, the install still reports success; the recovery box under the header explains the save.
 
 The player is left on The collection.
 
@@ -119,19 +119,31 @@ Then each image is opened, one at a time, to bound memory on phones:
 
 The card image and the pose sheet are not checked for transparency.
 
-A pack with an articulated atlas shows "Articulated character, movement tracks and fallback poses checked. Ready to install." and the badge **Four sports · Articulated movement**. Every other pack shows the six-pose wording.
+Last, before the review is shown:
+
+| Check | Message |
+|---|---|
+| No card with the same ID is already installed in this tab with a different revision | "This character ID is already in use. Ask Codex for a new pack ID." |
+
+A pack with an articulated atlas shows "Articulated character, movement tracks and fallback poses checked. Ready to install." Every other pack shows "All six poses checked. Ready to install." The badge says which kind the pack is and whether it can be played in Play:
+
+| Pack | Badge |
+|---|---|
+| Articulated atlas with a connected rig | **Four Watch sports · Articulated movement · Ready for Play** |
+| Articulated atlas without a connected rig | **Four Watch sports · Articulated movement · Watch only, not Play** |
+| Six poses only | **Four Watch sports · Six poses · Watch only, not Play** |
 
 ## Modifiers
 
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
 | Input device | **Mouse:** click the drop zone, or drag the file onto it. **Keyboard:** Tab to the drop zone and press Enter to open the file picker. **Touch:** tap the drop zone to open the file picker. | No effect. |
-| Event and action combinations | No effect: a pack always covers all four Watch sports, as its badge says. | Not applicable. |
+| Event and action combinations | No effect: a pack always covers all four Watch sports, as its badge says. The badge also says whether it can be played in Play. | Not applicable. |
 | Contest kind | No effect on installing. After installing, your next exhibition or counted entry uses the new card unless you change it. A loaded Watch recording stays as it was. | Not applicable. |
-| Character card | A pack cannot replace Dan or Doug, or an installed card with a different revision. Which card was previewed before does not matter. Only packs with a connected rig can be used in Play: see [installed characters](#interactions-with-other-systems). | Not applicable: the pack is fixed at **Install & preview**. |
+| Character card | A pack cannot replace Dan or Doug, or an installed card with a different revision; the review refuses it. Which card was previewed before does not matter. Only packs with a connected rig can be used in Play, and their badge says **Ready for Play**: see [installed characters](#interactions-with-other-systems). | Not applicable: the pack is fixed at **Install & preview**. |
 | Presentation settings | The operating system's reduced-motion setting stops the spinner from spinning. The **Reduced motion** and **Lower graphics quality** checkboxes and the sound switches have no effect on the dialog. | No effect. |
 | Screen size and orientation | The dialog is 860 px wide, or the window width less 28 px, and scrolls within 92% of the window height. At 640 px wide and below, the poses sit in two rows of three, and the buttons stack full width with **Install & preview** on top. | Reflows at once. |
-| Saved state | Installed characters already in the library decide which IDs conflict. If the library cannot open, checking still works but installing fails. The Arena save, its entries and its policy make no difference. | A corrupt Arena save makes a successful install look like a failure: see [edge cases](#edge-cases). |
+| Saved state | Installed characters already in the library decide which IDs conflict. If the library cannot open, checking still works but installing fails. The Arena save, its entries and its policy make no difference. | An Arena save that cannot be read does not affect the install, which is reported as a success; see [edge cases](#edge-cases). |
 
 ## Cancel and interrupt
 
@@ -146,7 +158,7 @@ A pack with an articulated atlas shows "Articulated character, movement tracks a
 | Focus leaves the game | No effect; the check carries on in a hidden tab. | No effect; saving carries on. |
 | Reload, close, or back/forward cache | Nothing is installed. The chosen file is not kept. | The library write is all or nothing. After reloading, the card is either in the collection or not; if not, install again. |
 | Settings or saved data change underneath | Another tab installing the same pack ID first makes this install fail with "A different pack uses this character ID…", unless the packs are identical. **Reset demo** anywhere leaves installed characters alone. | The same. |
-| Graphics or storage failure | If the library cannot open, installing fails with "The character library could not be opened. Check that browser storage is available." | If the browser refuses the write, the message is "The character could not be saved. Browser storage may be full." or "The character was not installed." Nothing is installed. |
+| Graphics or storage failure | If the library cannot open, installing fails with "The character library could not be opened. Check that browser storage is available." An Arena save that cannot be read does not stop the install. | If storage is full, the message is **The character could not be saved. Browser storage may be full.** Any other refusal reads "The character was not installed." Nothing is installed. |
 | Input device changes | No effect. | No effect. |
 
 After any failure the review stays, so the player can retry without choosing the file again.
@@ -155,9 +167,9 @@ After any failure the review stays, so the player can retry without choosing the
 
 **Points and the ledger.** No interaction. An installed card earns points only as your card in a counted entry, like any other card.
 
-**Saved data and recovery.** Packs are stored in the character library, IndexedDB `wybmh-character-library-v1`, keyed by character ID. The library is separate from the Arena save. It is not in **Export local save**, and **Reset demo** does not touch it. Recordings name the card and its image paths but hold no images, so a recording that uses an installed character needs that character in the library to show. The pack file is the only backup ([this browser's save](../foundations/saved-data.md)).
+**Saved data and recovery.** Packs are stored in the character library, IndexedDB `wybmh-character-library-v1`, keyed by character ID. The library is separate from the Arena save. It is not in **Export local save**, and **Reset demo** does not touch it. Recordings name the card and its image paths but hold no images, so a recording that uses an installed character needs that character in the library to show. Without it, History names the card **Unknown card** and disables the row, and a waiting contest's **Resume contest** is disabled, each with "This recording uses a character that is no longer installed." ([history and member record](../club/history-and-member-record.md#the-two-dialogs)). If the library cannot be opened at all, the Arena save still loads, Watch works with the built-in cards, and a notice under the header says **Installed characters are unavailable because this browser's character storage could not be opened. The built-in cards still work.** The pack file is the only backup ([this browser's save](../foundations/saved-data.md)).
 
-**Watch and Play separation.** In Watch the card competes in every sport with its pack's traits and personality ([contests and recordings](../foundations/contests-and-recordings.md)). In Play it is listed in each slot's character choice. It can start a match only if its pack has an articulated atlas with a *connected rig*, a registration that joins the limbs to the body. Otherwise **Start** is accepted but the match fails to open, with "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." in its error overlay ([the match shell](../play/match-shell.md#backing-out-at-once)). The review does not say which kind a pack is: both kinds of articulated pack read **Articulated movement**, and a **Six poses** pack never works in Play.
+**Watch and Play separation.** In Watch the card competes in every sport with its pack's traits and personality ([contests and recordings](../foundations/contests-and-recordings.md)). In Play it is listed in each slot's character choice. It can start a match only if its pack has an articulated atlas with a *connected rig*, a registration that joins the limbs to the body. Otherwise **Start** is accepted but the match fails to open, with "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." in its error overlay ([the match shell](../play/match-shell.md#backing-out-at-once)). The review's badge says which kind a pack is: **Ready for Play** for a connected rig, **Watch only, not Play** otherwise.
 
 **Devices and players.** No interaction.
 
@@ -169,18 +181,18 @@ After any failure the review stays, so the player can retry without choosing the
 
 **Installed characters.** This document is the owner. An installed card appears in [the collection](the-collection.md), in both user collections in [the setup dialog](../watch/setup-dialog.md), and in Play setup.
 
-**Multiple tabs.** Every tab shares the character library, but a tab only reads it when the page loads and whenever another tab writes the Arena save. Another open tab does not show the new card until it reloads or the Arena save is written somewhere.
+**Multiple tabs.** Every tab shares the character library, but a tab only reads it when the page loads and whenever another tab writes the Arena save. Another open tab does not show the new card until it reloads or the Arena save is written somewhere. A tab whose library could not be opened tries again on those same re-reads, and its notice clears once it opens.
 
 **Agent tools.** No tool installs a character. `configure_arena_event` can switch views under the dialog, as described above ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
-- **A conflicting pack passes the review.** ID conflicts are only checked at **Install & preview**, so a pack that will be refused is first shown as "Ready to install."
+- **A conflicting pack.** A pack whose ID is already installed in this tab with a different revision is refused at review, with "This character ID is already in use. Ask Codex for a new pack ID.", before "Ready to install." A pack that conflicts only with one another tab has just installed can still pass the review, and is refused at **Install & preview** with "A different pack uses this character ID…".
 - **Choose another pack throws the review away** as soon as a new file is chosen, even if the new file fails. Cancelling the file picker keeps the review.
 - **The drop zone disappears during review.** A second pack can only be chosen with **Choose another pack**, not dropped.
 - **Dropping outside the dashed zone** is not handled by the page. Browsers then open the file in the tab by default, which leaves the Arena.
 - **Grid order.** A card installed this visit is added at the end of the grid. After a reload, installed cards follow Dan and Doug in the order of their IDs.
-- **A corrupt Arena save.** The pack is installed, but reading the save afterwards fails. The dialog stays open showing the save's error, as if the install had failed.
+- **An Arena save that cannot be read.** The pack is installed and the dialog closes as usual. Reading the save afterwards fails, but that is shown only in the recovery box under the header, not as an install error.
 - **The Animation library** keeps its clip after an install, so the new card appears playing that clip rather than idling.
 - **No way to remove a card.** An unwanted installed card stays in every list. Clearing the site's data removes it, together with this browser's save.
 
@@ -188,11 +200,13 @@ After any failure the review stays, so the player can retry without choosing the
 
 - Read from `components/arena/CharacterInstaller.tsx`, `lib/arena/character-pack.ts`, `character-store.ts`, `character-registry.ts`, `Game.tsx` (`onCharacterInstalled`) and `lib/arena/engine/core/ArenaSession.ts`. `tests/run-tests.mjs` checks pack validation, duplicate registration and recordings with an installed card, outside the page. Nothing here has been checked on the production page.
 - **The review keeps a pack after closing.** Reopening the dialog shows the last review or error (`CharacterInstaller.tsx`, line 16). Whether it should start fresh is a product call.
-- **Success reported as failure** when the Arena save is corrupt: `onCharacterInstalled` re-reads the save inside the install's error handling (`Game.tsx`, line 65; `CharacterInstaller.tsx`, line 15). This looks like a bug.
-- **Storage-full wording.** An exceeded quota aborts the library transaction rather than failing a request, which would show "The character was not installed." instead of the storage-full message (`character-store.ts`, line 38). Not tried.
-- **"Articulated movement" does not promise Play.** Play needs a connected-rig registration that the review never mentions (`CharacterInstaller.tsx`, line 20; `ArenaSession.ts`, lines 76–82). This may be worth treating as a bug.
+- The fixed behaviour below is read from the code; the scripted pass of 2026-09-24 ran before these fixes.
+- **Fixed: success reported as failure over an unreadable Arena save (B-33).** Re-reading the save no longer throws into the install; the recovery box explains the save.
+- **Fixed: storage-full wording (B-33).** An exceeded quota that aborts the library transaction now shows the storage-full message. Filling the storage has not been tried.
+- **Fixed: a conflicting ID passed the review (B-33).** It is now refused before "Ready to install."
+- **Fixed: "Articulated movement" did not promise Play (B-33).** The badge now says **Ready for Play** or **Watch only, not Play**.
 - **Dropping outside the zone.** Whether it navigates away from the Arena, as described above, has not been tried (`CharacterInstaller.tsx`, line 19).
 - **The hidden file input.** Whether it is an invisible stop in the Tab order has not been tried (`CharacterInstaller.tsx`, line 18).
-- **Privacy-hardened browsers** that disturb canvas pixels could fail the transparency check on a good pack (`character-store.ts`, line 29). Not tried.
+- **Privacy-hardened browsers** that disturb canvas pixels could fail the transparency check on a good pack (`character-store.ts`, line 30). Not tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

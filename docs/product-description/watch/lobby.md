@@ -43,13 +43,15 @@ stateDiagram-v2
 ### Starting
 
 The lobby appears when the page loads, when the logo is clicked, or after **Next showdown**. It reads this browser's save, then shows:
-- **The chip** with your demo user's revealed club points and rank, and **entries left** (the allowance minus counted entries already locked, whether or not revealed).
+- **The chip** with your demo user's revealed club points and rank, and **entries left**. Entries left is the allowance, never more than 4, minus the counted entries already locked, whether or not revealed. It reads 0 while **Counted entries enabled** is off.
 - **The resume banner**, if a contest is waiting.
 - **The stage**, loading the selected event with the two selected cards.
 
 "Your demo user" is whoever was last chosen in the setup dialog: Doug until then.
 
-**Set up showdown** is disabled until the save has loaded. It stays disabled if the save cannot load.
+**Set up showdown** is disabled until the save has loaded. It stays disabled if the save cannot be read. In that case a box under the header, on every view, reads **This browser’s Arena save could not be read: {reason}**, with **Export unreadable save** and **Reset demo…** ([this browser's save](../foundations/saved-data.md)).
+
+The Arena save is read on its own, so a character library that cannot be opened does not stop the lobby. A notice under the header then reads **Installed characters are unavailable because this browser’s character storage could not be opened. The built-in cards still work.** Watch works with Dan's and Doug's cards.
 
 ### Backing out at once
 
@@ -57,7 +59,7 @@ Choosing events, or opening and closing the setup dialog, saves nothing. The sel
 
 ### Committing
 
-The lobby itself commits nothing. It hands over to the setup dialog, whose **Start showdown** is the commit.
+The lobby itself commits nothing. It hands over to the setup dialog, whose **Start showdown** is the commit. While a counted entry is waiting to resume, that button reads **Start anyway** ([the setup dialog](setup-dialog.md#starting)).
 
 ### While committed
 
@@ -76,7 +78,7 @@ The chip shows:
 - **{points} CLUB POINTS** for the current demo user
 - "{name} · Rank {n} · {k} entries left"
 
-Points and rank leave out any counted entry that is loaded but not complete, or that is waiting to resume. Entries left does not leave it out. Clicking the chip opens that user's **Club member record** ([history and member record](../club/history-and-member-record.md)).
+Points and rank leave out the counted entry waiting to resume: a locked contest that has not yet been watched to the end. The one exception is while that same contest is loaded and complete. A replay of a contest that has already been revealed never hides its points. Entries left does not leave the waiting contest out. Clicking the chip opens that user's **Club member record** ([history and member record](../club/history-and-member-record.md)).
 
 The chip follows whoever "you" are in the setup dialog. Switching **Your demo user** there to Sam makes the chip show Sam, even if the dialog is then closed without starting.
 
@@ -88,9 +90,9 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 | Event and action combinations | The selected event sets the title, the preview court, the stage's sign, the stamp's count, unit and estimate, and which counted entry the setup dialog offers. | Not applicable. |
 | Contest kind | The lobby does not show the mode. The duel cards show your card and the *exhibition* opponent card even when the setup dialog is on **Counted entry · points**, whose real opponent card is Doug. | Not applicable. |
 | Character card | The duel cards and the stage preview use the cards chosen in the setup dialog: by default Dan's card first and Doug's second. An installed character appears once chosen. | Not applicable. |
-| Presentation settings | Reduced motion and lower graphics change the preview. The clean spectator view hides everything but the stage, the resume banner and the error box, which in the lobby leaves no way to set up a contest until it is turned off. | Toggling rebuilds or restyles the preview at once. |
+| Presentation settings | Reduced motion and lower graphics change the preview. The clean spectator view hides everything but the stage, the error box and the unreadable-save box. It hides the resume banner and the character-library notice too. In the lobby that leaves no way to set up a contest until it is turned off. | Toggling rebuilds or restyles the preview at once. |
 | Screen size and orientation | At 1000 px wide and below, **CHOOSE YOUR EVENT** is hidden. At 720 px and below, the side station moves under the stage. The stage keeps the court's 16:9 shape, so it is only about 208 px high in a 390 px phone window. | Reflows at once. |
-| Saved state | The chip, the banner and **Set up showdown** depend on the save. A fresh save shows each user one counted entry used. A corrupt save leaves **Set up showdown** disabled with an error. | Another tab's write updates the chip and banner in place. |
+| Saved state | The chip, the banner and **Set up showdown** depend on the save. A fresh save shows each user one counted entry used. With **Counted entries enabled** off, **entries left** reads 0. An unreadable save leaves **Set up showdown** disabled, and the box under the header explains it. A blocked character library leaves the lobby working with the built-in cards. | Another tab's write updates the chip and banner in place. The preview does not reload unless the two shown cards' mappings changed. |
 
 ## Cancel and interrupt
 
@@ -104,15 +106,15 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 | Forced finish | Not applicable. | Not applicable. |
 | Focus leaves the game | No effect. | Not applicable. |
 | Reload, close, or back/forward cache | The lobby reopens with Cornhole and default choices. The banner shows if a contest is waiting. | Not applicable. |
-| Settings or saved data change underneath | A policy change updates the entries left. A reset updates the chip and removes the banner. Another tab's write updates both. | Not applicable. |
-| Graphics or storage failure | A preview that fails to load shows the error box. There, **Restore arena** clears the message and *toggles* **Lower graphics quality**, because no recording is loaded ([the stage](../foundations/stage.md)). | Not applicable. |
+| Settings or saved data change underneath | A policy change updates the entries left. A reset updates the chip and removes the banner. Another tab's write updates both. None of these reloads the preview, unless the two shown cards' mappings changed. | Not applicable. |
+| Graphics or storage failure | A preview that fails to load, or loses its graphics, shows the error box with **Reload the arena**. It rebuilds the preview and restarts its idle clock. Any other error in the box, such as a refused lock, shows **Dismiss** instead. Neither button changes **Lower graphics quality** ([the stage](../foundations/stage.md)). An unreadable save or a blocked character library is reported under the header instead, as in [Starting](#starting). | Not applicable. |
 | Input device changes | Not applicable. | Not applicable. |
 
 ## Interactions with other systems
 
 **Points and the ledger.** The chip shows revealed points and rank for the current demo user ([points and entries](../club/points-and-entries.md)).
 
-**Saved data and recovery.** The lobby reads the save and writes nothing. The logo re-reads it.
+**Saved data and recovery.** The lobby reads the save and writes nothing. The logo re-reads it. An unreadable save is reported in its own box under the header, which offers **Export unreadable save** and **Reset demo…** ([this browser's save](../foundations/saved-data.md)).
 
 **Watch and Play separation.** The lobby's event choice does not affect Play's, and Play's does not affect the lobby's.
 
@@ -127,12 +129,13 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 - The duel card buttons are labelled "Change competitor 1" and "Change competitor 2".
 - The stage's box is labelled "The backyard arena"; the drawing inside it has its own label ([the stage](../foundations/stage.md#interactions-with-other-systems)).
 - The chip is a button with its text as its name.
+- The unreadable-save box is an alert. The character-library notice is a polite status.
 
-**Installed characters.** Installing a character selects it as your card, so it appears as the first duel card and in the preview.
+**Installed characters.** Installing a character selects it as your card, so it appears as the first duel card and in the preview. If the character library cannot be opened, the lobby shows the notice under the header and works with the built-in cards.
 
-**Multiple tabs.** Each tab has its own selection. The chip and banner follow the shared save.
+**Multiple tabs.** Each tab has its own selection. The chip and banner follow the shared save. Another tab's writes do not reload this tab's preview unless they change the shown cards' mappings.
 
-**Agent tools.** `configure_arena_event` selects an event in the lobby, as if its button had been clicked, and switches to Watch if needed. It refuses while a recording is loaded ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** `configure_arena_event` selects an event in the lobby, as if its button had been clicked. From Standings or The collection it switches to Watch. It refuses while the Play tab is open, with "Leave Play before configuring a Watch contest.", and while a recording is loaded ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
@@ -140,10 +143,13 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 - **The chip changes user** when **Your demo user** changes in the setup dialog, even if no contest is started.
 - **The bottom bar in the lobby** shows placeholder text: **PEPPERONI CHEESERS** and **HOME COURT ADVANTAGE: NONE**.
 - **The stamp's estimate** ("~{S} SEC") is based on Dan's and Doug's timing whatever cards are chosen.
+- **Beer pong's stamp** reads "6 SHOTS EACH", matching the nameplates ([the four sports](the-four-sports.md)).
 
 ## Open questions and verification
 
 - Read from `Game.tsx` (the lobby branch) and `app/globals.css`. Not yet checked on the production page.
-- **The clean spectator view in the lobby.** In the lobby it hides **Set up showdown** and the event dock. Whether it is meant to be available before a contest is a product call.
+- **The clean spectator view in the lobby.** In the lobby it hides **Set up showdown** and the event dock. It now also hides the resume banner (B-36). Whether it is meant to be available before a contest is still a product call.
+- Fixed: **Restore arena** no longer toggles **Lower graphics quality** in the lobby. The error box offers **Reload the arena** or **Dismiss** (B-13).
+- Fixed: an unreadable save and a blocked character library each have their own message under the header, and a blocked library no longer disables Watch (B-03, B-04).
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

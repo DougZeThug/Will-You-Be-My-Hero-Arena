@@ -26,9 +26,10 @@ stateDiagram-v2
     offered --> hidden : Start showdown (two awards written, one entry used by each user)
     hidden --> waiting : logo, reload, close (still hidden)
     waiting --> hidden : Resume contest
-    hidden --> revealed : playback complete, or Skip to result
-    waiting --> revealed : another contest started or replayed (no playback)
-    revealed --> hidden : this recording replayed (until the replay completes)
+    waiting --> waiting : another recording replayed (still hidden)
+    hidden --> revealed : playback complete, or Skip to result (no longer waiting)
+    waiting --> revealed : another contest locked with Start anyway (no playback)
+    revealed --> revealed : this recording replayed (points stay shown)
 ```
 
 ### Starting
@@ -61,7 +62,7 @@ Nothing the viewer does during playback changes the awards. Pausing, speed, leav
 
 ### Resolving
 
-When playback is complete, the awards are revealed. The result panel shows **COUNTED RESULT / POINTS POSTED** and each user's **+N PTS** ([result and replay](../watch/result-and-replay.md)). The chip, Standings, member records and History include the contest from then on. The pairing stays used until **Reset demo**.
+When playback is complete, the awards are revealed. The result panel shows **COUNTED RESULT / POINTS POSTED** and each user's **+N PTS** ([result and replay](../watch/result-and-replay.md)). At the same moment the save stops listing the contest as waiting, so the points appear at once and stay shown after a reload. The chip, Standings, member records and History include the contest from then on. Replaying it later never hides its points again. The pairing stays used until **Reset demo**.
 
 ## The scoring policy
 
@@ -75,13 +76,15 @@ The scoring policy has five settings, edited under **Host · prototype scoring**
 | Allowance | **Entries / User** | 4 | How many counted entries each demo user may take part in, across all sports |
 | Enabled | **Counted entries enabled** | On | Whether any counted entry is offered at all |
 
-Each value must be a whole number from 0 to 100. Nothing checks that a win is worth more than a loss. **Save for future entries** saves all five at once and gives the policy a new name, even when nothing changed. [House rules](house-rules.md) ends with the name: "Scoring policy: club-points-v1" by default.
+Each value must be a whole number from 0 to 100, and **Entries / User** can be at most 4, one for each of a user's scheduled pairings. A larger allowance is refused with "Entries / user can be at most 4, one for each scheduled pairing." Nothing checks that a win is worth more than a loss. **Save for future entries** saves all five at once.
+
+The policy has a name. Saving unchanged values keeps the name. Saving new values gives the name `club-points-{hash of the values}`, so the same values always give the same name. The default policy is named `club-points-v1` until its values change. [House rules](house-rules.md) ends with the name: "Scoring policy: club-points-v1" by default.
 
 The two halves of the policy apply at different times:
 - **The point values** are copied into a contest when **Start showdown** is pressed. A saved change affects only contests locked afterwards. The dialog says "Historical points retain their saved policy."
 - **The allowance and the enabled switch** are read live, every time availability is worked out and again at the lock. A saved change affects availability at once, including for pairings that were already offered.
 
-The policy is shown in several places. The counted review strip shows "Win +{win} · Draw +{draw} · Loss +{loss}." House rules shows "Win 3, draw 1, loss 0" and "Each user has an equal 4-entry allowance". Standings shows "Counted wins earn 3 points." All three show the *current* policy. The result panel shows the points the contest was locked under.
+The policy is shown in two places. The counted review strip shows "Win +{win} · Draw +{draw} · Loss +{loss}." House rules shows "Win 3, draw 1, loss 0" and "Each user has an equal 4-entry allowance", or, with counted entries off, "Counted entries are switched off, so no contest earns points." Both show the *current* policy. The result panel shows the points the contest was locked under. Standings quotes no values: its heading says points come "under the scoring policy each was played with".
 
 ## The schedule
 
@@ -117,7 +120,7 @@ A counted entry is offered to your demo user for the selected sport when all of 
 
 Otherwise the dialog shows **No entry remaining** and disables **Start showdown**. It does not say which rule failed.
 
-**Entries left** is the allowance minus the counted entries you have taken part in, and never less than 0. The chip shows "{k} entries left" and the dialog "{k} counted entries left". Both count every locked counted entry, including one still hidden and the fresh save's fixture. Neither looks at **Counted entries enabled** or at how many pairings remain, so **entries left** can promise more than the dialog will offer (see [edge cases](#edge-cases)).
+**Entries left** is the allowance, capped at 4, minus the counted entries you have taken part in, and never less than 0. It is 0 whenever **Counted entries enabled** is off. The chip shows "{k} entries left" and the dialog "{k} counted entries left". Both count every locked counted entry, including one still waiting and the fresh save's fixture. Because each user has four pairings, **entries left** never promises more entries than the schedule holds. It can still be above 0 for a sport whose pairing is already played, because it counts across all sports.
 
 ## Awards
 
@@ -140,7 +143,7 @@ Awards never change after they are written. A later policy change, a replay or *
 
 ## Totals and ranks
 
-Every number below is added up from the revealed ledger, with any hidden contest left out ([written and revealed](../foundations/contests-and-recordings.md#written-and-revealed)):
+Every number below is added up from the revealed ledger, leaving out the one contest that is waiting for its first viewing ([written and revealed](../foundations/contests-and-recordings.md#written-and-revealed)):
 
 | Number | What it counts | Shown in |
 |---|---|---|
@@ -170,11 +173,11 @@ So a fresh save shows Doug 3 (rank 1), Riley 1 and Sam 1 (both rank 2), and Dan 
 | --- | --- | --- |
 | Input device | Counted entries exist only in Watch, which is driven by clicks and keyboard focus. No Play device can start one or earn points. | No effect. |
 | Event and action combinations | The lobby's sport picks the pairing: one per sport for each pair of users. The point values are the same in every sport. Each award is tagged with its sport, which is what the Standings sport tabs use. | Not applicable: the sport is fixed at the lock. |
-| Contest kind | Only a counted entry uses an entry and writes awards. An exhibition uses no entry and writes none. A replay writes nothing. Play practice never touches points. | Not applicable: a locked contest's kind cannot change. Replaying a finished counted entry hides its points again until the replay completes. |
+| Contest kind | Only a counted entry uses an entry and writes awards. An exhibition uses no entry and writes none. A replay writes nothing. Play practice never touches points. | Not applicable: a locked contest's kind cannot change. Replaying a finished counted entry never hides its points. |
 | Character card | Your card changes the outcome, not what the outcome is worth. The opponent always plays the Doug card. An installed card can be your card in a counted entry. Rarity gives no advantage. | Not applicable: the cards are fixed at the lock. |
 | Presentation settings | No effect on points or entries. The clean spectator view hides the chip, the header and the footer, so the points are out of sight until it is turned off. | No effect. |
 | Screen size and orientation | No effect on points or entries. | No effect. |
-| Saved state | A fresh save starts each user with one entry used. Availability and **entries left** come from the save's counted contests, including hidden ones. A save that fails to load offers no contests at all and shows 0 points. | A policy saved after the lock does not change the written awards. **Reset demo** removes them and reopens six pairings. |
+| Saved state | A fresh save starts each user with one entry used. Availability and **entries left** come from the save's counted contests, including one still waiting. With counted entries switched off, **entries left** reads 0. A save that cannot be read shows the recovery box, keeps **Set up showdown** disabled, and shows 0 points, "Rank —" and "— entries left" ([this browser's save](../foundations/saved-data.md)). | A policy saved after the lock does not change the written awards. **Reset demo** removes them and reopens six pairings. |
 
 ## Cancel and interrupt
 
@@ -184,19 +187,19 @@ So a fresh save shows Doug 3 (rank 1), Riley 1 and Sam 1 (both rank 2), and Dan 
 | Pause or resume | Not applicable: nothing plays before the lock. | Pausing keeps the awards hidden. Nothing is written or revealed until playback is complete. |
 | Repeated or rapid input | A double-click on **Start showdown** locks one contest and writes two awards. | The pairing is no longer offered. Repeated **Skip to result** or **Replay same recording** writes nothing. |
 | A panel opens on top | Arena settings cannot open over the setup dialog, so this tab cannot change the policy under it. | The chip's member record, History and Standings all leave the contest out until it is complete. |
-| Navigating away | Nothing is used. The setup choices stay in memory until reload. | A tab switch pauses playback and keeps the points hidden. The logo, a reload or closing the tab leaves the contest waiting to resume, still hidden. Starting another contest, or replaying another recording, takes over the waiting slot and reveals the points with no playback ([resume a contest](../watch/resume-a-contest.md)). |
+| Navigating away | Nothing is used. The setup choices stay in memory until reload. | A tab switch pauses playback and keeps the points hidden. The logo, a reload or closing the tab leaves the contest waiting to resume, still hidden. Replaying another recording leaves it waiting. Locking a new contest reveals its points with no playback; for a waiting counted entry the setup dialog warns first, and the button reads **Start anyway** ([resume a contest](../watch/resume-a-contest.md)). |
 | Forced finish | Not applicable. | **Skip to result** reveals the points at once. |
 | Focus leaves the game | No effect. | Hiding the browser tab stops the playback clock, so the reveal waits. Window blur has no effect. |
 | Reload, close, or back/forward cache | Nothing is written before the lock. | The awards survive. On return the contest waits to resume, and its points stay hidden until it is watched or skipped to the end. |
-| Settings or saved data change underneath | A saved policy or another tab's write changes the offered values, **entries left** and the offered pairing at once. Another tab locking this pairing makes it **No entry remaining**. **Reset demo** reopens pairings. | A later policy change never alters written awards. **Reset demo** removes them and unloads the contest. |
-| Graphics or storage failure | If the save refuses the lock's write, no award is written and no entry is used. | WebGL loss pauses playback, so the reveal waits. If the playback-position writes fail, the save can still list the contest as waiting after it was watched, and a reload hides its points again. |
+| Settings or saved data change underneath | A saved policy or another tab's write changes the offered values, **entries left** and the offered pairing at once. Another tab locking this pairing makes it **No entry remaining**. **Reset demo** reopens pairings. | A later policy change never alters written awards. **Reset demo** removes them and unloads the contest. A reset that fails removes nothing and leaves playback running. |
+| Graphics or storage failure | If the save refuses the lock's write, no award is written and no entry is used. | WebGL loss pauses playback, so the reveal waits. If the save refuses the write that ends the wait, the error box shows "Playback could not be saved. Keep this tab open and export your recording." The points stay shown in this tab while the result is on screen, but the save still lists the contest as waiting, so returning to the lobby or reloading hides them again. |
 | Input device changes | No effect. | No effect. |
 
 ## Interactions with other systems
 
 **Points and the ledger.** This document owns the values, the allowance, the schedule and the counting. When awards are written and revealed is owned by [contests and recordings](../foundations/contests-and-recordings.md#written-and-revealed).
 
-**Saved data and recovery.** The ledger, the recordings and the policy are part of the Arena save. A lock is one journaled write, so a crash keeps both awards or neither. **Export local save** leaves out any recording that is loaded and not complete, or waiting to resume, together with its awards ([this browser's save](../foundations/saved-data.md#exports)).
+**Saved data and recovery.** The ledger, the recordings and the policy are part of the Arena save. A lock is one journaled write, so a crash keeps both awards or neither. **Export local save** exports every recording and every award, including a contest still waiting to resume, whatever is loaded ([this browser's save](../foundations/saved-data.md#exports)). If the save cannot be read, the page shows 0 points and offers no contests until the save is reset.
 
 **Watch and Play separation.** Only Watch counted entries earn points. Play's caption says **Practice / no club points**, and nothing in Play reads the ledger.
 
@@ -210,19 +213,21 @@ So a fresh save shows Doug 3 (rank 1), Riley 1 and Sam 1 (both rank 2), and Dan 
 
 **Installed characters.** An installed card can be your card in a counted entry. Installing a character adds no demo users and no pairings ([Install character](../collection/install-character.md)).
 
-**Multiple tabs.** Locks are taken one at a time across tabs, so a pairing is locked once. **Entries left** drops in every tab at once. A tab with no recording of its own loaded hides whichever contest the save says is waiting to resume. So while one tab plays a new counted entry, another tab sitting in the lobby or Standings hides its points too, and reveals them when the first tab's playback completes.
+**Multiple tabs.** Locks are taken one at a time across tabs, so a pairing is locked once. **Entries left** drops in every tab at once. Every tab hides whichever contest the save says is waiting for its first viewing. So while one tab plays a new counted entry, another tab sitting in the lobby or Standings hides its points too, and shows them once the first tab's playback completes or is skipped. Replaying a revealed contest in one tab never hides its points in another.
 
 **Agent tools.** `read_arena` returns the overall leaderboard as this tab shows it: each user's points and rank. `configure_arena_event` changes the lobby's sport, and so which pairing the setup dialog offers. It never starts a contest or awards points ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
 - **Entries left before points.** Between the lock and the reveal, the chip's **entries left** has dropped while its points, the rank, and **Played** in Standings have not.
-- **Counted entries switched off.** With **Counted entries enabled** off, every sport shows **No entry remaining**, but the chip and the dialog still show the allowance's **entries left**.
-- **An allowance above 4 is never usable.** Each user has only four pairings. With **Entries / User** at 6, a fresh save shows "5 entries left", but only three pairings can ever be played.
+- **Counted entries switched off.** With **Counted entries enabled** off, every sport shows **No entry remaining**, and the chip and the dialog read "0 entries left" and "0 counted entries left". Turning it back on restores the count.
+- **An allowance above 4 is refused.** Each user has only four pairings. **Save for future entries** with **Entries / User** at 6 shows "Entries / user can be at most 4, one for each scheduled pairing." in the settings dialog and saves nothing. The field's maximum is 4.
 - **Lowering the allowance** below what a user has played shows "0 entries left" and closes every pairing. It removes no points. An allowance of 1 closes counted entries for everyone, because the fresh save used one entry each.
 - **Doug and Dan always have the same entries left**, and so do Sam and Riley, because every counted entry uses one of each.
 - **A loss still counts as played.** It is an award worth the loss value, 0 by default.
-- **A policy change between the lock and the reveal.** The contest is revealed with the values it was locked under, while the Standings heading and House rules show the new values.
+- **A policy change between the lock and the reveal.** The contest is revealed with the values it was locked under, while House rules shows the new values.
+- **Replaying a revealed contest.** Its points stay in the chip, Standings, History and the member record for the whole replay. Leaving the replay part-way offers no resume banner for it.
+- **A waiting contest and a replay.** Replaying another recording from History while a counted entry waits leaves that entry waiting, with its points still hidden and its banner back in the lobby afterwards.
 - **After Reset demo**, a pairing played again with the same card, strategy and tie rule produces the same result as before, because its seed is fixed.
 - **Grammar.** One remaining entry reads "1 entries left" and "1 counted entries left".
 
@@ -230,11 +235,12 @@ So a fresh save shows Doug 3 (rank 1), Riley 1 and Sam 1 (both rank 2), and Dan 
 
 - Read from `lib/arena/persistence.ts` (`awardsFor`, `standings`, `rankedPlayed`, `availableEntry`, `commit`, `fixtures`, `adjustAward`), `lib/arena/model.ts` (`DEFAULT_POLICY`, `SCHEDULE`, `USERS`), `components/arena/Game.tsx`, `SetupDialog.tsx` and `Panels.tsx`. `tests/run-tests.mjs` checks that a counted entry committed twice, or twice at once, keeps exactly two awards, that a policy change leaves the ledger unchanged, that four users on 0 all rank 1, and that a repeated correction is ignored. It runs against the code directly, not through the page.
 - **The fresh save's scores** (2–0 and 1–1) were worked out by running the Arena's own simulation code outside the page. They have not been seen on the production page.
-- **Entries left ignores the enabled switch.** The chip (`Game.tsx`, line 47) and the dialog (`SetupDialog.tsx`, line 11) show **entries left** from the allowance alone, while availability (`persistence.ts`, line 11) also needs **Counted entries enabled**. This may be worth treating as a bug.
-- **An allowance above the four pairings** promises entries that cannot exist (`model.ts`, line 45). This is a product call.
-- **Replaying a finished counted entry hides its points again**, and an abandoned replay leaves a misleading resume banner (`Game.tsx`, lines 25–26; `persistence.ts`, line 28). This is a known bug.
-- **Replacing a waiting counted entry reveals it with no playback.** Starting or replaying another contest makes a waiting counted entry's points appear without it ever being watched (`Game.tsx`, lines 25–26 and 33). This is a product call.
-- **Corrections have no interface.** `adjustAward` (`persistence.ts`, line 33) is never called by the page. Whether hosts need a way to correct an award, or the function should go, is a product call.
-- **The duplicate-award check runs only when the save is read** (`persistence.ts`, lines 14–16), not when it is written. Nothing on the page can write a duplicate, so this has no visible effect today.
+- **Fixed: entries left and the enabled switch (B-32).** **Entries left** now reads 0 when counted entries are off, and never counts more than 4.
+- **Fixed: an allowance above the four pairings (B-32).** **Save for future entries** refuses it, and House rules states the allowance capped at 4.
+- **Fixed: replaying a finished counted entry (B-01).** Only the contest waiting for its first viewing is hidden, and a replay of a revealed contest never becomes the waiting contest.
+- **Fixed: replacing a waiting counted entry (B-05).** Replaying another recording no longer touches it. Locking a new contest still reveals it with no playback, but the setup dialog warns first and the button reads **Start anyway**. A waiting exhibition is replaced without a warning.
+- **Not yet confirmed on the page.** The fixed behaviour above is read from the code. The scripted pass of 2026-09-24 ran before these fixes.
+- **Corrections have no interface.** `adjustAward` (`persistence.ts`) is never called by the page. Whether hosts need a way to correct an award, or the function should go, is a product call.
+- **The duplicate-award check runs only when the save is read** (`assertState` in `persistence.ts`), not when it is written. Nothing on the page can write a duplicate, so this has no visible effect today.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

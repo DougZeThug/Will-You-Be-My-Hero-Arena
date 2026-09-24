@@ -22,7 +22,7 @@ They choose **The wildcard** as the **Starting personality**. The **Motion previ
 
 They set **Celebration style** to **Crowd bow**. The Motion preview switches to **Celebration** and both Dougs bow on a loop. They click **Return to this card’s personality**: the pickers and the detail pane go back to **The lock-in showman**, and the link disappears.
 
-With the lobby on Cornhole, which is the default, the same steps change the text but not the stage: see [Dan and Doug on the cornhole court](#dan-and-doug-on-the-cornhole-court).
+With the lobby on Cornhole, which is the default, the same steps work too. The first choice reloads the preview, because Dan and Doug change from their side-view rig to their puppet figure: see [Dan and Doug on the cornhole court](#dan-and-doug-on-the-cornhole-court).
 
 ## The interaction, event by event
 
@@ -104,12 +104,13 @@ A personality also has an energy, a tempo and a variation number. The mixer cann
 
 ## Dan and Doug on the cornhole court
 
-On a cornhole court, the preview draws Dan and Doug with their cornhole side-view rig, which only stands in its rest idle ([the collection](the-collection.md#motion-preview-clips)). So for Dan and Doug:
-- With the lobby on Cornhole, the default, no choice here changes the stage. Only the detail pane's text changes.
-- With another lobby event, the entrance, idle, celebration and miss choices show on that court.
-- A **Throw style** can never be seen. Choosing one always moves the preview to the cornhole court, where the rig only idles.
+On a cornhole court, the preview draws Dan and Doug with their cornhole side-view rig only for the plain **Personality idle** with no draft ([the collection](the-collection.md#motion-preview-clips)). As soon as a draft exists, it draws them with their puppet figure instead, the one used on the other courts. So for Dan and Doug:
+- Every choice shows on every court, including with the lobby on Cornhole, the default.
+- The first choice on a cornhole court reloads the preview, with **UNFOLDING THE ARENA…**, as they switch figure.
+- A **Throw style** plays a cornhole throw at that style's pace, as it does for installed characters.
+- **Return to this card’s personality** with the Motion preview on **Personality idle** reloads the preview again, back to the side-view idle.
 
-Installed characters have no side-view rig, so every choice shows, and **Throw style** plays a cornhole throw at that style's pace.
+Installed characters have no side-view rig, so they always use their puppet, and every choice shows without a reload.
 
 ## Modifiers
 
@@ -118,7 +119,7 @@ Installed characters have no side-view rig, so every choice shows, and **Throw s
 | Input device | A mouse, touch or the keyboard. The summary opens with Enter; the pickers are labelled and reachable with Tab. Game keys do nothing here. | No effect. |
 | Event and action combinations | The Watch lobby's event sets the court for every choice except **Throw style**, which always uses Cornhole. | Not applicable: the lobby's event cannot change from this tab. |
 | Contest kind | Not applicable: a draft never reaches a contest. Watch contests always use the card's own personality. | Not applicable. |
-| Character card | The starting values are the card's own personality. Dan and Doug show nothing on a cornhole court. An installed character shows every choice. A personality with its own name, such as an installed pack's, keeps that name when single styles change; a new **Starting personality** replaces it with that personality's name. | The draft belongs to the card it was made on: see [resolving](#resolving). |
+| Character card | The starting values are the card's own personality. Dan and Doug switch to their puppet on a cornhole court once a draft exists, so every choice shows for them. An installed character shows every choice. A personality with its own name, such as an installed pack's, keeps that name when single styles change; a new **Starting personality** replaces it with that personality's name. | The draft belongs to the card it was made on: see [resolving](#resolving). |
 | Presentation settings | **Reduced motion** plays each style in its reduced form, and the entrance loses its burst and puff. **Lower graphics quality** only rebuilds the stage. The preview makes no sound. The clean spectator view cannot be on here. | Toggling either setting keeps the draft. |
 | Screen size and orientation | The pickers sit in a grid of columns at least 220 px wide: as many as fit on a wide window, one on a phone. | Reflows at once; the draft is kept. |
 | Saved state | An attached asset mapping's personality is the starting point for that card. Nothing about the mixer is saved, so a fresh or returning save starts the same way. | A new mapping or **Reset demo** changes the card's own personality underneath. The draft is kept, and **Return to this card’s personality** then returns to the new one. |
@@ -135,8 +136,8 @@ Installed characters have no side-view rig, so every choice shows, and **Throw s
 | Forced finish | Not applicable. | Not applicable. |
 | Focus leaves the game | Hiding the browser tab freezes the preview loop. | The same; the draft is kept. |
 | Reload, close, or back/forward cache | Nothing is kept. | The draft is lost. |
-| Settings or saved data change underneath | **Reduced motion** applies at once. A reload of the Arena save, for example another tab's write, rebuilds the stage; the loop carries on from where it was. | The same; the draft is kept and still shown. |
-| Graphics or storage failure | A lost graphics context freezes the preview, with its message only on the Watch tab. Storage is never involved. | The same; the draft is kept. |
+| Settings or saved data change underneath | **Reduced motion** applies at once. Another tab's write leaves the stage alone, unless it changes this card's mapping, which rebuilds it; the loop carries on from where it was. | The same; the draft is kept and still shown. |
+| Graphics or storage failure | A lost graphics context freezes the preview, with its message in the preview's error box under the stage. **Reload the preview** rebuilds the stage and restarts its clock. Storage is never involved. | The same; the draft is kept, and the rebuilt preview still shows it. |
 | Input device changes | No effect. | No effect. |
 
 ## Interactions with other systems
@@ -166,16 +167,17 @@ Installed characters have no side-view rig, so every choice shows, and **Throw s
 - **The name can mislead.** After a single style changes, the detail pane still shows the starting personality's name above a summary that no longer matches it.
 - **A card's own clips differ from its styles.** Undrafted, Dan and Doug play clips from their character profiles. A draft plays the mixer's style clips instead, so choosing the styles a card already has can still look different.
 - **The Animation library wins.** While an **Animation library** clip is chosen, the stage plays it and ignores the draft, except that a throw clip keeps the draft's pace.
+- **Two reloads on the cornhole court.** For Dan and Doug, the first choice reloads the preview if it was showing the side-view idle. **Return to this card’s personality** reloads it again only if the Motion preview is then on **Personality idle** with no library clip. Choices in between do not reload it.
 - **The throw preview's loop length** follows the card's own personality, not the draft's, so a slower draft throw can be cut off at the end of each loop.
 
 ## Open questions and verification
 
 - Read from `components/arena/MotionExplorer.tsx`, `SecondaryViews.tsx`, `lib/arena/personality.ts`, `lib/arena/motion-catalog.json` and `lib/arena/engine/scenes/ArenaScene.ts`. Not yet checked on the production page. No test drives the mixer on `/`.
-- **Nothing shows for Dan and Doug on the cornhole court**, including every **Throw style** (`ArenaScene.ts`, lines 188–191; `MotionExplorer.tsx`, line 7). This looks like a bug.
+- **Fixed: nothing showed for Dan and Doug on the cornhole court (B-20).** A draft now switches them to their puppet, so every choice, including **Throw style**, plays. This is read from the code; the scripted pass of 2026-09-24 ran before the fix, and how the puppet's throw styles look for Dan and Doug has not been seen.
 - **No way to keep a draft.** The text points to Codex, but the page gives the player nothing to take there. This is a product call.
 - **The personality name after single changes** is kept (`MotionExplorer.tsx`, line 14) while a new starting personality drops it (line 13). Whether a changed mix should keep the original name is a product call.
 - **The loop length** uses the card's personality rather than the draft's (`ArenaScene.ts`, line 504). Whether that cuts off slow throws has not been seen.
 - **Whether every style clip plays** without error on every court has not been seen.
 - **Choosing the starting personality already shown**, with no draft: whether it creates a draft and the **Return to this card’s personality** link depends on whether the picker reports an unchanged choice. Not tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

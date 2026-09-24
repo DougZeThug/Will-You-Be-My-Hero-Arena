@@ -5,7 +5,7 @@
 The Standings tab is the club leaderboard. It ranks the four demo users by their revealed club points, overall or in one sport, and shows how many counted entries each has played. It is read-only: nothing on it changes this browser's save. From it the player can open any user's **Club member record**, and their own contest history.
 
 It is reached from the **Standings** main tab in the header, from any view. It shows, from top to bottom:
-- **The heading:** the eyebrow **THE LEADERBOARD**, the title **THE STANDINGS.**, and "Counted wins earn 3 points. Equal totals share a rank."
+- **The heading:** the eyebrow **THE LEADERBOARD**, the title **THE STANDINGS.**, and "Points come from counted entries, under the scoring policy each was played with. Equal totals share a rank."
 - **My contest history**, a button on the right of the heading.
 - **The sport tabs:** **Overall**, **Cornhole**, **Football**, **Beer pong** and **Basketball**.
 - **The table**, with the columns **Rank**, **Club member**, **Points**, **Played** and an unlabelled details column.
@@ -26,7 +26,7 @@ On a fresh save, the player clicks **Standings**. **Overall** is selected, and t
 
 They click **Cornhole**. Nobody has played counted cornhole yet, so all four read **01**, 0 points and 0 played, listed Dan, Doug, Riley, Sam.
 
-They click Doug's name. The **Club member record** opens over the table: "Doug", then 3 **points**, 1 **wins**, 0 **draws**, 0 **losses**, and one row, **Basketball** "ranked" "2 — 0". They press Escape, and Standings is exactly as they left it.
+They click Doug's name. The **Club member record** opens over the table: "Doug", then 3 **points**, 1 **wins**, 0 **draws**, 0 **losses**, and one row, **Basketball** "Counted entry" "2 — 0". They press Escape, and Standings is exactly as they left it.
 
 ## The interaction, event by event
 
@@ -51,7 +51,7 @@ Clicking **Standings** replaces the current view at once:
 - **From Watch mid-playback,** the recording pauses first and Watch sound stops. The recording stays loaded, paused where it was.
 - **From Play,** the match and Play setup are discarded without warning ([the app shell](../foundations/app-shell.md)).
 
-The table is counted from this browser's save as the page is showing it. A counted entry that is loaded and not yet complete, or that is waiting to resume, is left out ([written and revealed](../foundations/contests-and-recordings.md#written-and-revealed)). The sport tab is whichever was chosen last since the page loaded: **Overall** the first time.
+The table is counted from this browser's save as the page is showing it. The one contest waiting for its first viewing is left out, whether it is playing, paused or waiting to resume ([written and revealed](../foundations/contests-and-recordings.md#written-and-revealed)). A replay of a revealed contest stays in. The sport tab is whichever was chosen last since the page loaded: **Overall** the first time.
 
 ### Backing out at once
 
@@ -83,7 +83,7 @@ The player leaves by a main tab, the logo, or **Replay**. Nothing is kept except
 
 **"You".** "You" is the demo user last chosen as **Your demo user** in [the setup dialog](../watch/setup-dialog.md): Doug until then. Changing it there moves the **YOU** tag, even if the dialog was closed without starting. There is no sign-in. Being "you" changes nothing in the table but the tag; it also decides whose contests **My contest history** lists.
 
-**The heading's points.** "Counted wins earn N points" shows the *current* policy's win value. Past wins keep the value they were locked under ([points and entries](points-and-entries.md#the-scoring-policy)).
+**The heading's points.** The heading quotes no point values. Each counted entry keeps the values of the policy it was locked under, so the table can mix policies after a change ([points and entries](points-and-entries.md#the-scoring-policy)). The current values are in [House rules](house-rules.md).
 
 **The member record** opens as the **Club member record** dialog, over the table. Its contents and its replays belong to [history and member record](history-and-member-record.md#the-two-dialogs).
 
@@ -93,11 +93,11 @@ The player leaves by a main tab, the logo, or **Replay**. Nothing is kept except
 | --- | --- | --- |
 | Input device | Mouse or keyboard. The sport tabs are one tab stop: the arrow keys move between them, wrapping at the ends, and Enter or Space selects one. The names and arrow buttons are ordinary buttons. Play devices and game keys do nothing here. | Not applicable: Standings never commits. |
 | Event and action combinations | The sport tabs filter the table by sport. The Watch lobby's selected event does not choose a tab, and choosing a tab does not change the lobby's event. | Not applicable: Standings never commits. |
-| Contest kind | Only counted entries add points and **Played**. Exhibitions and Play practice never change the table. A replay of a finished counted entry hides that entry's points again until the replay completes (see [edge cases](#edge-cases) and bug-triage B-01). | Not applicable: Standings never commits. |
+| Contest kind | Only counted entries add points and **Played**. Exhibitions and Play practice never change the table. A replay of a finished counted entry never hides its points (see [edge cases](#edge-cases)). | Not applicable: Standings never commits. |
 | Character card | The table lists demo users, not cards. Which card won does not show here. Installed characters add no rows. | Not applicable: Standings never commits. |
 | Presentation settings | Reduced motion and lower graphics have no effect: there is no stage. The clean spectator view hides the header, so Standings cannot be reached until it is turned off on the Watch stage. Watch sound is stopped when leaving playback for Standings; the switch stays as it was. | Not applicable: Standings never commits. |
 | Screen size and orientation | At 600 px wide and below, **My contest history** moves under the heading text, the sport tabs scroll sideways, and the table's avatars, ranks and padding shrink. | Not applicable: Standings never commits. Resizing reflows the table at once. |
-| Saved state | A fresh save shows the table above. A counted entry that is playing or waiting to resume is left out. A save that failed to load shows the headings with no rows. **Counted entries enabled** off changes nothing here; past points stay. | Not applicable: Standings never commits. Another tab's write, a policy change or a reset recounts the table in place. |
+| Saved state | A fresh save shows the table above. The counted entry waiting for its first viewing is left out. A save that cannot be read shows the headings with no rows, under the recovery box. **Counted entries enabled** off changes nothing here; past points stay. | Not applicable: Standings never commits. Another tab's write, a policy change or a reset recounts the table in place. |
 
 ## Cancel and interrupt
 
@@ -111,8 +111,8 @@ The player leaves by a main tab, the logo, or **Replay**. Nothing is kept except
 | Forced finish | Not applicable. | Not applicable: Standings never commits. |
 | Focus leaves the game | No effect. | Not applicable: Standings never commits. |
 | Reload, close, or back/forward cache | The page reopens on the Watch lobby. Standings' sport tab is forgotten and returns to **Overall**. | Not applicable: Standings never commits. |
-| Settings or saved data change underneath | Another tab's write recounts the table in place. A policy change updates the heading's win value but no past points. A reset returns the table to the fresh save's. | Not applicable: Standings never commits. |
-| Graphics or storage failure | There is no stage here, so WebGL loss has no effect. If the save could not be read, the table has no rows. An error raised from a dialog opened here goes to the Watch error box and is not visible on Standings. | Not applicable: Standings never commits. |
+| Settings or saved data change underneath | Another tab's write recounts the table in place. A policy change changes no past points, and the heading quotes no values, so the view looks the same. A reset returns the table to the fresh save's. | Not applicable: Standings never commits. |
+| Graphics or storage failure | There is no stage here, so WebGL loss has no effect. If the save could not be read, the table has no rows and the recovery box above it offers **Export unreadable save** and **Reset demo…**. An error in Arena settings or the reset dialog, opened over Standings, shows inside that dialog. | Not applicable: Standings never commits. |
 | Input device changes | No effect. | Not applicable: Standings never commits. |
 
 ## Interactions with other systems
@@ -133,19 +133,19 @@ The player leaves by a main tab, the logo, or **Replay**. Nothing is kept except
 
 **Installed characters.** No interaction. Installed characters are cards, not club members.
 
-**Multiple tabs.** Each tab has its own sport tab. The table follows the shared save. A counted entry another tab is playing is hidden here too, unless this tab has a recording of its own loaded ([points and entries](points-and-entries.md#interactions-with-other-systems)).
+**Multiple tabs.** Each tab has its own sport tab. The table follows the shared save. A counted entry another tab is playing for the first time is hidden here too, until that tab's playback completes or is skipped ([points and entries](points-and-entries.md#interactions-with-other-systems)).
 
 **Agent tools.** `read_arena` returns the overall table as this tab shows it: each user's name, points and rank. It does not return **Played** or a sport tab ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
 - **Played lags entries left.** While a counted entry plays, is paused, or waits to resume, **Played** leaves it out, but the chip's **entries left** already counts it.
-- **Replaying a finished counted entry** removes its points from Standings until the replay completes.
+- **Replaying a finished counted entry** leaves its points in Standings for the whole replay.
 - **The Played column in a sport tab** is 0 or 1 for everyone, and at most 4 overall.
 - **A four-way tie** shows all four rows as **01** in orange.
 - **The member record ignores the sport tab.** Opening Dan's record from the **Cornhole** tab shows his overall points, wins, draws and losses.
 - **"Points reflect results and participation"** is only true when the loss value is above 0. With the default policy, a loss earns nothing.
-- **A save that failed to load** leaves the table empty, but the heading still reads "Counted wins earn 3 points", the built-in default.
+- **A save that cannot be read** leaves the table empty under the usual heading. The recovery box explains why.
 - **The tab is not the lobby's event.** Standings opened from a Beer pong contest still shows **Overall**, or whichever tab was chosen last.
 
 ## Open questions and verification
@@ -154,6 +154,7 @@ The player leaves by a main tab, the logo, or **Replay**. Nothing is kept except
 - **Tie order.** Equal users are listed in the order of their internal IDs, which happens to be alphabetical. Whether ties should be ordered some other way is a product call.
 - **Wins, draws and losses are not in the table.** They are only in the member record. This is a product call.
 - **Focus after closing a record.** Where keyboard focus returns after the member record closes has not been checked.
-- **The heading's win value** follows the current policy even when the table's points were earned under another. This may confuse players after a policy change.
+- **Fixed: the heading's win value (B-36).** The heading no longer quotes the current win value, which could differ from the policy the table's points were earned under.
+- **Fixed: replays hiding points (B-01).** A replay of a revealed contest no longer removes its points from the table. This is read from the code; the scripted pass of 2026-09-24 ran before the fix.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

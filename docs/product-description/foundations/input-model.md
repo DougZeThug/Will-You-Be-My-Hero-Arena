@@ -32,7 +32,7 @@ A second person can use **Keyboard · TFGH + numpad** on the same keyboard, or p
 | **Keyboard · WASD** (keyboard 1) | W A S D | Arrow keys | J, K, L, E, Space, left Shift, left Ctrl, C | Escape |
 | **Keyboard · TFGH + numpad** (keyboard 2) | T F G H | Numpad 8 / 4 / 5 / 6 | Numpad 1, 2, 3, 0, Enter, right Shift, right Ctrl, numpad decimal | Backspace |
 | **Controller 1–4** | Left stick, plus the D-pad | Right stick | A, X, B, Y (Cross, Square, Circle, Triangle); RT/R2; LB/L1; RB/R1; View/Share | Menu / Options |
-| **Touch / on-screen** | **Move** pad | **Aim** pad (cornhole only) | One button per action | **Pause game** on the toolbar only; the overlay's **Resume game** only resumes |
+| **Touch / on-screen** | **Move** pad | **Aim** pad (cornhole only) | One button per action, plus a **Grapple** button in the Brawl | **Pause game** on the toolbar only; the overlay's **Resume game** only resumes |
 | **AI player** | Decided by the event | Decided by the event | Decided by the event | Never pauses |
 
 The named inputs map to keys and buttons like this. The action names are the ones the remapping section shows:
@@ -60,7 +60,7 @@ The named inputs map to keys and buttons like this. The action names are the one
   Only the affected player's controller rumbles.
 - **Before starting.** Browsers only reveal a controller after one of its buttons has been pressed on the page. The setup screen says: "Press a controller button before starting."
 
-**On-screen controls.** These appear under the stage for every player who is not an AI player, whatever their device. See [touch controls](../play/touch-controls.md). Their input merges into the player's own device. For each button, the stronger of the two wins. For each pad, the pad wins whenever it is off-centre. A held action is a toggle on screen: one tap turns it on, and a second tap turns it off.
+**On-screen controls.** These appear under the stage for every player who is not an AI player, whatever their device. See [touch controls](../play/touch-controls.md). Their input merges into the player's own device. For each button, the stronger of the two wins. For each pad, the pad wins whenever it is off-centre. A held action is a toggle on screen: one tap turns it on, and a second tap turns it off. The action buttons stay disabled until the match has loaded. Cornhole's **Hold / release** is also disabled outside the player's own aiming or charging turn, unless it is already held.
 
 **Two players may not share a keyboard layout or a controller.** **Start** refuses with "Assign a different keyboard layout or controller to each player." Any number of players can be on touch or AI.
 
@@ -94,7 +94,13 @@ The event's action map then looks for an action that matches three things:
 
 Some actions also need another input held at the same time, such as the Brawl grapple. If nothing matches, the press does nothing at all and is not kept.
 
-**Stage focus.** A keyboard press only starts while keyboard focus is inside the Play stage's box and not in a text field, list or number box. The stage takes focus when a match finishes loading. It takes focus again whenever the toolbar's **Pause game** or **Resume game**, the overlay's **Resume game**, or an on-screen action button is used. Clicking anywhere else on the page, pressing a **Move** or **Aim** pad, or opening a dialog, moves focus away. Clicking the stage's drawing does *not* bring focus back: the drawing swallows the click. The verification pass confirmed that Space did nothing after a click on the stage, and worked after pressing Tab to reach it.
+**Stage focus.** A keyboard press only starts while keyboard focus is inside the Play stage's box and not in a text field, list or number box. The stage takes focus when a match finishes loading. It takes focus again whenever the player:
+- clicks or taps the stage
+- uses the toolbar's **Pause game**, **Resume game**, **Sound on** or **Mute**
+- uses the overlay's **Resume game**
+- uses an on-screen action button
+
+Pressing a **Move** or **Aim** pad leaves focus where it was. Clicking anywhere else on the page, or opening a dialog, moves focus away.
 
 The operating system's key auto-repeat is ignored. Holding a key produces one press, not a stream.
 
@@ -128,9 +134,12 @@ A buffered press is kept for the event's buffer time and retried on every game s
   - left Ctrl, then J, on keyboard 1
   - right Ctrl, then numpad 1, on keyboard 2
   - RB or R1, then A or Cross, on a controller
+  - the **Grapple** button on screen, which presses both at once
+
+  The first input still does its own action when it is pressed. In the Brawl that starts a counter stance; the grapple then cancels it and refunds its energy, so the chord costs only the grapple.
 - **Combos.** A combo is a sequence of presses within a time window:
   - Brawl light, light, heavy within 1.15 s becomes a finisher.
-  - Down, forward, special within 0.65 s becomes a special.
+  - Down, forward, special within 0.65 s becomes a charged power strike.
 
   A combo replaces the action its last press would otherwise have done.
 - **Facing.** Left and right are mirrored for a character facing left. "Forward" always means toward the opponent.
@@ -142,7 +151,7 @@ While an input stays above **0.1**, it produces a held signal on every game step
 
 Move and aim are read continuously, whatever their phase.
 
-- **Keys.** A key release always counts, even when stage focus has moved away. A key pressed on the stage and let go after clicking elsewhere still releases normally.
+- **Keys.** A key release always counts, even when stage focus has moved away. A key pressed on the stage and let go after clicking elsewhere still releases normally. The game only keeps from the page the release of a key whose press it took, so other keys' releases reach the page as usual.
 - **On-screen toggles.** A toggle stays held until it is tapped again. It is also let go automatically when the game pauses, and when a cornhole turn leaves aiming or charging.
 
 ### Resolving
@@ -174,8 +183,11 @@ Pausing a Play match does all of the following:
 - **Controllers** are made to return to [neutral](#neutral).
 
 **What pauses a match.** Any player's pause input toggles pause: pressing it again resumes. Each device has its own pause key, so keyboard 2's Backspace works during keyboard 1's turn. The match also pauses on its own when:
-- the window loses focus or the tab is hidden, with **Paused while the window was inactive.**
+- the window loses focus or the tab is hidden, with **Paused while the window was inactive.** A match that has already finished is not paused this way, so its result stays on screen.
 - a controller reports it is disconnected, with **Controller disconnected. Reconnect it, then resume.**
+- the browser takes away the graphics context, with **Graphics were interrupted. Resume when the stage is back.** When the browser gives it back, the notice changes to **Graphics are back. Resume when ready.** The match stays paused until someone resumes it.
+
+Each automatic pause is also announced to screen readers as "Paused. {notice}".
 
 **A disconnected controller.** While it stays disconnected, resuming pauses again straight away. A controller that was never revealed to the page counts as disconnected, so the match opens paused with that notice.
 
@@ -187,24 +199,24 @@ Pausing a Play match does all of the following:
 | Event and action combinations | The event decides what each named input does (see the table above), which inputs are held actions, and which chords and combos exist. Left and right modifiers are ordinary inputs, not modifier keys in the desktop sense. | A chord is only recognised when its first input is already held at the moment of the second press. Letting go of the first input mid-way leaves an ordinary press. |
 | Contest kind | Input exists only in Play practice. Watch contests of any kind have no game input. | Not applicable. |
 | Character card | No effect on input. Cards change what an action achieves, not how it is read. | Not applicable. |
-| Presentation settings | No effect on input. Toggling **Reduced motion** restarts the match (see below). | No effect, except through a restart. |
+| Presentation settings | No effect on input. | No effect. Toggling **Reduced motion** applies to the running match without restarting it, so devices and held input are untouched. |
 | Screen size and orientation | Keys and controllers are unaffected. The on-screen pads measure a drag relative to their own size, so a small pad reaches full travel with a short drag. | Resizing mid-press does not release anything. |
-| Saved state | Slots 1 and 2 load the bindings saved by the last **Start** in this browser; slots 3 and 4 always start from the defaults. Changing a slot's **Controls** replaces its bindings with that device's defaults. A saved binding that fails the format check is ignored for that slot. An entry that is not a bindings object at all may instead break the Play tab (bug-triage B-18). | No effect: bindings are fixed for the match. |
+| Saved state | Bindings are saved per device. Any slot, 1 to 4, that picks a keyboard layout or a controller gets the bindings saved for that device by the last **Start** in this browser, both when setup opens and whenever its **Controls** changes. A device with nothing saved gets its defaults. Touch and AI players have no saved bindings. A saved entry that fails the format check is ignored, and the device's defaults are used. | No effect: bindings are fixed for the match. |
 
 ## Cancel and interrupt
 
 | Event | Before committing | While committed |
 | --- | --- | --- |
-| Escape or click outside | **Escape** is keyboard 1's pause key. It pauses if a keyboard 1 player exists and stage focus is on the stage; otherwise it does nothing. Clicking outside the stage moves focus away, so later key presses do nothing. | A held key keeps its hold after a click elsewhere, and its release still counts. On-screen toggles stay on. |
+| Escape or click outside | **Escape** is keyboard 1's pause key. It pauses if a keyboard 1 player exists and stage focus is on the stage; otherwise it does nothing. Clicking outside the stage moves focus away, so later key presses do nothing until the player clicks the stage again. | A held key keeps its hold after a click elsewhere, and its release still counts. On-screen toggles stay on. |
 | Pause or resume | Every input is cleared, and nothing pressed is carried across the pause. | Every held action is let go as if released, except that no released action runs. A cornhole charge is discarded rather than thrown, for example. Controllers must return to neutral. |
 | Repeated or rapid input | Operating-system key repeat is ignored. Two presses within 0.26 s are also a double-tap, which only the Brawl uses (a dodge). Presses the event cannot act on yet are buffered, at most four. | A held input cannot be pressed again without first being released. |
 | A panel opens on top | Focus moves into the dialog, so key presses stop counting. Controllers, on-screen controls and AI players carry on. The match does not pause. | Held keys stay held until released; their release counts. |
 | Navigating away | The match is closed, and every device is released and detached. | The same; nothing is completed. |
-| Forced finish | No effect on input. The event decides what a time limit or automatic release does. | Input already held is simply ignored once the event has finished. |
-| Focus leaves the game | Losing window focus or hiding the tab pauses the match and drops every held key. | The same; held actions are let go without their release action. |
-| Reload, close, or back/forward cache | The match is gone. Only the bindings saved by the last **Start** remain. | The same. |
-| Settings or saved data change underneath | Toggling **Reduced motion** rebuilds the match, and with it every device. Other settings and save changes do not touch input. | The same. |
-| Graphics or storage failure | Input is unaffected by a lost WebGL context, as far as the code shows. A refused bindings save is silent, and the match starts with the bindings on screen. | The same. |
+| Forced finish | No effect on input. The event decides what a time limit or automatic release does. | Input already held is simply ignored once the event has finished. Losing focus after the finish does not pause the match. |
+| Focus leaves the game | Losing window focus or hiding the tab pauses the match and drops every held key. Once the match has finished, held keys are still dropped but the match is not paused. | The same; held actions are let go without their release action. |
+| Reload, close, or back/forward cache | The match is gone. Only the per-device bindings saved by the last **Start** remain. | The same. |
+| Settings or saved data change underneath | Toggling **Reduced motion** applies to the running match and leaves every device and held input as it was. Other settings and save changes do not touch input either. | The same. |
+| Graphics or storage failure | A lost WebGL context pauses the match, which clears input as any pause does, and controllers must return to neutral. A refused bindings save is silent, and the match starts with the bindings on screen. | The same; held actions are let go without their release action. |
 | Input device changes | A controller disconnecting pauses the match. On reconnect it must return to neutral. A *different* physical controller that takes over the same index is simply read from then on. On-screen input merges at any time, and the player's tile then shows `touch`. | A disconnect lets go of every held action, as for pause. |
 
 > Technical note: pause is watched by the session itself on every device, before the event's own controls. That is why any player can pause or resume during anyone's turn, and why pause works while a controller is still waiting for neutral.
@@ -213,7 +225,7 @@ Pausing a Play match does all of the following:
 
 **Points and the ledger.** No interaction. Input exists only in practice.
 
-**Saved data and recovery.** The bindings for each slot are saved as `wybmh-input-bindings-v1` when **Start** is pressed, and loaded when Play setup opens. Nothing else about input is saved. See [controls and remapping](../play/controls-and-remapping.md).
+**Saved data and recovery.** When **Start** is pressed, the bindings of every keyboard layout and controller in the match are saved as `wybmh-input-bindings-v2`, one entry per device. They are loaded into any slot that picks that device, when Play setup opens and whenever **Controls** changes. The older per-slot `wybmh-input-bindings-v1` is only read as a fallback for keyboard 1, until a newer keyboard 1 entry exists, and is no longer written. Nothing else about input is saved. See [controls and remapping](../play/controls-and-remapping.md).
 
 **Watch and Play separation.** Watch has no game input. Its only controls are page buttons, and Escape only closes dialogs there.
 
@@ -221,13 +233,13 @@ Pausing a Play match does all of the following:
 
 **Sound.** No interaction. Input makes no sound of its own; the events play sounds for what the input causes.
 
-**Reduced motion and graphics quality.** No direct interaction. Changing Reduced motion restarts a running match.
+**Reduced motion and graphics quality.** No direct interaction. Changing Reduced motion applies to a running match without restarting it. A lost graphics context pauses the match ([the stage](stage.md#graphics-context-loss-and-the-error-box)).
 
-**Accessibility.** All play can be done from the keyboard. The on-screen buttons are focusable buttons, and the pads accept the arrow keys when focused. Stage focus must be on the stage for game keys to work, and the stage's label says so: "Playable arena. Focus here for keyboard controls." See [accessibility](../cross-cutting/accessibility.md).
+**Accessibility.** All play can be done from the keyboard. The on-screen buttons are focusable buttons, and the pads accept the arrow keys when reached with Tab. Stage focus must be on the stage for game keys to work, and the stage's label says so: "Playable arena. Focus here for keyboard controls." Clicking the stage gives it focus. Page buttons keep working with Space during a keyboard match. An automatic pause is announced through a hidden polite live region. See [accessibility](../cross-cutting/accessibility.md).
 
 **Installed characters.** No interaction. Installed characters are driven exactly like built-in ones.
 
-**Multiple tabs.** Each tab reads the keyboard only while it has focus, and switching tabs pauses the match in the tab being left. Controllers are visible to every tab. A match in the background tab stays paused, because it paused when its window lost focus.
+**Multiple tabs.** Each tab reads the keyboard only while it has focus, and switching tabs pauses the match in the tab being left, unless it has finished. Controllers are visible to every tab. A match in the background tab stays paused, because it paused when its window lost focus.
 
 **Agent tools.** No interaction. The page's agent tools cannot send game input.
 
@@ -235,12 +247,12 @@ Pausing a Play match does all of the following:
 
 - **Keyboard 2's Backspace** is also the key many browsers once used for "back". The Arena swallows it only while stage focus is on the stage.
 - **Keyboard 2 needs a numeric keypad.** Without one, such as on most laptops, a keyboard 2 player can move with T, F, G and H and use Enter, right Shift, right Ctrl and Backspace. They cannot aim or use primary, secondary, tertiary, special or celebrate.
-- **Remapping a key onto a movement key**, such as K to W, is accepted. Both meanings then fire together; see [controls and remapping](../play/controls-and-remapping.md).
+- **Remapping onto a key already in use is refused.** That covers another action of the same player, that player's movement or aim keys, and the other keyboard layout's keys. For example, moving K to W reads "W is already used for movement. Choose another key." See [controls and remapping](../play/controls-and-remapping.md).
 - **Two different controllers.** Controller 1 and Controller 2 are browser controller slots 0 and 1. Which physical pad is which depends on the order the browser discovered them in.
 - **A stick and the D-pad** pushed opposite ways cancel each other out.
 - **The pause key while paused** resumes. There is no separate resume key.
-- **Player 1 with keyboard 2's bindings.** If player 1 last started a match on keyboard 2, the next visit shows **Keyboard · WASD** carrying keyboard 2's saved keys: numpad actions, and Backspace to pause. Escape then does nothing.
-- **Space on page buttons.** During a match with a keyboard player, the page cancels the release of every bound key anywhere on the page, including Space. A focused page button such as **Sound on** may then not respond to Space. This is read from the code and has not been tried.
+- **Bindings follow the device, not the slot.** A remap made for **Keyboard · TFGH + numpad** comes back for whichever slot next picks that layout, and never appears on **Keyboard · WASD**. The old per-slot save is read for keyboard 1 only when its pause key is Escape, so keyboard 2's keys cannot leak onto keyboard 1.
+- **Space on page buttons.** During a match with a keyboard player, a focused page button such as **Pause game** or **Sound on** works with Space. The game only keeps a key's release from the page when it took that key's press on the stage.
 
 ## Open questions and verification
 
@@ -248,5 +260,9 @@ Pausing a Play match does all of the following:
 - Keyboard 2 has not been tried with Num Lock off. Browsers normally report the physical numpad key either way, but this is unconfirmed.
 - Whether a controller whose browser slot changes mid-match is noticed as a disconnect has not been tried.
 - Keyboard 2's pause key (Backspace) is also browser "back" in some older browsers. Whether it can navigate away when stage focus is elsewhere has not been tried.
+- **A finished match can still be paused.** Only losing focus and hiding the tab skip a finished match. The pause key, **Pause game** and a graphics loss still pause it, and the **PAUSED** overlay is then drawn over the stage while the result shows below. This is read from `ArenaSession.ts` and `LiveStage.tsx` and has not been tried.
+- Whether the stage draws again when the browser gives back a lost graphics context has not been tried. The match stays paused either way.
+- Fixed: clicking the stage now gives it focus, and pressing a pad no longer takes focus away (B-06). The first verification pass found Space did nothing after a click on the stage.
+- Fixed: bindings are saved and restored per device for every slot, and a malformed saved entry is ignored (B-18). Space works on page buttons during a keyboard match (B-24). Reduced motion no longer restarts a match (B-07).
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

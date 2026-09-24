@@ -11,7 +11,7 @@ Your job is to write every document in the README's structure until the coverage
 
 ## Source of truth
 
-This repository, at commit `3b4ec62`, is the product. Describe the experience on the production page at `/`: `app/page.tsx` → `components/arena/Game.tsx`, built with `pnpm build` and served with `pnpm start`. Describe it in the default configuration, in a fresh browser profile, with nothing customized.
+This repository, at commit `364e3c1`, is the product. The description was first written against `3b4ec62` and revised after the bug-triage fixes. Describe the experience on the production page at `/`: `app/page.tsx` → `components/arena/Game.tsx`, built with `pnpm build` and served with `pnpm start`. Describe it in the default configuration, in a fresh browser profile, with nothing customized.
 
 Out of scope:
 
@@ -62,14 +62,14 @@ Do not describe code. Describe what the player sees and does. Technical detail g
 - **Use sentence case for all headings.** Use direct, concrete language, with no hedging and no marketing. Quote on-screen labels exactly and in **bold**.
 - **State surprising behaviour plainly.** Say why it happens if the reason is in the code or a comment. If it looks like a bug, say so in "Open questions" rather than smoothing it over.
 - **Cross-reference other documents with relative links** rather than repeating their content. [The input model](foundations/input-model.md) owns thresholds, bindings, stage focus, neutral, buffering, and the cancel/complete/interrupt definitions for Play. [Contests and recordings](foundations/contests-and-recordings.md) owns locking, written versus revealed, and the Watch lifecycle diagram. Link to them; do not restate them.
-- **End every document** with "## Open questions and verification", listing what was read from code but not confirmed on the running page. Follow it with `Verified against Will-You-Be-My-Hero-Arena commit \`3b4ec62\``.
+- **End every document** with "## Open questions and verification", listing what was read from code but not confirmed on the running page. Follow it with `Verified against Will-You-Be-My-Hero-Arena commit \`364e3c1\``.
 - **Add one Mermaid `stateDiagram-v2` per action**, keeping to the states the player passes through.
 
 ## Things already established (do not re-derive, do not contradict)
 
 - **Surface and default.** The only production route is `/`. The page opens on the Watch lobby with Cornhole selected. Reloading always lands there; nothing about the current view is kept in the URL.
 - **Watch and Play sound.** Sound starts off in both, and the two switches are independent. The footer **Sound on/off** reflects only the Watch switch.
-- **Play is practice.** It never reads or writes points, recordings, the ledger or the playback position. It writes only the bindings, `wybmh-input-bindings-v1`, when **Start {event}** is pressed.
+- **Play is practice.** It never reads or writes points, recordings, the ledger or the playback position. It writes only the bindings, per device, to `wybmh-input-bindings-v2` when **Start {event}** is pressed. Touch and AI are not saved. The old per-slot `wybmh-input-bindings-v1` is only read once, as a fallback for player 1's keyboard 1 layout, and is no longer written.
 - **Play session clock.** Fixed steps of 1/60 s. At most 0.1 s of game time per rendered frame, so a stalled tab does not jump ahead.
 - **Press and release thresholds.** A button or trigger counts as pressed above 0.2 and released below 0.1. A stick counts as a direction beyond 0.55 of its travel. Double-tap: two presses within 0.26 s. Auto-repeat inside the game starts after 0.36 s and repeats every 0.1 s. Operating-system key repeat is ignored.
 - **Controller deadzone.** Radial, 0.18. The D-pad adds to the left stick.
@@ -78,22 +78,23 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - A keyboard press only counts while focus is inside the Play stage's box and not in a text field, select or input.
   - A key release always counts.
   - Losing window focus drops every held key.
-  - Clicking the stage's drawing does *not* give it focus. Tab to it, or use **Pause game** or **Resume game**. Pressing a **Move** or **Aim** pad takes focus away. The verification pass confirmed this.
+  - Clicking (pointer down on) the stage gives it focus. So do Tab, **Pause game**, **Resume game**, the sound button (**Sound on** or **Mute**) and an on-screen action button. Pressing a **Move** or **Aim** pad does not take focus.
 - **Pause in Play.**
-  - Triggered by any player's pause key or button, the toolbar button, or the overlay button. The pause key toggles, so it both pauses and resumes. Losing window focus, hiding the tab, or a controller disconnecting also pauses.
+  - Triggered by any player's pause key or button, the toolbar button, or the overlay button. The pause key toggles, so it both pauses and resumes. Losing window focus, hiding the tab, a controller disconnecting, or a graphics loss also pauses. A finished match is never paused.
+  - A hidden polite live region announces every pause: "Paused. {notice}", or "Paused. Resume when you're ready." when the pause has no notice.
   - Pausing clears all held input, the buffers and any on-screen toggles.
-  - It cancels a cornhole charge back to aiming.
+  - It cancels a cornhole charge back to aiming, and the caption returns to the aiming message with the shot.
   - Every controller player must return to neutral before their input counts again.
-- **Cornhole charge.** Power grows at 1/1.5 per second and stops growing at 1.2. A charge releases automatically 2.2 s after it began. The ideal power is 0.7 at the starting spot (x = 215), rising as the thrower moves left and falling as they move right: 0.7 + (215 − x)/1400, with x between 165 and 350. The release window is ±(0.035 + 0.045 × the card's skill with that shot), plus 0.035 in precision mode, plus 0.025 for a clutch performer in the last round. It is measured in power units, and the meter shows everything divided by 1.2.
-- **Cornhole scoring.** A bag within 13 stage pixels of the hole's centre is 3. A bag on the board surface is 1. Anything else is 0. Scoring is gross: each player keeps their own bags' points, and knocking an opponent's bag into the hole gives *them* 3. Each player throws four bags; the match ends after players × 4 throws. Ties produce **Session complete** instead of a winner.
+- **Cornhole charge.** Power grows at 1/1.5 per second and stops growing at 1.2. A charge releases automatically 2.2 s after it began. The ideal power is 0.7 at player 1's starting spot (x = 215), rising as the thrower moves left and falling as they move right: 0.7 + (215 − x)/1400, with x between 165 and 350. Players 1 to 4 start at x = 215, 345, 280 and 190, all inside that line. The release window is ±(0.035 + 0.045 × the card's skill with that shot), plus 0.035 in precision mode, plus 0.025 for a clutch performer in the last round. It is measured in power units, and the meter shows everything divided by 1.2.
+- **Cornhole scoring.** A bag within 13 stage pixels of the hole's centre is 3. A bag on the board surface is 1. Anything else is 0. Scoring is gross: each player keeps their own bags' points, and knocking an opponent's bag into the hole gives *them* 3. Each player throws four bags; the match ends after players × 4 throws. A tie reads **Draw** instead of "{name} wins".
 - **Precision mode.** Right-modifier key, for cornhole only while aiming or charging. It costs 15 stamina and lasts 3 s, with a 10 s cooldown. It narrows scatter to 40% and widens the release window.
 - **Watch timing.** Entrances take 2.65 s, and the finale 2.6 s after the last attempt ends. Playback speed cycles 1× → 2× → 0.5× → 1× and resets to 1× on every replay or resume. There is no seek control; the progress bar is display-only.
-- **Written and revealed.** A counted entry's awards are written when **Start showdown** locks the contest. The page hides them until that recording's playback is complete, and keeps hiding them while the contest is waiting to resume. The chip's **entries left** counts from the full save and is not hidden.
+- **Written and revealed.** A counted entry's awards are written when **Start showdown** locks the contest. The newly locked contest, counted or exhibition, becomes the *waiting contest* at 0 seconds. The page hides only the waiting contest's recording and awards: from points, Standings, History, the member record and `read_arena`, except while that same contest is loaded and complete. A replay of a revealed contest never hides its points. The chip's **entries left** counts from the full save and is not hidden.
 - **Playback position.**
-  - It is written every 2 s of playback, when leaving by the logo or **Next showdown**, and on `pagehide`.
-  - It is cleared when playback passes the end of the last attempt, including by **Skip to result**.
-  - It is written for any recording that is played: exhibition, counted entry, or a replay of a finished one.
-- **Default scoring policy.** 3 points for a win, 1 for a draw and 0 for a loss. Allowance 4. Counted entries on.
+  - It is written only for the waiting contest: every 2 s of its playback, on a logo click, and on `pagehide`.
+  - As soon as the waiting contest is watched to its completion time, or **Skip to result** is pressed, the save stops listing it as waiting. This is saved at once, so its points appear straight away.
+  - Replaying any revealed contest never writes a position and never makes it the waiting contest.
+- **Default scoring policy.** 3 points for a win, 1 for a draw and 0 for a loss. Allowance 4, which is also the most allowed. Counted entries on. **entries left** reads 0 while counted entries are off.
 - **Fresh save.** Contains the two basketball counted contests, so each demo user has one entry used.
 - **Leaving Watch and Play by tab.** Switching tab during Watch playback pauses the clock and keeps the recording loaded. Switching away from Play unmounts it: a running match and all setup choices are lost without warning.
 - **Stage rebuilds.** The Watch stage is rebuilt, showing **UNFOLDING THE ARENA…**, on every return to the Watch tab, and whenever any of these change:
@@ -101,21 +102,22 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - the recording
   - the sport
   - **Lower graphics quality**
-  - the imported mappings, which in practice means every re-read of the save, including another tab's writes
+  - the two shown cards' imported mappings, only when they actually change. A lock, a policy save, a logo click or another tab's write does not rebuild the stage otherwise.
 
-  **Lower graphics quality** is ignored by Play. **Restore arena** reloads a loaded recording paused at the same second. With nothing loaded, it toggles **Lower graphics quality**.
-- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. Only the stage's sound and clean-view buttons, the progress bar and the result panel remain. It does not hide the resume banner or the error box.
+  **Lower graphics quality** is ignored by Play. After a stage failure, the error box's **Reload the arena** rebuilds the stage: a loaded recording stays paused at the same second, and in the lobby the idle clock restarts. Any other error shows **Dismiss**. Neither changes **Lower graphics quality**.
+- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, the footer, the resume banner and the character library notice. The stage's sound and clean-view buttons, a pause/resume button while a recording is playing, the progress bar, the error box, the save recovery box and the result panel remain.
 - **Exports and storage.**
-  - **Export local save** exports the save as this tab shows it. Any loaded-but-unfinished or waiting recording is left out with its awards, exhibitions included.
+  - **Export local save** and the reset dialog's **Export save** export the stored save: every recording, every award and the waiting contest, whatever is loaded. Over an unreadable save they download the stored text unchanged.
   - The Arena save cannot be imported back.
   - Installed characters live in IndexedDB. They are not touched by **Reset demo**, and there is no uninstall.
-  - If IndexedDB cannot open, the Arena save is never read and Watch cannot start a contest.
+  - If IndexedDB cannot open, the Arena save still loads and Watch works with the built-in cards. A notice under the header says installed characters are unavailable.
+  - If the Arena save cannot be read, the save recovery box under the header offers **Export unreadable save** and **Reset demo…**, and **Set up showdown** stays disabled.
 - **What the viewer sees on the stage.** `public/assets/arena-interface.css` loads after `globals.css`. At every width it shrinks four things to one-pixel boxes that only screen readers get: the page's Watch "Live score" scoreboard, the lobby's stage label, Play's score strip, and Play's **Release in green** meter. Sighted players see what the stage draws instead:
   - the nameplates and sign
   - in cornhole, a **RELEASE TIMING** meter at the bottom left, with a teal window
 
   The same stylesheet puts the Watch sound and clean-view buttons at the stage's bottom right, keeps the stage 16:9, underlines the active tab, and moves the side station under the stage at 720 px.
-- **Hiding across tabs.** A tab with *no recording loaded* hides the contest the save lists as waiting to resume. So an idle tab also hides a counted entry being played in another tab. Loading another recording does not write the old one's position. The new recording takes over the waiting slot, and the old contest's points are revealed.
+- **Hiding across tabs.** Every tab hides the contest the save lists as waiting, unless that same contest is loaded and complete there. So an idle tab hides the waiting contest, including a counted entry being played in another tab. Loading another recording, such as a replay, no longer replaces the waiting slot or reveals the waiting contest. Locking a new contest does replace it, and reveals the old one; while a counted entry is waiting, the setup dialog warns first and its button reads **Start anyway**.
 - **Watch lifecycle ownership.** [Contests and recordings](foundations/contests-and-recordings.md) owns the definitions and the single lifecycle diagram. Each state then has one owning document:
 
   | State | Owning document |

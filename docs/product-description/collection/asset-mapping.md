@@ -28,7 +28,7 @@ stateDiagram-v2
     [*] --> editing : Advanced asset mapping (example for the previewed card)
     editing --> checking : Validate & attach
     checking --> editing : refused (reason shown, nothing saved)
-    checking --> saved : every check passed (mapping written, stages rebuild)
+    checking --> saved : every check passed (mapping written, preview rebuilds if it shows the card)
     saved --> checking : Validate & attach again (replaces the card's mapping)
     editing --> [*] : ×, Escape, click outside (text discarded)
     saved --> [*] : ×, Escape, click outside (mapping kept)
@@ -38,13 +38,13 @@ stateDiagram-v2
 
 Clicking **Advanced asset mapping** fills the text area with the *example* for the previewed card, then opens the dialog:
 - **For Dan or Doug**, the example is their built-in description, which already passes every check.
-- **For an installed character**, it is the description from its pack.
+- **For an installed character**, it is the description installed from its pack. Its images live in the character library, and the check finds them there, so this example can be attached too.
 
 The example is never the card's attached mapping. An attached mapping cannot be viewed from the page.
 
 The status line still shows the last message from earlier in this visit, if there was one.
 
-**Download example** downloads the same example as `character-manifest.json`. It ignores whatever is in the text area.
+**Download example** downloads the same example as `character-manifest.json`: for an installed character, its installed description. It ignores whatever is in the text area.
 
 ### Backing out at once
 
@@ -54,13 +54,13 @@ Closing the dialog with ×, Escape or a click outside saves nothing. Edits in th
 
 **Validate & attach** runs the checks in [what is checked](#what-is-checked), in order, and stops at the first step that fails. When every check passes, the mapping is written to the Arena save and commits. It replaces any earlier mapping for the same card. The write takes the save's cross-tab lock, like locking a contest ([this browser's save](../foundations/saved-data.md#committing)).
 
-There is no busy state. While the images load, the button stays enabled and the dialog can be closed. Pressing it again starts a second check.
+While the images load, **Validate & attach** is disabled and reads **Checking the images…**, so a second check cannot start. The dialog can still be closed; the check carries on.
 
 ### While committed
 
-The status line reads "Mapping saved. Open the motion preview to review every supported action." It is in the same red as the error messages. The dialog stays open with the text as attached. Editing it and pressing **Validate & attach** again replaces the mapping with the new one.
+The status line reads "Mapping saved. Open the motion preview to review every supported action.", in green; error messages are red. The dialog stays open with the text as attached. Editing it and pressing **Validate & attach** again replaces the mapping with the new one.
 
-Behind the dialog, the preview stage rebuilds with the mapping. The detail pane's personality follows the mapping's personality, if it has one.
+Behind the dialog, the preview stage rebuilds with the mapping if the mapped card is the one previewed. The detail pane's personality follows the mapping's personality, if it has one.
 
 ### Resolving
 
@@ -70,11 +70,12 @@ Closing the dialog returns to The collection, with the mapping in force. See [wh
 
 | Step | Refused with |
 |---|---|
-| The text is JSON | "Invalid JSON: SyntaxError: …", with the browser's own wording |
+| The text is JSON | "Invalid JSON: {reason}", with the browser's own wording of the reason |
 | It is a well-formed mapping. Every problem is listed, one per line | The messages below |
 | Its `cardId` names a card in the collection, built-in or installed | "Add this stable cardId to the CardCatalog adapter before attaching its animation." |
-| The card image, the pose sheet, each pose and each part image open in the browser | "Could not load assets:", then each address that failed, one per line |
-| The Arena save accepts the write | "Invalid JSON: …" with the storage or save error |
+| Its `parts`, if it has any, is an object. A mapping with no `parts` is allowed | "parts must be an object of named part images." |
+| The card image, the pose sheet, each pose and each part image open in the browser. An installed character's images are looked up in the character library | "Could not load assets:", then each address that failed, one per line |
+| The Arena save accepts the write | "The mapping could not be saved: {reason}", with the storage or save error |
 
 A well-formed mapping:
 - is a JSON object ("Paste a JSON character manifest object.")
@@ -87,10 +88,10 @@ A well-formed mapping:
 
 ## What a mapping changes
 
-- **The stages.** The collection's preview stage and the Watch lobby's stage rebuild, and draw the card with the mapping wherever it appears ([the stage](../foundations/stage.md#loading-and-rebuilding)).
+- **The stages.** A stage that shows the mapped card rebuilds and draws it with the mapping: the collection's preview at once if the card is previewed, the Watch stage the next time it is built, and the stage of another tab showing that card when it picks up the save. A stage that does not show the card is not rebuilt ([the stage](../foundations/stage.md#loading-and-rebuilding)).
 - **Contests locked afterwards**, exhibitions and counted entries alike. Each copies both cards' current descriptions, mapped or not, into its recording, and is drawn with that copy for good. The recording also takes three things from it: the point where each throw leaves the hand, each attempt's timing from the personality, and in cornhole each bag's shot style from a motion profile. Contests locked earlier, including one waiting to resume, keep what they were locked with.
 - **Play.** When **Start {event}** is pressed, each player's card uses its mapping for that match ([Play setup](../play/play-setup.md)).
-- **Dan and Doug.** Their body is always drawn from their built-in articulated figure, and on the cornhole court from their cornhole side-view rig. A mapping's poses and sheet are checked but not drawn for them. What changes is the card image on the court, the personality, and the motion profile if the mapping has one.
+- **Dan and Doug.** Their body is always drawn from their built-in articulated figure, or, on the cornhole court in Watch and in the collection's plain idle preview, from their cornhole side-view rig. A mapping's poses and sheet are checked but not drawn for them. What changes is the card image on the court, the personality, and the motion profile if the mapping has one.
 - **An installed character.** The mapping replaces its pack's figure: the card image on the court, the poses or articulated figure, and their markers. Whether it can then be played in Play depends on the mapping's figure ([Install character](install-character.md#interactions-with-other-systems)).
 - **What never changes:** the card images in the grid, the duel cards and the setup dialog, and the card's traits.
 
@@ -104,24 +105,24 @@ A well-formed mapping:
 | Event and action combinations | A mapping must cover all four sports and all fifteen animation states, so one mapping serves every Watch sport and Play event. | Not applicable: a mapping has no per-sport part. |
 | Contest kind | Every contest locked after attaching uses the mapping. Replays and a contest waiting to resume keep the mapping they were locked with. Play practice picks it up at **Start**. | Not applicable: attaching never changes a locked contest. |
 | Character card | The example and **Download example** come from the previewed card. The mapping attaches to whichever card its `cardId` names, whatever card is previewed. Dan and Doug take less from a mapping than installed characters do (see above). | Attaching again for the same card replaces its mapping. |
-| Presentation settings | No effect on the checks. The rebuilt stages follow **Reduced motion** and **Lower graphics quality** as usual. The clean spectator view cannot be on here. | No effect. |
+| Presentation settings | No effect on the checks. A rebuilt stage follows **Reduced motion** and **Lower graphics quality** as usual. The clean spectator view cannot be on here. | No effect. |
 | Screen size and orientation | The dialog is 850 px wide, or the window width less 36 px, and scrolls within 92% of the window height. The text area is 280 px high. At 600 px wide and below, the two buttons stack. | Reflows at once. |
-| Saved state | The mapping is written into the Arena save. A corrupt save refuses it with "Invalid JSON: Error: The local save did not pass its integrity check." | **Reset demo** removes every mapping. Another tab attaching one for the same card replaces this one. |
+| Saved state | The mapping is written into the Arena save. A save that cannot be read refuses it with "The mapping could not be saved: The local save did not pass its integrity check." or the format reason. | **Reset demo** removes every mapping. Another tab attaching one for the same card replaces this one. |
 
 ## Cancel and interrupt
 
 | Event | Before committing | While committed |
 | --- | --- | --- |
-| Escape or click outside | Closes the dialog; the edits are discarded. If images are still being checked, the check carries on, and a mapping that passes is saved with the dialog closed. The only signs are the stage rebuilding and the status line next time. | Closes the dialog; the mapping stays attached. |
+| Escape or click outside | Closes the dialog; the edits are discarded. If images are still being checked, the check carries on, and a mapping that passes is saved with the dialog closed. The only signs are the preview rebuilding, if it shows the card, and the status line next time. | Closes the dialog; the mapping stays attached. |
 | Pause or resume | Not applicable: nothing plays in the dialog. | Not applicable. |
-| Repeated or rapid input | A double-click on **Validate & attach** runs the checks twice and can write the same mapping twice. The result is the same. | Each further **Validate & attach** that passes writes again and rebuilds the stages again. |
+| Repeated or rapid input | **Validate & attach** is disabled while a check runs and reads **Checking the images…**, so a double-click runs the checks once. | Each further **Validate & attach** that passes writes again. A stage showing the card rebuilds only if the mapping's content changed. |
 | A panel opens on top | Not applicable: the dialog covers the gear and footer. It shares one window with Arena settings, House rules, History and the other panels, so only one of them can be open. | Not applicable. |
 | Navigating away | The dialog covers the tabs and logo. If the agent tool switches to Watch, the dialog stays open over the Watch lobby. | The same. |
 | Forced finish | Not applicable. | Not applicable. |
 | Focus leaves the game | No effect; a check under way carries on. | No effect. |
 | Reload, close, or back/forward cache | The text and the status are lost; nothing is saved. | The mapping survives a reload. The write is all or nothing ([this browser's save](../foundations/saved-data.md#committing)). |
 | Settings or saved data change underneath | **Reduced motion**, the scoring policy and other tabs' writes do not affect the checks. A reset from another tab does not change the text area. | A reset, here or in another tab, removes the mapping. The last mapping written for a card, from any tab, is the one in force. |
-| Graphics or storage failure | An image that fails to load refuses the mapping. A full storage quota is reported as "Invalid JSON: …" with the browser's error. | A stage that later cannot load a mapped image reports it in the Watch error box, which is not visible from The collection. |
+| Graphics or storage failure | An image that fails to load refuses the mapping. A full storage quota is reported as "The mapping could not be saved: …" with the browser's error. | A preview that later cannot load a mapped image reports it in its own error box under the preview stage, with **Reload the preview**. The Watch stage reports the same in the Watch error box, with **Reload the arena**. |
 | Input device changes | No effect. | No effect. |
 
 ## Interactions with other systems
@@ -138,32 +139,34 @@ A well-formed mapping:
 
 **Reduced motion and graphics quality.** No effect on attaching. Each stage that rebuilds applies them as usual ([the stage](../foundations/stage.md)).
 
-**Accessibility.** The text area is labelled **Asset manifest JSON**. The status line is a status region, so each result is announced, but errors are not marked as alerts. Success and errors are shown in the same red ([accessibility](../cross-cutting/accessibility.md)).
+**Accessibility.** The text area is labelled **Asset manifest JSON**. The status line is a polite live region, so each result is announced, but errors are not marked as alerts. Success is shown in green and errors in red; the words differ too, so colour is not the only cue ([accessibility](../cross-cutting/accessibility.md)).
 
-**Installed characters.** A mapping can name an installed card. That card's example, however, cannot be attached unchanged: its images exist only inside the character library, so the load check fails with "Could not load assets:" followed by every one of its addresses.
+**Installed characters.** A mapping can name an installed card. Its example, the description installed from its pack, can be attached unchanged: the image check looks its images up in the character library. If the library cannot be opened, installed cards are not in the collection, so a mapping naming one is refused with "Add this stable cardId…".
 
-**Multiple tabs.** Writes are serialized across tabs, and each tab reloads the save and rebuilds its stages when another attaches a mapping.
+**Multiple tabs.** Writes are serialized across tabs. Each tab reloads the save when another attaches a mapping, and a stage there rebuilds only if it shows the mapped card.
 
 **Agent tools.** No tool reads or writes mappings. `configure_arena_event` can switch to Watch while the dialog is open ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
-- **A mapping without a `parts` entry** passes the format checks, then fails with "Invalid JSON: TypeError: …", although the JSON is valid.
+- **A mapping without a `parts` entry** is allowed. A `parts` that is not an object, such as a list or `null`, is refused with "parts must be an object of named part images."
 - **Attaching the unedited example** for Dan or Doug saves a mapping identical to their built-in description. It looks like no mapping, but it is copied into later contests and removed only by **Reset demo**.
 - **The articulated figure's image** is not among the addresses checked. A bad address there passes and fails later on the stage.
 - **Remote HTTPS images** only have to display in the dialog's check. The stage loads them differently, and a server that does not allow cross-origin use can make the stage fail after the mapping is saved.
-- **With the character library unavailable**, attaching still writes the Arena save, and the page then shows that save for the first time. **Set up showdown** becomes usable although the library error remains.
+- **With the character library unavailable**, the Arena save is already showing, so attaching a mapping for Dan or Doug works as usual.
 - **The status line persists** for the rest of the visit, including "Mapping saved…" above a freshly reset example.
+- **A mapping for another card.** Attaching a mapping whose `cardId` is not the previewed card leaves the preview as it is, because the preview does not show that card.
 - **The two pre-played basketball contests** in a fresh save were made without any card descriptions. Their replays therefore draw each card with its *current* mapping, unlike every contest locked on the page.
 
 ## Open questions and verification
 
 - Read from `components/arena/Panels.tsx` (the import panel), `SecondaryViews.tsx`, `Game.tsx`, `lib/arena/assets.ts`, `lib/arena/persistence.ts`, `lib/arena/simulation.ts` and `lib/arena/engine/scenes/CharacterAssetLoader.ts`. `tests/run-tests.mjs` checks that the built-in examples pass validation. Nothing here has been checked on the production page.
-- **Misleading "Invalid JSON" errors.** A missing `parts`, a full storage quota and a corrupt save are all reported as invalid JSON (`Panels.tsx`, line 15). This looks like a bug.
-- **Installed characters' examples cannot be attached**, because the check loads their library-only image addresses directly (`Panels.tsx`, line 15; `character-registry.ts`, line 7). This looks like a bug.
-- **No way to see or remove one mapping.** The text area always shows the example, and only **Reset demo** removes mappings (`SecondaryViews.tsx`, line 16). This is a product call.
-- **No busy state** while images load (`Panels.tsx`, line 15). Whether a double attach is visible to the player has not been tried.
+- The fixed behaviour below is read from the code; the scripted pass of 2026-09-24 ran before these fixes.
+- **Fixed: misleading "Invalid JSON" errors (B-33).** A missing `parts` is allowed, a bad `parts` has its own message, and a storage or save failure reads "The mapping could not be saved: {reason}".
+- **Fixed: installed characters' examples could not be attached (B-33).** The image check now resolves their images through the character library.
+- **Fixed: no busy state (B-33).** **Validate & attach** is disabled while checking, and success is shown in green.
+- **No way to see or remove one mapping.** The text area always shows the example, and only **Reset demo** removes mappings. This is a product call.
 - **Mappings can change cornhole outcomes** through a motion profile (`simulation.ts`, lines 66–67). Whether a presentation mapping should be able to do that in counted entries is a product call.
-- **Remote images on the stage**, **a bad articulated-figure address** and **attaching with the character library unavailable** have not been tried.
+- **Remote images on the stage** and **a bad articulated-figure address** have not been tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

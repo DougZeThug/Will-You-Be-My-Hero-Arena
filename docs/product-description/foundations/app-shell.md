@@ -5,6 +5,7 @@
 The app shell is everything around the four main views. It lets the player move between Play, Watch, Standings and The collection, and open the dialogs that sit on top of any of them. It is always present on the page:
 - **The header:** the Arena logo, the **Play | Watch | Standings | The collection** tabs, the **LOCAL DEMO** label, and a gear button labelled "Arena settings".
 - **The footer:** **House rules**, **History**, and a **Sound on** or **Sound off** indicator.
+- **Save notices** under the header, on every view, when this browser's storage has a problem: a box when the Arena save cannot be read, and a notice when installed characters are unavailable. See [this browser's save](saved-data.md#edge-cases).
 
 The page has one route, `/`, and it always opens on the Watch lobby. Nothing about the current view, the selected event or an open dialog is kept in the address bar. This document owns:
 - what switching views does to whatever was running
@@ -34,12 +35,12 @@ Only one view is shown at a time. Switching tabs does not keep the others runnin
 
 **The logo** is a link to `/`, but clicking it does not reload the page. Instead it:
 1. stops Watch sound
-2. writes the loaded recording's position, if one is loaded
+2. writes the loaded recording's position, if it is a contest still waiting for its first viewing
 3. unloads the recording
 4. reloads this browser's save
 5. shows the Watch lobby
 
-So from anywhere, the logo is the way back to an empty Watch lobby. A contest left this way becomes the one [waiting to resume](../watch/resume-a-contest.md). Opening the logo in a new tab (middle-click) does load a fresh copy of the page.
+So from anywhere, the logo is the way back to an empty Watch lobby. It works even when the save cannot be read; the save box under the header explains the problem. A first viewing left this way stays the one [waiting to resume](../watch/resume-a-contest.md). A replay left this way is simply unloaded. Opening the logo in a new tab (middle-click) does load a fresh copy of the page.
 
 ## Dialogs
 
@@ -49,7 +50,7 @@ Every dialog is modal: while it is open, the page behind it cannot be clicked. E
 |---|---|---|
 | Setup: **Who’s stepping onto the court?** | **Set up showdown**, or a duel card, in the Watch lobby | [the setup dialog](../watch/setup-dialog.md) |
 | **Arena settings** | The header gear | [Arena settings](../club/arena-settings.md) |
-| **Reset the local demo?** | **Reset demo…** in Arena settings | [Reset demo](../club/reset-demo.md) |
+| **Reset the local demo?** | **Reset demo…** in Arena settings, or in the box shown when the save cannot be read | [Reset demo](../club/reset-demo.md) |
 | **House rules** | The footer, or **House rules** under the Watch stage | [House rules](../club/house-rules.md) |
 | **Your contest history** | The footer's **History**, or **My contest history** in Standings | [History and member record](../club/history-and-member-record.md) |
 | **Club member record** | The club points chip, or a name in Standings | [History and member record](../club/history-and-member-record.md) |
@@ -73,7 +74,7 @@ stateDiagram-v2
     dialog --> view : ×, Escape, click outside (nothing changed)
     dialog --> editing : a setting or field changed (settings dialogs only)
     editing --> view : saved or closed
-    view --> lobby : logo (position written, recording unloaded)
+    view --> lobby : logo (a first viewing's position written, recording unloaded)
 ```
 
 ### Starting
@@ -98,7 +99,7 @@ The view or dialog stays as the player left it. The page does nothing in the bac
 
 ### Resolving
 
-Closing the dialog returns focus to the page. It does not return focus to the Play stage: a keyboard player must Tab to the stage, or use **Pause game** or **Resume game**, before their keys work again. Clicking the stage's drawing does *not* give it focus, as the verification pass confirmed.
+Closing the dialog returns focus to the page. It does not return focus to the Play stage: a keyboard player must click the stage, Tab to it, or use **Pause game** or **Resume game**, before their keys work again ([the input model](input-model.md#starting)).
 
 ## Modifiers
 
@@ -108,24 +109,24 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 | Event and action combinations | The Watch event selected in the lobby is kept when switching tabs. Play's event is lost when leaving Play. | No effect. |
 | Contest kind | No effect on switching. A loaded Watch recording of any kind is paused, not discarded. | No effect. |
 | Character card | No effect. | No effect. |
-| Presentation settings | The **clean spectator view** hides the header and its tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. The Watch stage takes the page's full width. Only the stage's own sound and clean-view buttons, the progress bar and the result panel remain, so the clean-view button is the only way back to the tabs (see [playback controls](../watch/playback-controls.md#while-playing)). The footer's **Sound on/off** reflects only the Watch sound switch, never Play's. | Toggling Reduced motion in Arena settings restarts a Play match behind the dialog. |
+| Presentation settings | The **clean spectator view** hides the header and its tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. It also hides the resume banner and the installed-characters notice. The Watch stage takes the page's full width. What remains is the stage's own sound and clean-view buttons, a **Pause playback** or **Resume playback** button beside them while a recording is playing or paused, the progress bar, the result panel, the error box and the unreadable-save box. The clean-view button is the only way back to the tabs (see [playback controls](../watch/playback-controls.md#while-playing)). The footer's **Sound on/off** reflects only the Watch sound switch, never Play's. | Toggling Reduced motion in Arena settings applies at once to a Play match running behind the dialog; the match does not restart. |
 | Screen size and orientation | The layout reflows at several widths. At 720 px wide and below, the Watch side station moves under the stage. At 600 px and below, the header shrinks, **LOCAL DEMO** is hidden, and the tabs get smaller. The Watch stage keeps the court's 16:9 shape at every size, short landscape screens included ([the stage](stage.md#scaling)). | No effect. |
-| Saved state | A fresh save and a returning save show the same shell. A corrupt save shows an error in the Watch error box and leaves **Set up showdown** disabled. | Another tab writing the save reloads this tab's save data without changing the view. |
+| Saved state | A fresh save and a returning save show the same shell. A save that cannot be read shows a box under the header on every view, **This browser’s Arena save could not be read: {reason}**, with **Export unreadable save** and **Reset demo…**, and leaves **Set up showdown** disabled. If the character library cannot open, a notice under the header says installed characters are unavailable; Watch still works with the built-in cards. | Another tab writing the save reloads this tab's save data without changing the view. If the save or the library can now be read, the box or notice clears. |
 
 ## Cancel and interrupt
 
 | Event | Before committing | While committed |
 | --- | --- | --- |
-| Escape or click outside | Closes the open dialog, except **Install character** while it is busy. With no dialog open, Escape does nothing in Watch, Standings or The collection. In Play it is keyboard 1's pause key when stage focus is on the stage. | Closing a settings dialog with unsaved scoring changes keeps the draft values in memory. They are shown again when the dialog reopens, but are not saved. |
+| Escape or click outside | Closes the open dialog, except **Install character** while it is busy. With no dialog open, Escape does nothing in Watch, Standings or The collection. In Play it is keyboard 1's pause key when stage focus is on the stage. | Closing Arena settings with unsaved scoring changes discards them. Reopening it shows the saved policy, read again from storage, so it includes another tab's changes. |
 | Pause or resume | Not applicable: the shell has no pause. | Not applicable. |
 | Repeated or rapid input | Clicking a tab twice does nothing more. Clicking the logo twice unloads once. | No effect. |
 | A panel opens on top | The shell's own dialogs replace one another rather than stacking. | Opening **Reset demo…** from Arena settings replaces the settings dialog. |
 | Navigating away | Tab switches follow the rules above. **Replay** in History or a member record switches to Watch and loads that recording. | The same. A Play match is discarded by any of them. |
 | Forced finish | Not applicable. | Not applicable. |
 | Focus leaves the game | No effect on the shell. | No effect on the shell. The views underneath react as their own documents say. |
-| Reload, close, or back/forward cache | The page always reloads to the Watch lobby with Cornhole selected. The Back button leaves the Arena, because tab switches add no history entries. | The same. A Watch contest's position is written on the way out. |
-| Settings or saved data change underneath | Another tab's write reloads the save here. Standings, the chip and History update in place. | The same. |
-| Graphics or storage failure | Errors from Watch and from saves appear in the error box under the Watch stage. Most errors raised from a dialog are written only there, so if the player is on another tab, they see nothing until they return to Watch. | The same. |
+| Reload, close, or back/forward cache | The page always reloads to the Watch lobby with Cornhole selected. The Back button leaves the Arena, because tab switches add no history entries. | The same. A Watch contest's position is written on the way out if it is still waiting for its first viewing. |
+| Settings or saved data change underneath | Another tab's write reloads the save here. Standings, the chip and History update in place. The Watch stage and the collection preview are not rebuilt unless the shown cards' mappings changed. | The same. |
+| Graphics or storage failure | Each error shows where it happens. An unreadable save, or a character library that will not open, shows under the header on every view. A rejected scoring policy or a failed reset shows inside its dialog. A collection preview error shows under the preview, with **Reload the preview**. Watch's own errors, such as a refused lock, a failed position save or a stage failure, show in the error box under the Watch stage, with **Reload the arena** or **Dismiss** ([the stage](stage.md#graphics-context-loss-and-the-error-box)). | The same. |
 | Input device changes | No effect. | No effect. |
 
 > Technical note: `Game.tsx` keeps every view's state in one component. Watch's state survives a tab switch because it lives in that component. Play's state lives inside the Play view, which is removed from the page when another tab is chosen.
@@ -134,7 +135,7 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 
 **Points and the ledger.** The shell shows no points itself. The club points chip belongs to [the lobby](../watch/lobby.md).
 
-**Saved data and recovery.** The shell reads this browser's save once at start, again after the logo is clicked, and whenever another tab writes it. The label **LOCAL DEMO** is the only hint that nothing is shared beyond this browser ([this browser's save](saved-data.md)).
+**Saved data and recovery.** The shell reads this browser's save once at start, again after the logo is clicked, and whenever another tab writes it. The label **LOCAL DEMO** is the only hint that nothing is shared beyond this browser. When the save cannot be read, the box under the header offers the way out on every view: **Export unreadable save** and **Reset demo…** ([this browser's save](saved-data.md)).
 
 **Watch and Play separation.** The shell keeps them apart: leaving Watch pauses, leaving Play discards. They share only Reduced motion from Arena settings.
 
@@ -144,27 +145,27 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 
 **Reduced motion and graphics quality.** Set in Arena settings, which is reachable from every view. Neither is saved across reloads ([the stage](stage.md)).
 
-**Accessibility.** The tabs are a `nav` labelled "Main". They are plain buttons with no selected state for screen readers; the active tab is shown only by style. Dialogs take focus and have titles. See [accessibility](../cross-cutting/accessibility.md).
+**Accessibility.** The tabs are a `nav` labelled "Main". They are plain buttons with no selected state for screen readers; the active tab is shown only by style. Dialogs take focus and have titles. The unreadable-save box is an alert; the installed-characters notice is a polite status. See [accessibility](../cross-cutting/accessibility.md).
 
 **Installed characters.** No interaction with the shell.
 
 **Multiple tabs.** Each browser tab is its own shell with its own view. They share only this browser's save.
 
-**Agent tools.** `configure_arena_event` switches the view to **Watch** and selects an event. Called from Play it discards the match; called from Standings or The collection it simply switches ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** `configure_arena_event` switches the view to **Watch** and selects an event. While the Play tab is open it refuses with "Leave Play before configuring a Watch contest.", so a match or Play setup is never discarded by it. Called from Standings or The collection it simply switches ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 
 - **No active-tab signal for assistive technology.** The active tab has no `aria-current` or pressed state; only its styling shows it.
-- **The logo with no recording loaded** still reloads this browser's save and shows the lobby. Error text already in the error box stays until something clears it.
+- **The logo with no recording loaded** still reloads this browser's save and shows the lobby. Error text already in the Watch error box stays until **Dismiss** or **Reload the arena** clears it.
 - **Replay from History while a Play match runs** discards the match and switches to Watch.
 - **Clicking Watch while watching** pauses a playing contest, as any tab click does, although the view does not change.
 - **Opening Arena settings from Play** and changing **Lower graphics quality** has no visible effect until the player returns to Watch or opens The collection's preview stage.
 
 ## Open questions and verification
 
-- Read from `Game.tsx`, `Panels.tsx` and `components/ui/dialog.tsx`. Partly checked in the scripted pass of 2026-09-24: the tab switches, the clean view, the logo, stage focus, the corrupt-save error, and the policy error behind Standings.
-- **Errors behind other views.** Errors raised from a dialog while another view is showing may be invisible, because the error box is only drawn in Watch. An example is a rejected scoring policy while on Standings. That may be worth treating as a bug.
+- Read from `Game.tsx`, `Panels.tsx` and `components/ui/dialog.tsx`. The first verification pass (2026-09-24) partly checked the tab switches, the clean view, the logo and stage focus. It also found a corrupt save reported under the wrong name, and a policy error hidden behind Standings; both are fixed in the current build.
+- Fixed: errors now show where they happen. Settings and reset errors appear inside their dialogs, preview errors under the preview, and save problems under the header on every view (B-03, B-04, B-09, B-10, B-35).
+- Fixed: the logo works with an unreadable save (B-03), and `configure_arena_event` no longer discards a Play match (B-22).
 - **The back/forward cache.** How the page behaves when the browser restores it from its back/forward cache (for example, whether a Watch contest resumes playing) is untested. There is no handler for it.
-- **The logo with a corrupt save.** Reading the save throws before the view changes, so the click appears to do nothing. This has not been tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

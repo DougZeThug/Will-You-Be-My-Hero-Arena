@@ -4,7 +4,7 @@ This is a consolidated list of the defects and inconsistencies that the feature 
 
 Entries with a **Status** line were exercised on the running production page, in the scripted pass of 2026-09-24 described in [verification](verification/README.md#results-so-far). The rest are read from code and are still to be confirmed by hand.
 
-The list exists so the product owner can decide, item by item, whether to fix it, keep it as intended and document it, or leave it. Nothing here has been filed as an issue.
+The list was made so the product owner could decide, item by item, whether to fix it, keep it as intended and document it, or leave it. The owner chose to fix all 36, using the recommended default wherever an entry needed a product call. Each entry now has a **Fixed in** line naming the commit and the change, and the feature documents describe the fixed behaviour. The entries' other lines still describe the build at `3b4ec62`, where the problems were found. Nothing here was filed as an issue.
 
 ## Summary
 
@@ -12,6 +12,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised:** about 110 suspected defects across the 32 documents, not counting the purely "not yet tried" questions.
 - **Merged:** 36 entries after grouping by root cause. The last entry collects the small copy and display slips.
 - **Confirmed:** 12 entries were confirmed, at least in part, on the production page.
+- **Fixed:** all 36, in the three commits `517ccef` (saves, Watch, the collection), `a049c0d` (the Play shell and input) and `2c73318` (Play rules and the side rig), plus `3c64f06` (the Play focus ring), `680fa21` (follow-ups: a finished match stays on its result, singular entry counts, the House rules wording) and `364e3c1` (the remapping check). The second scripted pass, described in [verification](verification/README.md#results-so-far), re-checked the fixes on the page.
 
 **By severity.**
 - **Four are high.** Replaying a finished counted entry takes its points away again and claims the result is still waiting. The default Watch matchup names the loser as the winner. And two storage failures leave the page with no way out: a corrupt save, and a blocked character library.
@@ -22,44 +23,44 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Errors routed to the Watch-only error box**, so they are invisible anywhere else: B-09 and B-10.
 - **Side-view rig moments that are never drawn**, although the rules still apply them: B-15 and B-16.
 
-| ID | Title | Severity | Area | Decision needed | Issue |
+| ID | Title | Severity | Area | Decision needed | Status |
 | --- | --- | --- | --- | --- | --- |
-| B-01 | Replaying a finished counted entry hides its points again and says the result is waiting | high | Watch | fix | — |
-| B-02 | The result headline names the winning card, so the default matchup names the losing user | high | Watch | product call | — |
-| B-03 | A corrupt save leaves the page with no way out | high | Saved data | fix | — |
-| B-04 | A blocked character library disables Watch entirely | high | Saved data | fix | — |
-| B-05 | Loading any other recording silently replaces, and reveals, the contest waiting to resume | medium | Watch | product call | — |
-| B-06 | Clicking the Play stage does not give it keyboard focus | medium | Play | fix | — |
-| B-07 | Toggling Reduced motion restarts a running Play match | medium | Play | fix | — |
-| B-08 | Play's sound button can say **Mute** while sound is off | medium | Play | fix | — |
-| B-09 | A rejected scoring policy shows no message where the player is | medium | Club | fix | — |
-| B-10 | Preview and graphics errors outside Watch are invisible | medium | Collection | fix | — |
-| B-11 | **Export local save** leaves out any unfinished or waiting recording | medium | Saved data | fix | — |
-| B-12 | Every re-read of the save rebuilds the Watch and preview stages, including other tabs' writes | medium | Stage | fix | — |
-| B-13 | **Restore arena** toggles **Lower graphics quality** when no recording is loaded | medium | Stage | fix | — |
-| B-14 | Play has no handling for a lost graphics context | medium | Play | fix | — |
-| B-15 | A celebration or taunt in Play is never drawn but still locks the character | medium | Play | fix | — |
-| B-16 | The Brawl guard pose drops after 0.35 s while block is still held | medium | Play | fix | — |
-| B-17 | Dash lane depth is set once and never updated after a lane change | medium | Play | fix | — |
-| B-18 | Saved Play bindings follow the slot, not the device, and slots 3 and 4 are never read | medium | Play | fix | — |
-| B-19 | On-screen toggles get out of step with the game | medium | Play | fix | — |
-| B-20 | The collection's motion previews show nothing for Dan and Doug on the default court | medium | Collection | fix | — |
-| B-21 | A stale policy draft can silently undo another tab's scoring policy | medium | Club | fix | — |
-| B-22 | Agent tools: registration target, uncaught failure, and silently discarding Play | medium | Cross-cutting | fix | — |
-| B-23 | History may break for a recording whose installed character is gone | medium | Club | fix | — |
-| B-24 | During a keyboard match, Space may not press page buttons | low | Play | fix | — |
-| B-25 | The cornhole shot in use is never shown, and Dan's default style cannot be reselected | low | Play | product call | — |
-| B-26 | Cornhole rule slips: stacking Roll offset, players 3 and 4 jumping, AI accuracy bias | low | Play | fix | — |
-| B-27 | Cornhole caption stays on **Release in the green window** after a pause cancels the charge | low | Play | fix | — |
-| B-28 | Brawl rule and wording gaps | low | Play | product call | — |
-| B-29 | Dash physics slips | low | Play | fix | — |
-| B-30 | A finished Play match keeps counting and can show **PAUSED** | low | Play | fix | — |
-| B-31 | Watch attempt counts reveal extra pairs from the first second | low | Watch | fix | — |
-| B-32 | **Entries left** ignores the counted-entries switch, and the allowance can exceed the schedule | low | Club | product call | — |
-| B-33 | Install and mapping errors are misreported | low | Collection | fix | — |
-| B-34 | Remapping has no conflict check, and Shift+Tab rebinds a key | low | Play | fix | — |
-| B-35 | Smaller Watch timing and state slips | low | Watch | fix | — |
-| B-36 | Small copy and rendering slips | low | All | fix | — |
+| B-01 | Replaying a finished counted entry hides its points again and says the result is waiting | high | Watch | fix | fixed `517ccef` |
+| B-02 | The result headline names the winning card, so the default matchup names the losing user | high | Watch | product call | fixed `517ccef` |
+| B-03 | A corrupt save leaves the page with no way out | high | Saved data | fix | fixed `517ccef` |
+| B-04 | A blocked character library disables Watch entirely | high | Saved data | fix | fixed `517ccef` |
+| B-05 | Loading any other recording silently replaces, and reveals, the contest waiting to resume | medium | Watch | product call | fixed `517ccef` |
+| B-06 | Clicking the Play stage does not give it keyboard focus | medium | Play | fix | fixed `a049c0d` |
+| B-07 | Toggling Reduced motion restarts a running Play match | medium | Play | fix | fixed `a049c0d` |
+| B-08 | Play's sound button can say **Mute** while sound is off | medium | Play | fix | fixed `a049c0d` |
+| B-09 | A rejected scoring policy shows no message where the player is | medium | Club | fix | fixed `517ccef` |
+| B-10 | Preview and graphics errors outside Watch are invisible | medium | Collection | fix | fixed `517ccef` |
+| B-11 | **Export local save** leaves out any unfinished or waiting recording | medium | Saved data | fix | fixed `517ccef` |
+| B-12 | Every re-read of the save rebuilds the Watch and preview stages, including other tabs' writes | medium | Stage | fix | fixed `517ccef` |
+| B-13 | **Restore arena** toggles **Lower graphics quality** when no recording is loaded | medium | Stage | fix | fixed `517ccef` |
+| B-14 | Play has no handling for a lost graphics context | medium | Play | fix | fixed `517ccef` |
+| B-15 | A celebration or taunt in Play is never drawn but still locks the character | medium | Play | fix | fixed `2c73318` |
+| B-16 | The Brawl guard pose drops after 0.35 s while block is still held | medium | Play | fix | fixed `2c73318` |
+| B-17 | Dash lane depth is set once and never updated after a lane change | medium | Play | fix | fixed `2c73318` |
+| B-18 | Saved Play bindings follow the slot, not the device, and slots 3 and 4 are never read | medium | Play | fix | fixed `a049c0d` |
+| B-19 | On-screen toggles get out of step with the game | medium | Play | fix | fixed `a049c0d` |
+| B-20 | The collection's motion previews show nothing for Dan and Doug on the default court | medium | Collection | fix | fixed `517ccef` |
+| B-21 | A stale policy draft can silently undo another tab's scoring policy | medium | Club | fix | fixed `517ccef` |
+| B-22 | Agent tools: registration target, uncaught failure, and silently discarding Play | medium | Cross-cutting | fix | fixed `517ccef` |
+| B-23 | History may break for a recording whose installed character is gone | medium | Club | fix | fixed `517ccef` |
+| B-24 | During a keyboard match, Space may not press page buttons | low | Play | fix | fixed `a049c0d` |
+| B-25 | The cornhole shot in use is never shown, and Dan's default style cannot be reselected | low | Play | product call | fixed `2c73318` |
+| B-26 | Cornhole rule slips: stacking Roll offset, players 3 and 4 jumping, AI accuracy bias | low | Play | fix | fixed `2c73318` |
+| B-27 | Cornhole caption stays on **Release in the green window** after a pause cancels the charge | low | Play | fix | fixed `2c73318` |
+| B-28 | Brawl rule and wording gaps | low | Play | product call | fixed `2c73318` |
+| B-29 | Dash physics slips | low | Play | fix | fixed `2c73318` |
+| B-30 | A finished Play match keeps counting and can show **PAUSED** | low | Play | fix | fixed `a049c0d` |
+| B-31 | Watch attempt counts reveal extra pairs from the first second | low | Watch | fix | fixed `517ccef` |
+| B-32 | **Entries left** ignores the counted-entries switch, and the allowance can exceed the schedule | low | Club | product call | fixed `517ccef` |
+| B-33 | Install and mapping errors are misreported | low | Collection | fix | fixed `517ccef` |
+| B-34 | Remapping has no conflict check, and Shift+Tab rebinds a key | low | Play | fix | fixed `a049c0d` |
+| B-35 | Smaller Watch timing and state slips | low | Watch | fix | fixed `517ccef` |
+| B-36 | Small copy and rendering slips | low | All | fix | fixed `517ccef` |
 
 ## High
 
@@ -82,6 +83,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `Game.tsx:26` hides whichever contest is loaded and not complete, or is the waiting one, from the ledger shown on screen. The filter does not ask whether the contest had already been revealed.
 - **Severity:** `high`. The page silently takes back points it has already shown, and misleads the player about the state of their result.
 - **Decision needed:** `fix`. Only treat a recording as waiting, and only hide its points, until its first completion. For example, record a "revealed" flag at the first completion and skip both the position write and the filter for revealed contests.
+- **Fixed in** `517ccef`: only the contest waiting for its first full viewing keeps a resume position and is hidden; replays never write a position or hide points, and completion is saved at once.
 - **Raised by:**
   - [contests and recordings](foundations/contests-and-recordings.md#edge-cases)
   - [result and replay](watch/result-and-replay.md#open-questions-and-verification)
@@ -110,6 +112,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - The narration (`MatchNarration.ts`) also names the card.
 - **Severity:** `high`. In the default configuration the page announces the wrong person as the winner, directly above the points.
 - **Decision needed:** `product call`. Either name the user ("DOUG WINS. · with Dan's card"), or change the defaults so each user plays their own card. The first fixes every case; the second only the default.
+- **Fixed in** `517ccef`: the headline names the winning user ("DOUG WINS.") with a "with {card}'s card" line; the narration names both.
 - **Raised by:** [result and replay](watch/result-and-replay.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24:
   - counted entry: **Dan WINS.** with Doug +3 PTS and Dan +0 PTS
@@ -140,6 +143,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - Report save errors under their own name.
   - Let **Reset demo data** ignore an unreadable old save, keeping a revision above any journal.
   - Let the export download the raw stored text.
+- **Fixed in** `517ccef`: an unreadable save shows its own recovery box with **Export unreadable save** and **Reset demo…**; the reset no longer reads the old save.
 - **Raised by:**
   - [this browser's save](foundations/saved-data.md#open-questions-and-verification)
   - [reset demo](club/reset-demo.md#open-questions-and-verification)
@@ -162,6 +166,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - The policy and reset writes (`persistence.ts:29`, `:31`) do not depend on the library.
 - **Severity:** `high`. Watch is unusable in a whole class of browsers, and the fallback writes can destroy a save the player cannot see.
 - **Decision needed:** `fix`. Load the Arena save independently of the character library, and treat a library failure as "no installed characters".
+- **Fixed in** `517ccef`: the Arena save loads independently; a failed library is a notice and Watch works with the built-in cards.
 - **Raised by:**
   - [this browser's save](foundations/saved-data.md#open-questions-and-verification)
   - [reset demo](club/reset-demo.md#open-questions-and-verification)
@@ -188,6 +193,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/persistence.ts:27` makes a newly locked contest the waiting one.
 - **Severity:** `medium`. It is recoverable, but the "watch it to reveal it" promise is broken silently.
 - **Decision needed:** `product call`. Either keep the waiting position per recording, or confirm before replacing an unrevealed counted entry.
+- **Fixed in** `517ccef`: replays no longer take the waiting slot; locking a new contest over a waiting counted entry shows a warning and **Start anyway**.
 - **Raised by:**
   - [resume a contest](watch/resume-a-contest.md#open-questions-and-verification)
   - [points and entries](club/points-and-entries.md#open-questions-and-verification)
@@ -213,6 +219,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/live/LiveStage.tsx:85-93`: only the pause buttons call `host.focus()`.
 - **Severity:** `medium`. A common recovery action does nothing, and there is no hint why.
 - **Decision needed:** `fix`. Focus the host on `pointerdown`, and return focus to the stage after the sound button too.
+- **Fixed in** `a049c0d`: the stage focuses on pointer down, the sound button returns focus to it, and the pads no longer take focus.
 - **Raised by:**
   - [the input model](foundations/input-model.md#starting)
   - [the match shell](play/match-shell.md#open-questions-and-verification)
@@ -237,6 +244,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `LiveStage.tsx:26` and `:129-131`: `ready` is never reset.
 - **Severity:** `medium`. It loses a practice match's progress. Practice has no lasting value, which is why this is not rated high.
 - **Decision needed:** `fix`. Pass Reduced motion to the running scene instead of rebuilding, or confirm first.
+- **Fixed in** `a049c0d`: Reduced motion applies to the running match without a rebuild.
 - **Raised by:**
   - [the cornhole throw](play/cornhole.md#open-questions-and-verification)
   - [the match shell](play/match-shell.md#open-questions-and-verification)
@@ -260,6 +268,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `LiveStage.tsx:85-92`: a click before the game exists reaches nothing.
 - **Severity:** `medium`. The control lies about its state.
 - **Decision needed:** `fix`. Create the game with the current `sound` value.
+- **Fixed in** `a049c0d`: the match starts with the sound state the button shows.
 - **Raised by:**
   - [sound](cross-cutting/sound.md#open-questions-and-verification)
   - [the match shell](play/match-shell.md#open-questions-and-verification)
@@ -279,6 +288,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/Game.tsx:55` draws the error box only in the Watch branch.
 - **Severity:** `medium`. The save silently fails.
 - **Decision needed:** `fix`. Show the error inside the dialog, without the "Error:" prefix.
+- **Fixed in** `517ccef`, `680fa21`: settings errors show in the dialog, without the "Error:" prefix, and are gone when the dialog is reopened.
 - **Raised by:**
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
   - [the app shell](foundations/app-shell.md#open-questions-and-verification)
@@ -298,6 +308,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/engine/core/ArenaGame.ts:44-50` pauses the shared clock on context loss.
 - **Severity:** `medium`.
 - **Decision needed:** `fix`. Give each view its own error display.
+- **Fixed in** `517ccef`: the collection preview has its own error box and **Reload the preview**.
 - **Raised by:**
   - [the collection](collection/the-collection.md#open-questions-and-verification)
   - [the stage](foundations/stage.md#graphics-context-loss-and-the-error-box)
@@ -318,6 +329,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/Panels.tsx:10-11` export that filtered state.
 - **Severity:** `medium`. A backup silently loses data, and the reset dialog encourages relying on it.
 - **Decision needed:** `fix`. Export the stored save, not the displayed one.
+- **Fixed in** `517ccef`: both exports use the stored save, including a waiting contest and its awards.
 - **Raised by:**
   - [this browser's save](foundations/saved-data.md#exports)
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
@@ -344,6 +356,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/Game.tsx:25` and `:51` pass a freshly parsed list after every load.
 - **Severity:** `medium`. It causes flicker and wasted work, and possibly a stage that never finishes loading.
 - **Decision needed:** `fix`. Compare the mappings by content, or memoise them.
+- **Fixed in** `517ccef`: the stages rebuild only when the two cards' mappings change.
 - **Raised by:**
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
   - [the collection](collection/the-collection.md#open-questions-and-verification)
@@ -362,6 +375,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Why (from the code):** `components/arena/Game.tsx:55`: `if(rec)replay(rec,time);else setLow(!low);`.
 - **Severity:** `medium`. It silently changes a setting.
 - **Decision needed:** `fix`. With nothing loaded, only clear the message, or retry the stage.
+- **Fixed in** `517ccef`: the button is **Reload the arena** for stage failures and **Dismiss** otherwise; neither touches **Lower graphics quality**.
 - **Raised by:**
   - [the stage](foundations/stage.md#open-questions-and-verification)
   - [the lobby](watch/lobby.md#cancel-and-interrupt)
@@ -381,6 +395,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - In Watch, `lib/arena/engine/core/ArenaGame.ts:44-50` sets `clock.paused` without React's `paused` (`components/arena/Game.tsx:35`).
 - **Severity:** `medium`.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef` (Watch), `a049c0d` (Play): Watch's pause button follows the stopped clock; Play pauses with a notice on graphics loss and on restore.
 - **Raised by:**
   - [the match shell](play/match-shell.md#open-questions-and-verification)
   - [the cornhole throw](play/cornhole.md#open-questions-and-verification)
@@ -405,6 +420,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/engine/characters/components/RunningComponent.ts:19-28` refuses moves while a clip is active.
 - **Severity:** `medium`. An input that does nothing visible makes the next one fail.
 - **Decision needed:** `fix`.
+- **Fixed in** `2c73318`: a player's celebration or taunt no longer locks the character and is announced in the caption; the side rig still draws none.
 - **Raised by:**
   - [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
   - [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
@@ -423,6 +439,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lab/human-motion/PlayMotionRig.ts:161-166` drops the guard once the clip is gone.
 - **Severity:** `medium`. What is drawn contradicts the rules.
 - **Decision needed:** `fix`.
+- **Fixed in** `2c73318`: the side rig keeps the guard while the fighter is blocking; the front puppet still falls back after 0.35 s.
 - **Raised by:** [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) section of the Play checklist.
 
@@ -438,6 +455,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `RunningPhysics.ts:37-43` moves the lane but not the scale.
 - **Severity:** `medium`. It breaks a stated art invariant, and is visible in every race with lane changes.
 - **Decision needed:** `fix`.
+- **Fixed in** `2c73318`: lane depth follows the runner's position, and the side rig rescales its solved figure.
 - **Raised by:** [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/clubhouse-dash.md](verification/play.md#playclubhouse-dashmd) section of the Play checklist.
 
@@ -458,6 +476,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `PlayableArena.tsx:150-159` resets bindings on a device change.
 - **Severity:** `medium`.
 - **Decision needed:** `fix`. Save and restore by device.
+- **Fixed in** `a049c0d`: bindings are saved per device (`wybmh-input-bindings-v2`) and restored for any slot; malformed entries are skipped.
 - **Raised by:**
   - [controls and remapping](play/controls-and-remapping.md#open-questions-and-verification)
   - [Play setup](play/play-setup.md#open-questions-and-verification)
@@ -481,6 +500,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/live/LiveStage.tsx:220` and `:234-238` key the toggle state and focus.
 - **Severity:** `medium`.
 - **Decision needed:** `fix`.
+- **Fixed in** `a049c0d`: toggles are disabled until the match loads and outside the player's turn; pads keep their drag.
 - **Raised by:** [touch controls](play/touch-controls.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/touch-controls.md](verification/play.md#playtouch-controlsmd) section of the Play checklist.
 
@@ -501,6 +521,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `ArenaScene.ts:541-556` maps the three options to one clip.
 - **Severity:** `medium`. A whole feature appears broken in the default configuration.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef`: non-idle previews use the puppet; the empty picker value can be chosen again; duplicate clips are gone from the picker.
 - **Raised by:**
   - [the collection](collection/the-collection.md#open-questions-and-verification)
   - [explore motion styles](collection/explore-motion-styles.md#open-questions-and-verification)
@@ -522,6 +543,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/persistence.ts:29` hashes the old name into the new one.
 - **Severity:** `medium`.
 - **Decision needed:** `fix`. Reset the draft from the saved policy each time the dialog opens.
+- **Fixed in** `517ccef`: the draft is refreshed when settings opens, and unchanged values keep the policy's name.
 - **Raised by:** [arena settings](club/arena-settings.md#open-questions-and-verification)
 - **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-26.
 
@@ -537,6 +559,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Why (from the code):** `components/arena/Game.tsx:40`.
 - **Severity:** `medium`.
 - **Decision needed:** `fix`. Register on `navigator.modelContext` too, wrap the call, and refuse or confirm while Play is running.
+- **Fixed in** `517ccef`: tools register on `navigator.modelContext` first, failures are contained, and `configure_arena_event` refuses while Play is open.
 - **Raised by:** [agent tools](cross-cutting/agent-tools.md#open-questions-and-verification)
 - **Status:** the silent discard is confirmed by the scripted pass on 2026-09-24, with an emulated `document.modelContext`. The match was removed and Watch showed the new event. The registration target was not tried against a browser that ships WebMCP.
 - **Checklist items:** [foundations.md](verification/foundations.md): SHELL-39. Rows marked confirmed by the scripted pass: SHELL-39.
@@ -553,6 +576,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `components/arena/Panels.tsx:12`.
 - **Severity:** `medium`. Not tried. If it does break the page, it is high.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef`: unknown cards show as "Unknown card", and their Replay is disabled with an explanation.
 - **Raised by:**
   - [history and member record](club/history-and-member-record.md#open-questions-and-verification)
   - [this browser's save](foundations/saved-data.md#open-questions-and-verification)
@@ -570,6 +594,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Why (from the code):** `lib/arena/engine/input/KeyboardDevice.ts:23-31` checks focus only for key presses. Every allowed key-up is prevented.
 - **Severity:** `low`. Not tried.
 - **Decision needed:** `fix`.
+- **Fixed in** `a049c0d`: the keyboard device only cancels the release of a key whose press it took.
 - **Raised by:**
   - [accessibility](cross-cutting/accessibility.md#open-questions-and-verification)
   - [the input model](foundations/input-model.md#edge-cases)
@@ -587,6 +612,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `PrecisionActionMap.ts` offers only four shots.
 - **Severity:** `low`.
 - **Decision needed:** `product call`.
+- **Fixed in** `2c73318`: the caption names the current shot, and each turn starts on a selectable shot.
 - **Raised by:** [the cornhole throw](play/cornhole.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/cornhole.md](verification/play.md#playcornholemd) section of the Play checklist.
 
@@ -604,6 +630,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `PrecisionEvent.ts:261`, `Math.sin(this.throws * 4.7)`.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `2c73318`: a roll's offset applies once, players 3 and 4 start inside the line, and the AI nudge follows each thrower's own bags.
 - **Raised by:**
   - [the cornhole throw](play/cornhole.md#open-questions-and-verification)
   - [AI players](cross-cutting/ai-players.md#open-questions-and-verification)
@@ -619,6 +646,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Why (from the code):** `lib/arena/engine/events/precision/PrecisionEvent.ts:268-273` (`onPause`) resets the state but not `message`.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `2c73318`: a pause that cancels a charge restores the aiming caption.
 - **Raised by:** [the cornhole throw](play/cornhole.md#cancel-and-interrupt)
 - **Status:** confirmed by the scripted pass on 2026-09-24.
 - **Checklist items:** [foundations.md](verification/foundations.md): INPUT-32.
@@ -645,6 +673,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `LiveStage.tsx:183-187`
 - **Severity:** `low`.
 - **Decision needed:** `product call` for the counter stance, the combo and the grapple cost; `fix` for the wording and the defence rating.
+- **Fixed in** `2c73318` (rules), `a049c0d` (touch **Grapple**): draws read **Draw**, guard breaks and counters are announced, down-forward-special is a stronger charged power strike, defence scales damage, the limit starts after the entrance, and a grapple refunds the counter stance.
 - **Raised by:** [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) section of the Play checklist.
 
@@ -669,6 +698,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `VisualObjectRegistry.ts:106`
 - **Severity:** `low`.
 - **Decision needed:** `fix` for the physics; `product call` for the dodge direction and dead heats.
+- **Fixed in** `2c73318`: braking and sprint, free steering, progress, recovery, dodge, AI timing, hurdle height, dead heats and the sprint reserve are all fixed.
 - **Raised by:** [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
 - **Checklist items:** the P1 rows for this behaviour in the [play/clubhouse-dash.md](verification/play.md#playclubhouse-dashmd) section of the Play checklist.
 
@@ -684,6 +714,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/engine/core/LiveArenaGame.ts:40-46` pauses whatever the event's state.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `a049c0d`, `680fa21`: the finished match's clock stops, and nothing a player does (focus loss, the pause key, **Pause game**, a controller disconnect or a graphics loss) pauses it.
 - **Raised by:**
   - [the match shell](play/match-shell.md#open-questions-and-verification)
   - [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
@@ -701,6 +732,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/engine/scenes/ArenaScene.ts:362-368` count all attempts in the recording.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef`: attempt totals show regulation attempts until extra pairs begin.
 - **Raised by:** [the four sports](watch/the-four-sports.md#open-questions-and-verification)
 - **Checklist items:** [watch.md](verification/watch.md): SPORTS-36.
 
@@ -719,6 +751,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/model.ts:45`.
 - **Severity:** `low`.
 - **Decision needed:** `product call`.
+- **Fixed in** `517ccef`: entries left is 0 while counted entries are off, and the allowance is capped at 4.
 - **Raised by:** [points and entries](club/points-and-entries.md#open-questions-and-verification)
 - **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): POINTS-12, POINTS-44.
 
@@ -746,6 +779,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `app/globals.css` (`.import-panel pre`).
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef`: install and mapping errors name their cause, conflicts are found at review, and the badge says whether a pack works in Play.
 - **Raised by:**
   - [Install character](collection/install-character.md#open-questions-and-verification)
   - [asset mapping](collection/asset-mapping.md#open-questions-and-verification)
@@ -766,6 +800,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - `lib/arena/engine/core/ArenaSession.ts:204-205`, `:230-231`.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `a049c0d`, `364e3c1`: conflicting keys are refused with the action named (only keyboard players conflict), Shift+Tab moves focus, each slot can restore its defaults, and the setup error clears on any change.
 - **Raised by:**
   - [controls and remapping](play/controls-and-remapping.md#open-questions-and-verification)
   - [accessibility](cross-cutting/accessibility.md#open-questions-and-verification)
@@ -785,6 +820,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Why (from the code):** As listed.
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
+- **Fixed in** `517ccef`: Escape during locking still autoplays, PAUSED beats the heat check, the preview no longer releases Watch autoplay, replays from other views wait for the stage, and a failed reset reports itself.
 - **Raised by:**
   - [setup dialog](watch/setup-dialog.md#open-questions-and-verification)
   - [the four sports](watch/the-four-sports.md#open-questions-and-verification)
@@ -822,6 +858,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - **No solo match.** Play offers no solo match, although Cornhole and the Dash allow one player (`PlayableArena.tsx:184`; `EventRegistry.ts:28-29`, `:37-38`).
 - **Severity:** `low`.
 - **Decision needed:** `fix` for the copy; `product call` for the House rules scope, the clean view and solo play.
+- **Fixed in** `517ccef`, `a049c0d`, `3c64f06`, `680fa21`: the copy and rendering slips listed are fixed, the clean view keeps a pause button, and Cornhole and the Dash can be played solo.
 - **Raised by:**
   - [history and member record](club/history-and-member-record.md#open-questions-and-verification)
   - [resume a contest](watch/resume-a-contest.md#open-questions-and-verification)

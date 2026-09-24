@@ -22,7 +22,7 @@ On the Watch tab, the player clicks the speaker button at the bottom right of th
 
 Pausing cuts off any tone that is sounding.
 
-In Play, the player presses **Sound on** in the match toolbar, and the button then reads **Mute**. The match's sounds are single short blips. Every new match starts silent again.
+In Play, the player presses **Sound on** in the match toolbar, and the button then reads **Mute**. Focus goes back to the stage, so the game's keys keep working. The button always matches what is heard. The match's sounds are single short blips. Every new match starts silent again.
 
 ## The interaction, event by event
 
@@ -43,6 +43,8 @@ stateDiagram-v2
 ### Starting
 
 The player presses a switch. On the first press, on the page for Watch or in the match for Play, the page creates the browser's audio output. Because that happens inside a click, the browser's autoplay rule is met. The page never creates audio output before a click, so it never plays, or tries to play, sound by itself.
+
+Play's button can be pressed while **Opening the cards…** still shows. The press counts: the button reads **Mute**, and the match starts with sound on. In that case the audio output is created as the match opens, just after the click.
 
 ### Backing out at once
 
@@ -70,7 +72,7 @@ Sound is never saved, and turning it off is always free. The only lasting effect
 | Where | The speaker button at the bottom right of the Watch stage, in the lobby and during playback, and still there in the clean spectator view | **Sound on** or **Mute** in the [match shell](../play/match-shell.md)'s toolbar |
 | Label | An icon, named "Enable sound" when off and "Mute sound" when on | Text: **Sound on** when off, **Mute** when on |
 | Shown elsewhere | The footer reads **Sound off** or **Sound on** | Nowhere |
-| Starts | Off on every page load | Off at the start of every match |
+| Starts | Off on every page load | Off at the start of every match; a press while the match is loading carries into it |
 | Survives | Tab switches, the logo, new contests, replays, **Reset demo** | Nothing: it ends with the match |
 | Turning it off | Silences at once, cutting off a tone mid-note | Stops new sounds; a blip already playing finishes |
 
@@ -113,11 +115,11 @@ Cornhole has no sound for the end of the match.
 
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
-| Input device | Both switches are ordinary buttons, reached with Tab and pressed with Enter or Space. Neither has a keyboard shortcut. After a click on Play's button, focus stays on it, so a keyboard player's Enter presses it again ([the match shell](../play/match-shell.md#cancel-and-interrupt)). Space may do nothing there ([the input model](../foundations/input-model.md#edge-cases)). | No effect. |
+| Input device | Both switches are ordinary buttons, reached with Tab and pressed with Enter or Space. Neither has a keyboard shortcut. Space works on a focused page button even during a keyboard match ([the input model](../foundations/input-model.md#edge-cases)). After a press on Play's button, focus returns to the stage, so a keyboard player's next key goes to the game ([the match shell](../play/match-shell.md#cancel-and-interrupt)). | No effect. |
 | Event and action combinations | The sport or event decides which sounds exist: see [what makes sound](#what-makes-sound). | Not applicable: fixed for the contest or match. |
 | Contest kind | Exhibitions, counted entries and replays sound the same. A replay plays every sound again. Practice uses the Play switch. | No effect. |
 | Character card | No effect on which tones play. A card's rituals and celebrations decide when Watch's extra thuds fall. | Not applicable: cards are fixed for the contest or match. |
-| Presentation settings | Reduced motion and Lower graphics quality do not change sound. The clean spectator view hides the footer's indicator but keeps the stage's speaker button. | Toggling **Reduced motion** during a Play match restarts it and turns its sound off, while the button still reads **Mute**. In Watch it has no effect on sound. |
+| Presentation settings | Reduced motion and Lower graphics quality do not change sound. The clean spectator view hides the footer's indicator but keeps the stage's speaker button. | Toggling **Reduced motion** during a Play match applies to the running match without restarting it, and its sound stays as it was. In Watch it has no effect on sound. |
 | Screen size and orientation | No effect. The Watch speaker button is 31 px at every width. | No effect. |
 | Saved state | Not saved. Every visit starts with both switches off, whatever this browser's save holds. | No effect. |
 
@@ -131,10 +133,10 @@ Cornhole has no sound for the end of the match.
 | A panel opens on top | No effect. | Sound carries on behind any dialog, because Watch playback and Play matches both keep running. |
 | Navigating away | No effect. | **Watch:** switching tab mid-playback, or clicking the logo, cuts off any tone; the switch stays on for the return. **Play:** leaving closes the match's audio output, and the next match starts off. |
 | Forced finish | No effect. | **Skip to result** cuts off any tone and skips every remaining sound, including the fanfare. **Skip entrances** skips the entrance chords and thuds. A time limit or knockout in Play makes its usual end sound. |
-| Focus leaves the game | No effect. | **Watch:** a hidden tab stops the clock, so no new sounds play; a tone already playing finishes. Losing window focus does not affect Watch, which keeps sounding in an unfocused window. **Play:** losing focus or hiding the tab pauses the match, which then makes no sound. |
+| Focus leaves the game | No effect. | **Watch:** a hidden tab stops the clock, so no new sounds play; a tone already playing finishes. Losing window focus does not affect Watch, which keeps sounding in an unfocused window. **Play:** losing focus or hiding the tab pauses a match that is still running, which then makes no sound. A finished match is not paused. |
 | Reload, close, or back/forward cache | Both switches are off after a reload. | The same. What a page restored from the back/forward cache does with its audio is unknown. |
-| Settings or saved data change underneath | No effect. | **Reduced motion** restarts a Play match with sound off and its button still reading **Mute**; two presses bring sound back. **Reset demo** cuts off any Watch tone but leaves the switch on. |
-| Graphics or storage failure | Sound is not stored, so a refused save has no effect. | A Watch graphics loss pauses playback, so nothing sounds. **Restore arena** reloads the contest paused, with the switch still on. If the browser refuses to create audio output, the Watch switch stays off and the Play button stays **Sound on**. |
+| Settings or saved data change underneath | No effect. | **Reduced motion** changes a running Play match's effects but not its sound; the match carries on and the button still matches. **Reset demo** cuts off any Watch tone but leaves the switch on. |
+| Graphics or storage failure | Sound is not stored, so a refused save has no effect. | A Watch graphics loss pauses playback, so nothing sounds. **Reload the arena** rebuilds the stage with the contest paused at the same second, and the switch still on. A Play graphics loss pauses the match, which makes no sound until **Resume game**. If the browser refuses to create audio output, the Watch switch stays off and the Play button stays **Sound on**. |
 | Input device changes | No effect. | No effect on sound. A controller disconnecting pauses a Play match, which then makes no sound. Rumble is unaffected by either switch. |
 
 > Technical note: Watch sound is `ArenaAudio` in `lib/arena/audio.ts`, created once per page load and fed by the recording's director cues. Each Play match creates its own `AudioManager` (`lib/arena/engine/audio/AudioManager.ts`), which is destroyed with the match. Neither uses the game library's own audio, which is switched off.
@@ -151,7 +153,7 @@ Cornhole has no sound for the end of the match.
 
 **Sound.** This document is the owner.
 
-**Reduced motion and graphics quality.** Neither changes what sounds. Reduced motion restarts a Play match, which resets Play's sound: see the open questions.
+**Reduced motion and graphics quality.** Neither changes what sounds. Toggling Reduced motion during a Play match does not restart it, so Play's sound carries on.
 
 **Accessibility.** Every sound repeats something that is also shown, and Watch's narration and Play's caption are announced to screen readers. So a player who cannot hear loses nothing. The Watch button has an accessible name, "Enable sound" or "Mute sound", but no pressed state; the footer's text shows the state. The Play button's visible text is its name ([accessibility](accessibility.md)).
 
@@ -173,11 +175,12 @@ Cornhole has no sound for the end of the match.
 ## Open questions and verification
 
 - Read from `lib/arena/audio.ts`, `lib/arena/engine/audio/AudioManager.ts`, `Game.tsx`, `LiveStage.tsx`, `LiveArenaGame.ts`, `BattleDirector.ts`, `ArenaScene.ts` and `GamepadDevice.ts`. `scripts/production-smoke.mjs` confirms on the production page that **Enable sound** turns into **Mute sound**. No test listens to what is played.
-- **Reduced motion restart (suspected bug).** It leaves Play's button reading **Mute** while sound is off (`LiveStage.tsx` lines 27, 48–52 and 67).
-- **Sound pressed while loading (suspected bug).** **Sound on** pressed early in **Opening the cards…** reads **Mute** but leaves sound off (`LiveStage.tsx` lines 36–56 and 85–92).
+- **Fixed: Reduced motion restart (B-07).** Toggling Reduced motion used to restart a Play match with sound off while the button read **Mute**. It now applies to the running match, and sound is unchanged.
+- **Fixed: sound pressed while loading (B-08).** **Sound on** pressed during **Opening the cards…** used to read **Mute** but leave sound off. The match now starts with the button's state.
+- **Audio created after loading.** When sound is turned on during loading, the audio output is created as the match opens rather than inside the click. Whether every browser lets it start then has not been checked.
 - **Skipped sounds.** Watch skips every sound when the playback clock moves more than 0.3 s between frames (`BattleDirector.ts` lines 258–268). Ordinary playback never moves that far, even at 2×. Whether a stalled frame during a stage rebuild can skip one has not been checked.
 - **Play footsteps.** Which Play animations mark footsteps, and so whether running strides tick, has not been checked.
 - **Hidden tabs and the back/forward cache.** Whether a tone started just before the tab was hidden is heard, and whether audio comes back after the back/forward cache, are untested.
 - **No audio support.** What a browser without Web Audio shows when a switch is pressed has not been tried.
 
-Verified against Will-You-Be-My-Hero-Arena commit `3b4ec62`
+Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`
