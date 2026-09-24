@@ -81,4 +81,42 @@ A script cannot judge how motion looks, whether sound is heard, or real controll
 
 ## Results so far
 
-No pass has been recorded yet.
+### First scripted pass, 2026-09-24
+
+**What was run.**
+- **Build.** The production build of commit `d95832c`, whose source is identical to `3b4ec62`; only documents had changed. It was served by `scripts/serve.mjs`.
+- **Browser.** Headless Chromium with software WebGL (SwiftShader), a fresh context for every check, 1440×1000 unless noted.
+- **Scripts.** Playwright scripts under the ignored `work/qa/product-description/`. They drove the real interface by button names and keys, and read state back from localStorage, downloaded files and on-page text.
+- **Coverage.** About 45 checks across all five checklist files. Items are marked with the outcome and "scripted pass" in their Result column.
+
+**What the pass could not cover.**
+- **Timing.** Software rendering ran game time and playback time several times slower than wall time, so every item about a duration, a timing window or a speed is `blocked` here. Examples are the cornhole release window, the 2.2 s automatic release, Watch durations, and the Dash and Brawl timers.
+- **Looks and feel.** Nothing about how motion looks, how controls feel, or whether sound is heard was judged.
+- **Emulated conditions.**
+  - The controller was emulated by replacing `navigator.getGamepads`.
+  - A hidden tab was emulated by overriding `document.hidden`.
+  - Window focus loss was a dispatched `blur` event.
+  - WebMCP was a fake `document.modelContext`.
+  - A blocked character library was a failing `indexedDB.open`.
+- **Not tried at all:**
+  - real touch
+  - installing a real character pack
+  - graphics-context loss
+  - the back/forward cache
+  - screen readers
+  - small-screen layouts beyond a 390 px lobby
+
+**What it found.**
+- **Confirmed on the page**, and filed in [`bug-triage.md`](../bug-triage.md):
+  - replaying a finished counted entry hides its points again and leaves a misleading resume banner
+  - the result headline names the winning card, not the winning user, so by default it names the loser
+  - a corrupt save shows a "Character library:" error, and **Restore arena** then switches on **Lower graphics quality**
+  - a rejected scoring policy shows no message unless the player returns to Watch
+  - toggling **Reduced motion** restarts a Play match and leaves its Sound button out of step
+  - **Export local save** leaves out an unfinished or waiting contest
+- **Document corrections.** Several claims failed because the *document* was wrong, and were corrected before the checklists were written:
+  - the page's own Watch scoreboard and lobby label are covered by the stage's drawing
+  - the stage's height follows its width
+  - clicking the Play stage does not give it keyboard focus
+
+No document is marked `verified`: a scripted pass alone never moves a document to `verified`, and the timing and feel items still need a person at a real machine.
