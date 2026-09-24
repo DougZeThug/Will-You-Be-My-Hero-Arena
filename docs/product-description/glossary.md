@@ -382,7 +382,7 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 ## The interface
 
-**Club points chip.** The Watch lobby button that shows your club points, your rank and **entries left**. It opens your member record.
+**Club points chip.** The button in the Watch title row, shown in the lobby and during playback, that shows your club points, your rank and **entries left**. It opens your member record.
 
 **Duel cards.** The two card images at the Watch station, labelled **THROWS FIRST** and **THROWS SECOND**. In the lobby, clicking either opens the setup dialog.
 

@@ -179,7 +179,7 @@ A finished recording can be replayed any number of times, from the result panel,
 
 | Event | Before committing | While committed |
 | --- | --- | --- |
-| Escape or click outside | Closes the setup dialog; nothing kept. Pressed during **Locking the contest…**, the lock still completes. The new contest then loads paused instead of playing by itself; see [the setup dialog](../watch/setup-dialog.md). | Closes whichever dialog is open. Playback is not affected. |
+| Escape or click outside | Closes the setup dialog; nothing kept. Pressed during **Locking the contest…**, the lock still completes. The code suggests the new contest then loads paused instead of playing by itself. The scripted pass could not reproduce this, because the lock finished before the Escape landed; see [the setup dialog](../watch/setup-dialog.md). | Closes whichever dialog is open. Playback is not affected. |
 | Pause or resume | Not applicable: nothing is playing. | Stops or restarts the playback clock. The outcome is unchanged. |
 | Repeated or rapid input | A double-click on **Start showdown** locks one contest; the second click is ignored while locking. | Repeated **Skip to result** or **Replay same recording** only move through the same recording. |
 | A panel opens on top | Not applicable during setup: the setup dialog is already on top. | Playback keeps running behind the dialog. |

@@ -162,7 +162,7 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 
 ## Open questions and verification
 
-- Read from `Game.tsx`, `Panels.tsx` and `components/ui/dialog.tsx`. Not yet checked on the production page.
+- Read from `Game.tsx`, `Panels.tsx` and `components/ui/dialog.tsx`. Partly checked in the scripted pass of 2026-09-24: the tab switches, the clean view, the logo, stage focus, the corrupt-save error, and the policy error behind Standings.
 - **Errors behind other views.** Errors raised from a dialog while another view is showing may be invisible, because the error box is only drawn in Watch. An example is a rejected scoring policy while on Standings. That may be worth treating as a bug.
 - **The back/forward cache.** How the page behaves when the browser restores it from its back/forward cache (for example, whether a Watch contest resumes playing) is untested. There is no handler for it.
 - **The logo with a corrupt save.** Reading the save throws before the view changes, so the click appears to do nothing. This has not been tried.

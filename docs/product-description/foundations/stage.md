@@ -59,7 +59,7 @@ The page's own text overlays on the stage cannot be seen at any width:
 
 Only screen readers get them. What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)). The sound and clean-view buttons sit at the bottom right of the stage, just above the bottom bar.
 
-> Technical note: a second stylesheet, `public/assets/arena-interface.css`, loads after `app/globals.css`. It sets the stage box to `aspect-ratio: 16/9`, and shrinks the scoreboard and the lobby label to a one-pixel clipped box ("The accessible DOM scores remain; the shared Phaser HUD is the sole visual score"). The verification pass saw them hidden at desktop widths; the stylesheet hides them on narrow screens too. The same rule hides the Play stage's score strip and **Release timing** meter; the Play stage draws its own nameplates and meter instead.
+> Technical note: a second stylesheet, `public/assets/arena-interface.css`, loads after `app/globals.css`. It sets the stage box to `aspect-ratio: 16/9`, and shrinks the scoreboard and the lobby label to a one-pixel clipped box ("The accessible DOM scores remain; the shared Phaser HUD is the sole visual score"). The verification pass saw them hidden at desktop widths; the stylesheet hides them on narrow screens too. The same rule hides the Play stage's score strip and the page's **Release in green** meter; the Play stage draws its own nameplates and meter instead.
 
 ## Reduced motion and lower graphics quality
 
@@ -187,8 +187,8 @@ See [accessibility](../cross-cutting/accessibility.md).
 
 ## Open questions and verification
 
-- Read from `components/arena/ArenaStage.tsx`, `lib/arena/engine/core/ArenaGame.ts`, `LiveArenaGame.ts`, `lib/arena/engine/scenes/ArenaScene.ts`, `LiveArenaScene.ts`, `Game.tsx` and `app/globals.css`. Not yet checked on the production page.
-- **The second stylesheet.** That `public/assets/arena-interface.css` overrides `app/globals.css` is inferred from the measured stage heights. What follows from it has not been seen: the bottom-right sound and clean-view buttons, the hidden scoreboard on narrow screens, the side station staying beside the stage down to 720 px, and the clean spectator view keeping 16:9 during a contest rather than filling the window's height.
+- Read from `components/arena/ArenaStage.tsx`, `lib/arena/engine/core/ArenaGame.ts`, `LiveArenaGame.ts`, `lib/arena/engine/scenes/ArenaScene.ts`, `LiveArenaScene.ts`, `Game.tsx` and `app/globals.css`. Partly checked in the scripted pass of 2026-09-24: loading, the 16:9 heights, the hidden overlays at 1440 px, and **Restore arena** with nothing loaded. Graphics loss and narrow screens were not checked.
+- **The second stylesheet.** That `public/assets/arena-interface.css` overrides `app/globals.css` is inferred from the measured stage heights. The hidden overlays were checked only at 1440 px. What has not been seen is the bottom-right sound and clean-view buttons, the hidden scoreboard on narrow screens, the side station staying beside the stage down to 720 px, and the clean spectator view keeping 16:9 during a contest rather than filling the window's height.
 - **Graphics loss in Play.** Whether the stage recovers on its own when the browser restores the context, and whether the session keeps advancing unseen, is unknown.
 - **Restore arena.** Whether **Restore arena** actually brings back drawing after a real graphics loss, or only clears the message, is unknown. It reloads the recording but does not rebuild the renderer.
 - **The clock during a rebuild.** The renderer drives the playback clock only once it exists. Whether playback creeps forward for a moment during a rebuild, before the new stage takes over, has not been measured.

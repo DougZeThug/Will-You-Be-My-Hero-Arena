@@ -189,7 +189,7 @@ Pausing a Play match does all of the following:
 | Character card | No effect on input. Cards change what an action achieves, not how it is read. | Not applicable. |
 | Presentation settings | No effect on input. Toggling **Reduced motion** restarts the match (see below). | No effect, except through a restart. |
 | Screen size and orientation | Keys and controllers are unaffected. The on-screen pads measure a drag relative to their own size, so a small pad reaches full travel with a short drag. | Resizing mid-press does not release anything. |
-| Saved state | Slots 1 and 2 load the bindings saved by the last **Start** in this browser; slots 3 and 4 always start from the defaults. Changing a slot's **Controls** replaces its bindings with that device's defaults. A saved binding that fails the format check is ignored for that slot. | No effect: bindings are fixed for the match. |
+| Saved state | Slots 1 and 2 load the bindings saved by the last **Start** in this browser; slots 3 and 4 always start from the defaults. Changing a slot's **Controls** replaces its bindings with that device's defaults. A saved binding that fails the format check is ignored for that slot. An entry that is not a bindings object at all may instead break the Play tab (bug-triage B-18). | No effect: bindings are fixed for the match. |
 
 ## Cancel and interrupt
 

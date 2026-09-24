@@ -113,7 +113,7 @@ Nothing on the page can import an exported save or recording back. The bindings 
 | --- | --- | --- |
 | Escape or click outside | Closing a dialog before its save button writes nothing. | A write already under way finishes; it cannot be cancelled. |
 | Pause or resume | No effect on saving. | No effect. |
-| Repeated or rapid input | Double-clicking **Start showdown** writes once. Saving the same policy twice writes twice, with the same content. | A counted entry or award can never be written twice. The ledger rejects a duplicate award, and locking an already-played pairing returns the existing recording. |
+| Repeated or rapid input | Double-clicking **Start showdown** writes once. Pressing **Save for future entries** twice before the dialog closes writes twice with the same content. Separate saves each give the policy a new name, even with unchanged values. | A counted entry or award can never be written twice. The ledger rejects a duplicate award, and locking an already-played pairing returns the existing recording. |
 | A panel opens on top | No effect. | No effect. |
 | Navigating away | The logo writes the loaded recording's position. Switching tab does not. | A write under way completes. |
 | Forced finish | **Skip to result** writes the position as complete, which clears the contest waiting to resume. | No effect. |
