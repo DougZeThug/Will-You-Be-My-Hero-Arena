@@ -13,7 +13,7 @@ The page has one route, `/`, and it always opens on the Watch lobby. Nothing abo
 
 ## The simple case
 
-The page loads on **Watch** with Cornhole selected. Clicking **Play** replaces the Watch view with Play setup. **Standings** shows the leaderboard, and **The collection** shows the cards. The active tab is shown in reverse colours, tilted slightly.
+The page loads on **Watch** with Cornhole selected. Clicking **Play** replaces the Watch view with Play setup. **Standings** shows the leaderboard, and **The collection** shows the cards. The active tab is shown in reverse colours with a gold underline.
 
 The gear opens **Arena settings** as a dialog over whatever view is showing. The footer's **House rules** and **History** open their dialogs the same way. Every dialog closes with its × button, Escape, or a click outside it. When it closes, the view underneath is exactly as it was.
 
@@ -108,8 +108,8 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 | Event and action combinations | The Watch event selected in the lobby is kept when switching tabs. Play's event is lost when leaving Play. | No effect. |
 | Contest kind | No effect on switching. A loaded Watch recording of any kind is paused, not discarded. | No effect. |
 | Character card | No effect. | No effect. |
-| Presentation settings | The **clean spectator view** hides the header and its tabs, the lobby title, the event dock, the side station with the playback controls, and the footer. The Watch stage fills the window. Only the stage's own sound and clean-view buttons remain, so the clean-view button is the only way back to the tabs (see [playback controls](../watch/playback-controls.md)). The footer's **Sound on/off** reflects only the Watch sound switch, never Play's. | Toggling Reduced motion in Arena settings restarts a Play match behind the dialog. |
-| Screen size and orientation | The layout reflows at several widths. At 900 px wide and below, the Watch side station moves under the stage. At 600 px and below, the header shrinks, **LOCAL DEMO** is hidden, and the tabs get smaller. Short landscape screens (540 px high or less) get a shorter stage. | No effect. |
+| Presentation settings | The **clean spectator view** hides the header and its tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. The Watch stage takes the page's full width. Only the stage's own sound and clean-view buttons, the progress bar and the result panel remain, so the clean-view button is the only way back to the tabs (see [playback controls](../watch/playback-controls.md#while-playing)). The footer's **Sound on/off** reflects only the Watch sound switch, never Play's. | Toggling Reduced motion in Arena settings restarts a Play match behind the dialog. |
+| Screen size and orientation | The layout reflows at several widths. At 720 px wide and below, the Watch side station moves under the stage. At 600 px and below, the header shrinks, **LOCAL DEMO** is hidden, and the tabs get smaller. The Watch stage keeps the court's 16:9 shape at every size, short landscape screens included ([the stage](stage.md#scaling)). | No effect. |
 | Saved state | A fresh save and a returning save show the same shell. A corrupt save shows an error in the Watch error box and leaves **Set up showdown** disabled. | Another tab writing the save reloads this tab's save data without changing the view. |
 
 ## Cancel and interrupt
@@ -157,6 +157,7 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 - **No active-tab signal for assistive technology.** The active tab has no `aria-current` or pressed state; only its styling shows it.
 - **The logo with no recording loaded** still reloads this browser's save and shows the lobby. Error text already in the error box stays until something clears it.
 - **Replay from History while a Play match runs** discards the match and switches to Watch.
+- **Clicking Watch while watching** pauses a playing contest, as any tab click does, although the view does not change.
 - **Opening Arena settings from Play** and changing **Lower graphics quality** has no visible effect until the player returns to Watch or opens The collection's preview stage.
 
 ## Open questions and verification

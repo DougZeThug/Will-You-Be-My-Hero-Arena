@@ -71,7 +71,7 @@ This is the rule most other documents depend on.
 
 - **Written at lock.** When **Start showdown** succeeds, the recording and, for a counted entry, both users' awards are *written* to this browser's save. From that instant the result cannot be changed, discarded or played again for points. Closing the tab one second later does not undo it.
 - **Hidden until complete.** While that contest is loaded and its playback is not yet *complete*, the page hides it. It is also hidden while it is the contest *waiting to resume*. Hiding means it is left out of:
-  - the club points chip and its rank and **entries left**
+  - the club points chip's points and rank, though not its **entries left** (see below)
   - Standings
   - member records
   - History
@@ -99,7 +99,7 @@ stateDiagram-v2
     paused --> complete : Skip to result
     playing --> waiting : logo, reload, close (position kept)
     paused --> waiting : the same
-    waiting --> loaded : Resume contest (opens paused at the saved second)
+    waiting --> loaded : Resume contest (at the saved second; paused unless it is 0)
     complete --> lobby : Next showdown
     complete --> entrances : Replay same recording
 ```

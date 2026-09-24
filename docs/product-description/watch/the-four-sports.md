@@ -2,15 +2,15 @@
 
 ## Summary
 
-Watch has four sports: **Cornhole**, **Football**, **Beer pong** and **Basketball**. In every one, two cards take turns at identical equipment in two side-by-side lanes. Each card has the same number of *attempts*, and the higher total wins. This document describes what a viewer sees in each sport: the attempts and their units, the rules and scoring, what the scoreboard, the court and the *narration* say, how card traits and strategy show up, the heat-check round, the extra-pair tie rule, and what is special about each sport's stage.
+Watch has four sports: **Cornhole**, **Football**, **Beer pong** and **Basketball**. In every one, two cards take turns at identical equipment in two side-by-side lanes. Each card has the same number of *attempts*, and the higher total wins. This document describes what a viewer sees in each sport: the attempts and their units, the rules and scoring, what the court, its nameplates and the *narration* say, how card traits and strategy show up, the heat-check round, the extra-pair tie rule, and what is special about each sport's stage.
 
 Nothing here is decided during playback. The whole recording, every landing spot and every score, exists from the moment the contest is locked ([contests and recordings](../foundations/contests-and-recordings.md)). Playback, its controls and the result panel belong to [playback controls](playback-controls.md) and [result and replay](result-and-replay.md).
 
 ## The simple case
 
-The viewer picks **03 Beer pong** in the lobby and starts an exhibition, Dan's card against Doug's. After the entrances, Dan's card stands in the near lane at the lower left with a rack of six yellow cups at the far end of its table. Doug's card stands in the far lane, higher up and drawn smaller, with six orange cups. The scoreboard reads "Dan 0 0/6 balls" and "Doug 0 0/6 balls".
+The viewer picks **03 Beer pong** in the lobby and starts an exhibition, Dan's card against Doug's. After the entrances, Dan's card stands in the near lane at the lower left with a rack of six yellow cups at the far end of its table. Doug's card stands in the far lane, higher up and drawn smaller, with six orange cups. The nameplates in the stage's top corners show Dan and Doug, each with a score of 0 and six pips.
 
-Dan's card lines up, and the narration says "Dan lines up the next throw." The ball leaves the hand ("Dan sends it."), arcs down the table and drops into a cup. That cup vanishes from Dan's rack. A moment later the scoreboard shows 1 and "1/6 balls", and the narration reads "In the cup. That one leaves the rack." Dan's card celebrates, and then Doug's card takes its turn. After six balls each, the narration names the winner, and the result panel appears.
+Dan's card lines up, and the narration says "Dan lines up the next throw." The ball leaves the hand ("Dan sends it."), arcs down the table and drops into a cup. That cup vanishes from Dan's rack. A moment later Dan's nameplate shows 1 and loses a pip, and the narration reads "In the cup. That one leaves the rack." Dan's card celebrates, and then Doug's card takes its turn. After six balls each, the narration names the winner, and the result panel appears.
 
 ## The four sports at a glance
 
@@ -28,7 +28,7 @@ Dan's card lines up, and the narration says "Dan lines up the next throw." The b
 
 Each attempt takes about 2 to 4.5 seconds from the start of the card's turn to the end of its reaction. A contest with no extra pairs runs from about half a minute (cornhole, football) to about three quarters of a minute (beer pong).
 
-**House rules** shows the selected sport's three rules; the rest of that panel belongs to [House rules](../club/house-rules.md). The rules read:
+**House rules** shows the selected sport's three rules; the rest of that dialog belongs to [House rules](../club/house-rules.md). The rules read:
 - **Cornhole:** "Quick arcade preset: four alternating throws each. Gross scoring, without cancellation." "Hole = 3, bag resting on the board = 1, floor = 0. Slides can push earlier bags; airmails can collect bags into the hole." "Separate identical boards. Board contacts and displacements are recorded before playback. Starting order is locked."
 - **Football:** "Five alternating throws each at identical target walls." "Concentric targets score 3, 2, or 1. Outside the outer circle = 0. A boundary belongs to its inner, higher-value zone." "The ball spirals to its recorded impact. There are no catches or bonus points."
 - **Beer pong:** "Six alternating direct shots each, with a separate six-cup water rack. One point per cup made." "Made cups leave that player’s rack. The controller targets only remaining cups." "Direct shots only. A center crossing inside the cup opening scores; bounce shots and rim-outs score zero."
@@ -44,7 +44,7 @@ The camera looks across the court from the side. The card listed **THROWS FIRST*
 
 A cornhole contest between Dan's card and an installed card therefore shows one character in profile and one facing the camera. Watch never turns a character between the two views.
 
-**The canvas labels.** The court draws its own labels, separate from the page's scoreboard. A nameplate in each top corner (first card gold on the left, second teal on the right) shows the card's first name, its score, one pip per remaining attempt, and a status line such as "3 BAGS LEFT · BAG FLIGHT". A hanging sign in the middle shows the sport's name and the phase, such as "ROUND 2 · PAUSED". Both disappear for a moment while a ball or bag passes behind them.
+**The nameplates and sign.** The court draws its own labels; the page's own scoreboard is hidden, and only screen readers get it ([the stage](../foundations/stage.md#scaling)). A nameplate in each top corner (first card gold on the left, second teal on the right) shows the card's first name, its score, one pip per remaining attempt, and a status line such as "3 BAGS LEFT · BAG FLIGHT". A hanging sign in the middle shows the sport's name and the phase, such as "ROUND 2 · PAUSED". Both disappear for a moment while a ball or bag passes behind them.
 
 ## The interaction, event by event
 
@@ -65,7 +65,7 @@ stateDiagram-v2
 ### Starting
 
 An attempt starts the instant the previous one ends, or when the entrances end for the first attempt. There is no gap between attempts. At that instant:
-- **The scoreboard** underlines the card now throwing in yellow, and its nameplate brightens.
+- **The nameplate** of the card now throwing brightens. The page's hidden scoreboard marks the same card for screen readers.
 - **The status line** reads **READY**, then **ANTICIPATION** and **THROW** as the card winds up.
 - **The narration** reads "{first name} lines up the next throw.", or "…next shot." in basketball.
 
@@ -95,7 +95,7 @@ At contact the status reads **LANDING**. The narration reads "{first name} waits
 ### Scoring and reaction
 
 The score appears 0.16 s after contact. At that moment:
-- **The scoreboard** shows the card's new total, and its count goes up by one ("2/4 bags"). The nameplate loses a pip.
+- **The nameplate** shows the card's new total and loses a pip. The page's hidden scoreboard's count goes up by one ("2/4 bags").
 - **The narration** shows the attempt's commentary (see [narration](#narration)).
 - **The sound.** With Watch sound on, a bright two-note tone plays if the attempt added points, and a low tone if not.
 
@@ -103,7 +103,7 @@ The card then reacts: a celebration if the attempt added points, a disappointed 
 
 **The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare.
 
-**Attempt history** lists an attempt from the moment of contact, 0.16 s before the scoreboard shows it. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and **+N**.
+**Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and **+N**.
 
 ## What each sport shows
 
@@ -190,8 +190,8 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Event and action combinations | The sport sets the attempts, units, equipment, scoring, throw and narration wording. **Heat check** is exhibition-only. **Up to 3 extra equal pairs** can lengthen any sport. | Not applicable: a recording's sport and options are fixed at lock. |
 | Contest kind | Exhibitions and counted entries play every sport by the same rules. A counted entry's order and seed come from the schedule, and its opponent card is Doug. A replay shows exactly the same attempts. Play practice has no football, beer pong or basketball, and Play cornhole has different rules ([the cornhole throw](../play/cornhole.md)). | Not applicable. |
 | Character card | Traits shape the landings; personality shapes timing and acting; in cornhole the card sets the shot mix. Dan and Doug are drawn in profile in cornhole; installed cards face the camera in every sport. | Not applicable. |
-| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake and the contact bursts, dust puffs and star bursts. **Reduced motion** also removes the entrance dust and plays calmer clips ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration but keeps the scoreboard. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
-| Screen size and orientation | The court scales as a whole, so every sport looks the same at any size. At 600 px wide and below, the scoreboard sits above the court. | The court rescales; the attempt carries on. |
+| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake and the contact bursts, dust puffs and star bursts. **Reduced motion** also removes the entrance dust and plays calmer clips ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration; the nameplates and sign stay, because the stage draws them. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
+| Screen size and orientation | The court scales as a whole, so every sport looks the same at any size. The page's scoreboard stays hidden at every width. | The court rescales; the attempt carries on. |
 | Saved state | No effect on how a sport is shown. A resumed contest reopens mid-attempt with the bags, cups and scores exactly as they were. | No effect. |
 
 ## Cancel and interrupt
@@ -202,7 +202,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Pause or resume | The card freezes mid-wind-up. The bottom bar reads **PAUSED** (except in the heat-check round) and the sign reads "ROUND n · PAUSED". Resuming continues the same wind-up. | The object hangs in the air, or the bag stops mid-slide. Any sound stops. Resuming continues the same flight; the landing never changes. |
 | Repeated or rapid input | Speed changes only change how fast the wind-up plays. | At **2×** the 0.16 s contact line lasts 0.08 s; at **0.5×** every beat is twice as long. |
 | A panel opens on top | The attempt continues behind the dialog. | The same. **Attempt history** lists it once it has made contact. |
-| Navigating away | Switching tab pauses mid-wind-up. On return the stage rebuilds and shows the same frame. | The same, mid-flight. The logo or another recording leaves the contest waiting to resume at that second. |
+| Navigating away | Switching tab pauses mid-wind-up. On return the stage rebuilds and shows the same frame. | The same, mid-flight. The logo leaves the contest waiting to resume at that second. Another recording takes over the waiting slot without writing this one's position. |
 | Forced finish | **Skip entrances** jumps to the first attempt's ready. **Skip to result** jumps past every remaining attempt and the finale. | **Skip to result** shows the final scores, boards and racks at once. |
 | Focus leaves the game | Hiding the browser tab stops the wind-up until it is visible again. Window blur has no effect. | The same, mid-flight. |
 | Reload, close, or back/forward cache | The position is written. **Resume contest** reopens paused at that moment, mid-wind-up. | The same. The bags on the board and the missing cups are rebuilt from the recording. |
@@ -234,7 +234,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 
 ## Edge cases
 
-- **The scoreboard gives away extra pairs.** Each card's count shows the recording's total attempts from the entrances on. A cornhole contest that will need one extra pair reads "0/5 bags" from its first second, which tells the viewer that the scheduled bags will end level. The nameplates show five pips for the same reason.
+- **The nameplates give away extra pairs.** Each card's pips and "{N} BAGS LEFT" count the recording's total attempts from the entrances on. A cornhole contest that will need one extra pair shows five pips from its first second, which tells the viewer that the scheduled bags will end level. The hidden scoreboard reads "0/5 bags" for the same reason.
 - **"Final scheduled attempt."** marks the second card's last scheduled attempt even when extra pairs follow. When that bag moves other bags, the push or collect line replaces the whole commentary, prefix included.
 - **A cornhole bag can lower its thrower's score.** Pushing an earlier bag off the back of the board can make the net change 0 or negative. The commentary then reads, for example, "Net -1."
 - **"another bag"** is used even when an airmail collects two.
@@ -253,7 +253,6 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 - **Beer pong unit.** The nameplate unit **SHOTS** (`ArenaTheme.ts`, lines 33–38) disagrees with "balls" (`model.ts`, line 33). This looks like an oversight.
 - **House rules undersells pushes.** It says slides push and airmails collect. In the recording, flat hole-runners, fast bags, cut shots, push shots and standard bags also push, and a collect needs the airmail itself to drop in (`CornholeBoard.ts`, lines 91–108). The rules text may need updating; this is a product call.
 - **"Cosmetic stage effect".** The setup option promises a stage effect, but the only visible changes are the bottom-bar label and livelier acting (`Game.tsx`, line 54; `BattleDirector.ts`, line 81).
-- **The court's own sign** sits behind the page's scoreboard on a desktop window. How much of it shows has not been seen.
 - **The vanishing cup.** A made cup appears to disappear the instant the ball arrives, before the ball has sunk. This has not been watched at normal speed.
 - **The mapping and the side-view rig.** Whether an imported mapping for Dan or Doug is really invisible in cornhole is read from the rig choice by card, and has not been tried.
 

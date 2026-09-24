@@ -16,7 +16,7 @@ This document owns the complete state and the replay that starts from it. Replay
 Doug's card beats Dan's 7–4 in a counted cornhole entry. As the last bag settles:
 - **The title** changes to **CORNHOLE / FINAL**, and the bottom bar reads **FINAL SCORE** and **FULL TIME**.
 - **The narration** says "Doug Weidensaul takes it."
-- **A dark panel** slides in below the stage with:
+- **The result panel**, dark, slides in below the stage with:
   - **COUNTED RESULT / POINTS POSTED**
   - **Doug WINS.**
   - **7 — 4 Cornhole**
@@ -33,7 +33,8 @@ stateDiagram-v2
     complete --> lobby : Next showdown (recording unloaded)
     complete --> replaying : Replay same recording (from second 0, 1×)
     replaying --> complete : last attempt ends, or Skip to result
-    replaying --> waiting : logo, reload, another recording (position kept; points hidden again)
+    replaying --> waiting : logo, reload (position kept; points hidden again)
+    replaying --> [*] : another recording (position not written; its points shown again)
     complete --> [*] : tab switch, logo, reload (nothing more to keep)
 ```
 
@@ -42,10 +43,10 @@ stateDiagram-v2
 Playback becomes complete when the clock reaches the end of the last attempt. At that instant:
 - **The position is cleared**, so the contest is no longer waiting to resume. This happens with the next position write, or at once for **Skip to result**.
 - **The contest's points are revealed** in the club points chip, Standings, member records and History.
-- **The panel appears**, and the playback buttons other than **Attempt history** disappear.
+- **The result panel appears**, and the playback buttons other than **Attempt history** disappear.
 - **The finale.** A winner's finale keeps animating for about 2.6 seconds unless the viewer skipped.
 
-The panel shows:
+The result panel shows:
 
 | Part | Counted entry | Exhibition |
 |---|---|---|
@@ -80,22 +81,22 @@ During a replay, every control in [playback controls](playback-controls.md) work
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
 | Input device | Buttons only; no keyboard shortcuts. | No effect. |
-| Event and action combinations | The score line names the event. Units are not shown on the panel. | Not applicable. |
+| Event and action combinations | The score line names the event. Units are not shown on the result panel. | Not applicable. |
 | Contest kind | See the table above. A counted entry shows the policy's points and the rank change. An exhibition shows **+0 PTS**. | A replay of either kind awards nothing new. |
 | Character card | The headline uses the winning card's first name. | Not applicable. |
-| Presentation settings | Reduced motion and lower graphics change the finale's effects only. In the clean spectator view the result panel stays visible under the full-window stage. | No effect on the panel. |
-| Screen size and orientation | At 1150 px and below, the panel's buttons move under the scores. | Reflows at once. |
+| Presentation settings | Reduced motion and lower graphics change the finale's effects only. In the clean spectator view the result panel stays visible under the full-window stage. | No effect on the result panel. |
+| Screen size and orientation | At 1150 px and below, the result panel's buttons move under the scores. | Reflows at once. |
 | Saved state | Totals and ranks are computed from the whole revealed ledger. "(was {n})" compares against the ledger without this contest. | Another tab's write updates the totals and ranks in place. |
 
 ## Cancel and interrupt
 
 | Event | Before committing | While committed |
 | --- | --- | --- |
-| Escape or click outside | No effect on the panel. | Closes an open dialog; a replay keeps playing. |
+| Escape or click outside | No effect on the result panel. | Closes an open dialog; a replay keeps playing. |
 | Pause or resume | Not applicable: only **Attempt history** remains at completion. | During a replay the pause button is back and works normally. |
-| Repeated or rapid input | **Replay same recording** pressed repeatedly restarts from second 0 each time. **Next showdown** can be pressed only once, because the panel goes away. | The same. |
+| Repeated or rapid input | **Replay same recording** pressed repeatedly restarts from second 0 each time. **Next showdown** can be pressed only once, because the result panel goes away. | The same. |
 | A panel opens on top | The result panel stays underneath. | The replay keeps playing behind the dialog. |
-| Navigating away | Switching tab and back shows the result panel again after the stage rebuilds. The logo returns to the lobby, like **Next showdown**. | Mid-replay, switching tab pauses the replay. The logo or another recording leaves it *waiting to resume*, with its points hidden again. |
+| Navigating away | Switching tab and back shows the result panel again after the stage rebuilds. The logo returns to the lobby, like **Next showdown**. | Mid-replay, switching tab pauses the replay. The logo leaves it *waiting to resume*, with its points hidden again. Another recording takes over the waiting slot instead, so this contest's points are shown again. |
 | Forced finish | Not applicable. | **Skip to result** ends the replay at once and brings the result panel back. |
 | Focus leaves the game | No effect. | Hiding the tab stops the replay's clock until it is visible again. |
 | Reload, close, or back/forward cache | After completion there is nothing to resume; the page reopens on the lobby. | Mid-replay, the position is written. The lobby then shows the resume banner "Your result is waiting." for a contest that already finished. |
@@ -105,7 +106,7 @@ During a replay, every control in [playback controls](playback-controls.md) work
 
 ## Interactions with other systems
 
-**Points and the ledger.** The panel's **+N PTS** comes from the policy saved with the contest, so a later policy change never alters it. Totals and ranks come from the revealed ledger ([points and entries](../club/points-and-entries.md)).
+**Points and the ledger.** The result panel's **+N PTS** comes from the policy saved with the contest, so a later policy change never alters it. Totals and ranks come from the revealed ledger ([points and entries](../club/points-and-entries.md)).
 
 **Saved data and recovery.** Completion clears the waiting contest. A replay sets it again ([resume a contest](resume-a-contest.md)).
 
@@ -113,11 +114,11 @@ During a replay, every control in [playback controls](playback-controls.md) work
 
 **Devices and players.** No interaction.
 
-**Sound.** A victory flourish may play in the finale if Watch sound is on. **Next showdown** stops any sound.
+**Sound.** With Watch sound on, a decided contest's finale plays a victory fanfare; a draw has none ([the four sports](the-four-sports.md#scoring-and-reaction)). **Next showdown** stops any sound.
 
 **Reduced motion and graphics quality.** They affect the finale only.
 
-**Accessibility.** The headline is a heading, and the narration announces the winner. The rank change is text. The panel is not announced as a live region by itself.
+**Accessibility.** The headline is a heading, and the narration announces the winner. The rank change is text. The result panel is not announced as a live region by itself.
 
 **Installed characters.** An installed winning card's first name is used in the headline.
 
@@ -131,7 +132,7 @@ During a replay, every control in [playback controls](playback-controls.md) work
 - **A draw** shows **HONORS SHARED.** and gives each user the draw points: 1 by default.
 - **An unresolved draw** after three extra pairs is still a draw for points.
 - **"(was {n})"** appears only for counted entries, and only when the user's rank actually changed.
-- **A counted entry played before a policy change** keeps its original points on this panel, but rank and totals always use today's full ledger.
+- **A counted entry played before a policy change** keeps its original points on the result panel, but rank and totals always use today's full ledger.
 
 ## Open questions and verification
 

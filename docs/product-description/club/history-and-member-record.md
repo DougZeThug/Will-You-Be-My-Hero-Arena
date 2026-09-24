@@ -17,7 +17,7 @@ On a fresh save, the player clicks **History** in the footer. The dialog **Your 
 - "2 — 0"
 - "+3 points · Replay"
 
-They click it. The dialog closes, the page shows Watch, and the stage rebuilds as a basketball court. The recording plays from the entrances, and the scoreboard reads **COUNTED ENTRY**. When the last shot ends, the result panel shows **COUNTED RESULT / POINTS POSTED** and Doug **+3 PTS**, exactly as the first time. Nothing new is awarded.
+They click it. The dialog closes, the page shows Watch, and the stage rebuilds as a basketball court. The recording plays from the entrances, and the side station's note reads "Points post once. Replay as often as you like." When the last shot ends, the result panel shows **COUNTED RESULT / POINTS POSTED** and Doug **+3 PTS**, exactly as the first time. Nothing new is awarded.
 
 ## The two dialogs
 

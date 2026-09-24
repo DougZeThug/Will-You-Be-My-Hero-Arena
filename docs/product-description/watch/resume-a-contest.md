@@ -6,7 +6,7 @@ Resuming lets a viewer come back to a Watch contest they left before it finished
 
 > Saved at N seconds. Your result is waiting. **Resume contest**
 
-**Resume contest** loads that recording paused at the saved second.
+**Resume contest** loads that recording at the saved second, paused unless that second is 0.
 
 This document owns the waiting state and the banner, from the moment a contest is left unfinished until it is resumed, replaced or finished.
 
@@ -23,8 +23,9 @@ A viewer starts a counted Football entry, watches 40 seconds and closes the tab.
 ```mermaid
 stateDiagram-v2
     [*] --> watching
-    watching --> waiting : logo, another recording, reload, close (position written)
-    waiting --> resumed : Resume contest (paused at the saved second)
+    watching --> waiting : logo, reload, close (position written)
+    watching --> replaced : another recording (position not written)
+    waiting --> resumed : Resume contest (at the saved second; paused unless it is 0)
     resumed --> watching : Resume playback
     waiting --> replaced : Start showdown, or a replay of another recording
     watching --> finished : complete, or Skip to result (waiting cleared)
@@ -38,7 +39,8 @@ A contest becomes the one waiting to resume as soon as it is locked, at second 0
 - **Every 2 seconds of playback.**
 - **When the viewer clicks the logo.**
 - **When the page goes away**, whether by reload, closing the tab or navigating off the page.
-- **When another recording is loaded.** Every recording that plays writes its own position, so a replay of anything takes over the waiting slot within its first moment of playback.
+
+Loading another recording does *not* update it. The old contest's position is not written; the new recording takes over the waiting slot as soon as it writes its own first position.
 
 The saved second never goes past the recording's end. A write made at or after the end of the last attempt clears the waiting contest instead.
 
@@ -48,7 +50,7 @@ The banner can be ignored. The viewer can set up and start a different contest i
 
 ### Committing
 
-**Resume contest** commits. It loads the recording with the clock at the saved second, paused, and at **1×**. The stage rebuilds, and the banner and event dock disappear.
+**Resume contest** commits. It loads the recording with the clock at the saved second, paused, and at **1×**. A contest saved at second 0 is the exception: it plays by itself once the stage is ready (see [edge cases](#edge-cases)). The stage rebuilds, and the banner and event dock disappear.
 
 ### While committed
 
@@ -121,6 +123,7 @@ The chip's **entries left** already counts it ([written and revealed](../foundat
 - **An exhibition shows "Your result is waiting."** too, though it has no points to reveal.
 - **An abandoned replay of a finished contest** becomes the waiting contest. Its already-seen points are hidden again until it is finished.
 - **Starting a new contest silently replaces** the waiting one, whose points then become visible, with no playback.
+- **A contest saved at second 0 plays by itself.** If it was left before its playback began, for example by a reload while the stage was still loading after **Start showdown**, **Resume contest** starts it from the entrances once the stage is ready instead of opening paused. The page treats a start at second 0 like a new load.
 - **The saved second is rounded down** on the banner ("Saved at 39 seconds"), but resuming uses the exact saved moment.
 
 ## Open questions and verification

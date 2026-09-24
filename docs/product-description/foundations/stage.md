@@ -14,7 +14,7 @@ Every stage draws a fixed 1280×720 scene, scaled to fit its box without distort
 - what happens when the browser loses the graphics context (WebGL)
 - the Watch error box and its **Restore arena** button
 
-What the stage *shows* during a contest or match belongs to the sport and event documents. The Watch overlays belong to [playback controls](../watch/playback-controls.md): the scoreboard, the stage labels and the sound and clean-view buttons.
+What the stage *shows* during a contest or match belongs to the sport and event documents. The Watch overlays belong to [playback controls](../watch/playback-controls.md): the scoreboard, the bottom bar and the sound and clean-view buttons.
 
 ## The simple case
 
@@ -51,13 +51,15 @@ The Watch stage box keeps the court's 16:9 shape at every width the verification
 | 850 px | 324 px |
 | 390 px | 208 px |
 
-The stylesheet also sets fixed heights (510, 570, 480 and 550 px) and heights for short landscape screens. At the widths above, those fixed heights are overridden. In the clean spectator view the stage fills the window.
+The stylesheet also sets fixed heights (510, 570, 480 and 550 px) and heights for short landscape screens. They are overridden at every size, so the box stays 16:9. In the clean spectator view the stage takes the page's full width.
 
-The stage's own drawing covers the page's text overlays at these widths:
+The page's own text overlays on the stage cannot be seen at any width:
 - **In the lobby**, the "THE SAME CREW. HIGHER STAKES." label.
 - **During playback**, the "Live score" scoreboard.
 
-What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)).
+Only screen readers get them. What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)). The sound and clean-view buttons sit at the bottom right of the stage, just above the bottom bar.
+
+> Technical note: a second stylesheet, `public/assets/arena-interface.css`, loads after `app/globals.css`. It sets the stage box to `aspect-ratio: 16/9`, and shrinks the scoreboard and the lobby label to a one-pixel clipped box ("The accessible DOM scores remain; the shared Phaser HUD is the sole visual score"). The verification pass saw them hidden at desktop widths; the stylesheet hides them on narrow screens too. The same rule hides the Play stage's score strip and **Release timing** meter; the Play stage draws its own nameplates and meter instead.
 
 ## Reduced motion and lower graphics quality
 
@@ -65,7 +67,7 @@ Both are checkboxes in [Arena settings](../club/arena-settings.md). They apply a
 
 | | Reduced motion | Lower graphics quality |
 |---|---|---|
-| Watch | Calmer effects; no camera punch or shake; simplified intro impacts. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects and camera effects are toned down as for Reduced motion; character motion is unchanged. |
+| Watch | No contact effects, camera punch or shake, and no burst or dust as the characters land from their entrances. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects and camera punch and shake are removed, as for Reduced motion; the entrance effects and character motion are unchanged. |
 | Play | The match **restarts** from its entrances. Camera punches are skipped, impact effects are not drawn at all, and squash and stretch is off. | No effect: Play ignores it. |
 | The collection | Previews use reduced clips. On a cornhole court, though, Dan and Doug always show the same performance idle, whatever the setting. | The preview stage is rebuilt. The preview has no contact or camera effects to tone down, so the rebuild is the only visible change. |
 | The page itself | Transitions are turned off, card hover lift is disabled, and spinners stop spinning. This follows the operating system's preference, not the checkbox. | No effect. |
@@ -130,7 +132,7 @@ The stage is torn down when its view is left, or rebuilt when a rebuilding chang
 | Contest kind | No effect on the stage. | No effect. |
 | Character card | Each card's art and rig is loaded. An installed character's images come from the character library. An installed card without a connected rig cannot be used in Play (see [Install character](../collection/install-character.md)). | Changing a card in setup rebuilds the Watch lobby stage. |
 | Presentation settings | See the table above. | **Reduced motion** applies at once in Watch and restarts a Play match. **Lower graphics quality** rebuilds the Watch stage. |
-| Screen size and orientation | The scene is fitted and centred in its box, whose height steps at the widths listed above. | Resizing or rotating rescales at once; nothing reloads or restarts. |
+| Screen size and orientation | The scene is fitted and centred in its box, whose height follows its width at 16:9 (see the table above). | Resizing or rotating rescales at once; nothing reloads or restarts. |
 | Saved state | Imported asset mappings replace a card's character art on the Watch stage. | Attaching a mapping rebuilds the Watch stage. |
 
 ## Cancel and interrupt
@@ -181,11 +183,12 @@ See [accessibility](../cross-cutting/accessibility.md).
 - **Returning to Watch always reloads the stage**, even after only a glance at Standings. **UNFOLDING THE ARENA…** shows each time.
 - **Restore arena with no recording loaded toggles Lower graphics quality.** Pressed twice for two separate errors, it switches the setting on and then off again.
 - **After a Watch graphics loss**, the pause button still offers **Pause playback** even though playback has stopped. Pressing it once *resumes* the clock underneath, and only the second press shows **Resume playback**. **Restore arena** puts the button back in step.
-- **A hidden tab.** While the Watch tab is hidden, the stage simply does not advance, and it picks up where it was when the tab is shown again. The stage label never says **PAUSED** for this.
+- **A hidden tab.** While the Watch tab is hidden, the stage simply does not advance, and it picks up where it was when the tab is shown again. The bottom bar never says **PAUSED** for this.
 
 ## Open questions and verification
 
 - Read from `components/arena/ArenaStage.tsx`, `lib/arena/engine/core/ArenaGame.ts`, `LiveArenaGame.ts`, `lib/arena/engine/scenes/ArenaScene.ts`, `LiveArenaScene.ts`, `Game.tsx` and `app/globals.css`. Not yet checked on the production page.
+- **The second stylesheet.** That `public/assets/arena-interface.css` overrides `app/globals.css` is inferred from the measured stage heights. What follows from it has not been seen: the bottom-right sound and clean-view buttons, the hidden scoreboard on narrow screens, the side station staying beside the stage down to 720 px, and the clean spectator view keeping 16:9 during a contest rather than filling the window's height.
 - **Graphics loss in Play.** Whether the stage recovers on its own when the browser restores the context, and whether the session keeps advancing unseen, is unknown.
 - **Restore arena.** Whether **Restore arena** actually brings back drawing after a real graphics loss, or only clears the message, is unknown. It reloads the recording but does not rebuild the renderer.
 - **The clock during a rebuild.** The renderer drives the playback clock only once it exists. Whether playback creeps forward for a moment during a rebuild, before the new stage takes over, has not been measured.

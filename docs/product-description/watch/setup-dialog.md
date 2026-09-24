@@ -123,7 +123,7 @@ While locking, the dialog shows **Locking the contest…** and nothing else chan
 
 - **Two counts at once.** **N counted entries left** counts across all sports. It can read "3 counted entries left" beside **No entry remaining**, because this sport's pairing is already played.
 - **Changing the sport.** The player must close the dialog and choose another event in the lobby.
-- **The lobby's duel cards and a counted entry.** The duel cards show your card and the *exhibition* opponent card, labelled **THROWS FIRST** and **THROWS SECOND**. In counted mode the real opponent card is Doug, and the order comes from the schedule. For example, Dan's and Riley's scheduled opponents throw first; Doug and Sam are first in their own pairings. The review strip's "{name} throws first" is correct; the lobby cards may not be.
+- **The lobby's duel cards and a counted entry.** The duel cards show your card and the *exhibition* opponent card, labelled **THROWS FIRST** and **THROWS SECOND**. In counted mode the real opponent card is Doug, and the order comes from the schedule. For example, Dan's and Riley's scheduled opponents throw first; Doug and Sam are first in their own pairings. The review strip's "{name} throws first" is correct; the lobby cards are not always.
 - **Counted Doug against Doug.** A counted entry with your card set to Doug is Doug against Doug.
 - **The opponent's strategy** is always Steady, and the dialog does not say so.
 - **The estimate.** "approximately N seconds" is estimated from Dan's and Doug's timing whatever cards are chosen. For a tie rule with extra pairs it adds "+ extra pairs".

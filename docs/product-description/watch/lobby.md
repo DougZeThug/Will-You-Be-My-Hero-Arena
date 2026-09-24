@@ -7,9 +7,9 @@ The lobby is the Watch tab with no recording loaded, which is where the page ope
 - **The club points chip** on the right.
 - **The resume banner**, when a contest is waiting.
 - **The event dock** **CHOOSE YOUR EVENT** with four buttons: **01 Cornhole**, **02 Football**, **03 Beer pong**, **04 Basketball**.
-- **The stage**, previewing the court with the two selected cards. The stage's sign reads the event's name over **CHOOSE A MATCHUP**, and each card's nameplate reads **READY** with a score of 0. The page also has a label, "THE SAME CREW. HIGHER STAKES." and "{N} {units} each / Fully automatic". At desktop widths the stage's drawing covers it, so only screen readers get it.
+- **The stage**, previewing the court with the two selected cards. The stage's sign reads the event's name over **CHOOSE A MATCHUP**, and each card's nameplate reads **READY** with a score of 0. The page also has a label, "THE SAME CREW. HIGHER STAKES." and "{N} {units} each / Fully automatic". It is hidden at every width, so only screen readers get it ([the stage](../foundations/stage.md#scaling)).
 - **The side station** **ON THE CARD**, with the two duel cards labelled **THROWS FIRST** and **THROWS SECOND**, a note, **Set up showdown**, and a stamp such as "4 BAGS EACH / ~{S} SEC", where S is the estimated length in seconds.
-- **The caption** under the stage, "GROSS POINTS. EQUAL ATTEMPTS. SETTLE IT ON THE COURT.", and a **House rules** link.
+- **The floor caption** under the stage, "GROSS POINTS. EQUAL ATTEMPTS. SETTLE IT ON THE COURT.", and a **House rules** link.
 
 The lobby owns the event choice, the chip, the preview and the way into [the setup dialog](setup-dialog.md). The banner belongs to [resume a contest](resume-a-contest.md).
 
@@ -89,7 +89,7 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 | Contest kind | The lobby does not show the mode. The duel cards show your card and the *exhibition* opponent card even when the setup dialog is on **Counted entry · points**, whose real opponent card is Doug. | Not applicable. |
 | Character card | The duel cards and the stage preview use the cards chosen in the setup dialog: by default Dan's card first and Doug's second. An installed character appears once chosen. | Not applicable. |
 | Presentation settings | Reduced motion and lower graphics change the preview. The clean spectator view hides everything but the stage, which in the lobby leaves no way to set up a contest until it is turned off. | Toggling rebuilds or restyles the preview at once. |
-| Screen size and orientation | At 900 px wide and below, the side station moves under the stage and **CHOOSE YOUR EVENT** is hidden. The stage keeps the court's 16:9 shape, so it is only about 208 px high in a 390 px phone window. | Reflows at once. |
+| Screen size and orientation | At 1000 px wide and below, **CHOOSE YOUR EVENT** is hidden. At 720 px and below, the side station moves under the stage. The stage keeps the court's 16:9 shape, so it is only about 208 px high in a 390 px phone window. | Reflows at once. |
 | Saved state | The chip, the banner and **Set up showdown** depend on the save. A fresh save shows each user one counted entry used. A corrupt save leaves **Set up showdown** disabled with an error. | Another tab's write updates the chip and banner in place. |
 
 ## Cancel and interrupt
@@ -104,7 +104,7 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 | Forced finish | Not applicable. | Not applicable. |
 | Focus leaves the game | No effect. | Not applicable. |
 | Reload, close, or back/forward cache | The lobby reopens with Cornhole and default choices. The banner shows if a contest is waiting. | Not applicable. |
-| Settings or saved data change underneath | A policy change updates the entries left. A reset updates the chip and may remove the banner. Another tab's write updates both. | Not applicable. |
+| Settings or saved data change underneath | A policy change updates the entries left. A reset updates the chip and removes the banner. Another tab's write updates both. | Not applicable. |
 | Graphics or storage failure | A preview that fails to load shows the error box. There, **Restore arena** clears the message and *toggles* **Lower graphics quality**, because no recording is loaded ([the stage](../foundations/stage.md)). | Not applicable. |
 | Input device changes | Not applicable. | Not applicable. |
 
@@ -125,7 +125,7 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 **Accessibility.**
 - The event buttons use `aria-pressed`.
 - The duel card buttons are labelled "Change competitor 1" and "Change competitor 2".
-- The stage is labelled "The backyard arena".
+- The stage's box is labelled "The backyard arena"; the drawing inside it has its own label ([the stage](../foundations/stage.md#interactions-with-other-systems)).
 - The chip is a button with its text as its name.
 
 **Installed characters.** Installing a character selects it as your card, so it appears as the first duel card and in the preview.

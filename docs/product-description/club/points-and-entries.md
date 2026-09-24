@@ -55,7 +55,7 @@ If the lock is refused, nothing is written and no entry is used. The reasons are
 The awards are written but hidden, as [written and revealed](../foundations/contests-and-recordings.md#written-and-revealed) describes. What the player notices:
 - The chip's **entries left** has already dropped, while its points and rank have not moved.
 - Standings shows the same points and **Played** as before the lock.
-- The scoreboard reads **COUNTED ENTRY**, and the side note reads "Points post once. Replay as often as you like."
+- The side station's note reads "Points post once. Replay as often as you like." The page's scoreboard says **COUNTED ENTRY**, but only screen readers get it.
 
 Nothing the viewer does during playback changes the awards. Pausing, speed, leaving, resuming and skipping only change when they are revealed.
 
@@ -196,7 +196,7 @@ So a fresh save shows Doug 3 (rank 1), Riley 1 and Sam 1 (both rank 2), and Dan 
 
 **Points and the ledger.** This document owns the values, the allowance, the schedule and the counting. When awards are written and revealed is owned by [contests and recordings](../foundations/contests-and-recordings.md#written-and-revealed).
 
-**Saved data and recovery.** The ledger, the recordings and the policy are part of the Arena save. A lock is one journaled write, so a crash keeps both awards or neither. **Export local save** leaves out a contest that is still hidden ([this browser's save](../foundations/saved-data.md#exports)).
+**Saved data and recovery.** The ledger, the recordings and the policy are part of the Arena save. A lock is one journaled write, so a crash keeps both awards or neither. **Export local save** leaves out any recording that is loaded and not complete, or waiting to resume, together with its awards ([this browser's save](../foundations/saved-data.md#exports)).
 
 **Watch and Play separation.** Only Watch counted entries earn points. Play's caption says **Practice / no club points**, and nothing in Play reads the ledger.
 

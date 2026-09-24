@@ -49,7 +49,8 @@ stateDiagram-v2
     paused --> playing : Resume playback
     playing --> complete : last attempt ends, or Skip to result (points revealed)
     paused --> complete : Skip to result
-    playing --> [*] : logo, reload, another recording (position kept)
+    playing --> [*] : logo or reload (position kept)
+    playing --> [*] : another recording (position not written; slot taken over)
 ```
 
 ### Starting
@@ -65,7 +66,7 @@ A recording is loaded. At that instant:
   | **Start showdown** | Plays once the stage is ready *and* the setup dialog has finished closing |
   | **Replay** from History or a member record | Plays once the stage is ready |
   | **Replay same recording** | Plays at once from second 0; the stage is not rebuilt |
-  | **Resume contest** | Opens *paused* at the saved second |
+  | **Resume contest** | Opens *paused* at the saved second; a contest saved at second 0 plays once the stage is ready ([resume a contest](resume-a-contest.md#edge-cases)) |
 
 ### Backing out at once
 
@@ -99,13 +100,14 @@ Playback commits the moment the clock starts advancing. From then on:
 
 Before the first landing it reads "The first attempt has not landed yet." Its **Export immutable recording** link downloads the whole recording as JSON, including attempts not yet shown. Playback keeps running behind the dialog.
 
-**Sound.** The speaker button at the top right of the stage, labelled "Enable sound" or "Mute sound", turns Watch sound on or off. It starts off. The footer's **Sound on/off** mirrors it. See [sound](../cross-cutting/sound.md).
+**Sound.** The speaker button at the bottom right of the stage, just above the bottom bar, labelled "Enable sound" or "Mute sound", turns Watch sound on or off. It starts off. The footer's **Sound on/off** mirrors it. See [sound](../cross-cutting/sound.md).
 
-**Clean spectator view.** The other button at the top right of the stage hides the rest of the page and lets the stage fill the window:
+**Clean spectator view.** The button beside it hides the rest of the page and lets the stage take the page's full width:
 - the header and tabs
 - the title
 - the event dock
 - the side station, with its narration and playback controls
+- the floor caption, with **House rules**
 - the footer
 
 The progress bar and, when complete, the result panel stay. The same button brings everything back. While the clean view is on, the viewer cannot pause, change speed or skip. They can only watch, toggle sound, or leave the clean view.
@@ -119,15 +121,15 @@ The progress bar and, when complete, the result panel stay. The same button brin
 | Bottom bar, left | **CARDS TO COURT** | **ROUND n** | **FINAL SCORE** |
 | Bottom bar, right | **● LIVE** or **PAUSED** | **● LIVE** or **PAUSED**; during a heat-check attempt, **HEAT CHECK / COSMETIC** | **FULL TIME** |
 
-The page also has its own scoreboard, labelled "Live score". It shows each card's revealed score, "n/N {unit}", and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. At desktop widths it sits *under* the stage's drawing and cannot be seen, which the verification pass confirmed. Screen readers still read it, but a sighted viewer is never told on the stage whether the contest counts. The side station's note is the only visible sign.
+The page also has its own scoreboard, labelled "Live score". It shows each card's revealed score, "n/N {unit}", and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. It cannot be seen at any width, which the verification pass confirmed at desktop widths ([the stage](../foundations/stage.md#scaling)). Screen readers still read it, but a sighted viewer is never told on the stage whether the contest counts. Only the side station's note, and the floor caption's code word, say so.
 
-The caption under the stage reads "COLLECTIONS: {user} / {user} / {mode}". The side station's note reads "Points post once. Replay as often as you like." for a counted entry, and "EXHIBITION / NO LEADERBOARD POINTS" for an exhibition.
+The floor caption under the stage reads "COLLECTIONS: {user} / {user} / {mode}". The side station's note reads "Points post once. Replay as often as you like." for a counted entry, and "EXHIBITION / NO LEADERBOARD POINTS" for an exhibition.
 
 ### Resolving
 
 When the clock passes the end of the last attempt, playback is complete. It gets there by watching or by **Skip to result**. Then:
 - **The title** becomes **{EVENT} / FINAL**.
-- **The controls.** All the playback buttons except **Attempt history** disappear, and so does the station note.
+- **The controls.** All the playback buttons except **Attempt history** disappear, and so does the side station's note.
 - **The narration** announces the winner, for example "Doug Weidensaul takes it.", or "Honors shared. The rivalry continues."
 - **The result panel** appears below. From here [result and replay](result-and-replay.md) takes over.
 
@@ -139,10 +141,10 @@ The finale keeps animating for about 2.6 seconds after completion, unless the vi
 | --- | --- | --- |
 | Input device | Mouse, touch or keyboard on ordinary buttons. There are no keyboard shortcuts: Space does not pause and the arrow keys do not seek. | No effect. |
 | Event and action combinations | The sport sets the units, the number of attempts and what the stage shows ([the four sports](the-four-sports.md)). | Not applicable: a recording's sport is fixed. |
-| Contest kind | Counted entry: the page's hidden scoreboard says **COUNTED ENTRY**, and the visible side-station note reads "Points post once. Replay as often as you like." Exhibition: **EXHIBITION / NO POINTS**. A replay of a finished recording looks the same as its first showing. | Not applicable. |
+| Contest kind | Counted entry: the page's hidden scoreboard says **COUNTED ENTRY**, and the visible side station's note reads "Points post once. Replay as often as you like." Exhibition: **EXHIBITION / NO POINTS**. A replay of a finished recording looks the same as its first showing. | Not applicable. |
 | Character card | Each card's personality sets its entrance, rituals, timing and reactions, so recordings with different cards run for different lengths. | Not applicable. |
-| Presentation settings | Reduced motion calms effects and camera movement. Lower graphics quality tones down effects and rebuilds the stage. Sound starts off. The clean spectator view hides the controls. | Toggling Reduced motion applies at once. Toggling Lower graphics quality rebuilds the stage, and playback carries on from the same moment once it is ready. Sound and the clean view toggle at once. |
-| Screen size and orientation | The stage rescales, keeping the court's 16:9 shape. Whether the page's own scoreboard becomes visible on narrow screens has not been checked. | Rescales at once; playback is not interrupted. |
+| Presentation settings | Reduced motion removes contact effects and camera punch and shake, and calms the characters' clips. Lower graphics quality removes the same effects and rebuilds the stage. Sound starts off. The clean spectator view hides the controls. | Toggling Reduced motion applies at once. Toggling Lower graphics quality rebuilds the stage, and playback carries on from the same moment once it is ready. Sound and the clean view toggle at once. |
+| Screen size and orientation | The stage rescales, keeping the court's 16:9 shape. The page's own scoreboard stays hidden on narrow screens too. | Rescales at once; playback is not interrupted. |
 | Saved state | A resumed contest opens paused at its saved second. | Another tab writing the save does not interrupt playback. |
 
 ## Cancel and interrupt
@@ -194,7 +196,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 ## Edge cases
 
 - **There is no seek.** The progress bar cannot be dragged, and there is no rewind other than **Replay same recording** after completion.
-- **The mode's code name.** The caption under the stage uses the code's word for the mode, "ranked" or "exhibition", rather than the on-screen "counted entry".
+- **The mode's code name.** The floor caption under the stage uses the code's word for the mode, "ranked" or "exhibition", rather than the on-screen "counted entry".
 - **A heat-check round.** An exhibition with **Heat check** shows **HEAT CHECK / COSMETIC** in the bottom bar during round three's attempts, instead of **● LIVE** or **PAUSED**.
 - **Skipping past the finale.** **Skip to result** jumps past the finale, so the winner's victory animation is skipped. Watching to the end shows it.
 - **Pausing during the finale** pauses the finale animation; the result panel is already showing.

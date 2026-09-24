@@ -4,7 +4,7 @@
 
 House rules is a read-only dialog that explains, in a few short paragraphs, how a Watch contest is decided and how club points work. It shows the rules of the selected Watch sport, how ties are settled, the current scoring policy's points and allowance, a note on Heat check, and the name of the policy in force.
 
-It opens from **House rules** in the footer, on every main tab, and from **House rules** with an info icon at the right of the caption under the Watch stage. Its title reads **House rules**, shown in capitals, over the line "Will You Be My Hero? — Arena / local demo". It changes nothing. What the policy means belongs to [points and entries](points-and-entries.md), and how each sport plays belongs to [the four sports](../watch/the-four-sports.md).
+It opens from **House rules** in the footer, on every main tab, and from **House rules** with an info icon at the right of the floor caption under the Watch stage. Its title reads **House rules**, shown in capitals, over the line "Will You Be My Hero? — Arena / local demo". It changes nothing. What the policy means belongs to [points and entries](points-and-entries.md), and how each sport plays belongs to [the four sports](../watch/the-four-sports.md).
 
 ## The simple case
 
