@@ -215,16 +215,68 @@ check(() =>
     2,
   ),
 );
-const before = repo.load().ledger.length;
-await repo.commit(setup('pong', 'exhibition'));
-check(() => assert.equal(repo.load().ledger.length, before));
 repo.savePlayback(ranked.id, 17.7);
 const resumed = new p.LocalArenaRepository(storage).load();
 check(() => assert.equal(resumed.active.time, 17.7));
 check(() => assert.equal(resumed.active.id, ranked.id));
+const before = repo.load().ledger.length;
+const exhibition = await repo.commit(setup('pong', 'exhibition'));
+check(() => assert.equal(repo.load().ledger.length, before));
+// Only the contest waiting for its first full viewing keeps a position: a
+// recording that has lost the slot, or been watched to the end, never takes it.
+check(() => assert.equal(repo.load().active.id, exhibition.recording.id));
+repo.savePlayback(ranked.id, 5);
+check(() =>
+  assert.deepEqual(repo.load().active, {
+    id: exhibition.recording.id,
+    time: 0,
+  }),
+);
+repo.savePlayback(exhibition.recording.id, exhibition.recording.duration);
+check(() => assert.equal(repo.load().active, null));
+const revisionAfterFinish = repo.load().revision;
+repo.savePlayback(exhibition.recording.id, 3);
+repo.savePlayback(ranked.id, 3);
+check(() => assert.equal(repo.load().active, null));
+check(() => assert.equal(repo.load().revision, revisionAfterFinish));
 const historical = structuredClone(repo.load().ledger);
 await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 7 });
 check(() => assert.deepEqual(repo.load().ledger, historical));
+// Saving unchanged values keeps the policy's name; new values get a name
+// from the values alone, so the same values always give the same name.
+const win7 = repo.load().policy.id;
+await repo.updatePolicy(repo.load().policy);
+check(() => assert.equal(repo.load().policy.id, win7));
+await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 8 });
+await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 7 });
+check(() => assert.equal(repo.load().policy.id, win7));
+check(() => assert.equal(p.MAX_ALLOWANCE, 4));
+await assert.rejects(
+  repo.updatePolicy({ ...m.DEFAULT_POLICY, allowance: 5 }),
+  /at most 4/,
+);
+checks++;
+check(() =>
+  assert.equal(
+    p.entriesLeft(
+      {
+        ...repo.load(),
+        policy: { ...repo.load().policy, rankedEnabled: false },
+      },
+      'user-doug',
+    ),
+    0,
+  ),
+);
+check(() =>
+  assert.equal(
+    p.entriesLeft(
+      { ...repo.load(), policy: { ...repo.load().policy, allowance: 100 } },
+      'user-sam',
+    ),
+    3,
+  ),
+);
 await assert.rejects(
   repo.commit({
     ...ranked,
@@ -266,6 +318,27 @@ storage.setItem(
 check(() =>
   assert.equal(new p.LocalArenaRepository(storage).load().active.time, 22),
 );
+// A save that fails its checks can still be exported as stored text and
+// reset; the reset outranks every revision written before it.
+const damagedStorage = new MemoryStorage(),
+  damaged = new p.LocalArenaRepository(damagedStorage);
+await damaged.commit(setup('football', 'damaged'));
+const damagedRevision = damaged.load().revision;
+const unreadable = JSON.stringify({
+  payload: JSON.stringify({ ...damaged.load(), revision: damagedRevision + 4 }),
+  checksum: 'bad',
+});
+damagedStorage.setItem(p.STORAGE_KEY, unreadable);
+assert.throws(() => damaged.load(), /integrity check/);
+checks++;
+check(() => assert.equal(damaged.raw(), unreadable));
+const afterReset = await damaged.reset();
+check(() => assert.equal(afterReset.revision, damagedRevision + 5));
+check(() => assert.equal(damaged.load().recordings.length, 2));
+check(() => assert.equal(damaged.load().active, null));
+damagedStorage.setItem(p.STORAGE_KEY, 'not json');
+await damaged.reset();
+check(() => assert.equal(damaged.load().recordings.length, 2));
 check(() =>
   assert.deepEqual(
     a.validateAsset(a.manifest('card-dan', 'dan', 'human')).errors,

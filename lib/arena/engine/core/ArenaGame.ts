@@ -39,13 +39,14 @@ export class ArenaGame {
         postBoot: (game) => {
           game.canvas.setAttribute(
             'aria-label',
-            'Animated sports arena. Scores and commentary are also shown as text.',
+            options.canvasLabel ??
+              'Animated sports arena. Scores and commentary are also shown as text.',
           );
           game.canvas.addEventListener('webglcontextlost', (e) => {
             e.preventDefault();
             options.clock.paused = true;
             options.onError(
-              'Graphics paused. Restore the arena to resume the saved contest.',
+              'Graphics were interrupted. Reload to continue; nothing about the contest has changed.',
             );
           });
         },
