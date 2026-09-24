@@ -59,7 +59,7 @@ The suite passes 31,777 checks across 2,000 deterministic contests: equal attemp
 - `docs/DESIGN.md`: implemented art direction and critique.
 - `docs/REVIEW-STATUS.md`: observed verification and remaining scope.
 
-The animation connects the six full-body cutout drawings with short foot-aligned fades, subtle whole-paper motion, a registered hand release, and one shared state timeline. New matches have a 2.65-second card-portal entrance and personality-specific 2–3-second attempts. This remains limited 2D pose animation; no skeletal or paid animation runtime is required. See `docs/ANIMATION-TIMELINE.md` for timing and extension details. Generated assets and original card references are included.
+Dan and Doug are animated on side-view LoongBones bone rigs for cornhole (Watch and Play) and for Play running and fighting, and on a front-view articulated cut-out puppet for the other Watch sports and camera-facing moments; each character is drawn from the angle that faces the camera, with a quick paper-flip turn between views. Motion is fixed-step interpolated with continuous curves, overlap and squash-and-stretch in a cartoon style over real sport mechanics. No paid animation runtime is required. See `docs/ANIMATION-HANDOFF.md` for the current runtime, `docs/ANIMATION-ROADMAP.md` for what is next and `docs/ANIMATION-TIMELINE.md` for match timing. Generated assets and original card references are included.
 
 Dan is the quiet operator; Doug is the lock-in showman. Each has a distinct portal entrance, idle, wind-up, celebration, frustration and victory treatment. The collection previews these motions, and future character packs can carry their own profile. See `docs/CHARACTER-PERSONALITIES.md`.
 

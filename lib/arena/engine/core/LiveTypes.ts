@@ -65,6 +65,9 @@ export interface EventContext {
   random: () => number;
   emit: (cue: ArenaCue) => void;
   options: Record<string, string | number | boolean>;
+  /** Hold the simulation clock for `steps` fixed steps (Play hit-stop). Input
+   * is still sampled and buffered. Absent where time must not stop. */
+  hitStop?: (steps: number) => void;
 }
 export interface PlayableArenaEvent {
   id: string;

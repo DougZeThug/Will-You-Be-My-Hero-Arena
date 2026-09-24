@@ -79,6 +79,51 @@ for (const id of ['running-live', 'fighting-live']) {
   });
 }
 
+test('fighting-live: Dan and Doug square up in profile on the side-view motion rig', async ({
+  page,
+}, info) => {
+  const failures = await openScenario(page, 'fighting-live');
+  const canvas = page.locator('#arena canvas');
+  await expect(canvas).toHaveAttribute(
+    'data-character-backends',
+    'loongbones-side-motion,loongbones-side-motion',
+  );
+  // Through the intro turn, the approach, exchanges and hit-stops.
+  await step(page, 300);
+  const state = await snapshot(page);
+  expect(state.errors).toEqual([]);
+  const [a, b] = state.characters as Record<string, any>[];
+  // Bodies keep fighting distance instead of interpenetrating.
+  expect(Math.abs(a.body.x - b.body.x)).toBeGreaterThanOrEqual(88 - 1e-6);
+  await artifact(page, info, 'fighting-live-profile');
+  expect(failures).toEqual([]);
+});
+
+test('running-live: Dan and Doug run in profile on the side-view motion rig', async ({
+  page,
+}, info) => {
+  const failures = await openScenario(page, 'running-live');
+  const canvas = page.locator('#arena canvas');
+  await expect(canvas).toHaveAttribute(
+    'data-character-backends',
+    'loongbones-side-motion,loongbones-side-motion',
+  );
+  await expect(canvas).toHaveAttribute(
+    'data-character-runtime',
+    'play-side-motion-v1',
+  );
+  // Through the start, strides, a jump and a stumble: the simulation keeps
+  // running and nothing in the native rig throws.
+  await step(page, 300);
+  const state = await snapshot(page);
+  expect(state.errors).toEqual([]);
+  expect(
+    state.characters.every((c: Record<string, any>) => c.body.x > 300),
+  ).toBe(true);
+  await artifact(page, info, 'running-live-profile');
+  expect(failures).toEqual([]);
+});
+
 test('scenario lifecycle: one canvas, detached snapshots and no save writes', async ({
   page,
 }, info) => {

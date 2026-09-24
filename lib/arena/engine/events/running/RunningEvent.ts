@@ -82,7 +82,14 @@ export class RunningEvent implements PlayableArenaEvent {
     if (this.state !== 'running') return;
     for (const c of this.ctx.characters) {
       const m = this.motions.get(c.id)!;
-      runPhysics(c, m, dt, time, String(this.ctx.options.movement ?? 'lanes'));
+      if (runPhysics(c, m, dt, time, String(this.ctx.options.movement ?? 'lanes')))
+        this.ctx.emit({
+          kind: 'effect',
+          name: 'dust',
+          x: c.body.x,
+          y: c.body.y,
+          intensity: 0.3,
+        });
       for (const o of this.obstacles)
         if (obstacleCollision(c, o, m)) {
           m.hits.add(o.id);
@@ -103,6 +110,7 @@ export class RunningEvent implements PlayableArenaEvent {
             player: c.id,
           });
           this.ctx.emit({ kind: 'haptic', name: 'runningCrash', player: c.id });
+          this.ctx.emit({ kind: 'camera', name: 'stumble', intensity: 0.35 });
         }
       if (c.body.x >= RUNNING_LENGTH && !m.finished) {
         m.finished = time - this.started;

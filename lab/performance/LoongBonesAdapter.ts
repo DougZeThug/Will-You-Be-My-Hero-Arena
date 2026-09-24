@@ -17,6 +17,13 @@ import {
   readDougArmMaterialMarker,
 } from '../human-motion/ArmMaterialRecipe.mjs';
 import { RigIntegrityValidator } from '../../lib/arena/engine/motion/RigIntegrityValidator';
+import { NATIVE_LIMITS } from '../../lib/arena/engine/performance/NativeLimits';
+import { softReachDrop } from '../../lib/arena/engine/performance/KneeReach';
+import {
+  squashOffset,
+  squashScale,
+  type SquashPulse,
+} from '../../lib/arena/engine/motion/SquashStretch';
 import { chestContactWeight } from '../../lib/arena/engine/motion/ContactEnvelope';
 import type { AnimationGraph } from '../../lib/arena/engine/motion/AnimationGraph';
 import type {
@@ -48,18 +55,7 @@ const segments = [
   ['leftThigh', 'thigh_R', 'shin_R'],
   ['leftShin', 'shin_R', 'foot_R'],
 ] as const;
-const limits: Record<string, [number, number]> = {
-  upper_arm_L: [-95, 65],
-  forearm_L: [-145, 15],
-  hand_L: [-35, 95],
-  clavicle_L: [-12, 12],
-  pelvis: [-8, 8],
-  spine_lower: [-10, 10],
-  spine_mid: [-10, 10],
-  chest: [-12, 12],
-  head: [-15, 15],
-  neck: [-15, 15],
-};
+const limits = NATIVE_LIMITS;
 
 /** The only mutable native-rig boundary for character performances.
  * Native states persist. Game time drives blends and playheads together. All
@@ -81,6 +77,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private setup = new Map<string, number>();
   private widths = new Map<string, { indices: number[]; width: number }>();
   private planted = new Map<string, Vec2>();
+  /** Bind positions of the planted IK targets; a take's footwork moves them. */
+  private plantTargets = new Map<string, Vec2>();
   private soleSamples: {
     side: string;
     mesh: NativeMesh;
@@ -89,6 +87,13 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   }[] = [];
   private wristSamples: { mesh: NativeMesh; index: number }[] = [];
   private gaze = 0;
+  private kneeDrop = 0;
+  private squash = 0;
+  private smear: Phaser.GameObjects.Graphics;
+  /** Recent throwing-hand positions (armature space) for the swoosh smear. */
+  private trail: { t: number; x: number; y: number; revision: number }[] = [];
+  /** Presentation-only: disables squash & stretch (reduced motion). */
+  reducedMotion = false;
   private warnings = new Set<string>();
   private contactError = 0;
   private starts = 0;
@@ -226,7 +231,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     );
     this.actor = this.factory.build(definition.armature, key);
     this.actor.setScale(definition.scale);
-    this.root.add([this.shadow, this.actor]);
+    this.smear = scene.add.graphics();
+    this.root.add([this.shadow, this.smear, this.actor]);
     this.bones = new Map(
       this.actor.armature.getBones().map((b) => [b.name, b]),
     );
@@ -298,6 +304,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       const b = this.bones.get(name)!.globalTransformMatrix;
       this.planted.set(name, { x: b.tx, y: b.ty });
     }
+    for (const side of ['L', 'R'])
+      this.plantTargets.set(side, this.local('foot_target_' + side));
     // Validate painted sole material as well as anatomical foot landmarks.
     // Samples come from opaque atlas pixels close to each heel-to-toe contact.
     const body = this.meshes.find((m) => m.name === 'body')!;
@@ -440,6 +448,27 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         this.warnings.add('Clamped ' + name);
       }
     }
+    // Soft knee reach: lower the pelvis just enough that neither planted leg
+    // enters the two-bone singularity near full extension (where a pixel of
+    // hip drop swings the knee by ~8°). Feet and IK targets stay fixed.
+    const pelvis = this.bones.get('pelvis')!;
+    // WorldClock.advanceTime(0) is a no-op, so zero-length evaluations (the
+    // release re-evaluation, seeks) would still read last frame's lowered
+    // hips. Refresh the skeleton from the reset offsets before measuring.
+    this.actor.armature.advanceTime(0);
+    this.kneeDrop = softReachDrop(
+      (['L', 'R'] as const).map((side) => ({
+        hip: this.local('thigh_' + side),
+        ankle: this.local('foot_target_' + side),
+        length:
+          this.bones.get('thigh_' + side)!.boneData.length +
+          this.bones.get('shin_' + side)!.boneData.length,
+      })),
+    );
+    if (this.kneeDrop > 0) {
+      pelvis.offset.y = this.kneeDrop;
+      pelvis.invalidUpdate();
+    }
     const head = this.world('skull_center');
     const desire = target
       ? Math.max(
@@ -456,6 +485,41 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     h.invalidUpdate();
     this.actor.armature.advanceTime(0);
     const action = graph.get('action');
+    // Cartoon squash & stretch on the whole figure (root scale only: bones,
+    // limb lengths and the face art are untouched). Stateless in clip time,
+    // so seeks and replays reproduce it exactly.
+    const pulses: SquashPulse[] = [];
+    const markerTime = (name: string) =>
+      action?.clip.markers.find((m) => m.name === name)?.at;
+    if (action?.clip.id === 'underhand') {
+      const release = markerTime('equipmentRelease'),
+        finish = markerTime('finish'),
+        peak = markerTime('windupPeak');
+      if (peak !== undefined)
+        pulses.push({ at: peak - 0.12, amount: -0.035, settle: 0.4, frequency: 2.4 });
+      if (release !== undefined)
+        pulses.push({ at: release - 0.03, amount: 0.055, settle: 0.3 });
+      if (finish !== undefined)
+        pulses.push({ at: finish - 0.06, amount: -0.05, settle: 0.34 });
+    } else if (action?.clip.id === 'chestTap') {
+      for (const m of action.clip.markers)
+        if (m.name.startsWith('chestTapContact'))
+          pulses.push({ at: m.at, amount: -0.03, settle: 0.22 });
+    } else if (action?.clip.id === 'nod')
+      pulses.push({ at: action.clip.duration * 0.34, amount: -0.03, settle: 0.3 });
+    else if (action?.clip.id === 'negative')
+      pulses.push({ at: action.clip.duration * 0.35, amount: -0.04, settle: 0.3 });
+    this.squash =
+      action && !this.reducedMotion ? squashOffset(pulses, action.time) : 0;
+    const squash = squashScale(this.squash);
+    this.actor.setScale(
+      this.definition.scale * squash.x,
+      this.definition.scale * squash.y,
+    );
+    // The held object lives inside the actor for draw order. Undo the squash
+    // on its layer (both matrices are pure scales), so the bag keeps its own
+    // shape in the hand and leaves it without a size jump.
+    this.heldObjectLayer.setScale(1 / squash.x, 1 / squash.y);
     this.contactError = 0;
     if (action?.clip.id === 'chestTap') {
       const influence = chestContactWeight(
@@ -520,6 +584,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       }
     }
     this.actor.armature.advanceTime(0);
+    this.drawSmear(action);
     for (const b of this.bones.values())
       if (
         ![b.globalTransformMatrix.tx, b.globalTransformMatrix.ty].every(
@@ -555,8 +620,17 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         };
       }),
     );
-    const feet = [...this.planted].map(([name, anchor]) => {
-      const p = this.local(name);
+    // A foot is planted relative to its IK target: an authored or captured
+    // step moves the target; drift away from it is still a support error.
+    const stepped = (side: string) => {
+      const bind = this.plantTargets.get(side)!,
+        now = this.local('foot_target_' + side);
+      return { x: now.x - bind.x, y: now.y - bind.y };
+    };
+    const feet = [...this.planted].map(([name, bind]) => {
+      const p = this.local(name),
+        step = stepped(name.slice(-1)),
+        anchor = { x: bind.x + step.x, y: bind.y + step.y };
       return {
         name,
         anchor,
@@ -566,7 +640,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       };
     });
     const soles = ['L', 'R'].map((side) => {
-      const samples = this.soleSamples.filter((s) => s.side === side);
+      const samples = this.soleSamples.filter((s) => s.side === side),
+        step = stepped(side);
       return {
         side,
         samples: samples.length,
@@ -574,8 +649,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
           ...samples.map((s) => {
             const v = s.mesh.vertices[s.index];
             return (
-              Math.hypot(v.vx - s.anchor.x, v.vy - s.anchor.y) *
-              this.definition.scale
+              Math.hypot(
+                v.vx - s.anchor.x - step.x,
+                v.vy - s.anchor.y - step.y,
+              ) * this.definition.scale
             );
           }),
         ),
@@ -627,8 +704,11 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         'bounded local channels',
         'filtered gaze',
         'chest-relative native IK',
+        'soft knee reach',
         'opaque hand exposure',
       ],
+      kneeDrop: this.kneeDrop,
+      squash: this.squash,
       source: this.definition.provenance,
       derivedRuntimeMotion: true,
       productionInstalled:
@@ -692,7 +772,73 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     for (const m of this.meshes) m.setTint(on ? 0 : 0xfff2df);
     this.shadow.setVisible(!on);
   }
+  /** Cartoon swoosh: a tapered ribbon traced behind the throwing hand
+   * through the fast part of the drive, fading with hand speed. */
+  private drawSmear(action: ReturnType<AnimationGraph['get']>) {
+    this.smear.clear();
+    const peak = action?.clip.markers.find((m) => m.name === 'windupPeak')?.at,
+      finish = action?.clip.markers.find((m) => m.name === 'finish')?.at;
+    if (
+      !action ||
+      action.clip.id !== 'underhand' ||
+      peak === undefined ||
+      finish === undefined ||
+      this.reducedMotion ||
+      action.time < peak ||
+      action.time > finish + 0.12
+    ) {
+      this.trail = [];
+      return;
+    }
+    const hand = this.local('throwing_hand'),
+      last = this.trail.at(-1);
+    if (last && (last.revision !== action.revision || action.time < last.t))
+      this.trail = [];
+    if (!last || action.time - last.t > 1e-6)
+      this.trail.push({ t: action.time, ...hand, revision: action.revision });
+    this.trail = this.trail.filter((p) => action.time - p.t <= 0.1);
+    if (this.trail.length < 3) return;
+    const a = this.trail[0],
+      b = this.trail.at(-1)!,
+      span = b.t - a.t,
+      speed = span > 0 ? Math.hypot(b.x - a.x, b.y - a.y) / span : 0;
+    // Armature px/s; the swoosh appears only through the snap.
+    const strength = Math.max(0, Math.min(1, (speed - 1400) / 1800));
+    if (strength <= 0) return;
+    // Armature units: the rig is drawn at ~0.2x, so 70 is ~14 screen px.
+    const sx = this.actor.scaleX,
+      sy = this.actor.scaleY,
+      width = 70 * strength;
+    const left: { x: number; y: number }[] = [],
+      right: { x: number; y: number }[] = [];
+    this.trail.forEach((p, i) => {
+      const q = this.trail[Math.min(this.trail.length - 1, i + 1)],
+        o = this.trail[Math.max(0, i - 1)],
+        dx = q.x - o.x,
+        dy = q.y - o.y,
+        n = Math.hypot(dx, dy) || 1,
+        w = (width * i) / (this.trail.length - 1);
+      left.push({ x: (p.x - (dy / n) * w) * sx, y: (p.y + (dx / n) * w) * sy });
+      right.push({ x: (p.x + (dy / n) * w) * sx, y: (p.y - (dx / n) * w) * sy });
+    });
+    // Cream ribbon with an ink edge on its outer side, so it reads against the
+    // shirt and the sky alike.
+    this.smear
+      .fillStyle(0xfff1c9, 0.62 * strength)
+      .fillPoints([...left, ...[...right].reverse()], true)
+      .lineStyle(1.5, 0x3b2616, 0.45 * strength)
+      .strokePoints(left, false);
+    // Two thin speed lines trailing the ribbon.
+    for (const k of [0.45, 0.8]) {
+      const i = Math.floor(k * (this.trail.length - 1));
+      this.smear
+        .lineStyle(2.5, 0xfff1c9, 0.7 * strength)
+        .lineBetween(left[i].x, left[i].y, left[0].x, left[0].y);
+    }
+  }
   reset() {
+    this.trail = [];
+    this.smear.clear();
     this.actor.animation.reset();
     this.states.clear();
     this.gaze = 0;

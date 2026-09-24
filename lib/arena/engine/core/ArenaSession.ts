@@ -3,6 +3,7 @@ import type {
   LiveSnapshot,
   PlayableArenaEvent,
   ArenaCue,
+  VisualObject,
 } from './LiveTypes';
 import { playableEvent } from './EventRegistry';
 import { InputManager } from '../input/InputManager';
@@ -21,6 +22,8 @@ import assets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { seeded } from './Random';
 import type { InputFrame, Intent } from '../input/InputActions';
+/** Identity of a presented object across fixed steps ('held' passes owners). */
+export const objectKey = (o: VisualObject) => o.id + ':' + (o.owner ?? '');
 export class ArenaSession {
   readonly input = new InputManager();
   readonly characters: ArenaCharacter[];
@@ -35,6 +38,7 @@ export class ArenaSession {
   private frames = new Map<string, InputFrame>();
   private awaitingNeutral = new Set<string>();
   private fixedSteps = 0;
+  private stopSteps = 0;
   private recentMarkers: {
     player: string;
     time: number;
@@ -89,6 +93,9 @@ export class ArenaSession {
       time: () => this.time,
       random,
       emit: (c) => this.emit(c),
+      hitStop: (steps) => {
+        this.stopSteps = Math.max(this.stopSteps, Math.round(steps));
+      },
       options: config.options ?? {},
     });
     this.event.createParticipants();
@@ -209,7 +216,16 @@ export class ArenaSession {
     this.accumulator += Math.min(0.1, Math.max(0, delta));
     while (this.accumulator >= 1 / 60 && !this.paused) {
       this.accumulator -= 1 / 60;
-      this.time += 1 / 60;
+      // Presentation interpolates from this step's starting state.
+      for (const c of this.characters) c.capturePrevious();
+      this.previousObjects = new Map(
+        this.event.view().objects.map((o) => [objectKey(o), o]),
+      );
+      // Hit-stop holds the clock: nothing moves, but input is still sampled
+      // so a press made during the hold is buffered rather than lost.
+      const held = this.stopSteps > 0;
+      if (held) this.stopSteps--;
+      else this.time += 1 / 60;
       for (const c of this.controllers) {
         const frame = this.poll(c.id);
         if (this.paused) break;
@@ -217,6 +233,7 @@ export class ArenaSession {
       }
       if (this.paused) break;
       this.fixedSteps++;
+      if (held) continue;
       for (const c of this.characters)
         c.update(1 / 60, this.time, (m) => {
           this.recentMarkers.push({
@@ -235,6 +252,18 @@ export class ArenaSession {
       this.event.update(1 / 60);
     }
   }
+  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
+   * characters and objects between their previous and current step so motion
+   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
+  /** Remaining hit-stop steps (0 when the clock is running). */
+  get hitStopSteps() {
+    return this.stopSteps;
+  }
+  get alpha() {
+    return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
+  }
+  /** Object state at the start of the latest fixed step, keyed by objectKey. */
+  previousObjects = new Map<string, VisualObject>();
   snapshot(): LiveSnapshot {
     const view = this.event.view();
     return {

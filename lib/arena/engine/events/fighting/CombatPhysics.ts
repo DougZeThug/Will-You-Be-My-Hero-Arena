@@ -30,8 +30,13 @@ export function moveFighter(
   );
   c.body.vx *= Math.exp(-7 * dt);
   c.stamina = clamp(c.stamina + dt * (combat.blocking ? 3 : 11), 0, 100);
+  // Moving away from the opponent steps backward instead of moonwalking.
   c.animation.locomotion =
-    !locked && Math.abs(c.moveIntent.x) > 0.15 ? 'locomotion.walk' : '';
+    !locked && Math.abs(c.moveIntent.x) > 0.15
+      ? c.moveIntent.x * c.body.facing < 0
+        ? 'back_step'
+        : 'locomotion.walk'
+      : '';
 }
 /** Detect all active hitboxes before applying any hit. Trades do not depend on
  * participant iteration order. Hitboxes belong to rules, never sprite bounds. */

@@ -34,10 +34,15 @@ export const GESTURES:AnimationClip[]=[
 
 // Foot plants lead the pelvis, the opposite arm counter-swings. Translations
 // are local to a lane; the director supplies world travel for entrances/exits.
-const gait=(id:string,stride:number,lift:number,duration:number):AnimationClip=>gesture(id,'locomotion',['locomotion'],duration,.4,[
- k(.16,{footRX:41+stride,footRY:-22-lift,hipX:stride*.18,handLX:-65,handLY:-166,handRX:42,handRY:-161,body:-2}),
- k(.34,{footRX:41+stride,footRY:-22,hipX:stride*.42,footLX:-40+stride*.28}),
- k(.52,{footLX:-40+stride,footLY:-22-lift,hipX:stride*.22,handRX:72,handRY:-173,handLX:-43,handLY:-152,body:2}),
- k(.7,{footLX:-40+stride,footLY:-22,footRX:41,hipX:stride*.1}),
- k(.85,{footLX:-40,footLY:-24,body:0})],[{at:.34,name:'footstep'},{at:.7,name:'footstep'}]);
-GESTURES.push(gait('walk',19,7,1.25),gait('jog',25,15,.85),gait('run',33,23,.65),gait('sprint',37,29,.55),gait('shuffle',10,3,.7),gait('sidestep',23,5,.85),gait('back_step',-15,6,.85),gait('reposition',13,7,.7));
+// Cartoon gait: the hips dip at each plant and rise through the passing pose
+// (bob), the torso leans into faster gaits, and runs float between steps.
+const gait=(id:string,stride:number,lift:number,duration:number,lean=0,bob=2,float=0):AnimationClip=>{
+ const up=-172-bob-float,down=-172+bob;
+ return gesture(id,'locomotion',['locomotion'],duration,.4,[
+ k(.16,{footRX:41+stride,footRY:-22-lift,footLY:-22-float,hipX:stride*.18,hipY:up,handLX:-65,handLY:-166,handRX:42,handRY:-161,body:lean-2}),
+ k(.34,{footRX:41+stride,footRY:-22,footLY:-22,hipX:stride*.42,hipY:down,footLX:-40+stride*.28,body:lean}),
+ k(.52,{footLX:-40+stride,footLY:-22-lift,footRY:-22-float,hipX:stride*.22,hipY:up,handRX:72,handRY:-173,handLX:-43,handLY:-152,body:lean+2}),
+ k(.7,{footLX:-40+stride,footLY:-22,footRY:-22,footRX:41,hipX:stride*.1,hipY:down,body:lean}),
+ k(.85,{footLX:-40,footLY:-24,hipY:(up+down)/2,body:lean})],[{at:.34,name:'footstep'},{at:.7,name:'footstep'}]);
+};
+GESTURES.push(gait('walk',19,7,1.25,2,2.5),gait('jog',25,15,.85,4,4,2),gait('run',33,23,.65,6,5,5),gait('sprint',37,29,.55,9,6,8),gait('shuffle',10,3,.7,0,1.5),gait('sidestep',23,5,.85,0,2),gait('back_step',-15,6,.85,-2,2),gait('reposition',13,7,.7,1,2));

@@ -3,9 +3,9 @@ import type { PerformanceProfile } from '../../lib/arena/engine/performance/Perf
 // Controls use a conservative subset of the native profile's supported range.
 const settings = [
   ['movementTempo', 'Throw tempo', 0.9, 1.2, 0.01, '×'],
-  ['backswing', 'Backswing', 18, 40, 1, '°'],
-  ['weightTransfer', 'Weight shift', 16, 60, 1, 'rig px'],
-  ['finishRetention', 'Retained finish', 0.35, 0.7, 0.01, '%'],
+  ['backswing', 'Backswing', 20, 85, 1, '°'],
+  ['weightTransfer', 'Weight shift', 16, 100, 1, 'rig px'],
+  ['finishRetention', 'Retained finish', 0.35, 0.95, 0.01, '%'],
   ['recoveryDuration', 'Recovery time', 0.48, 0.95, 0.01, 's'],
 ] as const;
 

@@ -1,4 +1,4 @@
-import { addGaits } from './gait';
+import { addGaits, type GaitTuning } from './gait';
 import {
   rotation,
   translate,
@@ -13,9 +13,10 @@ export function addLocomotion(
   library: LibraryBuilder,
   id: 'dan' | 'doug',
   plants: MotionMarker[],
+  gait: GaitTuning = {},
 ) {
   const { add, athletic } = library;
-  addGaits(library, id);
+  addGaits(library, id, gait);
   athletic(
     'pivot',
     36,

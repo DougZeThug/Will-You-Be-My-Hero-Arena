@@ -332,9 +332,13 @@ export class PerformanceScene extends Phaser.Scene {
       ];
     }
     const notice = 0.28 + (1 - this.profile.confidence) * 0.18;
-    const duration = this.runtime.clips.get('underhand')!.duration;
-    const begin = 0.6 + notice + 0.34;
-    const release = begin + this.runtime.clips.get('underhand')!.markers[0].at;
+    const underhand = this.runtime.clips.get('underhand')!,
+      duration = underhand.duration,
+      marker = (name: string) =>
+        underhand.markers.find((m) => m.name === name)!.at;
+    // The take starts right after notice; its markers place each beat.
+    const begin = 0.6 + notice;
+    const release = begin + marker('equipmentRelease');
     const reaction =
       Math.max(
         begin + duration,
@@ -349,12 +353,18 @@ export class PerformanceScene extends Phaser.Scene {
     return [
       { name: 'idle', time: 0 },
       { name: 'notice', time: 0.62 },
-      { name: 'settle', time: 0.62 + notice },
-      { name: 'anticipate', time: begin + 0.05 },
-      { name: 'windup', time: begin + duration * 0.27 },
-      { name: 'drive', time: begin + duration * 0.43 },
+      { name: 'settle', time: begin + marker('anticipate') / 2 },
+      { name: 'anticipate', time: begin + marker('anticipate') + 0.02 },
+      {
+        name: 'windup',
+        time: begin + (marker('windup') + marker('windupPeak')) / 2,
+      },
+      { name: 'drive', time: begin + marker('windupPeak') + 0.03 },
       { name: 'release', time: release + 0.004 },
-      { name: 'followThrough', time: begin + duration * 0.64 },
+      {
+        name: 'followThrough',
+        time: begin + (marker('equipmentRelease') + marker('finish')) / 2 + 0.05,
+      },
       { name: 'watchTarget', time: begin + duration + 0.01 },
       {
         name: this.outcome !== 'miss' ? 'reactPositive' : 'reactNegative',

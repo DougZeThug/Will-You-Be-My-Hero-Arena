@@ -25,11 +25,12 @@ import type { DirectedAction } from '../core/BattlePlan';
 import type { CharacterProfile } from './CharacterProfile';
 import { puppetJoints } from '../../puppet-geometry';
 import { createCharacterRig } from './createCharacterRig';
-import type { PuppetPose } from '../../puppet-motion';
+import { mixPuppet, type PuppetPose } from '../../puppet-motion';
 import { handFrame } from '../../hand-geometry';
 import { sportRelease } from '../animation/SportMechanics';
 import type { ReleaseFrame } from '../events/ArenaEvent';
 import { smooth } from '../../match-timeline';
+import { squashScale } from '../motion/SquashStretch';
 export class CharacterController {
   readonly rig: CharacterRig;
   readonly base: { x: number; y: number };
@@ -67,6 +68,35 @@ export class CharacterController {
     this.observe(pose, id, progress);
     this.rig.apply(pose, id, progress);
   }
+  /** Plays the finale at its authored speed, then settles into the idle
+   * (it was stretched to 1.7 s whatever its length, then froze at rest). */
+  finale(
+    id: string,
+    elapsed: number,
+    idle: string,
+    time: number,
+    reduced: boolean,
+  ) {
+    const duration = isAuthoredRig(this.rig)
+      ? this.rig.duration(id)
+      : animation(id).duration;
+    if (elapsed >= duration) {
+      this.idle(idle, time, true, reduced);
+      return;
+    }
+    const tail = smooth((elapsed - (duration - 0.3)) / 0.3);
+    if (tail <= 0 || isAuthoredRig(this.rig)) {
+      this.clip(id, elapsed / duration, reduced);
+      return;
+    }
+    const pose = mixPuppet(
+      sampleClip(id, elapsed / duration, this.profile, reduced),
+      idlePose(idle, time, this.profile, true, reduced),
+      tail,
+    );
+    this.observe(pose, id, elapsed / duration);
+    this.rig.apply(pose, id, elapsed / duration);
+  }
   clip(id: string, progress: number, reduced: boolean) {
     const pose = sampleClip(id, progress, this.profile, reduced);
     this.observe(pose, id, progress);
@@ -78,6 +108,7 @@ export class CharacterController {
     time: number,
     reduced: boolean,
     legacy = this.personality,
+    idleBefore?: string,
   ) {
     if (this.rig instanceof FrameCharacterRig) {
       this.renderedAnimation = {
@@ -96,6 +127,7 @@ export class CharacterController {
       legacy,
       this.releaseLocal(a, d),
       reduced,
+      idleBefore,
     );
     if (isAuthoredRig(this.rig)) {
       if (this.rig.continuousThrow) {
@@ -287,8 +319,13 @@ export class CharacterController {
       },
     });
   }
-  place(x = this.base.x, y = this.base.y, scale = 1, alpha = 1) {
-    this.rig.root.setPosition(x, y).setScale(scale).setAlpha(alpha);
+  /** `squash` is a cartoon vertical offset (see SquashStretch); area is kept. */
+  place(x = this.base.x, y = this.base.y, scale = 1, alpha = 1, squash = 0) {
+    const s = squashScale(squash);
+    this.rig.root
+      .setPosition(x, y)
+      .setScale(scale * s.x, scale * s.y)
+      .setAlpha(alpha);
   }
   destroy() {
     this.rig.destroy();

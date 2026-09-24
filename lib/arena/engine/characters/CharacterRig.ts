@@ -14,8 +14,35 @@ export type SocketName =
   | 'footL'
   | 'footR'
   | 'effect';
+/** Simulated body state for a rig that animates and places itself from it
+ * (a side-view motion rig). Presentation skips its root transform. */
+export interface RigDriveFrame {
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  facing: number;
+  /** Body scale (lane depth). */
+  scale: number;
+  /** Presented session time and the time since the previous drive. */
+  time: number;
+  dt: number;
+  /** Current simulation action clip and its start revision. */
+  clip: string;
+  clipRevision: number;
+  /** Seconds the simulation scheduled for that clip (e.g. a jump's airtime). */
+  clipDuration: number;
+  substate: string;
+  reduced: boolean;
+  /** Presentation-only whole-figure squash (volume-preserving scales). */
+  squash: { x: number; y: number };
+}
 export interface CharacterRig {
   readonly root: Phaser.GameObjects.Container;
+  drive?(frame: RigDriveFrame): void;
+  /** Horizontal draw width during a view turn (1 = open, 0 = edge-on). */
+  setViewWidth?(width: number): void;
   readonly backend?: string;
   readonly performance?: CharacterPerformanceController;
   readonly heldObjectLayer?: Phaser.GameObjects.Container;
@@ -56,6 +83,6 @@ export interface CharacterRigProvider {
     scene: Phaser.Scene,
     character: LoadedCharacter,
     profile: CharacterProfile,
-    placement: { lane: number },
+    placement: { lane: number; scale?: number },
   ): CharacterRig | undefined;
 }

@@ -39,7 +39,11 @@ export default function LiveStage({
               ? await (
                   await import('../../../lab/performance/provider')
                 ).performanceMatchProvider()
-              : undefined;
+              : config.event === 'running' || config.event === 'fighting'
+                ? await (
+                    await import('../../../lab/human-motion/provider')
+                  ).sideMotionProvider(config.event)
+                : undefined;
           if (!mounted || !host.current) return;
           game.current = new LiveArenaGame(host.current, {
             config,

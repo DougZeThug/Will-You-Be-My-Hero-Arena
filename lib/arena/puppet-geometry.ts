@@ -1,4 +1,5 @@
 import {type PuppetPose,type CharacterChoreography} from './puppet-motion';
+import {softReachDrop} from './engine/performance/KneeReach';
 export const PUPPET_PARTS=['head','torso','upperL','upperR','foreL','foreR','thighL','thighR','shinL','shinR','footL','footR'] as const;
 export type PuppetPart=typeof PUPPET_PARTS[number];
 export interface PuppetPiece {rect:[number,number,number,number];pivot:[number,number];span?:number}
@@ -7,6 +8,7 @@ export interface JoinedSkin {rect:[number,number,number,number];hip:[number,numb
 export interface PuppetAsset {version:1|2;url:string;width:number;height:number;keyColor?:[number,number,number];pieces:Record<PuppetPart,PuppetPiece>;arm:[number,number];leg:[number,number];headSize:[number,number];torsoSize:[number,number];footSize:[number,number];choreography?:CharacterChoreography;skin?:Record<'head'|'torso'|'armL'|'armR'|'legL'|'legR',SkinPiece>;joined?:JoinedSkin}
 export interface JointPoint{x:number;y:number}
 const rad=Math.PI/180;
+const STANCE_BEND=3;
 /** Calibrate the rest silhouette without moving its image-space bind markers.
  * The collar stays centered; the shoulder line slopes down toward each arm. */
 export function joinedBodyPoint(skin:JoinedSkin,x:number,y:number):JointPoint{
@@ -22,12 +24,35 @@ export function solveLimb(root:JointPoint,target:JointPoint,l1:number,l2:number,
  const along=(l1*l1-l2*l2+d*d)/(2*d),cross=Math.sqrt(Math.max(0,l1*l1-along*along))*bend;
  return {root,joint:{x:root.x+ux*along-uy*cross,y:root.y+uy*along+ux*cross},end:{x:root.x+ux*d,y:root.y+uy*d},reachable:Math.abs(d-raw)<.001};
 }
+/** Share of a frontal knee bend drawn as sideways knee travel. A real knee
+ * flexes toward the camera in a front view: the thigh and shin foreshorten
+ * and the knee tracks slightly out over the toes. Drawing the whole bend
+ * sideways bowed every crouch, stride and landing into a squat. */
+export const FRONT_KNEE_SPLAY=.3;
+/** Share of an outward frontal elbow bend drawn sideways (see puppetJoints). */
+export const FRONT_ELBOW_WING=.55;
+/** Two-bone frontal leg. Hip and ankle are exactly those of `solveLimb`; the
+ * knee keeps its height along the leg and FRONT_KNEE_SPLAY of its sideways
+ * offset (`bend` picks the outward side). */
+export function frontLeg(root:JointPoint,target:JointPoint,l1:number,l2:number,bend:number){
+ const full=solveLimb(root,target,l1,l2,bend),d=Math.hypot(full.end.x-root.x,full.end.y-root.y);
+ if(d<1e-6)return full;
+ const along=(l1*l1-l2*l2+d*d)/(2*d),line={x:root.x+(full.end.x-root.x)*along/d,y:root.y+(full.end.y-root.y)*along/d};
+ return{...full,joint:{x:line.x+(full.joint.x-line.x)*FRONT_KNEE_SPLAY,y:line.y+(full.joint.y-line.y)*FRONT_KNEE_SPLAY}};
+}
 export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'version'|'joined'>){
  const reach=asset.leg[0]+asset.leg[1]-.1;
  const floorLimit=(footX:number,footY:number,offset:number)=>footY-Math.sqrt(Math.max(0,reach*reach-(footX-p.hipX-offset)**2))-6;
  // Fit the pelvis to planted ankles instead of letting a tall pose lift a sole.
  const lift=asset.joined?.posture?.hipLift??0;
- const hip={x:p.hipX,y:Math.max(Math.min(-158-lift,p.hipY-lift),floorLimit(p.footLX,p.footLY,-23),floorLimit(p.footRX,p.footRY,23))},body=(x:number,y:number)=>{const local=asset.joined?joinedBodyPoint(asset.joined,x,y):{x,y},q=rotatePoint({x:local.x*p.turn,y:local.y},p.body);return{x:hip.x+q.x,y:hip.y+q.y};};
+ // Soft knee reach: lower the pelvis smoothly as a planted leg nears full
+ // extension instead of letting the two-bone knee snap straight (a pop). The
+ // crouch floor leaves room for real anticipation dips and landings.
+ // A slight athletic knee bend keeps rest out of the saturated reach zone, so
+ // breathing and stand-tall beats still move the hips.
+ const raw={x:p.hipX,y:Math.min(-140-lift,p.hipY-lift)+STANCE_BEND},legLength=asset.leg[0]+asset.leg[1];
+ const soften=softReachDrop([{hip:{x:raw.x-23,y:raw.y+6},ankle:{x:p.footLX,y:p.footLY},length:legLength},{hip:{x:raw.x+23,y:raw.y+6},ankle:{x:p.footRX,y:p.footRY},length:legLength}]);
+ const hip={x:raw.x,y:Math.max(raw.y+soften,floorLimit(p.footLX,p.footLY,-23),floorLimit(p.footRX,p.footRY,23))},body=(x:number,y:number)=>{const local=asset.joined?joinedBodyPoint(asset.joined,x,y):{x,y},q=rotatePoint({x:local.x*p.turn,y:local.y},p.body);return{x:hip.x+q.x,y:hip.y+q.y};};
  const shoulderY=asset.version===2?-100:-88;
  const registered=(point:[number,number])=>body((point[0]-asset.joined!.hip[0])*asset.joined!.scale,(point[1]-asset.joined!.hip[1])*asset.joined!.scale);
  const shoulderL=asset.joined?registered(asset.joined.arms[0].root):body(-39,shoulderY+p.shrug),shoulderR=asset.joined?registered(asset.joined.arms[1].root):body(39,shoulderY+p.shrug),neck=asset.joined?registered(asset.joined.neck):body(0,-106),hipL={x:hip.x-23,y:hip.y+6},hipR={x:hip.x+23,y:hip.y+6};
@@ -43,7 +68,12 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
    // bend passes smoothly through straight, without reversing either bone or
    // letting the elbow coincide with the palm at a pole-vector singularity.
    const span=Math.max(Math.abs(asset.arm[0]-asset.arm[1])+.001,Math.min(reach-.001,d)),along=(asset.arm[0]**2-asset.arm[1]**2+span**2)/(2*span),height=Math.sqrt(Math.max(0,asset.arm[0]**2-along**2)),lift=Math.max(0,Math.min(1,-dy/45)),raised=lift*lift*(3-2*lift),bend=Math.tanh(dx/25)*(1-raised)+side*raised,ux=dx/Math.max(.001,d),uy=dy/Math.max(.001,d);
-   const joint={x:root.x+ux*along-uy*height*bend,y:root.y+uy*along+ux*height*bend};
+   // An elbow bending outward mostly travels back, away from the camera: draw
+   // FRONT_ELBOW_WING of it sideways and foreshorten the rest. The full
+   // sideways bend read as chicken wings whenever a hand came in front of
+   // the body.
+   const wing=bend*side<0?FRONT_ELBOW_WING:1;
+   const joint={x:root.x+ux*along-uy*height*bend*wing,y:root.y+uy*along+ux*height*bend*wing};
    joint.x=root.x+side*Math.max(-5,side*(joint.x-root.x));
    const foreX=joint.x-end.x,foreY=joint.y-end.y,limit=Math.sqrt(Math.max(0,asset.arm[1]**2-foreX**2));
    if(Math.abs(foreX)<=asset.arm[1]&&Math.abs(foreY)>limit)joint.y=end.y+Math.sign(foreY)*limit;
@@ -60,7 +90,7 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
   const joint={x:root.x+ux*along+px/pole*cross,y:root.y+uy*along+py/pole*cross};
   return {root,end,joint,reachable:d<=reach+.001};
  };
- return {hip,neck,shoulderL,shoulderR,leftArm:arm(shoulderL,{x:p.handLX,y:p.handLY},-1),rightArm:arm(shoulderR,{x:p.handRX,y:p.handRY},1),leftLeg:solveLimb(hipL,{x:p.footLX,y:p.footLY},...asset.leg,1),rightLeg:solveLimb(hipR,{x:p.footRX,y:p.footRY},...asset.leg,-1)};
+ return {hip,neck,shoulderL,shoulderR,leftArm:arm(shoulderL,{x:p.handLX,y:p.handLY},-1),rightArm:arm(shoulderR,{x:p.handRX,y:p.handRY},1),leftLeg:frontLeg(hipL,{x:p.footLX,y:p.footLY},...asset.leg,1),rightLeg:frontLeg(hipR,{x:p.footRX,y:p.footRY},...asset.leg,-1)};
 }
 export function puppetAssetErrors(input:unknown):string[]{
  if(!input||typeof input!=='object'||Array.isArray(input))return ['puppet must be an articulated asset object.'];

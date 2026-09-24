@@ -19,6 +19,8 @@ export interface Obstacle {
   height: number;
 }
 export const RUNNING_LENGTH = 2400;
+export const RUN_GRAVITY = 590;
+/** Advances one runner. Returns true on the step the runner touches down. */
 export function runPhysics(
   c: ArenaCharacter,
   m: RunnerMotion,
@@ -27,7 +29,8 @@ export function runPhysics(
   mode: string,
 ) {
   const b = c.body;
-  if (m.finished) return;
+  let landed = false;
+  if (m.finished) return landed;
   m.slide = Math.max(0, m.slide - dt);
   m.stumble = Math.max(0, m.stumble - dt);
   m.laneClock = Math.max(0, m.laneClock - dt);
@@ -61,9 +64,13 @@ export function runPhysics(
     100,
   );
   if (b.z > 0 || b.vz > 0) {
-    b.vz -= 590 * dt;
+    b.vz -= RUN_GRAVITY * dt;
     b.z = Math.max(0, b.z + b.vz * dt);
-    if (!b.z) b.vz = 0;
+    if (!b.z) {
+      b.vz = 0;
+      landed = true;
+      c.beat('land', time);
+    }
   }
   c.score = Math.round(
     Math.min(100, ((b.x - 170) / (RUNNING_LENGTH - 170)) * 100),
@@ -77,15 +84,24 @@ export function runPhysics(
         : sprint
           ? 'sprinting'
           : 'running';
+  // Hysteresis: a runner hovering at a threshold must not flicker between
+  // gait clips (each switch cross-fades the legs).
+  const gait = c.animation.locomotion,
+    sprintAt = gait === 'locomotion.sprint' ? 175 : 195,
+    runAt =
+      gait === 'locomotion.run' || gait === 'locomotion.sprint' ? 85 : 105;
   c.animation.locomotion =
-    m.stumble || m.slide || b.z > 0
+    m.stumble || m.slide
       ? ''
-      : b.vx > 185
-        ? 'locomotion.sprint'
-        : b.vx > 95
-          ? 'locomotion.run'
-          : 'locomotion.walk';
+      : b.z > 0
+        ? 'athletic.airborne'
+        : b.vx > sprintAt
+          ? 'locomotion.sprint'
+          : b.vx > runAt
+            ? 'locomotion.run'
+            : 'locomotion.walk';
   if (!c.animation.timeline.active) c.state = 'moving';
+  return landed;
 }
 export function obstacleCollision(
   c: ArenaCharacter,

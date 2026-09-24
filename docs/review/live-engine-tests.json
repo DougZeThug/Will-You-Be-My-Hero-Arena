@@ -42,22 +42,22 @@
     },
     {
       "event": "fighting",
-      "seconds": 12.183333333333518,
+      "seconds": 13.116666666666898,
       "scores": [
-        31,
+        40,
         105
       ],
       "health": [
         0,
-        69
+        60
       ],
       "commands": [
-        802,
-        799
+        900,
+        899
       ],
       "buffered": [
-        8,
-        13
+        11,
+        15
       ]
     }
   ],
@@ -70,6 +70,7 @@
     "combat active windows",
     "blocking",
     "input buffering and expiry",
+    "hit-stop holds the clock without dropping input",
     "deterministic AI sessions",
     "pause"
   ]

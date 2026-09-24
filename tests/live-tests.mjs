@@ -503,6 +503,40 @@ export async function testLive({ check }) {
     ),
   );
   expiry.destroy();
+  // Hit-stop: a landed blow holds the clock for a few steps. Nothing moves,
+  // but input made during the hold is sampled, not dropped.
+  const stop = new ArenaSession(config('fighting', false));
+  advance(stop, 1.6);
+  stop.characters[0].body.x = 500;
+  stop.characters[1].body.x = 610;
+  pulse(stop, 'p0', 'primaryAction');
+  for (let i = 0; i < 40 && stop.characters[1].health === 100; i++)
+    stop.advance(1 / 60);
+  const struck = stop.time,
+    frozen = JSON.stringify(stop.characters.map((c) => c.body)),
+    held = stop.hitStopSteps;
+  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() => assert.equal(stop.characters[1].beats.hit, struck));
+  check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
+  const inputs = () =>
+    stop.controllers[0].commands + stop.controllers[0].buffered;
+  const before = inputs();
+  pulse(stop, 'p0', 'primaryAction');
+  check(() => assert.equal(stop.time, struck, 'The clock holds'));
+  check(() =>
+    assert.equal(
+      JSON.stringify(stop.characters.map((c) => c.body)),
+      frozen,
+      'Nothing moves during hit-stop',
+    ),
+  );
+  check(() =>
+    assert.ok(inputs() > before, 'Input during hit-stop is not dropped'),
+  );
+  for (let i = 0; i < held; i++) stop.advance(1 / 60);
+  check(() => assert.ok(stop.time > struck, 'The clock resumes'));
+  check(() => assert.equal(stop.hitStopSteps, 0));
+  stop.destroy();
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',
@@ -519,6 +553,7 @@ export async function testLive({ check }) {
           'combat active windows',
           'blocking',
           'input buffering and expiry',
+          'hit-stop holds the clock without dropping input',
           'deterministic AI sessions',
           'pause',
         ],

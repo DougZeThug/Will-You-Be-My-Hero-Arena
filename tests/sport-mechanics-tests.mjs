@@ -31,16 +31,31 @@ export async function testSportMechanics({ check, setup, m, s, a }) {
         const beforeVelocity={x:(r.hand.palm.x-pre.hand.palm.x)/1e-5,y:(r.hand.palm.y-pre.hand.palm.y)/1e-5};
         const afterVelocity={x:(post.hand.palm.x-r.hand.palm.x)/1e-5,y:(post.hand.palm.y-r.hand.palm.y)/1e-5};
         check(() => assert.ok(distance(beforeVelocity,afterVelocity)<1,'No velocity reset at release: '+sport));
-        let previous, previousMesh;
+        let previous, previousMesh, airborne=0;
+        // Grounded means supporting weight without sliding or sinking. A jump
+        // shot leaves the floor (and must), then lands where it took off.
+        const jumps=sport==='basketball';
         for(let time=0;time<lead+.87;time+=1/60){
           const state=at(time);
           surface.apply(state.pose,state.joints);
           check(() => assert.ok(surface.positions.every(Number.isFinite),'Finite wrist/shoulder mesh'));
-          for(const [side,foot] of [['left',rest.leftLeg.end],['right',rest.rightLeg.end]])
-            check(() => assert.ok(distance(state.joints[side+'Leg'].end,foot)<.01,'Throwing weight shift preserves planted ankles'));
+          for(const [side,foot] of [['left',rest.leftLeg.end],['right',rest.rightLeg.end]]){
+            const end=state.joints[side+'Leg'].end;
+            if(!jumps)check(() => assert.ok(distance(end,foot)<.01,'Throwing weight shift preserves planted ankles'));
+            else{
+              check(() => assert.ok(Math.abs(end.x-foot.x)<.01,'A jump shot takes off and lands without sliding'));
+              check(() => assert.ok(end.y<=foot.y+.01,'Feet never sink below the court'));
+              airborne=Math.max(airborne,foot.y-end.y);
+            }
+          }
           if(previous)maxPalmStep=Math.max(maxPalmStep,distance(state.hand.palm,previous.hand.palm));
           if(previousMesh)for(let i=0;i<surface.positions.length;i+=2)maxMeshStep=Math.max(maxMeshStep,Math.hypot(surface.positions[i]-previousMesh[i],surface.positions[i+1]-previousMesh[i+1]));
           previous=state;previousMesh=surface.positions.slice();
+        }
+        if(jumps){
+          check(() => assert.ok(airborne>15,'The jump shot leaves the floor'));
+          for(const [side,foot] of [['left',rest.leftLeg.end],['right',rest.rightLeg.end]])
+            check(() => assert.ok(distance(at(0).joints[side+'Leg'].end,foot)<.01&&distance(at(lead+.86).joints[side+'Leg'].end,foot)<.01,'Takes off from and lands on the planted stance'));
         }
         if(lead===.85){
           const upper=r.joints.rightArm;

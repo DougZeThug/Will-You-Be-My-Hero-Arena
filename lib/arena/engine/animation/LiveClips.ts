@@ -17,6 +17,32 @@ const guard: Pose = {
   footRX: 48,
   hipY: -167,
 };
+/** Like `clip`, with optional accent eases per key. */
+function clipEased(
+  id: string,
+  category: AnimationCategory,
+  duration: number,
+  poses: [number, Pose, string?][],
+  markers: AnimationMarker[] = [],
+) {
+  registerAnimation({
+    id,
+    category,
+    duration,
+    tags: id.split('.'),
+    weight: 1,
+    intensity: 0.5,
+    markers,
+    motion: {
+      label: id,
+      keys: poses.map(([at, pose, ease]) => ({
+        at,
+        pose: { ...REST, ...pose },
+        ...(ease ? { ease } : {}),
+      })),
+    },
+  });
+}
 function clip(
   id: string,
   category: AnimationCategory,
@@ -40,17 +66,28 @@ function clip(
     },
   });
 }
+/** Cartoon strike: slow wind-up, accelerate into contact, overshoot past
+ * the strike pose, settle back and recover (was a symmetric ease into a
+ * dead hold). */
+const overshoot = (strike: Pose): Pose =>
+  Object.fromEntries(
+    Object.entries(strike).map(([key, value]) => {
+      const rest = guard[key as keyof Pose] ?? REST[key as keyof PuppetPose];
+      return [key, rest + (value! - rest) * 1.1];
+    }),
+  );
 const attack = (id: string, duration: number, anticipate: Pose, strike: Pose) =>
-  clip(
+  clipEased(
     id,
     'interaction',
     duration,
     [
       [0, guard],
-      [0.22, { ...guard, ...anticipate }],
-      [0.38, { ...guard, ...strike }],
-      [0.54, { ...guard, ...strike }],
-      [0.83, guard],
+      [0.21, { ...guard, ...anticipate }, 'power2.out'],
+      [0.38, { ...guard, ...strike }, 'power2.in'],
+      [0.44, { ...guard, ...overshoot(strike) }],
+      [0.58, { ...guard, ...strike }],
+      [0.84, guard],
       [1, guard],
     ],
     [
@@ -179,31 +216,76 @@ clip('combat.defeat', 'reaction', 1.2, [
     },
   ],
 ]);
+// Takeoff is immediate (responsive input), so the clip opens on a launch
+// stretch rather than a crouch the body has already left. RunningComponent
+// fits its length to the physical airtime; the tuck holds until touchdown.
+const tuck: Pose = {
+  hipY: -173,
+  body: 4,
+  footLX: -30,
+  footLY: -52,
+  footRX: 50,
+  footRY: -47,
+  handLX: -64,
+  handLY: -214,
+  handRX: 74,
+  handRY: -226,
+  head: -3,
+};
 clip(
   'athletic.jump',
   'locomotion',
   0.8,
   [
-    [0, { hipY: -156, handLY: -157, handRY: -157 }],
     [
-      0.24,
+      0,
       {
-        hipY: -177,
-        handLX: -35,
-        handLY: -217,
-        handRX: 56,
-        handRY: -228,
-        footLY: -45,
-        footRY: -41,
+        hipY: -181,
+        body: -2,
+        footLY: -30,
+        footRY: -27,
+        handLX: -48,
+        handLY: -258,
+        handRX: 58,
+        handRY: -266,
+        head: -5,
       },
     ],
-    [0.7, { hipY: -174, footLY: -34, footRY: -34 }],
+    [0.2, tuck],
+    [0.72, { ...tuck, footLY: -47, footRY: -43, body: 3 }],
+    [
+      0.94,
+      {
+        hipY: -170,
+        footLX: -44,
+        footLY: -25,
+        footRX: 46,
+        footRY: -25,
+        handLX: -78,
+        handLY: -196,
+        handRX: 86,
+        handRY: -202,
+        body: 2,
+      },
+    ],
     [1, {}],
   ],
   [
-    { name: 'jump', at: 0.12 },
-    { name: 'land', at: 0.95 },
+    { name: 'jump', at: 0.02 },
+    { name: 'land', at: 0.97 },
   ],
+);
+clip(
+  'athletic.airborne',
+  'locomotion',
+  0.6,
+  [
+    [0, tuck],
+    [0.5, { ...tuck, footLY: -49, footRY: -44, handRY: -222 }],
+    [1, tuck],
+  ],
+  [],
+  true,
 );
 clip('running.stumble', 'reaction', 0.75, [
   [0, {}],

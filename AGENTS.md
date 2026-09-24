@@ -19,14 +19,23 @@ and the side-view-v3 assets. The matching review surfaces are `/performance/`
 and the `cornhole-performance` Lab scenario. Use these paths for routine Dan or
 Doug recorded-cornhole animation work.
 
+Play **running and fighting** for Dan and Doug run on the side-view rig
+through `lab/human-motion/provider.ts` → `PlayMotionRig` (the Human Motion
+native animator driven from the live simulation's body). Which drawn angle
+faces the camera (profile rig or front cut-out, with a paper-flip turn) is
+chosen by `lib/arena/engine/characters/CharacterView.ts`. See the handoff
+section on both before changing them.
+
 Do **not** route that work to:
 
 - `character-doug` or `character-dan`: legacy connected-paper clip previews.
 - `cornhole-recorded`: the earlier weighted-rig comparison, not the normal
   Watch performance installation.
 - Human Motion V2/V3 scenes: experimental multi-event research, not Watch.
-- other recorded Watch sports or non-cornhole live Play: separate
-  providers/contracts that must not be migrated incidentally.
+  Play tuning belongs in `PlayMotionRig`; keep the Lab proofs' defaults.
+- other recorded Watch sports: separate providers/contracts that must not be
+  migrated incidentally (planned next in
+  [`docs/ANIMATION-ROADMAP.md`](docs/ANIMATION-ROADMAP.md)).
 
 Historical constraints, asset provenance, and completed-pass evidence remain
 in [`docs/CHARACTER-PERFORMANCE.md`](docs/CHARACTER-PERFORMANCE.md) and its
@@ -59,8 +68,17 @@ being changed; do not treat every historical review as required reading.
   explicitly requests art changes. Dan and Doug are both 5'8"; apply lane depth
   uniformly to rig, feet, sockets, shadows, and release velocity.
 - Keep feet grounded, soft court shadows, correct equipment registration, and
-  the horizontal cornhole layout. Objects remain attached to the evaluated hand
-  until the semantic release marker.
+  the horizontal cornhole layout. Grounded means supporting feet never slide or
+  sink; real sport footwork (jumps, steps, strides) is expected. Objects remain
+  attached to the evaluated hand until the semantic release marker.
+- Approved style: between NBA Jam and a Saturday-morning cartoon, leaning
+  cartoon, on real sport mechanics. Squash and stretch is stateless and applied
+  only at the root/actor scale (never bones, limb lengths or face art) and
+  returns exactly to rest. Watch effects are presentation-only; hit-stop is
+  Play-only and holds the clock without dropping input.
+- Draw each character from the angle that faces the camera (profile for
+  travel and exchanges across the screen, front for camera-facing beats).
+  Side-view rigs mirror the simulation; they never own position or results.
 - Preserve connected anatomy, opaque hand exposures, sleeve/torso material
   ownership, palm and foot registration, bounded IK, and semantic markers.
   Passing numeric checks is not proof of natural motion; inspect the rendered
@@ -102,6 +120,7 @@ intentional evidence under `docs/review/`.
 | React / player bridges | `components/arena/`, `app/` |
 | Watch / Live cores | `lib/arena/engine/core/` |
 | Current cornhole performance | `lib/arena/engine/performance/`, `lab/performance/` |
+| Play running/fighting side rig, views | `lab/human-motion/PlayMotionRig.ts`, `lib/arena/engine/characters/CharacterView.ts` |
 | Event rules | `lib/arena/engine/events/` |
 | Input/controllers | `lib/arena/engine/input/`, `lib/arena/engine/controllers/` |
 | Character systems | `lib/arena/engine/characters/` |

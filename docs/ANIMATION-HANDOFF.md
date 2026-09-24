@@ -1,9 +1,12 @@
 # Animation handoff
 
 This is the current router for Dan and Doug's **recorded Watch and interactive
-Play cornhole** performance. Replace stale details here when the installed path changes; do not
-append a pass-by-pass history. Historical implementation evidence remains in
-[`CHARACTER-PERFORMANCE.md`](CHARACTER-PERFORMANCE.md).
+Play cornhole** performance, and for their **side-view Play running and
+fighting** and the **view (camera angle) system**. Replace stale details here
+when the installed path changes; do not append a pass-by-pass history.
+Historical implementation evidence remains in
+[`CHARACTER-PERFORMANCE.md`](CHARACTER-PERFORMANCE.md). What is still missing
+is tracked in [`ANIMATION-ROADMAP.md`](ANIMATION-ROADMAP.md).
 
 ## Project and source checkpoint
 
@@ -51,6 +54,37 @@ Interactive Play route:
    lane-depth-scaled court shadow. Existing input, contact, scoring, pause, and
    turn transitions remain unchanged.
 
+Play running and fighting (side-view motion rig):
+
+1. `LiveStage.tsx` (and `LabRuntime` for `running-live` / `fighting-live`)
+   injects `lab/human-motion/provider.ts` → `sideMotionProvider(event)`. It
+   hash-checks the original side-v3 skeletons/atlases and loads the hand sheet
+   and rear-garment sources. Only Dan and Doug get the rig; any other
+   character keeps its puppet.
+2. `lab/human-motion/PlayMotionRig.ts` runs the Human Motion
+   `NativeAnimator` + `MotionPlanner` (reference-measured gaits, world-space
+   foot locks, touchdown blends, support compression, complete far arm,
+   rear-three-quarter garment view when facing left). The **event simulation
+   stays the only authority**: each frame `CharacterPresentation` mirrors the
+   presented body (position, step-displacement velocity, height) into the
+   motor the animator reads (`CharacterRig.drive`), so gaits are fitted to the
+   real ground speed and planted feet do not slide. Simulation clip starts
+   drive actions: jump (entered at takeoff, air phase stretched to the real
+   airtime), slide (`authoring/play.ts`), stumble → hit, combat jab/heavy/
+   dodge/block/hit, finish/win → success.
+3. Play tuning lives in `PlayMotionRig` (`PLAY_GAIT`: doubled running stride,
+   arm swing back past the hip). The Human Motion Lab proofs keep their
+   defaults (`GaitTuning`), so `/human-motion/` and its tests are unchanged.
+
+View system (`lib/arena/engine/characters/CharacterView.ts`):
+`chooseView` picks the drawn angle that faces the camera: the profile rig for
+travel and exchanges across the screen, the front cut-out puppet for
+camera-facing beats (`ready` before the start, `finished` after the result).
+`CharacterPresentation` keeps both rigs and turns between them with a 0.22 s
+paper flip through edge-on (`viewWidths`), so the two drawings are never on
+screen together. Three-quarter or back drawings would be further views; they
+need new art (see the roadmap).
+
 Matching review routes:
 
 - `/performance/`: isolated use of the same controller, adapter, profiles,
@@ -63,15 +97,21 @@ Matching review routes:
 
 These are not substitutes: `character-doug` and `character-dan` are legacy
 paper previews; `cornhole-recorded` is an earlier weighted-rig comparison;
-other Watch and Play sports and `/human-motion/` have separate providers and
-contracts.
+`/human-motion/` is the research Lab whose animator Play running/fighting
+reuse (with Play tuning); Watch basketball, football and beer pong still use
+the front-view puppet and separate contracts.
 
 ## Asset, profile, and recording identity
 
-- **Shipped motion authority:** curves originate in
-  `lib/arena/engine/performance/BodyMechanics.ts`; character differences come
-  from the validated Dan/Doug profiles; and `lab/performance/compile.ts` alone
-  emits native curves, durations, loop counts and semantic marker timing.
+- **Shipped motion authority:** the throw is a per-character take
+  (`lib/arena/engine/performance/takes/{dan,doug}-underhand.ts`, schema
+  `arena-performance-take-v1`, documented in `takes/README.md` including the
+  mocap mapping and optional footwork channels), validated by
+  `TakeValidation.ts` and converted by `BodyMechanics.underhandMechanics`;
+  character differences come from the takes and the validated profiles; and
+  `lab/performance/compile.ts` alone emits native curves (baked per native
+  frame, with overlap springs, rejected if any frame leaves `NativeLimits`),
+  durations, loop counts and semantic marker timing.
   `installShippedPerformanceClips` validates the character profile, compiler
   revision and `side-v3-attachment-r4` asset revision before deliberately
   replacing the skeleton's editor-reference clips. Those embedded clips are
@@ -79,8 +119,19 @@ contracts.
 - **Side-v3 asset authority:** the skeleton and atlas remain authoritative for
   bind geometry, bones, slots, IK constraints, material registration and source
   artwork. Motion installation must not rewrite those fields.
-- Runtime revision: `cornhole-distinct-recovery-v2` in
+- Runtime revision: `cornhole-cartoon-take-v1` in
   `lab/performance/compile.ts`.
+- Rig safety nets: `KneeReach.softReachDrop` lowers the pelvis before a
+  planted leg reaches the two-bone singularity (no knee pops); the adapter
+  applies stateless squash pulses at root level only and counter-scales the
+  held-object layer so the bag keeps its shape.
+- Bag flight: performance releases use `ballisticFlight`
+  (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
+  velocity, blends to a ballistic cruise with bounded gravity and lands
+  exactly on the recorded touch point and time.
+- Play clock: the charge plays the take into a held top of the backswing;
+  the release input drives it so the release marker lands on the live
+  release step (no speed snap).
 - Character profiles:
   `lib/arena/engine/performance/profiles/dan.json` and `doug.json`, validated by
   `PerformanceProfiles.ts`.
@@ -233,43 +284,23 @@ isolated from the regular game.
 
 ## Known defects and next task
 
-The current candidate replaces the shared scaled throw with two explicitly
-hand-authored Arena takes. Dan now settles gradually into the rear leg and lets
-pelvis, spine and shoulder carry his longer finish; Doug stays taller, commits
-later and catches a shorter finish with a more active counter-arm. Neither take
-is represented as measured footage. The authored palm path now remains inside
-the native hand limit instead of flattening at a compiler-only clamp.
+State after the smoothness/cartoon/profile passes (branch
+`claude/character-animation-smoothness-7yopto`):
 
-Recovery is selected from the actual predecessor: watch, positive response,
-negative response, or the settled end of Dan's nod / Doug's two-contact chest
-gesture. Thus the first recovery pose equals the preceding terminal pose rather
-than asking a generic crossfade to conceal a reset. Outcome selection is
-unchanged: misses do not celebrate, ordinary board scores retain the existing
-policy, Dan remains quiet, and Doug retains two contacts only when celebration
-was requested. Assets, stature, release marker, immutable recording, scoring,
-contact timing and release-hand artwork are unchanged.
+- Watch cornhole and all of Play (cornhole, running, fighting) show Dan and
+  Doug on side-view rigs. Watch basketball, football and beer pong still use
+  the front-view puppet: a throw across the court drawn on a figure facing the
+  camera cannot look fully real even with the foreshortened elbows and knees.
+  Moving them to the side rig needs a seek-safe (stateless or replayable)
+  side animator and rig-hand releases like cornhole's; see the roadmap.
+- Fighting uses the proof's near-arm jab and heavy; Play's cross, uppercut,
+  finisher, special and grapple reuse them, and defeat is a dejected gesture,
+  not a knockdown. The far-arm guard stays low (hidden-arm art limit).
+- Numeric checks are not visual proof. Review with
+  `node scripts/capture-motion-quality.mjs --label <new> [--cases ...]`
+  (frame-exact 60 Hz WebM, frame strips and socket metrics under
+  `work/qa/motion-quality/`); it covers Watch sports, cornhole, running and
+  fighting, including race/fight starts and the finish view turn.
 
-Authored-clock defect locations addressed in this candidate:
-
-- Dan load wrist plateau: about **1.51 s** after action start; Doug: about
-  **1.39 s**. Cause: authored palm/arm combination plus a compiler-only 90°
-  clamp. The curves were reshaped and compilation now rejects any native-limit
-  violation instead of silently clamping it.
-- Windup-through-finish sameness: approximately **1.07–2.20 s** for Dan and
-  **0.94–1.75 s** for Doug. Cause: one shared authored take with scalar profile
-  differences. The two timing and channel sequences are now independently
-  authored.
-- Response-to-recovery reset: outcome-dependent, immediately after watch,
-  positive/negative response, nod, or chest taps. Cause: every route entered a
-  fixed rest pose. Each route now has a matching recovery entry.
-
-Current environment limitation remains unresolved on **September 21, 2026**:
-Chromium is absent and `pnpm exec playwright install chromium` receives HTTP
-403 from the Playwright CDN. `review:cornhole-fast` therefore failed at browser
-launch before any current candidate frame or video was rendered. There is no
-honest normal-speed before/after or actual-match visual approval from this
-machine. On a Chromium-capable machine, run the fast and acceptance commands,
-then inspect complete Dan and Doug turns at 1×, especially planted soles, wrist
-silhouette through load/release, both recovery paths, inactive attention, bag
-impact readability, and Doug's final two contacts. The known impact-readability
-question remains unresolved because this pass did not change presentation.
+Chromium is available in this environment at `/opt/pw-browsers` (set
+`ARENA_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium-1194/chrome-linux/chrome`).

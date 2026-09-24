@@ -25,6 +25,11 @@ export interface ProjectileFrame extends XY {
     velocity: XY;
     initialVelocity: XY;
     acceleration: XY;
+    /** Ballistic model only: post-blend constant velocity, the gravity the
+     * hand's velocity alone would need, and the hand→cruise blend window. */
+    cruiseVelocity?: XY;
+    impliedGravity?: number;
+    blendSeconds?: number;
     airTime: number;
     phase: string;
   };

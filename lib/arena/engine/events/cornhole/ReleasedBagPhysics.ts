@@ -9,14 +9,77 @@ import {
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
 import { surfaceTravelSeconds } from './CornholePresentationTiming';
+import {
+  squashOffset,
+  squashScale,
+  velocityStretch,
+} from '../../motion/SquashStretch';
 export {
   firstImpactTime,
   surfaceTravelSeconds,
 } from './CornholePresentationTiming';
 
+/** Court projection: vertical render pixels per metre (see equipment-layout). */
+const COURT_PX_PER_METRE_Y = 78;
+const quintic = (u: number) => u * u * u * (10 - 15 * u + 6 * u * u);
+
+/**
+ * Ballistic flight that leaves the hand at the hand's own evaluated velocity.
+ *
+ * The velocity blends from the release velocity to a cruise velocity over a
+ * short window τ (quintic, never reversing), after which the bag travels with
+ * constant horizontal speed under a bounded constant gravity. Cruise velocity
+ * and gravity are solved so the bag reaches the immutable touch point exactly
+ * at `air`: position and velocity are continuous at release and the recorded
+ * contact, target, score and timing are unchanged. The previous model solved a
+ * free horizontal acceleration, so a slow hand produced a bag that visibly
+ * sped up after leaving it.
+ */
+export function ballisticFlight(
+  release: { x: number; y: number; scale?: number },
+  velocity: { x: number; y: number },
+  touch: { x: number; y: number },
+  air: number,
+) {
+  const tau = Math.min(0.22, 0.35 * air),
+    dx = touch.x - release.x,
+    dy = touch.y - release.y,
+    reference = 9.8 * COURT_PX_PER_METRE_Y * (release.scale ?? 1),
+    implied = (2 * (dy - velocity.y * air)) / (air * air),
+    gravity = Math.max(0.7 * reference, Math.min(1.5 * reference, implied)),
+    span = air - tau / 2,
+    cruise = {
+      x: (dx - (velocity.x * tau) / 2) / span,
+      y: (dy - 0.5 * gravity * air * air - (velocity.y * tau) / 2) / span,
+    };
+  return {
+    tau,
+    gravity,
+    implied,
+    cruise,
+    at(t: number) {
+      const u = Math.max(0, Math.min(1, t / tau)),
+        // w: remaining share of the release-velocity difference; W = ∫w dt.
+        w = 1 - quintic(u),
+        W = tau * (u - 2.5 * u ** 4 + 3 * u ** 5 - u ** 6);
+      return {
+        x: release.x + cruise.x * t + (velocity.x - cruise.x) * W,
+        y:
+          release.y +
+          cruise.y * t +
+          0.5 * gravity * t * t +
+          (velocity.y - cruise.y) * W,
+        vx: cruise.x + (velocity.x - cruise.x) * w,
+        vy: cruise.y + gravity * t + (velocity.y - cruise.y) * w,
+      };
+    },
+  };
+}
+
 /** Integrate from the evaluated release velocity. Solve acceleration against
  * the immutable board contact. Horizontal acceleration accommodates the
- * compressed court projection: visual physics, never a new scoring rule. */
+ * compressed court projection: visual physics, never a new scoring rule.
+ * Performance releases (which carry `flatten`) use `ballisticFlight`. */
 export function releasedBag(
   a: Attempt,
   shot: ShotStyle,
@@ -39,10 +102,19 @@ export function releasedBag(
   const air = Math.max(0.3, a.duration - slide),
     elapsed = Math.max(0, time - a.releaseAt),
     t = Math.min(air, elapsed);
-  const ax = (2 * (touch.x - release.x - velocity.x * air)) / (air * air),
-    gravity = (2 * (touch.y - release.y - velocity.y * air)) / (air * air);
-  let x = release.x + velocity.x * t + 0.5 * ax * t * t,
-    y = release.y + velocity.y * t + 0.5 * gravity * t * t;
+  const performance = release.flatten !== undefined;
+  const ballistic = performance
+    ? ballisticFlight(release, velocity, touch, air)
+    : null;
+  const ax = ballistic
+      ? 0
+      : (2 * (touch.x - release.x - velocity.x * air)) / (air * air),
+    gravity = ballistic
+      ? ballistic.gravity
+      : (2 * (touch.y - release.y - velocity.y * air)) / (air * air);
+  const flight = ballistic?.at(t);
+  let x = flight ? flight.x : release.x + velocity.x * t + 0.5 * ax * t * t,
+    y = flight ? flight.y : release.y + velocity.y * t + 0.5 * gravity * t * t;
   const rolls = ['roll', 'cut', 'flop', 'trick'].includes(shot),
     omega = rolls ? 2.5 : direct ? 0.16 : 0.08;
   let angle = (release.angle ?? 0) + omega * t,
@@ -50,8 +122,8 @@ export function releasedBag(
       (release.flatten ?? BAG_FLIGHT_FLATTEN) +
       (rolls ? 0.09 * Math.sin(t * 5) : 0),
     alpha = 1;
-  let vx = velocity.x + ax * t,
-    vy = velocity.y + gravity * t;
+  let vx = flight ? flight.vx : velocity.x + ax * t,
+    vy = flight ? flight.vy : velocity.y + gravity * t;
   // Only the new performance supplies an edge-on release exposure. Ease that
   // same object toward the board plane before contact; preserve historical paths.
   if (release.flatten !== undefined) {
@@ -97,13 +169,42 @@ export function releasedBag(
   const startScale = release.scale ?? 1;
   const depth =
     startScale + (boardDepthScale(a.actor) - startScale) * clamp01(t / air);
+  // Cartoon deformation (performance releases only): the bag stretches along
+  // its velocity in flight and squashes flat on touchdown, then settles.
+  let stretch = 1;
+  if (ballistic) {
+    if (elapsed < air) {
+      const speed = Math.hypot(vx, vy),
+        along = velocityStretch(speed, 1100, 0.2),
+        d = Math.atan2(vy, vx) - angle,
+        c = Math.cos(d) ** 2,
+        // Grow in after release (the held bag is unstretched: no pop at the
+        // hand) and relax before touchdown.
+        ease =
+          smooth(clamp01(t / 0.1)) *
+          (1 - smooth(clamp01((t / air - 0.8) / 0.2)));
+      const sx = along.across + (along.along - along.across) * c,
+        sy = along.across + (along.along - along.across) * (1 - c);
+      stretch = 1 + (sx - 1) * ease;
+      flatten *= 1 + (sy / sx - 1) * ease;
+    }
+    const impact = squashOffset(
+      [{ at: air, amount: -0.28, settle: 0.34, frequency: 4.5 }],
+      elapsed,
+    );
+    if (impact) {
+      const q = squashScale(impact);
+      stretch *= q.x;
+      flatten *= q.y / q.x;
+    }
+  }
   return {
     x,
     y,
     angle,
     flatten,
     alpha,
-    scale: depth * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
+    scale: depth * stretch * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
     ...(a.contact === 'hole' && elapsed >= a.duration
       ? {
           occlusion: {
@@ -121,10 +222,19 @@ export function releasedBag(
         (target.y - (610 - a.actor * 133)) * clamp01(t / air),
     },
     kinematics: {
-      model: 'release-constant-acceleration',
+      model: ballistic
+        ? 'release-ballistic-blend-v1'
+        : 'release-constant-acceleration',
       velocity: { x: vx, y: vy },
       initialVelocity: velocity,
       acceleration: { x: ax, y: gravity },
+      ...(ballistic
+        ? {
+            cruiseVelocity: ballistic.cruise,
+            impliedGravity: ballistic.implied,
+            blendSeconds: ballistic.tau,
+          }
+        : {}),
       airTime: air,
       phase:
         elapsed < air
