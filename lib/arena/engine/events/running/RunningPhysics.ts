@@ -9,6 +9,8 @@ export interface RunnerMotion {
   lane: number;
   laneClock: number;
   hits: Set<string>;
+  /** Where this runner started; progress is measured from here. */
+  startX?: number;
 }
 export interface Obstacle {
   id: string;
@@ -20,6 +22,14 @@ export interface Obstacle {
 }
 export const RUNNING_LENGTH = 2400;
 export const RUN_GRAVITY = 590;
+/** Lane depth: runners nearer the camera (larger y) are drawn larger. */
+export function laneScale(y: number) {
+  return 0.65 + ((y - 520) / 62) * 0.035;
+}
+/** How long a stumble lasts: the card's running recovery rating shortens it. */
+export function stumbleTime(c: ArenaCharacter) {
+  return 0.9 - c.stats.event('running', 'recovery', 0.5) * 0.4;
+}
 /** Advances one runner. Returns true on the step the runner touches down. */
 export function runPhysics(
   c: ArenaCharacter,
@@ -41,18 +51,21 @@ export function runPhysics(
     }
     b.y += (520 + m.lane * 62 - b.y) * Math.min(1, dt * 12);
   } else b.y = clamp(b.y + c.moveIntent.y * 160 * dt, 515, 650);
-  const sprint = m.sprint > 0.2 && c.stamina > 5,
+  // Depth follows the runner's position on the track, lane changes included.
+  b.scale = laneScale(b.y);
+  // Braking stops a sprint, and a sprint stops while a jump is still
+  // affordable (a jump costs 8).
+  const sprint = m.sprint > 0.2 && c.stamina > 8 && !m.brake,
     boost = c.abilities.enabled('burstSprint', time),
     max =
       140 +
       c.stats.event('running', 'topSpeed', 0.7) * 40 +
       (sprint ? 65 * m.sprint : 0) +
       (boost ? 75 : 0);
-  const target = m.stumble
-    ? 45
-    : m.brake
-      ? 45
-      : max * (mode === 'free' ? Math.max(0, c.moveIntent.x) : 1);
+  // In free steering nothing moves the runner forward without a push, not
+  // even a brake or a stumble.
+  const push = mode === 'free' ? Math.max(0, c.moveIntent.x) : 1,
+    target = m.stumble || m.brake ? 45 * push : max * push;
   b.vx +=
     (target - b.vx) *
     Math.min(1, dt * (2 + c.stats.event('running', 'acceleration', 0.6) * 4));
@@ -72,8 +85,9 @@ export function runPhysics(
       c.beat('land', time);
     }
   }
+  const start = m.startX ?? 170;
   c.score = Math.round(
-    Math.min(100, ((b.x - 170) / (RUNNING_LENGTH - 170)) * 100),
+    clamp(((b.x - start) / (RUNNING_LENGTH - start)) * 100, 0, 100),
   );
   c.substate = m.stumble
     ? 'stumbling'
@@ -112,6 +126,6 @@ export function obstacleCollision(
     !m.hits.has(o.id) &&
     Math.abs(c.body.x - o.x) < o.width / 2 + 15 &&
     Math.abs(c.body.y - o.y) < 30 &&
-    (o.kind === 'bar' ? m.slide <= 0 : c.body.z < o.height + 10)
+    (o.kind === 'bar' ? m.slide <= 0 : c.body.z < o.height)
   );
 }

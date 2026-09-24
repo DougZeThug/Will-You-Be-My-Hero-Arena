@@ -61,7 +61,9 @@ export class RunningComponent implements CharacterComponent {
     if (action === 'slide' || action === 'dodge') {
       m.slide = 0.6;
       c.startAction('running.slide');
-      if (action === 'dodge') m.lane = (m.lane + 1) % 3;
+      // A dodge moves to the next lane toward the camera, or back from the
+      // front lane; it never wraps across the track.
+      if (action === 'dodge') m.lane = m.lane < 2 ? m.lane + 1 : m.lane - 1;
       return true;
     }
     return false;

@@ -204,9 +204,7 @@ export default function LiveStage({
             {snapshot.winners.length === 1
               ? snapshot.players.find((p) => p.id === snapshot.winners[0])
                   ?.name + ' wins'
-              : snapshot.winners.length > 1
-                ? 'Draw'
-                : 'Session complete'}
+              : 'Draw'}
           </h2>
           <button className="primary-cta" onClick={onReplay}>
             Play again

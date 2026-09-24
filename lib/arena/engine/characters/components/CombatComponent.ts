@@ -32,6 +32,14 @@ export const ATTACKS: Record<
     cost: 22,
     knockback: 290,
   },
+  // Down, forward, special: the power strike with a run-up, 20% stronger.
+  chargedSpecial: {
+    clip: 'combat.special',
+    damage: 30,
+    range: 155,
+    cost: 22,
+    knockback: 320,
+  },
   grapple: {
     clip: 'combat.grapple',
     damage: 17,
@@ -106,8 +114,15 @@ export class CombatComponent implements CharacterComponent {
       return true;
     }
     const def = ATTACKS[action];
+    // A grapple is set up by holding the counter-stance key. Pressing it for
+    // the grapple is not a counter stance, so a stance still running is
+    // cancelled and refunded.
+    if (action === 'grapple' && time < this.counterUntil) {
+      c.stamina += 12;
+      this.counterUntil = 0;
+    }
     if (!def || c.stamina < def.cost) return false;
-    if (action === 'special') {
+    if (action === 'special' || action === 'chargedSpecial') {
       const ability = c.abilities.activate('powerStrike', time, c.stamina);
       if (!ability) return false;
     }

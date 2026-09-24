@@ -25,7 +25,8 @@ export class MotionPlanner {
   constructor(
     clips: MotionClip[],
     readonly profile: MotionProfile,
-    readonly displayScale = 1,
+    /** Display scale; Play updates it when a runner changes lane depth. */
+    public displayScale = 1,
   ) {
     this.clips = new Map(clips.map((c) => [c.id, c]));
     for (const c of clips)

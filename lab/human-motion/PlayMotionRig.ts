@@ -158,12 +158,17 @@ export class PlayMotionRig implements CharacterRig {
       this.revision = frame.clipRevision;
       this.start(frame.clip, frame.substate, frame.clipDuration);
     }
-    // A held guard ends when the simulation lets go of the block.
+    // A held guard ends when the simulation lets go of the block, not when
+    // its short start-up clip ends.
     if (
       planner.graph.get('action')?.clip.id === 'block' &&
-      frame.clip !== 'combat.block'
+      frame.substate !== 'blocking'
     )
       planner.graph.remove('action');
+    // Lane depth: a runner changing lane is drawn at the new lane's scale.
+    // The IK solves against the animator's scale, so it changes there, not
+    // only at the root, and planted feet stay planted.
+    if (Math.abs(frame.scale - this.scale) > 1e-4) this.rescale(frame.scale);
     // Paused or held (hit-stop): keep the pose.
     if (!(frame.dt > 0)) return this.applyWidth();
     const dt = Math.min(0.1, frame.dt),
@@ -235,6 +240,15 @@ export class PlayMotionRig implements CharacterRig {
     // Sort with the other lane objects by ground line, as the puppet does.
     animator.actor.setDepth(frame.y + 20);
     this.applyWidth();
+  }
+  private rescale(scale: number) {
+    this.scale = scale;
+    this.actorScale =
+      (this.definition.scale * PLAY_RIG_HEIGHT * scale) / 371;
+    const display = this.actorScale / this.definition.scale;
+    this.animator!.definition.scale = this.actorScale;
+    this.motor!.verticalScale = display;
+    this.planner!.displayScale = display;
   }
   setViewWidth(width: number) {
     this.width = width;

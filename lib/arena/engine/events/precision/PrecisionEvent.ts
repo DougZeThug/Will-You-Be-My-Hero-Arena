@@ -10,6 +10,14 @@ import { clamp, type InputFrame } from '../../input/InputActions';
 import { placement } from '../../../equipment-layout';
 import { timingGrade } from '../../input/TimingWindow';
 import { PrecisionActionMap } from './PrecisionActionMap';
+/** The four shots a player can select, with the names the controls use. */
+const SHOTS: Record<string, string> = Object.fromEntries(
+  PrecisionActionMap.actions
+    .filter((a) => a.command.startsWith('select.'))
+    .map((a) => [a.command.slice(7), a.label]),
+);
+/** Where each thrower stands: inside the throwing line, one depth row each. */
+const START_X = [215, 345, 280, 190];
 import {
   precisionTarget,
   flightPosition,
@@ -42,7 +50,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
   }
   createParticipants() {
     this.ctx.characters.forEach((c, i) => {
-      c.body.x = 215 + i * 130;
+      c.body.x = START_X[i] ?? 215;
       c.body.y = 650 - i * 72;
       c.body.scale = i === 0 ? 0.84 : 0.74;
       c.substate = 'waiting';
@@ -72,6 +80,8 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private action(c: ArenaCharacter, a: string, _p: ActionPayload) {
     if (a.startsWith('select.')) {
       this.shot = a.slice(7);
+      this.message =
+        this.state === 'charging' ? this.chargeMessage() : this.aimMessage();
       return true;
     }
     if (a === 'precision') {
@@ -89,7 +99,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
       this.state = c.substate = 'charging';
       this.chargeAt = this.ctx.time();
       c.startAction(c.personality.choose('ritual'));
-      this.message = 'Release in the green window';
+      this.message = this.chargeMessage();
       return true;
     }
     if (a === 'release') {
@@ -115,6 +125,15 @@ export class PrecisionEvent implements PlayableArenaEvent {
       return true;
     }
     return false;
+  }
+  private shotName() {
+    return SHOTS[this.shot] ?? this.shot;
+  }
+  private aimMessage() {
+    return `${this.active().profile.name}: aim, hold charge, then release · Shot: ${this.shotName()}`;
+  }
+  private chargeMessage() {
+    return `Release in the green window · Shot: ${this.shotName()}`;
   }
   private ideal() {
     return 0.7 + (215 - this.active().body.x) / 1400;
@@ -242,11 +261,13 @@ export class PrecisionEvent implements PlayableArenaEvent {
       c.substate = c === this.active() ? 'aiming' : 'waiting';
       c.animation.idle = c.personality.choose('idle');
     });
+    // Start on the character's favourite of the shots the player can select,
+    // so the default can always be chosen again.
     this.shot =
-      Object.entries(this.active().profile.throwingStyle.tendencies).sort(
-        (a, b) => (b[1] ?? 0) - (a[1] ?? 0),
-      )[0]?.[0] ?? 'flat';
-    this.message = `${this.active().profile.name}: aim, hold charge, then release`;
+      Object.entries(this.active().profile.throwingStyle.tendencies)
+        .filter(([shot]) => shot in SHOTS)
+        .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))[0]?.[0] ?? 'flat';
+    this.message = this.aimMessage();
   }
   ai(c: ArenaCharacter, time: number): InputFrame {
     const values: InputFrame['values'] = {
@@ -257,8 +278,12 @@ export class PrecisionEvent implements PlayableArenaEvent {
       if (this.state === 'aiming' && time - this.phaseAt > 0.4)
         values.charge = 1;
       if (this.state === 'charging') {
+        // The release nudge follows this thrower's own bags, so every AI
+        // thrower gets the same spread of early and late releases.
+        const own = Math.floor(this.throws / this.ctx.characters.length);
         values.charge =
-          this.power() < this.ideal() + Math.sin(this.throws * 4.7) * 0.03
+          this.power() <
+          this.ideal() + Math.sin((own + 1) * 4.7 + this.turn * 1.9) * 0.03
             ? 1
             : 0;
       }
@@ -269,6 +294,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
     if (this.state === 'charging') {
       this.state = this.active().substate = 'aiming';
       this.active().cancelAction();
+      this.message = this.aimMessage();
     }
   }
   resolveOutcome() {
