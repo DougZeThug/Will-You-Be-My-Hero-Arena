@@ -261,7 +261,7 @@ Status is one of `not started`, `drafted`, or `verified`.
 | glossary.md | drafted |
 | bug-triage.md | not started |
 | verification/ (5 checklists) | not started |
-| play/cornhole.md | not started |
+| play/cornhole.md | drafted |
 | foundations/input-model.md | not started |
 | foundations/contests-and-recordings.md | not started |
 | foundations/app-shell.md | not started |
