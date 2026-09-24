@@ -91,6 +91,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Status:** confirmed by the scripted pass on 2026-09-24:
   - after **Skip to result** the chip read 6, and during the replay it read 3
   - the logo mid-replay showed "Saved at 0 seconds. Your result is waiting."
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): POINTS-26, STAND-36, HIST-19, HIST-22; [foundations.md](verification/foundations.md): CONTEST-48, CONTEST-49; [watch.md](verification/watch.md): RESULT-11, RESULT-23, RESULT-26, RESUME-14, RESUME-29. Rows marked confirmed by the scripted pass: POINTS-26, HIST-19, HIST-22, CONTEST-48, RESULT-11, RESULT-23, RESUME-29.
 
 ### B-02: The result headline names the winning card, so the default matchup names the losing user
 
@@ -113,6 +114,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Status:** confirmed by the scripted pass on 2026-09-24:
   - counted entry: **Dan WINS.** with Doug +3 PTS and Dan +0 PTS
   - exhibition: **Doug WINS.** when user Dan's side won
+- **Checklist items:** [foundations.md](verification/foundations.md): CONTEST-18; [watch.md](verification/watch.md): RESULT-06, RESULT-07. Rows marked confirmed by the scripted pass: RESULT-06.
 
 ### B-03: A corrupt save leaves the page with no way out
 
@@ -144,6 +146,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [the app shell](foundations/app-shell.md#open-questions-and-verification)
   - [the stage](foundations/stage.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24. The error text and the disabled **Set up showdown** were seen, and **Restore arena** cleared the message and switched on **Lower graphics quality**. The reset failure was not tried.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): RESET-19; [foundations.md](verification/foundations.md): SHELL-29, SHELL-44, SAVE-28, SAVE-29. Rows marked confirmed by the scripted pass: SHELL-29, SAVE-28.
 
 ### B-04: A blocked character library disables Watch entirely
 
@@ -164,6 +167,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [reset demo](club/reset-demo.md#open-questions-and-verification)
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24, with `indexedDB.open` made to fail: the error text and the disabled **Set up showdown** were seen.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-40, RESET-25, COLL-27, INSTALL-28, MAP-33; [foundations.md](verification/foundations.md): SAVE-24, SAVE-30. Rows marked confirmed by the scripted pass: SAVE-24.
 
 ## Medium
 
@@ -189,6 +193,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [points and entries](club/points-and-entries.md#open-questions-and-verification)
   - [history and member record](club/history-and-member-record.md#open-questions-and-verification)
   - [contests and recordings](foundations/contests-and-recordings.md#cancel-and-interrupt)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): POINTS-36, HIST-20; [foundations.md](verification/foundations.md): CONTEST-33; [watch.md](verification/watch.md): PLAYBACK-09, RESUME-08, RESUME-10.
 
 ### B-06: Clicking the Play stage does not give it keyboard focus
 
@@ -214,6 +219,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [touch controls](play/touch-controls.md#open-questions-and-verification)
   - [accessibility](cross-cutting/accessibility.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24. After clicking the canvas, `document.activeElement` stayed on the page body and Space did nothing. After Tab, Space charged.
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-18. Rows marked confirmed by the scripted pass: INPUT-18.
 
 ### B-07: Toggling Reduced motion restarts a running Play match
 
@@ -237,6 +243,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [touch controls](play/touch-controls.md#open-questions-and-verification)
   - [the stage](foundations/stage.md#reduced-motion-and-lower-graphics-quality)
 - **Status:** confirmed by the scripted pass on 2026-09-24. The caption's seconds went 6, 6, 0, 0, … after the toggle.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-07; [foundations.md](verification/foundations.md): INPUT-40, SHELL-25, STAGE-20. Rows marked confirmed by the scripted pass: SETTINGS-07, INPUT-40, SHELL-25, STAGE-20.
 
 ### B-08: Play's sound button can say Mute while sound is off
 
@@ -258,6 +265,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [the match shell](play/match-shell.md#open-questions-and-verification)
   - [the cornhole throw](play/cornhole.md#open-questions-and-verification)
 - **Status:** partly confirmed by the scripted pass on 2026-09-24. The button still read **Mute** after the restart. That the sound was actually off is read from the code, not heard.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-32. Rows marked confirmed by the scripted pass: SETTINGS-32.
 
 ### B-09: A rejected scoring policy shows no message where the player is
 
@@ -275,6 +283,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
   - [the app shell](foundations/app-shell.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24. On Standings the dialog stayed open with no message. On Watch the box read "Error: Use whole numbers from 0 to 100."
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): STAND-31, SETTINGS-16; [foundations.md](verification/foundations.md): SHELL-36. Rows marked confirmed by the scripted pass: STAND-31, SETTINGS-16, SHELL-36.
 
 ### B-10: Preview and graphics errors outside Watch are invisible
 
@@ -292,6 +301,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [the collection](collection/the-collection.md#open-questions-and-verification)
   - [the stage](foundations/stage.md#graphics-context-loss-and-the-error-box)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): COLL-34; [foundations.md](verification/foundations.md): STAGE-27.
 
 ### B-11: Export local save leaves out any unfinished or waiting recording
 
@@ -313,6 +323,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [arena settings](club/arena-settings.md#open-questions-and-verification)
   - [points and entries](club/points-and-entries.md#open-questions-and-verification)
 - **Status:** confirmed by the scripted pass on 2026-09-24: the exported `clubhouse-save.json` had 4 awards while the save had 6.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): POINTS-41, SETTINGS-39, RESET-18; [foundations.md](verification/foundations.md): SAVE-17; [watch.md](verification/watch.md): RESUME-26. Rows marked confirmed by the scripted pass: POINTS-41, SETTINGS-39, SAVE-17, RESUME-26.
 
 ### B-12: Every re-read of the save rebuilds the Watch and preview stages, including other tabs' writes
 
@@ -339,6 +350,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [the stage](foundations/stage.md#loading-and-rebuilding)
   - [this browser's save](foundations/saved-data.md#while-committed)
 - **Status:** partly confirmed by the scripted pass on 2026-09-24. Tab A's lock made tab B's lobby stage reload once. Playback was too slow in that environment to show repeated reloads.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-36, SETTINGS-37, COLL-29, COLL-38; [foundations.md](verification/foundations.md): CONTEST-42, SAVE-11, STAGE-06. Rows marked confirmed by the scripted pass: SETTINGS-37, SAVE-11, STAGE-06.
 
 ### B-13: Restore arena toggles Lower graphics quality when no recording is loaded
 
@@ -354,6 +366,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [the stage](foundations/stage.md#open-questions-and-verification)
   - [the lobby](watch/lobby.md#cancel-and-interrupt)
 - **Status:** confirmed by the scripted pass on 2026-09-24: **Lower graphics quality** went from unticked to ticked.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-35; [foundations.md](verification/foundations.md): STAGE-28; [watch.md](verification/watch.md): LOBBY-35. Rows marked confirmed by the scripted pass: SETTINGS-35, STAGE-28, LOBBY-35.
 
 ### B-14: Play has no handling for a lost graphics context
 
@@ -375,6 +388,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
   - [the stage](foundations/stage.md#edge-cases)
   - [playback controls](watch/playback-controls.md#open-questions-and-verification)
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-56, STAGE-26, STAGE-37; [watch.md](verification/watch.md): PLAYBACK-41.
 
 ### B-15: A celebration or taunt in Play is never drawn but still locks the character
 
@@ -394,6 +408,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
   - [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/clubhouse-dash.md](verification/play.md#playclubhouse-dashmd), [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) sections of the Play checklist.
 
 ### B-16: The Brawl guard pose drops after 0.35 s while block is still held
 
@@ -409,6 +424,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `medium`. What is drawn contradicts the rules.
 - **Decision needed:** `fix`.
 - **Raised by:** [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) section of the Play checklist.
 
 ### B-17: Dash lane depth is set once and never updated after a lane change
 
@@ -423,6 +439,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `medium`. It breaks a stated art invariant, and is visible in every race with lane changes.
 - **Decision needed:** `fix`.
 - **Raised by:** [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/clubhouse-dash.md](verification/play.md#playclubhouse-dashmd) section of the Play checklist.
 
 ### B-18: Saved Play bindings follow the slot, not the device, and slots 3 and 4 are never read
 
@@ -446,6 +463,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [Play setup](play/play-setup.md#open-questions-and-verification)
   - [this browser's save](foundations/saved-data.md#interactions-with-other-systems)
   - [the input model](foundations/input-model.md#edge-cases)
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-44, INPUT-46, INPUT-67, SAVE-25.
 
 ### B-19: On-screen toggles get out of step with the game
 
@@ -464,6 +482,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `medium`.
 - **Decision needed:** `fix`.
 - **Raised by:** [touch controls](play/touch-controls.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/touch-controls.md](verification/play.md#playtouch-controlsmd) section of the Play checklist.
 
 ### B-20: The collection's motion previews show nothing for Dan and Doug on the default court
 
@@ -485,6 +504,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [the collection](collection/the-collection.md#open-questions-and-verification)
   - [explore motion styles](collection/explore-motion-styles.md#open-questions-and-verification)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): COLL-13, COLL-14, COLL-19, MOTION-08, MOTION-20; [foundations.md](verification/foundations.md): STAGE-22.
 
 ### B-21: A stale policy draft can silently undo another tab's scoring policy
 
@@ -503,6 +523,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `medium`.
 - **Decision needed:** `fix`. Reset the draft from the saved policy each time the dialog opens.
 - **Raised by:** [arena settings](club/arena-settings.md#open-questions-and-verification)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): SETTINGS-26.
 
 ### B-22: Agent tools: registration target, uncaught failure, and silently discarding Play
 
@@ -518,6 +539,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Decision needed:** `fix`. Register on `navigator.modelContext` too, wrap the call, and refuse or confirm while Play is running.
 - **Raised by:** [agent tools](cross-cutting/agent-tools.md#open-questions-and-verification)
 - **Status:** the silent discard is confirmed by the scripted pass on 2026-09-24, with an emulated `document.modelContext`. The match was removed and Watch showed the new event. The registration target was not tried against a browser that ships WebMCP.
+- **Checklist items:** [foundations.md](verification/foundations.md): SHELL-39. Rows marked confirmed by the scripted pass: SHELL-39.
 
 ### B-23: History may break for a recording whose installed character is gone
 
@@ -534,6 +556,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [history and member record](club/history-and-member-record.md#open-questions-and-verification)
   - [this browser's save](foundations/saved-data.md#open-questions-and-verification)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): HIST-38; [foundations.md](verification/foundations.md): SAVE-31.
 
 ## Low
 
@@ -550,6 +573,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [accessibility](cross-cutting/accessibility.md#open-questions-and-verification)
   - [the input model](foundations/input-model.md#edge-cases)
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-68.
 
 ### B-25: The cornhole shot in use is never shown, and Dan's default style cannot be reselected
 
@@ -564,6 +588,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `low`.
 - **Decision needed:** `product call`.
 - **Raised by:** [the cornhole throw](play/cornhole.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/cornhole.md](verification/play.md#playcornholemd) section of the Play checklist.
 
 ### B-26: Cornhole rule slips: stacking Roll offset, players 3 and 4 jumping, AI accuracy bias
 
@@ -582,6 +607,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [the cornhole throw](play/cornhole.md#open-questions-and-verification)
   - [AI players](cross-cutting/ai-players.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/cornhole.md](verification/play.md#playcornholemd) section of the Play checklist.
 
 ### B-27: Cornhole caption stays on Release in the green window after a pause cancels the charge
 
@@ -595,6 +621,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Decision needed:** `fix`.
 - **Raised by:** [the cornhole throw](play/cornhole.md#cancel-and-interrupt)
 - **Status:** confirmed by the scripted pass on 2026-09-24.
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-32.
 
 ### B-28: Brawl rule and wording gaps
 
@@ -619,6 +646,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `low`.
 - **Decision needed:** `product call` for the counter stance, the combo and the grapple cost; `fix` for the wording and the defence rating.
 - **Raised by:** [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) section of the Play checklist.
 
 ### B-29: Dash physics slips
 
@@ -642,6 +670,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `low`.
 - **Decision needed:** `fix` for the physics; `product call` for the dodge direction and dead heats.
 - **Raised by:** [Clubhouse Dash](play/clubhouse-dash.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/clubhouse-dash.md](verification/play.md#playclubhouse-dashmd) section of the Play checklist.
 
 ### B-30: A finished Play match keeps counting and can show PAUSED
 
@@ -658,6 +687,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [the match shell](play/match-shell.md#open-questions-and-verification)
   - [Backyard Brawl](play/backyard-brawl.md#open-questions-and-verification)
+- **Checklist items:** the P1 rows for this behaviour in the [play/match-shell.md](verification/play.md#playmatch-shellmd), [play/backyard-brawl.md](verification/play.md#playbackyard-brawlmd) sections of the Play checklist.
 
 ### B-31: Watch attempt counts reveal extra pairs from the first second
 
@@ -672,6 +702,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `low`.
 - **Decision needed:** `fix`.
 - **Raised by:** [the four sports](watch/the-four-sports.md#open-questions-and-verification)
+- **Checklist items:** [watch.md](verification/watch.md): SPORTS-36.
 
 ### B-32: Entries left ignores the counted-entries switch, and the allowance can exceed the schedule
 
@@ -689,6 +720,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Severity:** `low`.
 - **Decision needed:** `product call`.
 - **Raised by:** [points and entries](club/points-and-entries.md#open-questions-and-verification)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): POINTS-12, POINTS-44.
 
 ### B-33: Install and mapping errors are misreported
 
@@ -717,6 +749,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [Install character](collection/install-character.md#open-questions-and-verification)
   - [asset mapping](collection/asset-mapping.md#open-questions-and-verification)
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): INSTALL-25, INSTALL-29, INSTALL-34, INSTALL-37, MAP-10, MAP-11, MAP-22, MAP-26, MAP-29, MAP-30.
 
 ### B-34: Remapping has no conflict check, and Shift+Tab rebinds a key
 
@@ -736,6 +769,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
 - **Raised by:**
   - [controls and remapping](play/controls-and-remapping.md#open-questions-and-verification)
   - [accessibility](cross-cutting/accessibility.md#open-questions-and-verification)
+- **Checklist items:** [foundations.md](verification/foundations.md): INPUT-64.
 
 ### B-35: Smaller Watch timing and state slips
 
@@ -758,6 +792,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [history and member record](club/history-and-member-record.md#open-questions-and-verification)
   - [reset demo](club/reset-demo.md#open-questions-and-verification)
 - **Status:** the Escape-during-locking case was **not reproduced** by the scripted pass on 2026-09-24. Locking finished in 0.6 s, before the Escape landed, and the contest autoplayed. The case needs Escape to land while the lock is still running.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): HIST-18, RESET-20, COLL-40; [foundations.md](verification/foundations.md): CONTEST-34; [watch.md](verification/watch.md): SETUP-29, SPORTS-32.
 
 ### B-36: Small copy and rendering slips
 
@@ -801,3 +836,4 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [Play setup](play/play-setup.md#open-questions-and-verification)
   - [the collection](collection/the-collection.md#open-questions-and-verification)
 - **Status:** "ranked" in History and the member record, and "Saved at 1 seconds.", were seen in the scripted pass on 2026-09-24.
+- **Checklist items:** [club-and-collection.md](verification/club-and-collection.md): STAND-19, HIST-11, HIST-27, SETTINGS-16; [watch.md](verification/watch.md): PLAYBACK-25, RESUME-30, SPORTS-04, SPORTS-23, SPORTS-33. Rows marked confirmed by the scripted pass: HIST-11, SETTINGS-16.

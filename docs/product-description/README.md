@@ -260,7 +260,7 @@ Status is one of `not started`, `drafted`, or `verified`.
 | --- | --- |
 | glossary.md | drafted |
 | bug-triage.md | drafted |
-| verification/ (5 checklists) | not started |
+| verification/ (5 checklists) | drafted |
 | play/cornhole.md | drafted |
 | foundations/input-model.md | drafted |
 | foundations/contests-and-recordings.md | drafted |

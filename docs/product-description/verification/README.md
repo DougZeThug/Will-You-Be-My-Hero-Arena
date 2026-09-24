@@ -87,7 +87,7 @@ A script cannot judge how motion looks, whether sound is heard, or real controll
 - **Build.** The production build of commit `d95832c`, whose source is identical to `3b4ec62`; only documents had changed. It was served by `scripts/serve.mjs`.
 - **Browser.** Headless Chromium with software WebGL (SwiftShader), a fresh context for every check, 1440×1000 unless noted.
 - **Scripts.** Playwright scripts under the ignored `work/qa/product-description/`. They drove the real interface by button names and keys, and read state back from localStorage, downloaded files and on-page text.
-- **Coverage.** About 45 checks across all five checklist files. Items are marked with the outcome and "scripted pass" in their Result column.
+- **Coverage.** About 45 scripted checks. The five checklist files hold 1,302 items, 405 of them P1. Of these, 278 carry a result from this pass, with "(scripted pass 2026-09-24)" in their Result column: 230 pass, 37 confirmed suspected bugs, 9 blocked, and 2 not reproduced. Many of the passes are partial, and their notes say which part was seen. The other 1,024 items are still `—`.
 
 **What the pass could not cover.**
 - **Timing.** Software rendering ran game time and playback time several times slower than wall time, so no item about a duration, a timing window or a speed could pass here. The ones the pass attempted are marked `blocked`: the cornhole release window and the 2.2 s automatic release. Others, such as Watch durations and the Dash and Brawl timers, were not attempted and are left at `—`.
