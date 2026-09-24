@@ -89,7 +89,7 @@ Once the event is over, every action it presses is refused. It can still be the 
 | Contest kind | Play practice only. Watch contests have no AI players: both sides are simulated before playback ([contests and recordings](../foundations/contests-and-recordings.md)). | Not applicable: practice cannot become anything else. |
 | Character card | The card's stats and abilities work for the AI as for a person: scatter, speed, damage, stamina drain. In cornhole the card's default shot is the only one it throws. In the Brawl the card's personality sets how often it blocks; a more intense, showier card blocks less. | Not applicable: cards are fixed for the match. |
 | Presentation settings | No effect on what the AI decides. | Toggling **Reduced motion** restarts the match, and the AI starts over with it ([the match shell](../play/match-shell.md)). |
-| Screen size and orientation | No effect on the AI. At 720 px wide and below, the tile's "· AI" is removed, even for screen readers. | No effect. |
+| Screen size and orientation | No effect on the AI. At 720 px wide and below, the tile's whole "Stamina N · AI" line is removed, even for screen readers. | No effect. |
 | Saved state | No effect. The AI reads nothing from this browser's save. An AI slot's bindings are saved at **Start** like the others, but never used. | No effect. |
 
 ## Cancel and interrupt

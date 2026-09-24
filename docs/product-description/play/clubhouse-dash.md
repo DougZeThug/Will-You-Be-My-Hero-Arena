@@ -206,7 +206,7 @@ After an interrupt the player stays in the race unless they navigated away or re
 
 **Devices and players.** Two to four runners race at once. The event allows one, but Play setup never offers fewer than two slots. Runners pass through each other, and any number can share a lane. Two players may not share a keyboard layout or a controller; any number can use touch or AI. See [the input model](../foundations/input-model.md).
 
-**Sound.** Off by default in every match. With **Sound on**, a low thud plays on each crash and a bright tone as each runner crosses the line. Running, jumping, sliding and bursting make no sound. Watch's sound switch has no effect here ([sound](../cross-cutting/sound.md)).
+**Sound.** Off by default in every match. With **Sound on**, a low thud plays on each crash and a bright tone as each runner crosses the line. Running, jumping, sliding and bursting play no tones of their own. Whether the runners' strides tick as footsteps is an open question in [sound](../cross-cutting/sound.md#open-questions-and-verification). Watch's sound switch has no effect here ([sound](../cross-cutting/sound.md)).
 
 **Reduced motion and graphics quality.** Reduced motion removes dust, crash camera shake, and squash and stretch; the race's timing and results are unchanged. Lower graphics quality is not applied to Play ([the stage](../foundations/stage.md)).
 

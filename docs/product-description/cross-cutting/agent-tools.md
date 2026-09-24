@@ -38,7 +38,7 @@ First it checks the event: anything other than the four code names, such as `run
 | Watch lobby | The event changes and the stage rebuilds, as for a click on the event button. If that event was already selected, nothing visible changes. |
 | Standings or The collection | The page switches to the Watch lobby, whose stage rebuilds. |
 | Play setup or a live match | Play is removed at once, as for any tab switch: a running match, paused or not, and every setup choice are lost without warning ([the app shell](../foundations/app-shell.md)). |
-| A dialog open over any of these | The dialog stays open over the new view. An open setup dialog updates its eyebrow, estimate and counted entry for the new sport ([the setup dialog](../watch/setup-dialog.md)). An open **House rules** switches to the new sport's rules. |
+| A dialog open over any of these | The setup dialog and the shared dialogs (House rules, Arena settings, History and the others) stay open over the new view. **Install character** belongs to The collection's view and disappears with it, even while busy. An open setup dialog updates its eyebrow, estimate and counted entry for the new sport ([the setup dialog](../watch/setup-dialog.md)). An open **House rules** switches to the new sport's rules. |
 
 ## Registration lifetime
 
@@ -138,7 +138,7 @@ The player is on the Watch lobby with the new event selected. Nothing is written
 ## Edge cases
 
 - **The score has no names.** `score` is in throwing order, and nothing in the result says whose card is whose.
-- **Another tab's hidden contest** counts in this tab's leaderboard. Only the tab playing a counted entry hides it ([contests and recordings](../foundations/contests-and-recordings.md#written-and-revealed)).
+- **Another tab's hidden contest** is hidden in this tab's leaderboard too, as long as this tab has no recording of its own loaded. An idle tab hides whichever contest the save lists as waiting. If this tab has its own recording loaded, the other tab's contest counts ([contests and recordings](../foundations/contests-and-recordings.md#written-and-revealed)).
 
 ## Open questions and verification
 

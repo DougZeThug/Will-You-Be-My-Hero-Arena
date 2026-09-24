@@ -220,7 +220,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 
 **Devices and players.** No interaction. Exactly two cards compete, and no device drives them.
 
-**Sound.** With Watch sound on, the cards' entrances chime, each release plays a tone and each cornhole bag thuds on the board. Each score plays a bright or low tone, and a decided contest ends with a fanfare. Football, beer pong and basketball contacts make no sound of their own ([sound](../cross-cutting/sound.md)).
+**Sound.** With Watch sound on, each card's entrance plays a low two-note chord, each release plays a tone and each cornhole bag thuds on the board. Each score plays a bright or low tone, and a decided contest ends with a fanfare. Football, beer pong and basketball contacts make no sound of their own ([sound](../cross-cutting/sound.md)).
 
 **Reduced motion and graphics quality.** Either one removes the camera moves and contact effects in every sport. Scores, timing and outcomes are unchanged ([the stage](../foundations/stage.md)).
 
