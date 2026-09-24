@@ -20,7 +20,7 @@ The host wants a win to be worth 5 points. They click the gear. The dialog shows
 - **Host · prototype scoring**, with four number fields: **Win** 3, **Draw** 1, **Loss** 0 and **Entries / User** 4
 - **Counted entries enabled**, ticked
 
-They change **Win** to 5 and press **Save for future entries**. The dialog closes. Nothing else visibly changes: points already awarded stay as they were, and a contest already locked keeps the policy it was locked under. The next counted entry to be locked awards 5 for a win, and **House rules** now reads "Win 5, draw 1, loss 0." with a new policy name at the end.
+They change **Win** to 5 and press **Save for future entries**. The dialog closes. If the Watch tab is showing, its stage rebuilds (**UNFOLDING THE ARENA…**) because the save was re-read ([edge cases](#edge-cases)); otherwise nothing visibly changes. Points already awarded stay as they were, and a contest already locked keeps the policy it was locked under. The next counted entry to be locked awards 5 for a win, and **House rules** now reads "Win 5, draw 1, loss 0." with a new policy name at the end.
 
 Ticking **Reduced motion** or **Lower graphics quality** needs no save. The change applies at once and lasts until the page is reloaded.
 
@@ -145,7 +145,7 @@ Only the Watch stage reports. The Play stage and The collection's preview never 
 | --- | --- | --- |
 | Escape or click outside | Closes the dialog. Nothing changes; a ticked checkbox stays applied. | Closes the dialog and keeps the draft in memory, unsaved. Reopening shows the edited values. If a save is already under way, it still finishes. |
 | Pause or resume | Not applicable: the dialog has no pause, and the pause controls behind it are covered. Watch playback and a Play match keep running, and a controller's Menu or Options button can still pause Play. | Not applicable, as before committing. The draft is unaffected. |
-| Repeated or rapid input | Ticking **Lower graphics quality** repeatedly rebuilds the Watch stage each time. Ticking **Reduced motion** repeatedly restarts a Play match each time. Each **Export local save** click downloads another copy. | A second click on **Save for future entries** before the dialog has closed writes the same policy again, under the same name. Mashing a field's arrows stops at 0 or 100. |
+| Repeated or rapid input | Ticking **Lower graphics quality** repeatedly rebuilds the Watch stage each time. Ticking **Reduced motion** repeatedly restarts a Play match each time. Each **Export local save** click downloads another copy. | A second click on **Save for future entries** before the dialog has closed writes the same policy again, under the same name, because the second click still carries the old name; separate saves each get a new name. Mashing a field's arrows stops at 0 or 100. |
 | A panel opens on top | Only **Reset demo…** can replace this dialog; the gear, footer and tabs are covered. | The same. The draft survives the switch and is replaced by the default policy only if the reset goes ahead. |
 | Navigating away | The tabs and logo are covered, so the player must close the dialog first. A browser agent's `configure_arena_event` can switch the view to Watch behind it when no recording is loaded. | The draft survives tab switches, the logo and the agent tool. Only a reload, a successful save or a reset replaces it. |
 | Forced finish | Not applicable: nothing in the dialog is timed. A Watch contest can reach its result behind it. | Not applicable. |

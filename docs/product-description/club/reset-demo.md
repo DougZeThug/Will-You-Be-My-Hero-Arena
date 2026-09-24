@@ -14,7 +14,7 @@ The player opens Arena settings from the gear and clicks **Reset demo…**. The 
 
 They press **Export save**, which downloads `clubhouse-before-reset.json` and leaves the dialog open. Then they press **Reset demo data**, the dark red button. A moment later the dialog closes.
 
-On the Watch tab, the lobby is now empty: the stage rebuilds, the resume banner is gone, and the chip shows the fresh save's points with **3 entries left**. Standings and History show only the two basketball contests. The view does not change, and no message confirms the reset.
+On the Watch tab, the lobby is now empty: the stage rebuilds, the resume banner is gone, and the chip shows the fresh save's points with **3 entries left**. Standings count only the two basketball contests, and History shows your demo user's one basketball contest. The view does not change, and no message confirms the reset.
 
 ## What a reset replaces and keeps
 
