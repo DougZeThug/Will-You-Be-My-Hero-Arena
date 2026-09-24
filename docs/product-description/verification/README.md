@@ -45,11 +45,13 @@ Priorities:
    Commits after `3b4ec62` that only touch `docs/product-description/` do not change the page. Any other difference means some failures may be drift, not defects.
 3. **Keep the documents open beside the page.** Read the linked section before each item; the item is a summary, the section is the claim.
 4. **Work in priority order.** Do P1 first across all files, then P2, then P3.
-5. **Record each result** in the Result column as `pass`, `fail` or `blocked`, with a short note for anything other than a clean pass.
+5. **Record each result** in the Result column as `pass`, `partial`, `fail` or `blocked`, with a short note for anything other than a clean pass.
+   - **A pass** means every step was run and every part of the expected result was seen.
+   - **A partial** item was run, and what was seen matched, but part of it was not tried or not seen: a step, a device, a case or a value. The note says which part. A partial does not count toward `verified`; the item needs another run.
    - **A fail** is something the document says that the page does not do.
    - **A blocked** item could not be run: there was no controller, or a prior failure was in the way.
 6. **File every fail in [`bug-triage.md`](../bug-triage.md).** If the entry exists, add a Status line quoting the item ID. If not, add an entry with the item ID under "Raised by". A fail is not automatically a product bug; sometimes the document is wrong, and the fix is to the document. Say which in the Status line.
-7. **Mark documents verified.** When every P1 and P2 item for a document has passed or been filed, change its row in the [coverage table](../README.md#coverage) from `drafted` to `verified`.
+7. **Mark documents verified.** When every P1 and P2 item for a document has passed (not `partial`) or been filed, change its row in the [coverage table](../README.md#coverage) from `drafted` to `verified`.
 
 ## Devices and conditions
 
@@ -87,7 +89,7 @@ A script cannot judge how motion looks, whether sound is heard, or real controll
 - **Build.** The production build of commit `d95832c`, whose source is identical to `3b4ec62`; only documents had changed. It was served by `scripts/serve.mjs`.
 - **Browser.** Headless Chromium with software WebGL (SwiftShader), a fresh context for every check, 1440×1000 unless noted.
 - **Scripts.** Playwright scripts under the ignored `work/qa/product-description/`. They drove the real interface by button names and keys, and read state back from localStorage, downloaded files and on-page text.
-- **Coverage.** About 45 scripted checks. The five checklist files hold 1,302 items, 405 of them P1. Of these, 278 carry a result from this pass, with "(scripted pass 2026-09-24)" in their Result column: 230 pass, 37 confirmed suspected bugs, 9 blocked, and 2 not reproduced. Many of the passes are partial, and their notes say which part was seen. The other 1,024 items are still `—`.
+- **Coverage.** About 45 scripted checks. The five checklist files hold 1,302 items, 405 of them P1. Of these, 278 carry a result from this pass, with "(scripted pass 2026-09-24)" in their Result column: 112 pass, 118 partial, 37 confirmed suspected bugs, 9 blocked, and 2 not reproduced. A partial's note says which part was not tried or not seen. The other 1,024 items are still `—`.
 
 **What the pass could not cover.**
 - **Timing.** Software rendering ran game time and playback time several times slower than wall time, so no item about a duration, a timing window or a speed could pass here. The ones the pass attempted are marked `blocked`: the cornhole release window and the 2.2 s automatic release. Others, such as Watch durations and the Dash and Brawl timers, were not attempted and are left at `—`.
