@@ -174,7 +174,9 @@
   outline: none;
 }
 .live-game-host:focus-visible {
-  outline: 3px solid #18a1ad;
+  /* The page's darker teal: about 4:1 against the paper, above the 3:1 a
+     focus indicator needs. */
+  outline: 3px solid var(--teal);
   outline-offset: 3px;
 }
 .live-score-strip {

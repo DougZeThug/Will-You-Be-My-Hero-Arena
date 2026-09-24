@@ -367,11 +367,11 @@ async function userJourney() {
     .click();
   for (const expected of ['2×', '0.5×', '1×']) {
     await page
-      .getByRole('button', { name: 'Playback speed', exact: true })
+      .getByRole('button', { name: /^Playback speed / })
       .click();
     assert.equal(
       await page
-        .getByRole('button', { name: 'Playback speed', exact: true })
+        .getByRole('button', { name: /^Playback speed / })
         .innerText(),
       expected,
     );
