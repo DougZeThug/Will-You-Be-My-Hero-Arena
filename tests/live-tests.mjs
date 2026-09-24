@@ -783,6 +783,12 @@ export async function testLive({ check }) {
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
   check(() => assert.equal(limit.snapshot().message, 'Draw'));
+  // B-30: a finished match stays on its result; the pause key does nothing.
+  limit.inject('p0', 'pause', 1);
+  limit.advance(1 / 60);
+  limit.inject('p0', 'pause', 0);
+  limit.advance(1 / 60);
+  check(() => assert.equal(limit.paused, false, 'No pause over a result'));
   limit.destroy();
   check(() =>
     assert.equal(

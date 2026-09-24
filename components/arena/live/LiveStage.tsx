@@ -91,7 +91,7 @@ export default function LiveStage({
               game.current?.session.pause(!snapshot?.paused);
               host.current?.focus();
             }}
-            disabled={!ready}
+            disabled={!ready || (!!snapshot?.finished && !snapshot.paused)}
           >
             {snapshot?.paused ? 'Resume game' : 'Pause game'}
           </button>

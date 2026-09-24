@@ -46,7 +46,9 @@ export class ArenaGame {
             e.preventDefault();
             options.clock.paused = true;
             options.onError(
-              'Graphics were interrupted. Reload to continue; nothing about the contest has changed.',
+              options.recording
+                ? 'Graphics were interrupted. Reload to continue; nothing about the contest has changed.'
+                : 'Graphics were interrupted. Reload to continue.',
             );
           });
         },

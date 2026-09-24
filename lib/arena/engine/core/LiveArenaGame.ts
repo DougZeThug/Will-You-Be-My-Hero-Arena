@@ -84,15 +84,18 @@ export class LiveArenaGame {
         postBoot: (game) => {
           // A lost graphics context pauses the match; Phaser rebuilds its
           // resources when the context comes back, and the player resumes.
-          game.renderer.on(Phaser.Renderer.Events.LOSE_WEBGL, () =>
-            this.session.pause(
-              true,
-              'Graphics were interrupted. Resume when the stage is back.',
-            ),
-          );
-          game.renderer.on(Phaser.Renderer.Events.RESTORE_WEBGL, () =>
-            this.session.pause(true, 'Graphics are back. Resume when ready.'),
-          );
+          const finished = () => this.session.snapshot().finished;
+          game.renderer.on(Phaser.Renderer.Events.LOSE_WEBGL, () => {
+            if (!finished())
+              this.session.pause(
+                true,
+                'Graphics were interrupted. Resume when the stage is back.',
+              );
+          });
+          game.renderer.on(Phaser.Renderer.Events.RESTORE_WEBGL, () => {
+            if (!finished())
+              this.session.pause(true, 'Graphics are back. Resume when ready.');
+          });
         },
       },
     });
