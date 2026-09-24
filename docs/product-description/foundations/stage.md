@@ -132,7 +132,7 @@ The stage is torn down when its view is left, or rebuilt when a rebuilding chang
 | Contest kind | No effect on the stage. | No effect. |
 | Character card | Each card's art and rig is loaded. An installed character's images come from the character library. An installed card without a connected rig cannot be used in Play (see [Install character](../collection/install-character.md)). | Changing a card in setup rebuilds the Watch lobby stage. |
 | Presentation settings | See the table above. | **Reduced motion** applies at once in Watch and restarts a Play match. **Lower graphics quality** rebuilds the Watch stage. |
-| Screen size and orientation | The scene is fitted and centred in its box. The Watch stage's box keeps 16:9 (see the table above), and the Play stage's box follows its width in the same way. The collection's preview stage has a fixed box, 360 px high, or 380 px at 600 px and below, so the court is letterboxed there. | Resizing or rotating rescales at once; nothing reloads or restarts. |
+| Screen size and orientation | The scene is fitted and centred in its box. The Watch stage's box keeps 16:9 (see the table above); the verification pass measured the Play stage's box at 776 px high in a 1440 px window. The collection's preview stage has a fixed box, 360 px high, or 380 px at 600 px and below, so the court is letterboxed there. | Resizing or rotating rescales at once; nothing reloads or restarts. |
 | Saved state | An imported asset mapping changes a card's card image, personality and motion profile, and for an installed card its drawn figure too. Dan and Doug are always drawn from their built-in figure ([asset mapping](../collection/asset-mapping.md)). | Attaching a mapping rebuilds the Watch stage. |
 
 ## Cancel and interrupt
