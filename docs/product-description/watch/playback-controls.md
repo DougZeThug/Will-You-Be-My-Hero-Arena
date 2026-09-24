@@ -22,7 +22,7 @@ None of these can change the result, which already exists ([contests and recordi
 - the title reads **{EVENT} / LIVE**
 - the event dock and the resume banner are hidden
 - the side station is headed **THE MATCH CARD**
-- the stage shows the scoreboard
+- the stage draws a nameplate for each card in its top corners
 
 This document owns everything from the moment a recording is loaded until playback is complete. The result panel and what follows belong to [result and replay](result-and-replay.md).
 
@@ -30,7 +30,7 @@ This document owns everything from the moment a recording is loaded until playba
 
 After **Start showdown**, the stage rebuilds for the contest (**UNFOLDING THE ARENA…**). Then it begins:
 1. **The entrances.** The bottom bar reads **CARDS TO COURT** and the narration says "The cards are opening. Make some room."
-2. **The attempts.** After 2.65 seconds the attempts begin, alternating between the two cards. The scoreboard shows each card's revealed score and attempts done, for example "2/4 bags". The narration describes each throw as it happens and its result once it lands. The bottom bar counts **ROUND 1**, **ROUND 2** and so on, with **● LIVE** on the right, and the progress bar under the stage fills.
+2. **The attempts.** After 2.65 seconds the attempts begin, alternating between the two cards. The nameplates in the stage's top corners show each card's revealed score and how many attempts are left, for example **2 BAGS LEFT**. The narration describes each throw as it happens and its result once it lands. The bottom bar counts **ROUND 1**, **ROUND 2** and so on, with **● LIVE** on the right, and the progress bar under the stage fills.
 3. **The controls.** At the side, under the narration, are four buttons: pause, a speed button reading **1×**, skip to result, and attempt history. During the entrances a **Skip entrances** link appears under them.
 
 When the last attempt ends, playback is complete and the result panel appears ([result and replay](result-and-replay.md)).
@@ -70,7 +70,8 @@ A recording is loaded. At that instant:
 ### Backing out at once
 
 The viewer can leave before anything plays: the logo, a reload, another replay, or a tab switch. The contest stays locked, because that happened at **Start showdown**:
-- **The logo, a reload, or another replay** writes the position (second 0 or wherever it was), so the lobby offers the contest on the [resume banner](resume-a-contest.md).
+- **The logo or a reload** writes the position (second 0 or wherever it was), so the lobby offers the contest on the [resume banner](resume-a-contest.md).
+- **Another replay** makes *that* recording the one waiting to resume. This contest's position is dropped, and its points are revealed without it being watched.
 - **A tab switch** pauses and keeps the recording loaded.
 
 ### Committing
@@ -113,9 +114,12 @@ The progress bar and, when complete, the result panel stay. The same button brin
 
 | Where | During the entrances | During the attempts | When complete |
 |---|---|---|---|
-| Scoreboard | Each card's first name, revealed score, and "n/N {unit}" (bags, throws, balls or shots); **COUNTED ENTRY** or **EXHIBITION / NO POINTS** | The same; the card currently throwing is underlined in yellow | The same |
+| Nameplates, drawn on the stage | Each card's first name, revealed score, pips for attempts left, and a status such as **4 BAGS LEFT · WAITING** | The same; the thrower's status names what they are doing | The same |
+| Sign, drawn on the stage | The event's name and **CARDS TO COURT** | The event's name and the current phase | The event's name and the final phase |
 | Bottom bar, left | **CARDS TO COURT** | **ROUND n** | **FINAL SCORE** |
 | Bottom bar, right | **● LIVE** or **PAUSED** | **● LIVE** or **PAUSED**; during a heat-check attempt, **HEAT CHECK / COSMETIC** | **FULL TIME** |
+
+The page also has its own scoreboard, labelled "Live score". It shows each card's revealed score, "n/N {unit}", and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. At desktop widths it sits *under* the stage's drawing and cannot be seen, which the verification pass confirmed. Screen readers still read it, but a sighted viewer is never told on the stage whether the contest counts. The side station's note is the only visible sign.
 
 The caption under the stage reads "COLLECTIONS: {user} / {user} / {mode}". The side station's note reads "Points post once. Replay as often as you like." for a counted entry, and "EXHIBITION / NO LEADERBOARD POINTS" for an exhibition.
 
@@ -135,10 +139,10 @@ The finale keeps animating for about 2.6 seconds after completion, unless the vi
 | --- | --- | --- |
 | Input device | Mouse, touch or keyboard on ordinary buttons. There are no keyboard shortcuts: Space does not pause and the arrow keys do not seek. | No effect. |
 | Event and action combinations | The sport sets the units, the number of attempts and what the stage shows ([the four sports](the-four-sports.md)). | Not applicable: a recording's sport is fixed. |
-| Contest kind | Counted entry: the scoreboard shows **COUNTED ENTRY**, and the note reads "Points post once. Replay as often as you like." Exhibition: **EXHIBITION / NO POINTS**. A replay of a finished recording looks the same as its first showing. | Not applicable. |
+| Contest kind | Counted entry: the page's hidden scoreboard says **COUNTED ENTRY**, and the visible side-station note reads "Points post once. Replay as often as you like." Exhibition: **EXHIBITION / NO POINTS**. A replay of a finished recording looks the same as its first showing. | Not applicable. |
 | Character card | Each card's personality sets its entrance, rituals, timing and reactions, so recordings with different cards run for different lengths. | Not applicable. |
 | Presentation settings | Reduced motion calms effects and camera movement. Lower graphics quality tones down effects and rebuilds the stage. Sound starts off. The clean spectator view hides the controls. | Toggling Reduced motion applies at once. Toggling Lower graphics quality rebuilds the stage, and playback carries on from the same moment once it is ready. Sound and the clean view toggle at once. |
-| Screen size and orientation | The stage rescales. At 600 px wide and below, the scoreboard sits above the court instead of over it. | Rescales at once; playback is not interrupted. |
+| Screen size and orientation | The stage rescales, keeping the court's 16:9 shape. Whether the page's own scoreboard becomes visible on narrow screens has not been checked. | Rescales at once; playback is not interrupted. |
 | Saved state | A resumed contest opens paused at its saved second. | Another tab writing the save does not interrupt playback. |
 
 ## Cancel and interrupt
@@ -149,7 +153,7 @@ The finale keeps animating for about 2.6 seconds after completion, unless the vi
 | Pause or resume | The pause button is available as soon as the recording is loaded. While the stage is still loading, it offers **Resume playback**. Pressing it starts the clock at once, before the stage is drawn, so the start of the entrances may be missed. | Pauses or resumes the clock and stops any sound. The result is unchanged. |
 | Repeated or rapid input | Not applicable. | Each speed click moves one step round the cycle. **Skip to result** pressed again after completion does nothing new. The pause button toggles each time. |
 | A panel opens on top | Loading carries on. | Playback keeps running behind the dialog: attempt history, House rules, Arena settings or History. |
-| Navigating away | Switching tab keeps the recording. The logo or another recording writes the position at second 0. | Switching tab pauses and stops sound. Returning shows the contest paused where it was, after the stage rebuilds. The logo, a replay from History, or **Next showdown** writes the position; the contest then waits to resume. |
+| Navigating away | Switching tab keeps the recording. The logo writes the position at second 0. Another recording takes over the waiting slot instead. | Switching tab pauses and stops sound. Returning shows the contest paused where it was, after the stage rebuilds. The logo writes the position, and the contest then waits to resume. A replay from History drops this contest's position, and its points are revealed. |
 | Forced finish | **Skip to result** works even before playback starts. | **Skip entrances** jumps to the first attempt. **Skip to result** jumps to the end and reveals the points. |
 | Focus leaves the game | Not applicable. | Hiding the browser tab stops the clock. Nothing says **PAUSED**, and sound is not stopped. Playback carries on by itself when the tab is visible again. Losing window focus without hiding the tab has no effect. |
 | Reload, close, or back/forward cache | The contest is kept, waiting to resume at second 0. | The position is written as the page goes away. The lobby then offers **Resume contest**, which opens paused at that second. |

@@ -78,6 +78,7 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - A keyboard press only counts while focus is inside the Play stage's box and not in a text field, select or input.
   - A key release always counts.
   - Losing window focus drops every held key.
+  - Clicking the stage's drawing does *not* give it focus. Tab to it, or use **Pause game** or **Resume game**. Pressing a **Move** or **Aim** pad takes focus away. The verification pass confirmed this.
 - **Pause in Play.**
   - Triggered by any player's pause key or button, the toolbar button, or the overlay button. The pause key toggles, so it both pauses and resumes. Losing window focus, hiding the tab, or a controller disconnecting also pauses.
   - Pausing clears all held input, the buffers and any on-screen toggles.
@@ -100,15 +101,17 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - the recording
   - the sport
   - **Lower graphics quality**
-  - the imported mappings
+  - the imported mappings, which in practice means every re-read of the save, including another tab's writes
 
   **Lower graphics quality** is ignored by Play. **Restore arena** reloads a loaded recording paused at the same second. With nothing loaded, it toggles **Lower graphics quality**.
-- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, and the footer. Only the stage's sound and clean-view buttons remain.
+- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer. Only the stage's sound and clean-view buttons, the progress bar and the result panel remain.
 - **Exports and storage.**
-  - **Export local save** exports the save as this tab shows it, so a hidden counted entry is left out.
+  - **Export local save** exports the save as this tab shows it. Any loaded-but-unfinished or waiting recording is left out with its awards, exhibitions included.
   - The Arena save cannot be imported back.
   - Installed characters live in IndexedDB. They are not touched by **Reset demo**, and there is no uninstall.
   - If IndexedDB cannot open, the Arena save is never read and Watch cannot start a contest.
+- **What the viewer sees on the Watch stage.** At desktop widths the stage's drawing covers the page's own "Live score" scoreboard and the lobby's stage label. The visible score is the drawing's *nameplates* and *sign*, and the scoreboard exists only for screen readers.
+- **Hiding across tabs.** Every tab hides the contest the save lists as waiting to resume, so a tab with nothing loaded also hides a counted entry being played in another tab. Loading another recording does not write the old one's position. The new recording takes over the waiting slot, and the old contest's points are revealed.
 - **Watch lifecycle ownership.** [Contests and recordings](foundations/contests-and-recordings.md) owns the definitions and the single lifecycle diagram. Each state then has one owning document:
 
   | State | Owning document |

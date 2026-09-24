@@ -52,7 +52,12 @@ The named inputs map to keys and buttons like this. The action names are the one
 **Controllers.**
 - **Family.** A controller is recognised as Xbox, PlayStation or generic from the name the browser reports. The on-screen glyphs follow the family: an Xbox pad shows "A", a PlayStation pad "Cross", and a generic pad "Button 0".
 - **Sticks.** A stick reads as centred inside its 0.18 *deadzone*, and scales smoothly from there to full travel. The D-pad adds to the left stick, so the D-pad alone can move.
-- **Rumble.** A controller rumbles briefly on a few events, such as a perfect cornhole release, a heavy hit or a win, if the browser supports it.
+- **Rumble.** If the browser supports it, a controller rumbles briefly on three events:
+  - a perfect cornhole release
+  - a crash in the Dash, which is a stronger rumble
+  - being hit in the Brawl, whether the hit lands or is blocked
+
+  Only the affected player's controller rumbles.
 - **Before starting.** Browsers only reveal a controller after one of its buttons has been pressed on the page. The setup screen says: "Press a controller button before starting."
 
 **On-screen controls.** These appear under the stage for every player who is not an AI player, whatever their device. See [touch controls](../play/touch-controls.md). Their input merges into the player's own device. For each button, the stronger of the two wins. For each pad, the pad wins whenever it is off-centre. A held action is a toggle on screen: one tap turns it on, and a second tap turns it off.
@@ -89,7 +94,7 @@ The event's action map then looks for an action that matches three things:
 
 Some actions also need another input held at the same time, such as the Brawl grapple. If nothing matches, the press does nothing at all and is not kept.
 
-**Stage focus.** A keyboard press only starts while keyboard focus is inside the Play stage's box and not in a text field, list or number box. The stage takes focus when a match finishes loading. It takes focus again whenever the toolbar's **Pause game** or **Resume game**, the overlay's **Resume game**, or an on-screen action button is used. Clicking anywhere else on the page, or opening a dialog, moves focus away.
+**Stage focus.** A keyboard press only starts while keyboard focus is inside the Play stage's box and not in a text field, list or number box. The stage takes focus when a match finishes loading. It takes focus again whenever the toolbar's **Pause game** or **Resume game**, the overlay's **Resume game**, or an on-screen action button is used. Clicking anywhere else on the page, pressing a **Move** or **Aim** pad, or opening a dialog, moves focus away. Clicking the stage's drawing does *not* bring focus back: the drawing swallows the click. The verification pass confirmed that Space did nothing after a click on the stage, and worked after pressing Tab to reach it.
 
 The operating system's key auto-repeat is ignored. Holding a key produces one press, not a stream.
 
@@ -119,7 +124,10 @@ A buffered press is kept for the event's buffer time and retried on every game s
 
 #### Chords and combos
 
-- **Chords.** A chord needs its other input already held above 0.2 when the second input is pressed. The Brawl grapple is right Ctrl held, then J.
+- **Chords.** A chord needs its other input already held above 0.2 when the second input is pressed. The Brawl grapple is the right-modifier input held, then primary:
+  - left Ctrl, then J, on keyboard 1
+  - right Ctrl, then numpad 1, on keyboard 2
+  - RB or R1, then A or Cross, on a controller
 - **Combos.** A combo is a sequence of presses within a time window:
   - Brawl light, light, heavy within 1.15 s becomes a finisher.
   - Down, forward, special within 0.65 s becomes a special.
@@ -181,7 +189,7 @@ Pausing a Play match does all of the following:
 | Character card | No effect on input. Cards change what an action achieves, not how it is read. | Not applicable. |
 | Presentation settings | No effect on input. Toggling **Reduced motion** restarts the match (see below). | No effect, except through a restart. |
 | Screen size and orientation | Keys and controllers are unaffected. The on-screen pads measure a drag relative to their own size, so a small pad reaches full travel with a short drag. | Resizing mid-press does not release anything. |
-| Saved state | Each slot's bindings come from the last **Start** in this browser, saved per slot number. A saved binding that fails the format check is ignored for that slot. | No effect: bindings are fixed for the match. |
+| Saved state | Slots 1 and 2 load the bindings saved by the last **Start** in this browser; slots 3 and 4 always start from the defaults. Changing a slot's **Controls** replaces its bindings with that device's defaults. A saved binding that fails the format check is ignored for that slot. | No effect: bindings are fixed for the match. |
 
 ## Cancel and interrupt
 
@@ -231,6 +239,8 @@ Pausing a Play match does all of the following:
 - **Two different controllers.** Controller 1 and Controller 2 are browser controller slots 0 and 1. Which physical pad is which depends on the order the browser discovered them in.
 - **A stick and the D-pad** pushed opposite ways cancel each other out.
 - **The pause key while paused** resumes. There is no separate resume key.
+- **Player 1 with keyboard 2's bindings.** If player 1 last started a match on keyboard 2, the next visit shows **Keyboard · WASD** carrying keyboard 2's saved keys: numpad actions, and Backspace to pause. Escape then does nothing.
+- **Space on page buttons.** During a match with a keyboard player, the page cancels the release of every bound key anywhere on the page, including Space. A focused page button such as **Sound on** may then not respond to Space. This is read from the code and has not been tried.
 
 ## Open questions and verification
 

@@ -7,7 +7,7 @@ The lobby is the Watch tab with no recording loaded, which is where the page ope
 - **The club points chip** on the right.
 - **The resume banner**, when a contest is waiting.
 - **The event dock** **CHOOSE YOUR EVENT** with four buttons: **01 Cornhole**, **02 Football**, **03 Beer pong**, **04 Basketball**.
-- **The stage**, previewing the court with the two selected cards. A label reads "THE SAME CREW. HIGHER STAKES." and "{N} {units} each / Fully automatic".
+- **The stage**, previewing the court with the two selected cards. The stage's sign reads the event's name over **CHOOSE A MATCHUP**, and each card's nameplate reads **READY** with a score of 0. The page also has a label, "THE SAME CREW. HIGHER STAKES." and "{N} {units} each / Fully automatic". At desktop widths the stage's drawing covers it, so only screen readers get it.
 - **The side station** **ON THE CARD**, with the two duel cards labelled **THROWS FIRST** and **THROWS SECOND**, a note, **Set up showdown**, and a stamp such as "4 BAGS EACH / ~{S} SEC", where S is the estimated length in seconds.
 - **The caption** under the stage, "GROSS POINTS. EQUAL ATTEMPTS. SETTLE IT ON THE COURT.", and a **House rules** link.
 
@@ -20,7 +20,7 @@ The page opens with **01 Cornhole** selected, showing **Cornhole / HEAD TO HEAD*
 The player clicks **03 Beer pong**:
 - the title changes
 - the stage reloads the beer-pong table
-- the label reads "6 balls each / Fully automatic"
+- the sign reads **BEER PONG**
 - the stamp updates
 
 They press **Set up showdown**, and the setup dialog opens for Beer pong.
@@ -85,11 +85,11 @@ The chip follows whoever "you" are in the setup dialog. Switching **Your demo us
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
 | Input device | Ordinary buttons. The event buttons show their pressed state to screen readers. | No effect. |
-| Event and action combinations | The selected event sets the title, the preview court, the stage label's count and unit, the stamp's estimate, and which counted entry the setup dialog offers. | Not applicable. |
+| Event and action combinations | The selected event sets the title, the preview court, the stage's sign, the stamp's count, unit and estimate, and which counted entry the setup dialog offers. | Not applicable. |
 | Contest kind | The lobby does not show the mode. The duel cards show your card and the *exhibition* opponent card even when the setup dialog is on **Counted entry · points**, whose real opponent card is Doug. | Not applicable. |
 | Character card | The duel cards and the stage preview use the cards chosen in the setup dialog: by default Dan's card first and Doug's second. An installed character appears once chosen. | Not applicable. |
 | Presentation settings | Reduced motion and lower graphics change the preview. The clean spectator view hides everything but the stage, which in the lobby leaves no way to set up a contest until it is turned off. | Toggling rebuilds or restyles the preview at once. |
-| Screen size and orientation | At 900 px wide and below, the side station moves under the stage and **CHOOSE YOUR EVENT** is hidden. At 600 px and below, the stage label moves above the court. | Reflows at once. |
+| Screen size and orientation | At 900 px wide and below, the side station moves under the stage and **CHOOSE YOUR EVENT** is hidden. The stage keeps the court's 16:9 shape, so it is only about 208 px high in a 390 px phone window. | Reflows at once. |
 | Saved state | The chip, the banner and **Set up showdown** depend on the save. A fresh save shows each user one counted entry used. A corrupt save leaves **Set up showdown** disabled with an error. | Another tab's write updates the chip and banner in place. |
 
 ## Cancel and interrupt

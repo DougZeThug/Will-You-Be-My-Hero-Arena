@@ -272,27 +272,27 @@ Status is one of `not started`, `drafted`, or `verified`.
 | watch/result-and-replay.md | drafted |
 | watch/resume-a-contest.md | drafted |
 | watch/lobby.md | drafted |
-| watch/the-four-sports.md | not started |
-| play/play-setup.md | not started |
-| play/controls-and-remapping.md | not started |
-| play/touch-controls.md | not started |
-| play/match-shell.md | not started |
-| play/clubhouse-dash.md | not started |
-| play/backyard-brawl.md | not started |
-| club/points-and-entries.md | not started |
-| club/standings.md | not started |
-| club/history-and-member-record.md | not started |
-| club/arena-settings.md | not started |
-| club/reset-demo.md | not started |
-| club/house-rules.md | not started |
-| collection/the-collection.md | not started |
-| collection/explore-motion-styles.md | not started |
-| collection/install-character.md | not started |
-| collection/asset-mapping.md | not started |
-| cross-cutting/ai-players.md | not started |
-| cross-cutting/sound.md | not started |
-| cross-cutting/accessibility.md | not started |
-| cross-cutting/agent-tools.md | not started |
+| watch/the-four-sports.md | drafted |
+| play/play-setup.md | drafted |
+| play/controls-and-remapping.md | drafted |
+| play/touch-controls.md | drafted |
+| play/match-shell.md | drafted |
+| play/clubhouse-dash.md | drafted |
+| play/backyard-brawl.md | drafted |
+| club/points-and-entries.md | drafted |
+| club/standings.md | drafted |
+| club/history-and-member-record.md | drafted |
+| club/arena-settings.md | drafted |
+| club/reset-demo.md | drafted |
+| club/house-rules.md | drafted |
+| collection/the-collection.md | drafted |
+| collection/explore-motion-styles.md | drafted |
+| collection/install-character.md | drafted |
+| collection/asset-mapping.md | drafted |
+| cross-cutting/ai-players.md | drafted |
+| cross-cutting/sound.md | drafted |
+| cross-cutting/accessibility.md | drafted |
+| cross-cutting/agent-tools.md | drafted |
 
 ## Reference
 

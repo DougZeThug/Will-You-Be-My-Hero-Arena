@@ -121,7 +121,7 @@ During a replay, every control in [playback controls](playback-controls.md) work
 
 **Installed characters.** An installed winning card's first name is used in the headline.
 
-**Multiple tabs.** Another tab sees the points as soon as the contest was locked, not when this tab's result appears.
+**Multiple tabs.** Another tab with nothing loaded hides the points while the contest is the save's waiting one. It reveals them when this tab's completion clears the waiting slot, so both tabs reveal at about the same moment.
 
 **Agent tools.** `read_arena` reports `complete: true` and the final revealed score.
 

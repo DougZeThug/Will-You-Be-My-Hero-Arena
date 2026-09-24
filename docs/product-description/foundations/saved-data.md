@@ -77,20 +77,20 @@ Each write adds one to the save's revision number. Writes that change the ledger
 
 ### While committed
 
-Other tabs of the Arena on the same browser are told about each write. They re-read the save, and re-open the character library, so their Standings, points chip and History update without a reload. The view, any loaded recording, and dialogs in those tabs are left as they were.
+Other tabs of the Arena on the same browser are told about each write. They re-read the save, and re-open the character library, so their Standings, points chip and History update without a reload. The view, any loaded recording, and dialogs in those tabs are left as they were. Their Watch stage and collection preview are *rebuilt*, though, because every re-read counts as new mappings ([the stage](stage.md#loading-and-rebuilding)). The verification pass saw one lock in one tab reload the lobby stage of another.
 
 ### Resolving
 
 The page shows the saved result. After locking a contest, the new recording is loaded. After saving the policy, the settings dialog closes. After a reset, the loaded contest is unloaded.
 
-If a write is refused, the save on disk is unchanged. Examples are a full storage quota, a failed checksum, or a duplicate award. The page shows one of these messages:
+If a write is refused, the save on disk is unchanged. The usual cause is a full or blocked storage quota. Every write first re-reads the save, so a save that fails its checksum or format check makes every write fail too; the checks themselves run when the save is read, not when it is written. The page shows one of these messages:
 - **Locking a contest.** The reason appears in the setup dialog and in the error box.
 - **Saving the playback position.** **Playback could not be saved. Keep this tab open and export your recording.**
 - **Saving the policy.** The reason appears in the error box under the Watch stage, and the settings dialog stays open.
 
 ## Exports
 
-- **Export local save.** In [Arena settings](../club/arena-settings.md), it downloads the Arena save as `clubhouse-save.json`: recordings, ledger, policy, the contest waiting to resume, and mappings. **Reset the local demo?** offers the same export as `clubhouse-before-reset.json`. The export is the save *as shown*, so a counted entry that is still hidden from the page is also missing from the file.
+- **Export local save.** In [Arena settings](../club/arena-settings.md), it downloads the Arena save as `clubhouse-save.json`: recordings, ledger, policy, the contest waiting to resume, and mappings. **Reset the local demo?** offers the same export as `clubhouse-before-reset.json`. The export is the save *as shown*. Any recording that is loaded and not yet complete, or waiting to resume, is left out together with its awards, and that includes exhibitions. The verification pass saw an export with 4 awards while the save held 6. The file's waiting-contest field still names the missing recording, and the file carries no checksum.
 - **Export immutable recording.** In the attempt history (**The contest, as it happened**), it downloads the loaded recording as `arena-{contest id}.json`.
 
 Nothing on the page can import an exported save or recording back. The bindings and the character library are not included in any export. A character pack is its own backup: keep the `.arena-character.json` file.
@@ -133,7 +133,7 @@ Nothing on the page can import an exported save or recording back. The bindings 
 
 **Watch and Play separation.** Watch writes the Arena save. Play writes only the bindings. The two never write each other's data.
 
-**Devices and players.** The bindings are saved per Play slot number, not per device or person. Player 2's remapped keys apply to whoever is player 2 next time.
+**Devices and players.** The bindings are saved per Play slot number, not per device or person, but only slots 1 and 2 are read back. Changing a slot's **Controls** replaces its bindings with that device's defaults. In practice a saved remap reaches a later match only for player 1, left on the device it had. See [controls and remapping](../play/controls-and-remapping.md).
 
 **Sound.** Not saved.
 
@@ -149,8 +149,8 @@ Nothing on the page can import an exported save or recording back. The bindings 
 
 ## Edge cases
 
-- **A save that fails its integrity check** (**The local save did not pass its integrity check.**) or format check (**This save has an unsupported format. Export it before resetting.**) is refused when the page opens. The error box shows it prefixed with **Character library:**, which misleads. **Set up showdown** stays disabled, and there is no way to reset from the page: **Reset demo data** needs the save to load first.
-- **If IndexedDB is unavailable**, for example because browser storage is blocked, the character library cannot open. The page then never reads the Arena save at all. The error box shows **Character library: Error: The character library could not be opened. Check that browser storage is available.** and Watch cannot start a contest.
+- **A save that fails its integrity check** (**The local save did not pass its integrity check.**) or format check (**This save has an unsupported format. Export it before resetting.**) is refused when the page opens. The error box shows it prefixed with **Character library:**, which misleads. **Set up showdown** stays disabled, and there is no way to reset from the page: **Reset demo data** reads the old save first, and throws. The verification pass confirmed the error text, the disabled button, and that **Restore arena** then switched on **Lower graphics quality**.
+- **If IndexedDB is unavailable**, for example because browser storage is blocked, the character library cannot open. The page then never reads the Arena save at all. The error box shows **Character library: Error: The character library could not be opened. Check that browser storage is available.** and Watch cannot start a contest. The verification pass confirmed this by making the library fail to open. **Reset demo data** and **Save for future entries** still work in this state, because they read the save directly. They can therefore overwrite a save the page never showed, and **Export local save** first would download nothing useful.
 - **Clearing only the character library** through the browser leaves recordings that name an installed character's card. What those recordings show has not been determined.
 - **Bindings saved for players 3 and 4** are not loaded when Play setup opens, because setup starts with two slots. Added slots get the default bindings.
 - **A fresh save is built again on every load until the first write.** Two tabs opened on a fresh browser therefore both show the fixtures until one of them writes.

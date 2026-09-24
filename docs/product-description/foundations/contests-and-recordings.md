@@ -26,7 +26,7 @@ All four sports can be exhibitions or counted entries.
 **Setup options.** Every contest has the following options, set in [the setup dialog](../watch/setup-dialog.md):
 - **Strategy.** Only your card's strategy is chosen. **Steady · tighter grouping** or **Bold · wider swings**. The opponent always plays Steady.
 - **Tie rule.** **Finish as a draw**, or **Up to 3 extra equal pairs**. With extra pairs, a tie after the regulation attempts adds one pair of attempts at a time, up to three. A contest still tied after three extra pairs is an *unresolved draw*, scored as a draw.
-- **Heat check · cosmetic stage effect.** Exhibition only. Round three of the contest shows **HEAT CHECK / COSMETIC** and a stage effect. It never changes a score.
+- **Heat check · cosmetic stage effect.** Exhibition only. During round three the stage's bottom bar reads **HEAT CHECK / COSMETIC** and the cards act more showily. Nothing extra is drawn. It never changes a score, though the livelier acting can change how long the contest runs.
 - **Replayable showcase seed.** Exhibition Cornhole only. It uses the fixed seed `velvet-paw-29`, so every contest started with it plays out identically.
 
 ## How a contest is decided
@@ -49,7 +49,13 @@ For an exhibition the seed is new and random, unless the showcase seed is on. Fo
   | Beer pong | 6 balls |
   | Basketball | 5 shots |
 
-- **Traits.** Composure matters in the last round. Specialty helps only in the card's own sport: Dan in cornhole, Doug in beer pong.
+- **Traits.** Composure matters in the last scheduled round and in every extra pair. Specialty tightens a card's grouping in its own sport (Dan in cornhole, Doug in beer pong) and loosens it slightly in the other three.
+- **The card's own description.** Each card's motion profile, poses and personality also feed the simulation:
+  - In cornhole, each bag's shot is picked from the card's shot tendencies. Shots push earlier bags differently, so the tendencies can change scores.
+  - Where the hand releases comes from the card's poses.
+  - The attempt timing comes from the personality.
+
+  An [asset mapping](../collection/asset-mapping.md) attached for a card therefore changes contests locked after it.
 - **Timing.** Every attempt is timed for playback when the recording is made:
   - the entrances take 2.65 s
   - each attempt's length depends on the character's personality and throwing speed
@@ -71,7 +77,7 @@ This is the rule most other documents depend on.
   - History
 - **Revealed at complete.** Playback is complete when the clock reaches the end of the last attempt. That happens by watching, or at once with **Skip to result**. The result panel appears, the chip and Standings include the new points, and History lists the contest.
 
-> Technical note: the ledger itself never changes after lock. Hiding is a display filter (`Game.tsx`, the `hiddenId` line) that removes one contest from the ledger and recording list shown on screen. Another tab reads this browser's save directly and sees the points at once. The **Export local save** file, though, is built from what this tab shows, so it leaves the hidden contest out too ([this browser's save](saved-data.md#exports)).
+> Technical note: the ledger itself never changes after lock. Hiding is a display filter (`Game.tsx`, the `hiddenId` line) that removes one contest from the ledger and recording list shown on screen. Another tab applies the same filter, because it hides whichever contest the save lists as waiting to resume, and locking makes the new contest that one. So another tab with nothing loaded also hides the points until this tab's playback completes, or until something else takes the waiting slot. The **Export local save** file, though, is built from what this tab shows, so it leaves the hidden contest out too ([this browser's save](saved-data.md#exports)).
 
 **Entries left** is *not* hidden. The chip counts entries from the full save, so it drops by one the moment a counted entry is locked, while the points and rank beside it still leave that contest out.
 
@@ -91,7 +97,7 @@ stateDiagram-v2
     paused --> playing : Resume playback
     playing --> complete : last attempt ends, or Skip to result (points revealed)
     paused --> complete : Skip to result
-    playing --> waiting : logo, reload, close, or another recording loaded (position kept)
+    playing --> waiting : logo, reload, close (position kept)
     paused --> waiting : the same
     waiting --> loaded : Resume contest (opens paused at the saved second)
     complete --> lobby : Next showdown
@@ -102,7 +108,7 @@ stateDiagram-v2
 |---|---|---|
 | Lobby | The event dock, the club points chip, the duel cards, **Set up showdown**, and the resume banner if a contest is waiting | [the lobby](../watch/lobby.md) |
 | Setup, locking | The setup dialog; **Locking the contest…** on its button while it works | [the setup dialog](../watch/setup-dialog.md) |
-| Loaded, entrances, playing, paused | The scoreboard, narration, the progress bar and the playback controls | [playback controls](../watch/playback-controls.md) |
+| Loaded, entrances, playing, paused | The stage's nameplates, the narration, the progress bar and the playback controls | [playback controls](../watch/playback-controls.md) |
 | Complete | The result panel | [result and replay](../watch/result-and-replay.md) |
 | Waiting to resume | The resume banner in the lobby | [resume a contest](../watch/resume-a-contest.md) |
 
@@ -177,7 +183,7 @@ A finished recording can be replayed any number of times, from the result panel,
 | Pause or resume | Not applicable: nothing is playing. | Stops or restarts the playback clock. The outcome is unchanged. |
 | Repeated or rapid input | A double-click on **Start showdown** locks one contest; the second click is ignored while locking. | Repeated **Skip to result** or **Replay same recording** only move through the same recording. |
 | A panel opens on top | Not applicable during setup: the setup dialog is already on top. | Playback keeps running behind the dialog. |
-| Navigating away | Closing the dialog by switching tab is not possible, because the dialog covers the header. | Switching tab pauses playback and keeps the recording loaded. The logo, **Next showdown**, or loading another recording writes the position and leaves the contest waiting to resume. |
+| Navigating away | Closing the dialog by switching tab is not possible, because the dialog covers the header. | Switching tab pauses playback and keeps the recording loaded. The logo writes the position and leaves the contest waiting to resume. Loading another recording, for example **Replay** from History, does not: the other recording takes the waiting slot, and this contest's points are revealed without it being watched. |
 | Forced finish | Not applicable. | **Skip entrances** jumps to the first attempt. **Skip to result** jumps to complete and reveals the points. |
 | Focus leaves the game | No effect on the dialog. | Hiding the tab stops the clock without showing **PAUSED**; it resumes when the tab is visible again. Window blur alone has no effect. |
 | Reload, close, or back/forward cache | Before **Start showdown**, nothing is kept. If the page goes away *during* **Locking the contest…**, the contest is locked only if the write had already finished. | The recording and any awards are already written. The position is written on the way out, and on return the resume banner offers the contest. |
@@ -203,7 +209,7 @@ A finished recording can be replayed any number of times, from the result panel,
 
 **Installed characters.** An installed card can compete in any Watch contest. Its pack's traits and personality are used in the simulation, and every demo user owns a copy ([Install character](../collection/install-character.md)).
 
-**Multiple tabs.** Writes are serialized across tabs. A counted entry locked in one tab cannot be locked again in another; the second tab gets the same recording. Another tab sees the new points at once, because the hiding rule belongs to the tab that is playing.
+**Multiple tabs.** Writes are serialized across tabs. A counted entry locked in one tab cannot be locked again in another; the second tab gets the same recording. Another tab hides the new points too, as long as the contest is the save's waiting one (see the technical note under [written and revealed](#written-and-revealed)).
 
 **Agent tools.** `configure_arena_event` refuses while a recording is loaded ("Return to the lobby before configuring a contest."). `read_arena` returns only the revealed score and the leaderboard as currently shown ([agent tools](../cross-cutting/agent-tools.md)).
 

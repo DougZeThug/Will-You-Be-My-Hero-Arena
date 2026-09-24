@@ -28,6 +28,18 @@ The vocabulary used across these documents. When a document uses one of these wo
 
 **Overlay.** A layer drawn over the Play stage without being a dialog. There are three: **Opening the cards…** while loading, the error overlay, and the **PAUSED** overlay.
 
+**Player slot.** One numbered row of Play setup, **PLAYER 1** to **PLAYER 4**. It holds a card, a **Controls** device and that slot's bindings. Cornhole turns follow slot order, and bindings are saved by slot number.
+
+**Preview stage.** The third stage, in The collection. It draws two copies of the previewed card on the Watch lobby's court, or on the court of a sport clip. It loops the chosen clip on its own clock and makes no sound. Its errors go to the Watch-only error box.
+
+**Toolbar.** The row above the Play stage in a live match. It holds **DIRECT PLAY / PRACTICE**, the event's name, **Pause game** or **Resume game**, Play's sound switch (**Sound on** or **Mute**), and **Back to setup**.
+
+**Control panel.** The block under the Play stage for each player who is not an AI player, in slot order. It holds the player's name, their move keys, the event's one-line hint and the on-screen controls. The Play result replaces it when the match ends. It is not a dialog; see *Panel*.
+
+**Play result.** The bar that replaces the control panels when a Play match ends. It reads "{name} wins" or **Session complete**, with **Play again** and **Choose another event**. It is not the Watch *result panel*.
+
+**Agent tools.** The two tools the page offers a browser's built-in assistant through WebMCP: `read_arena` and `configure_arena_event`. See [agent tools](cross-cutting/agent-tools.md).
+
 ## The objects
 
 **Demo user.** One of the four people the page pretends to be: Doug, Dan, Sam and Riley. The setup dialog's user choice says which of them "you" are for a contest. There is no sign-in; *this browser's save* is shared by all four.
@@ -50,9 +62,9 @@ The vocabulary used across these documents. When a document uses one of these wo
 
 **Recording.** The immutable, pre-simulated result of a contest: every *attempt*, the scores, the winner, the duration and an integrity hash. It is created in full the moment the contest is *locked*, before any of it is shown. Playback only reveals it; nothing about the outcome is decided during playback.
 
-**Attempt.** One throw or shot inside a recording. It has a *release*, a *contact* and a *score time*. Cornhole, football and basketball attempts are called bags, throws and shots on screen. Beer pong attempts are called balls.
+**Attempt.** One throw or shot inside a recording. It has a *release*, a *contact* and a *score time*. The page's scoreboard counts cornhole, football, beer pong and basketball attempts as bags, throws, balls and shots. The stage's nameplates call beer-pong attempts **SHOTS**.
 
-**Award.** One entry in the *ledger*: a number of points given to one demo user for one counted entry, as a win, draw or loss. Each award's ID is built from the contest and the user. The ledger refuses a duplicate ID, which is why an award can never post twice.
+**Award.** One entry in the *ledger*: a number of points given to one demo user for one counted entry, as a win, draw or loss. Each award's ID is built from the contest and the user. An award can never post twice, because locking a contest that already exists returns the existing recording instead of writing new awards. A save that somehow contains a duplicate award ID is refused when it is read.
 
 **Ledger.** The list of all awards in this browser's save. *Club points* and *standings* are always computed from it, never stored separately.
 
@@ -68,6 +80,36 @@ The default is 3 for a win, 1 for a draw, 0 for a loss, an allowance of 4, and c
 **Allowance.** How many counted entries each demo user may play, whichever sport. The default is 4. "Entries left" is the allowance minus the counted entries the user has already taken part in.
 
 **Schedule.** The fixed list of eight counted pairings: Doug against Dan and Sam against Riley, once in each of the four Watch sports. Each pairing can be played once. A fresh save already contains both basketball pairings.
+
+**Pairing.** One of the schedule's eight fixed counted matchups. It has a sport, a throwing order and a seed, and it belongs to both of its users. Each pairing can be locked once.
+
+**Round.** One attempt by each card, in order. Shown on the Watch stage as **ROUND n**.
+
+**Extra pair.** One more round, added while a contest set to **Up to 3 extra equal pairs** is still tied after its scheduled attempts. At most three are added.
+
+**Unresolved draw.** A contest still tied after three extra pairs. It is scored as a draw, and the result panel says "Unresolved draw after three extra pairs".
+
+**Heat check.** An exhibition-only option. During round three the bottom bar reads **HEAT CHECK / COSMETIC** and the cards act more showily. No score changes, though the timing can.
+
+**Replay.** Playing a finished recording again, from the result panel, History or a member record. A replay never awards anything.
+
+**Correction.** An award that points back to an earlier award and adjusts its points, without changing played, wins, draws or losses. The code supports corrections, but nothing on the page can make one.
+
+**Policy name.** The name this browser's save gives a scoring policy, shown as "Scoring policy: {name}" in House rules. The default is `club-points-v1`. Every save of the policy produces a new name, even with unchanged values, and each award is tagged with the name it was locked under.
+
+**Watch sport.** The sport selected in the Watch lobby, or the loaded recording's sport. It is separate from the Play event, and it survives tab switches but not a reload.
+
+**Personality.** A card's named mix of five motion styles: entrance, idle, throw, celebration and miss reaction. It also has an energy, a tempo and a variation number. Dan's is "The quiet operator" and Doug's "The lock-in showman". It sets how attempts are timed and acted in recordings, never their scores.
+
+**Character pack.** The `.arena-character.json` file that **Install character** reads. It holds a card, its card image, six poses with markers, and optionally a connected rig, a personality and a motion profile. Each image carries a SHA-256 checksum. A pack is at most 40 MB.
+
+**Connected rig.** A drawing of a character whose limbs are joined to the body so it can be animated freely. A card needs one to be used in Play. Dan and Doug have one built in; only some installed packs include one.
+
+**Side-view rig and front-view puppet.** The two ways a character is drawn. Dan and Doug are drawn from the side for cornhole (Watch and Play) and for Play running and fighting. Every other case uses the front-facing cut-out puppet, with a quick paper-flip turn between the two.
+
+**Previewed card.** The card selected in The collection, whose details and character are showing. It is Dan's card on each visit. A newly installed card becomes the previewed card.
+
+**Push and collect.** In Watch cornhole, a later bag moving the same card's earlier bags on the board. Collect is the case where it carries them into the hole. Play cornhole has its own push rule; see [the cornhole throw](play/cornhole.md).
 
 ## State
 
@@ -99,6 +141,10 @@ A read-only dialog never commits. The five phases in [the interaction](#the-inte
 
 **Busy.** A dialog that is doing work refuses to close and disables its main buttons. Examples are the setup dialog while **Locking the contest…** and **Install character** while reading or installing a pack.
 
+**Policy draft.** The unsaved values in Arena settings' **Host · prototype scoring** fields. Editing changes only the draft. **Save for future entries** writes it as the scoring policy. The draft stays in memory while the page is open, even after the dialog closes. Only a successful save, a reset in this tab, or a reload replaces it; another tab's save never updates it.
+
+**Motion-style draft.** An unsaved personality mixed in **Explore motion styles**. It belongs to one card and is used only by the preview stage. It survives a trip to Standings, but is lost on going to Watch or Play, or on reload.
+
 ## The interaction
 
 **Action.** The unit these documents narrate. It is anything that has a beginning, a possibly long middle and an end:
@@ -123,7 +169,7 @@ Every action is described in the same five phases.
 
 **Tap.** A press that is let go before it becomes a hold. A tap too short to be seen between two game steps is still counted once.
 
-**Chord.** Two inputs that only mean something together. For example, right Ctrl then J makes a Brawl grapple.
+**Chord.** Two inputs that only mean something together. For example, holding the right-modifier input and pressing primary makes a Brawl grapple. On keyboard 1 that is left Ctrl, then J.
 
 **Shot.** The cornhole throwing style the active player has chosen: **Hole runner**, **Slide**, **Roll** or **Airmail**. A character starts each turn with a default shot that may not be one of these four. See [the cornhole throw](play/cornhole.md#shots).
 
@@ -132,6 +178,33 @@ Every action is described in the same five phases.
 **Buffer.** A short grace period after a press that could not act yet. If the action becomes possible before the buffer runs out, it happens then, as though the press had arrived on time. It lasts 0.14 s in cornhole, 0.18 s in the Dash and 0.23 s in the Brawl, and holds at most four presses. See [the input model](foundations/input-model.md#buffered-presses).
 
 **Hit-stop.** A pause of a few game steps when a Brawl hit lands. It is a freeze of the game clock that makes the hit feel heavy. Input is still read during it, so nothing pressed is lost. It exists only in Play.
+
+**Toggle.** The on-screen form of a held action. The first tap turns it on and changes its label to **Release**, or to "Stop" plus the action's name, such as **Stop sprint** or **Stop block**. A second tap turns it off. Any pause clears it.
+
+**Entrances.** The opening of a contest or match in which the characters walk on. They take 2.65 s in Watch, 1.45 s in Play cornhole, and 1.5 s in the Dash and the Brawl.
+
+**Stamina.** In Play, each player's 0–100 reserve, shown as the bar in the score strip.
+- **Cornhole** spends it on precision mode and never gives it back.
+- **The Dash** spends it on sprinting, jumping, sliding, dodging, burst sprint and crashes. It comes back whenever Sprint is not held.
+- **The Brawl** calls it **Energy**.
+
+**Energy.** The Brawl's name for stamina. It pays for attacks, dodges and counter stance, and a blocked hit costs 8. It comes back at 11 per second, or 3 per second while blocking.
+
+**Course controls.** The Dash's setup choice, the same for every runner. With **Auto forward / change lanes**, runners run by themselves and move one lane at a time. With **Free steering / control acceleration**, they push forward to run and steer freely. It is not saved.
+
+**Lane.** One of the three running lines on the Dash track: back, middle and front. An obstacle trips only a runner in its lane.
+
+**Crash.** In the Dash, touching a hurdle without clearing it, or a bar without sliding. The runner stumbles for 0.7 s, slows to a crawl, loses 10 stamina, and cannot jump, slide or dodge until the stumble ends.
+
+**Cancel point.** The moment late in a Brawl attack or dodge from which the next action may start and cut off the rest of it. Presses made before it wait in the buffer.
+
+**Chip damage.** The fixed 2 health a blocked Brawl hit still takes, whatever the attack.
+
+**Guard break.** A blocked Brawl hit that takes the defender's energy to 0. The guard drops and the fighter reels for 0.38 s.
+
+**Hit reaction.** After a Brawl hit lands, the fighter reels and cannot act or walk: for 0.38 s under 15 damage, or 0.72 s at 15 or more.
+
+**Knockback.** The slide a Brawl hit causes in the direction of the blow. It is about 13 to 44 stage pixels, or roughly a fifth of that when blocked.
 
 ## Input
 
@@ -178,9 +251,9 @@ Two players may not share a keyboard layout or a controller. Any number may use 
 
 **AI player.** A player whose inputs are produced by the event's own simple strategy through the same input path as a person. See [AI players](cross-cutting/ai-players.md).
 
-**Binding.** The key or controller button assigned to an action for one player slot. The defaults are listed above. Only the action keys and buttons can be changed, and only in [controls and remapping](play/controls-and-remapping.md). Movement and aim keys are fixed.
+**Binding.** The key or controller button assigned to a *named input* for one *player slot*. The defaults are listed above. Only the action keys, the controller buttons and the controller's stick axes can be changed, and only in [controls and remapping](play/controls-and-remapping.md). Keyboard movement and aim keys, and the pause key, are fixed.
 
-**Stage focus.** Keyboard input counts only while keyboard focus is inside the Play stage's box. The stage takes focus when a match finishes loading, and again when the toolbar pause buttons or on-screen buttons are used. Clicking elsewhere on the page moves focus away, and presses then do nothing. A key that was already held can still be let go, though.
+**Stage focus.** Keyboard input counts only while keyboard focus is inside the Play stage's box. The stage takes focus when a match finishes loading, and again when the toolbar's pause buttons or an on-screen action button are used, or when the player presses Tab to reach it. Clicking elsewhere on the page, or pressing a **Move** or **Aim** pad, moves focus away, and presses then do nothing. Clicking the stage's drawing does *not* give it focus. A key that was already held can still be let go, though.
 
 **Press and release thresholds.** A button or trigger counts as pressed above 0.2 of its travel, and as released below 0.1. Keys are either 0 or 1.
 
@@ -191,6 +264,12 @@ Two players may not share a keyboard layout or a controller. Any number may use 
 After any pause, a controller player's inputs are ignored until that controller has returned to neutral once. This stops a trigger that was held through the pause from acting again the instant play resumes. The controller's pause button still works while the player is waiting.
 
 **Deadzone.** The centre area of a stick that reads as no movement: 0.18 of full travel.
+
+**Named input.** One of the eleven inputs every Play event reads: move, aim, primary, secondary, tertiary, special, charge, left modifier, right modifier, celebrate and pause. Each event gives them its own names. A binding belongs to the named input, so a remap applies in all three events.
+
+**Glyph.** The key or button name shown on an on-screen action button and beside a player's name, such as **J**, **RT**, **Cross**, **Tap** or **W A S D**. It follows the slot's bindings and the device family the player used last.
+
+**Rumble.** A brief controller vibration, where the browser supports it. It happens on a perfect cornhole release, on a Dash crash (stronger), and to a Brawl fighter who is hit or blocks a hit. It is separate from both sound switches.
 
 ## Events that end or interrupt an action
 
@@ -238,7 +317,7 @@ Leaving Watch mid-playback pauses the clock and keeps the recording. Leaving Pla
 
 **Settings or saved data change underneath.** Something changes a setting or this browser's save during an action:
 - **Reduced motion:** toggling it restarts a Play match.
-- **Scoring policy:** saving a new one makes an open counted-entry setup fail when started.
+- **Scoring policy:** a new policy saved in another tab can make **Start showdown** refuse, if it is pressed before this tab has re-read the save.
 - **Reset demo:** resetting replaces the save.
 - **Another tab:** another tab writing the save makes this tab reload its save.
 
@@ -248,6 +327,8 @@ Leaving Watch mid-playback pauses the clock and keeps the recording. Leaving Pla
 - **A refused save:** it shows a message in the error box, or in the dialog that tried to save.
 
 **Input device changes.** A controller disconnects or reconnects, a second device is used for the same player, or the on-screen controls are used alongside a keyboard or controller. A controller that disconnects mid-match pauses the match with **Controller disconnected. Reconnect it, then resume.**
+
+**Knockout.** A Brawl fighter's health reaching 0, including from chip damage. The bout ends on that game step.
 
 ## This browser's save
 
@@ -269,11 +350,15 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 **Journal.** A temporary second copy written just before each save, so that an interrupted write can be recovered on the next load.
 
 **Export.**
-- **Export local save** in Arena settings downloads the Arena save as the page is showing it, as `clubhouse-save.json`. A counted entry still hidden is left out.
+- **Export local save** in Arena settings downloads the Arena save as the page is showing it, as `clubhouse-save.json`. Any recording that is loaded but not complete, or waiting to resume, is left out with its awards.
 - **Export immutable recording** in the attempt history downloads one recording.
 - Nothing in the page can import an exported save back.
 
 **Reset demo.** Replaces this browser's save with a fresh save. It does not remove installed characters. See [Reset demo](club/reset-demo.md).
+
+**Character library.** The IndexedDB store `wybmh-character-library-v1` that holds installed character packs, one per card ID. It is separate from the Arena save and is neither exported nor reset.
+
+**Asset mapping.** A JSON description of how a card is drawn, attached through **Advanced asset mapping**. There is at most one per card, kept in the Arena save. Contests locked afterwards copy it in, and only **Reset demo** removes it.
 
 ## The interface
 
@@ -283,7 +368,11 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Resume banner.** **Saved at N seconds. Your result is waiting.** with a **Resume contest** button. It shows in the lobby while a contest is waiting to resume.
 
-**Scoreboard.** The Watch score display during playback. It shows each card's revealed score and attempts done out of total, the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**.
+**Scoreboard.** The page's own Watch score box, labelled "Live score". It shows each card's revealed score and attempts done out of total, the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. At desktop widths it sits under the stage's drawing and cannot be seen, so only screen readers get it. The visible score is on the *nameplates*.
+
+**Nameplate.** A label drawn by the stage in each top corner of the court, in Watch and in Play. It shows a character's first name, score (or health in the Brawl), pips for attempts left, and a status line such as **4 BAGS LEFT · WAITING**, **READY** or the current phase.
+
+**Sign.** The hanging board the stage draws at the top centre of the court, in Watch and Play. It shows the event's name, and under it the phase: **CHOOSE A MATCHUP** in the lobby, **CARDS TO COURT** during the entrances, or a Play phase such as "AIMING · PRACTICE".
 
 **Narration.** One line of plain-language commentary that updates during Watch playback and during a Play match. It is announced to screen readers as it changes.
 
@@ -293,11 +382,25 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Error box.** A red message under the Watch stage with a **Restore arena** button, used for Watch errors and save failures.
 
-**Score strip.** The row of player tiles under the Play stage. Each shows a name, a score, and one bar. The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
+**Score strip.** The row of player tiles laid over the top centre of the Play stage. Each shows a name, a score, and one bar. The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
 
 **Caption.** The line under the Play stage. It shows the event's current message and **Ns · Practice / no club points**.
 
 **Release timing meter.** The cornhole charge meter over the Play stage. It has a moving marker and a green release window, labelled **Release in green**.
+
+**Played.** The Standings column counting a user's revealed counted entries, whether won, drawn or lost. Exhibitions never count.
+
+**Rank.** A demo user's place by revealed club points among all four users. Equal totals share a rank and the next rank skips: 1, 2, 2, 4.
+
+**Member record.** The **Club member record** dialog, showing one demo user's revealed points, wins, draws and losses, and their contests.
+
+**Performance snapshot.** The collapsed section at the bottom of Arena settings with the Watch stage's last measured frame rate, frame interval, draw calls, asset load time and graphics memory estimate. It appears only once the Watch stage has reported.
+
+**Sound switch.** One of two independent on/off controls. Watch's is the stage's speaker button, "Enable sound" or "Mute sound", mirrored by the footer's **Sound on/off**. Play's is the toolbar's **Sound on** or **Mute**. Both start off and neither is saved.
+
+**Commentary.** The line stored with each Watch attempt. The narration shows it once the attempt's score appears, and **The contest, as it happened** lists it.
+
+**Clean spectator view.** The Watch stage button that hides everything but the stage, the progress bar and the result panel: the header, the title, the event dock, the side station with the playback controls, the floor caption with **House rules**, and the footer.
 
 ## Units
 

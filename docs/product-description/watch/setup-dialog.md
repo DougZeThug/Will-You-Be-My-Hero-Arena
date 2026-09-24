@@ -61,7 +61,7 @@ The dialog captures the choices and the current scoring policy, then locks the c
 
 ### While committed
 
-While locking, the dialog shows **Locking the contest…** and nothing else changes. Locking normally takes a fraction of a second: the whole contest is simulated, checked and written in one step.
+While locking, the dialog shows **Locking the contest…** and nothing else changes. Locking itself took about 0.6 seconds in the verification pass: the whole contest is simulated, checked and written in one step. Closing the dialog and rebuilding the stage for the recording can take much longer on a slow machine, and playback waits for both.
 
 ### Resolving
 
@@ -77,7 +77,7 @@ While locking, the dialog shows **Locking the contest…** and nothing else chan
 | Event and action combinations | The lobby's sport sets the attempt count, the estimate and whether **Replayable showcase seed** is offered: Cornhole only. The dialog cannot change the sport. | Not applicable: the sport was captured when **Start showdown** was pressed. |
 | Contest kind | **Exhibition · no points**: free opponent and cards, and the two cosmetic options, with no points. **Counted entry · points**: the scheduled opponent and order, the locked Doug card, points; **Start showdown** is disabled when no entry remains. | Not applicable once pressed. |
 | Character card | Your collection lists every card your user owns: both built-in cards and every installed card. In exhibition, the opponent's collection lists theirs. Card traits affect the outcome, not the dialog. | Not applicable. |
-| Presentation settings | No effect on the choices. Reduced motion shortens the dialog's animations where the operating system asks for it. | No effect. |
+| Presentation settings | No effect on the choices. The dialog's short fade-and-zoom plays whatever the Reduced motion setting. | No effect. |
 | Screen size and orientation | The dialog is at most the window width minus 36 px, and at most 92% of the window height. It scrolls when the content is taller. | No effect. |
 | Saved state | The counted tab depends on the save: the allowance used, which scheduled pairings are played, and whether **Counted entries enabled** is on in Arena settings. On a fresh save the basketball pairings are already played, so counted basketball shows **No entry remaining**. | Another tab's write can change these while the dialog is open (see below). |
 
@@ -123,7 +123,7 @@ While locking, the dialog shows **Locking the contest…** and nothing else chan
 
 - **Two counts at once.** **N counted entries left** counts across all sports. It can read "3 counted entries left" beside **No entry remaining**, because this sport's pairing is already played.
 - **Changing the sport.** The player must close the dialog and choose another event in the lobby.
-- **The lobby's duel cards and a counted entry.** The duel cards show your card and the *exhibition* opponent card, labelled **THROWS FIRST** and **THROWS SECOND**. In counted mode the real opponent card is Doug, and the order comes from the schedule. For example, Dan, Sam and Riley's scheduled opponents throw first. The review strip's "{name} throws first" is correct; the lobby cards may not be.
+- **The lobby's duel cards and a counted entry.** The duel cards show your card and the *exhibition* opponent card, labelled **THROWS FIRST** and **THROWS SECOND**. In counted mode the real opponent card is Doug, and the order comes from the schedule. For example, Dan's and Riley's scheduled opponents throw first; Doug and Sam are first in their own pairings. The review strip's "{name} throws first" is correct; the lobby cards may not be.
 - **Counted Doug against Doug.** A counted entry with your card set to Doug is Doug against Doug.
 - **The opponent's strategy** is always Steady, and the dialog does not say so.
 - **The estimate.** "approximately N seconds" is estimated from Dan's and Doug's timing whatever cards are chosen. For a tie rule with extra pairs it adds "+ extra pairs".

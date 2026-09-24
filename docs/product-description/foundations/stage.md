@@ -31,7 +31,7 @@ Resizing the window rescales the court smoothly. Nothing restarts, and nothing c
   - the loaded recording
   - the sport
   - **Lower graphics quality**
-  - the imported asset mappings
+  - the imported asset mappings. In practice this means *every* re-read of this browser's save: a policy save, a reset, the logo, and every write from another tab. Each re-read produces a new list of mappings, even when nothing in it changed.
 
   It is also rebuilt every time the player returns to the Watch tab. While it rebuilds, the playback clock does not advance: the renderer drives it. Playback continues from where it was once the stage is ready.
 - **The Play stage is built once per match.** It is rebuilt only by **Play again**, which starts a new match, or by toggling **Reduced motion**, which restarts the match.
@@ -41,12 +41,23 @@ Resizing the window rescales the court smoothly. Nothing restarts, and nothing c
 
 The scene is always 1280×720 *stage pixels*, fitted inside the stage box and centred. Any spare space is letterboxed in the court's background colour. All game rules measure in stage pixels, so the window size never changes an outcome. Examples are the cornhole hole's 13-pixel radius and the Brawl's hit ranges.
 
-The Watch stage box is 510 pixels high on a typical desktop:
-- 570 at 1450 px wide and above
-- 480 at 1150 px and below
-- 550 at 600 px and below, where the scoreboard moves above the court
-- 350–450 on short landscape screens
-- the whole window in the clean spectator view
+The Watch stage box keeps the court's 16:9 shape at every width the verification pass measured:
+
+| Window width | Stage height |
+|---|---|
+| 1600 px | 710 px |
+| 1440 px | 620 px |
+| 1100 px | 429 px |
+| 850 px | 324 px |
+| 390 px | 208 px |
+
+The stylesheet also sets fixed heights (510, 570, 480 and 550 px) and heights for short landscape screens. At the widths above, those fixed heights are overridden. In the clean spectator view the stage fills the window.
+
+The stage's own drawing covers the page's text overlays at these widths:
+- **In the lobby**, the "THE SAME CREW. HIGHER STAKES." label.
+- **During playback**, the "Live score" scoreboard.
+
+What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)).
 
 ## Reduced motion and lower graphics quality
 
@@ -55,8 +66,8 @@ Both are checkboxes in [Arena settings](../club/arena-settings.md). They apply a
 | | Reduced motion | Lower graphics quality |
 |---|---|---|
 | Watch | Calmer effects; no camera punch or shake; simplified intro impacts. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects and camera effects are toned down as for Reduced motion; character motion is unchanged. |
-| Play | The match **restarts** from its entrances. Camera punches are skipped and effects softened. | No effect: Play ignores it. |
-| The collection | Previews use reduced clips. | The preview stage is rebuilt with toned-down effects. |
+| Play | The match **restarts** from its entrances. Camera punches are skipped, impact effects are not drawn at all, and squash and stretch is off. | No effect: Play ignores it. |
+| The collection | Previews use reduced clips. On a cornhole court, though, Dan and Doug always show the same performance idle, whatever the setting. | The preview stage is rebuilt. The preview has no contact or camera effects to tone down, so the rebuild is the only visible change. |
 | The page itself | Transitions are turned off, card hover lift is disabled, and spinners stop spinning. This follows the operating system's preference, not the checkbox. | No effect. |
 
 ## Graphics context loss and the error box
@@ -69,7 +80,7 @@ A browser can take away a page's WebGL graphics context, for example after a GPU
 
   **Restore arena** clears the message and reloads the same recording at the same second, paused. The player presses **Resume playback** to continue.
 - **In Play** nothing catches it. There is no message and no pause from the page itself.
-- **In The collection**, preview errors are reported the same way as in Watch.
+- **In The collection**, preview errors go to the same error state as Watch's. The error box is only drawn on the Watch tab, so nothing shows on The collection. A lost graphics context silently stops the preview's clock.
 
 The same Watch error box shows other errors too. Examples: a refused setup, a failed playback-position save, a rejected scoring policy, and a character library that will not open. It always carries **Restore arena**, whatever the error:
 - **With a recording loaded**, the button reloads it paused at the current second, as above.

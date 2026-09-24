@@ -29,7 +29,8 @@ The gear opens **Arena settings** as a dialog over whatever view is showing. The
 Only one view is shown at a time. Switching tabs does not keep the others running in the background:
 - **Watch.** If a recording is playing, switching away *pauses* it first. The recording, its position and the speed are kept, and returning to Watch shows it paused where it was left. The Watch stage itself is torn down while away and rebuilt on return.
 - **Play.** Switching away *removes* Play entirely. A running match ends at once without a warning, and nothing about it is kept. Play setup's choices are lost too: event, players, characters, devices, course controls, and any remapping not yet saved by **Start**. Returning shows the defaults.
-- **Standings and The collection** keep nothing but their current tab and preview choices. Those last only until the page is reloaded.
+- **Standings** keeps its sport tab until the page is reloaded.
+- **The collection** keeps its previewed card and **Motion preview** clip until reload. The **Animation library** clip and any motion-style draft survive a trip to Standings, but not to Watch or Play.
 
 **The logo** is a link to `/`, but clicking it does not reload the page. Instead it:
 1. stops Watch sound
@@ -54,7 +55,7 @@ Every dialog is modal: while it is open, the page behind it cannot be clicked. E
 | **Club member record** | The club points chip, or a name in Standings | [History and member record](../club/history-and-member-record.md) |
 | **The contest, as it happened** | **Attempt history** during Watch playback | [playback controls](../watch/playback-controls.md) |
 | **Card → competitor mapping** | **Advanced asset mapping** in The collection | [asset mapping](../collection/asset-mapping.md) |
-| **Install character** (**FROM CARD TO CO…**) | **Install character** in The collection | [Install character](../collection/install-character.md). It refuses to close while busy. |
+| **Install character** (**FROM CARD TO COURT.**) | **Install character** in The collection | [Install character](../collection/install-character.md). It refuses to close while busy. |
 
 Only one of the Arena settings, House rules, History, member record, attempt history, mapping and reset dialogs can be open at a time. They share one window, and opening another replaces its contents. The setup dialog and **Install character** are separate windows.
 
@@ -97,7 +98,7 @@ The view or dialog stays as the player left it. The page does nothing in the bac
 
 ### Resolving
 
-Closing the dialog returns focus to the page. It does not return focus to the Play stage: a keyboard player must click the stage, or use a toolbar button, before their keys work again.
+Closing the dialog returns focus to the page. It does not return focus to the Play stage: a keyboard player must Tab to the stage, or use **Pause game** or **Resume game**, before their keys work again. Clicking the stage's drawing does *not* give it focus, as the verification pass confirmed.
 
 ## Modifiers
 
