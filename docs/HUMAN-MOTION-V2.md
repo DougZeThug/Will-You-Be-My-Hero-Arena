@@ -2,7 +2,7 @@
 
 The [organic performance pass](ORGANIC-PERFORMANCE.md) extends this runtime with sequential body response, support balance, velocity-aware settling, action review takes and evaluated motion curves. It preserves the opt-in migration boundary below.
 
-This is an opt-in **Arena Lab migration**, available at `http://127.0.0.1:3010/human-motion/`. It runs the actual Phaser 3.90 renderer, the pinned DragonBones 5.5 runtime used by LoongBones, and the approved side-v3 Dan/Doug meshes and textures. It does not install new art, change saved recordings, award club points, or replace production Play/Watch.
+This is an opt-in **Arena Lab migration**, available at `http://127.0.0.1:3010/human-motion/`. It runs the actual Phaser 3.90 renderer, the pinned DragonBones 5.5 runtime used by LoongBones, and the approved side-v3 Dan/Doug meshes and textures. It does not install new art, change saved recordings, or award club points. Its `NativeAnimator` + `MotionPlanner` now also drive production Play running and fighting through `PlayMotionRig`; see [`ANIMATION-HANDOFF.md`](ANIMATION-HANDOFF.md) for the current routing.
 
 The [V3 contact and locomotion pass](review/human-motion-v3/README.md) further adds measured gait retargeting, stride matching, named equipment interactions, actual landing absorption and body-space collision. Its review surface still uses this V2 architecture.
 
