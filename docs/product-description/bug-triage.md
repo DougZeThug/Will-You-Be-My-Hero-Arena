@@ -779,6 +779,7 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - **Headings.** The Standings heading's win value follows the current policy even for points earned under another (`SecondaryViews.tsx:16`).
   - **Live score.** The "Live score" name sits on a box with no role, and the speed button's name hides its value (`Game.tsx:53`, `:60`).
   - **Focus ring.** The Play focus ring is about 2.6:1 against the page (`app/live-arena.css:176-179`).
+  - **Preview canvas label.** The collection's preview canvas is labelled "Animated sports arena. Scores and commentary are also shown as text.", which is untrue on that tab (`lib/arena/engine/core/ArenaGame.ts:41`).
   - **PAUSED overlay.** It has no live region, so an automatic pause is not announced (`LiveStage.tsx:137-150`).
   - **Clean spectator view:**
     - it leaves no way to pause (`app/globals.css`)
@@ -798,4 +799,5 @@ The list exists so the product owner can decide, item by item, whether to fix it
   - [playback controls](watch/playback-controls.md#open-questions-and-verification)
   - [the lobby](watch/lobby.md#open-questions-and-verification)
   - [Play setup](play/play-setup.md#open-questions-and-verification)
+  - [the collection](collection/the-collection.md#open-questions-and-verification)
 - **Status:** "ranked" in History and the member record, and "Saved at 1 seconds.", were seen in the scripted pass on 2026-09-24.

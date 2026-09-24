@@ -107,7 +107,7 @@ The default is 3 for a win, 1 for a draw, 0 for a loss, an allowance of 4, and c
 
 **Side-view rig and front-view puppet.** The two ways a character is drawn. Dan and Doug are drawn from the side for cornhole (Watch and Play) and for Play running and fighting. Every other case uses the front-facing cut-out puppet, with a quick paper-flip turn between the two.
 
-**Previewed card.** The card selected in The collection, whose details and character are showing. It is Dan's card on each visit. A newly installed card becomes the previewed card.
+**Previewed card.** The card selected in The collection, whose details and character are showing. It is Dan's card when the page loads, and then whichever card was last previewed, across tab switches, until a reload. A newly installed card becomes the previewed card.
 
 **Push and collect.** In Watch cornhole, a later bag moving the same card's earlier bags on the board. Collect is the case where it carries them into the hole. Play cornhole has its own push rule; see [the cornhole throw](play/cornhole.md).
 

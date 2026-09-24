@@ -24,7 +24,7 @@ On the Watch tab, the lobby is now empty: the stage rebuilds, the resume banner 
 | Ledger | Only those two contests' four awards. |
 | Scoring policy | The default: 3 for a win, 1 for a draw, 0 for a loss, an allowance of 4, counted entries on, named `club-points-v1`. |
 | Contest waiting to resume | None. The resume banner disappears. |
-| Imported asset mappings | None. Cards show their built-in art again. |
+| Imported asset mappings | None. Cards lose any mapped card image, personality and motion profile. |
 | The save's revision number | One more than before. It never goes back to zero. |
 | Arena settings' scoring draft | Replaced by the default policy, discarding any unsaved edits. |
 | Installed characters | Kept, in every demo user's collection. |
@@ -149,7 +149,7 @@ Those tabs' Arena settings drafts are not reset.
   The format error itself says **This save has an unsupported format. Export it before resetting.**, but neither works. Recovery needs the browser's own site-data controls ([this browser's save](../foundations/saved-data.md#edge-cases)).
 - **A character library that will not open.** The page never read the Arena save, so **Export save** downloads `null`. **Reset demo data** does read the save, and replaces it with a fresh one. The page then shows the fresh save and **Set up showdown** works, while the error box still shows the library message. The player's real contests are gone without ever having been exportable.
 - **An entry given back.** Resetting while a counted entry is loaded but not complete, or waiting to resume, removes it with its unrevealed awards. The entry can be played again.
-- **Imported mappings.** A card whose art came from an attached mapping shows its built-in art again after the reset ([asset mapping](../collection/asset-mapping.md)).
+- **Imported mappings.** A card with an attached mapping loses its mapped card image, personality and motion profile after the reset ([asset mapping](../collection/asset-mapping.md)).
 - **A reset from another view.** Opened from Play, Standings or The collection, the reset leaves the player there. The Watch lobby is empty when they return.
 
 ## Open questions and verification
