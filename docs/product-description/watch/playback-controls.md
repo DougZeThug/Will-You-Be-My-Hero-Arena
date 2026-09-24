@@ -199,7 +199,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 - **The mode's code name.** The floor caption under the stage uses the code's word for the mode, "ranked" or "exhibition", rather than the on-screen "counted entry".
 - **A heat-check round.** An exhibition with **Heat check** shows **HEAT CHECK / COSMETIC** in the bottom bar during round three's attempts, instead of **● LIVE** or **PAUSED**.
 - **Skipping past the finale.** **Skip to result** jumps past the finale, so the winner's victory animation is skipped. Watching to the end shows it.
-- **Pausing during the finale** pauses the finale animation; the result panel is already showing.
+- **Pausing during the finale** is only possible by switching tab: at completion the pause button disappears with the other playback buttons, and the result panel is already showing.
 - **Speed and the progress bar.** At 2× speed the position is still written every 2 seconds of *playback* time, so about once a second in real time.
 - **Duel cards.** The duel cards in the side station are disabled during playback, so the setup dialog cannot be opened.
 

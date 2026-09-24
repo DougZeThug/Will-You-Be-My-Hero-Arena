@@ -100,7 +100,7 @@ The chip's **entries left** already counts it ([written and revealed](../foundat
 
 **Points and the ledger.** A waiting counted entry's points are hidden until it completes or is replaced. Nothing is written or removed; only what is shown changes.
 
-**Saved data and recovery.** The waiting contest and its second are part of the Arena save. They are exported with **Export local save** and removed by **Reset demo** ([this browser's save](../foundations/saved-data.md)).
+**Saved data and recovery.** The waiting contest and its second are part of the Arena save. **Export local save** leaves the waiting recording and its awards out of the file, keeping only the field that names it (bug-triage B-11). **Reset demo** removes them ([this browser's save](../foundations/saved-data.md)).
 
 **Watch and Play separation.** Play never writes a position; a Play match cannot be resumed.
 

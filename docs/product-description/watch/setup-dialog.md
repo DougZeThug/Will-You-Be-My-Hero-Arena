@@ -13,7 +13,7 @@ The setup dialog is where the player decides who competes in a Watch contest, an
 
 **Start showdown** then turns those choices into an immutable recording ([contests and recordings](../foundations/contests-and-recordings.md)).
 
-The dialog opens from the Watch lobby, either from **Set up showdown** or by clicking either duel card. Its title is **Who’s stepping onto the court?** and its eyebrow names the sport and attempt count, for example **CORNHOLE · 4 ATTEMPTS EACH**. It cannot be opened while a recording is loaded: the duel cards are disabled then, and **Set up showdown** is not shown. It also cannot be opened while this browser's save has failed to load, because **Set up showdown** is disabled then.
+The dialog opens from the Watch lobby, either from **Set up showdown** or by clicking either duel card. Its title is **Who’s stepping onto the court?** and its eyebrow names the sport and attempt count, for example **CORNHOLE · 4 ATTEMPTS EACH**. It cannot be opened while a recording is loaded: the duel cards are disabled then, and **Set up showdown** is not shown. While this browser's save has failed to load, **Set up showdown** is disabled, but the duel cards still open the dialog. **Start showdown** then cannot work, because there is no save to lock into (read from code, not tried).
 
 ## The simple case
 
@@ -78,7 +78,7 @@ While locking, the dialog shows **Locking the contest…** and nothing else chan
 | Contest kind | **Exhibition · no points**: free opponent and cards, and the two cosmetic options, with no points. **Counted entry · points**: the scheduled opponent and order, the locked Doug card, points; **Start showdown** is disabled when no entry remains. | Not applicable once pressed. |
 | Character card | Your collection lists every card your user owns: both built-in cards and every installed card. In exhibition, the opponent's collection lists theirs. Card traits affect the outcome, not the dialog. | Not applicable. |
 | Presentation settings | No effect on the choices. The dialog's short fade-and-zoom plays whatever the Reduced motion setting. | No effect. |
-| Screen size and orientation | The dialog is at most the window width minus 36 px, and at most 92% of the window height. It scrolls when the content is taller. | No effect. |
+| Screen size and orientation | The dialog is at most the window width minus 36 px, and at most 92% of the window height, or 94% at 600 px wide and below. It scrolls when the content is taller. | No effect. |
 | Saved state | The counted tab depends on the save: the allowance used, which scheduled pairings are played, and whether **Counted entries enabled** is on in Arena settings. On a fresh save the basketball pairings are already played, so counted basketball shows **No entry remaining**. | Another tab's write can change these while the dialog is open (see below). |
 
 ## Cancel and interrupt

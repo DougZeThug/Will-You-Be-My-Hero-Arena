@@ -147,7 +147,7 @@ A read-only dialog never commits. The five phases in [the interaction](#the-inte
 
 **Active player.** In Play cornhole, the one player whose turn it is. Only the active player's inputs do anything, apart from **Celebrate**.
 
-**Busy.** A dialog that is doing work refuses to close and disables its main buttons. Examples are the setup dialog while **Locking the contest…** and **Install character** while reading or installing a pack.
+**Busy.** A dialog that is doing work disables its main buttons. The setup dialog while **Locking the contest…** still closes on Escape, and the lock finishes anyway. **Install character** while reading or installing a pack is the only dialog that also refuses to close.
 
 **Policy draft.** The unsaved values in Arena settings' **Host · prototype scoring** fields. Editing changes only the draft. **Save for future entries** writes it as the scoring policy. The draft stays in memory while the page is open, even after the dialog closes. Only a successful save, a reset in this tab, or a reload replaces it; another tab's save never updates it.
 
