@@ -95,6 +95,20 @@ Do not describe code. Describe what the player sees and does. Technical detail g
 - **Default scoring policy.** 3 points for a win, 1 for a draw and 0 for a loss. Allowance 4. Counted entries on.
 - **Fresh save.** Contains the two basketball counted contests, so each demo user has one entry used.
 - **Leaving Watch and Play by tab.** Switching tab during Watch playback pauses the clock and keeps the recording loaded. Switching away from Play unmounts it: a running match and all setup choices are lost without warning.
+- **Stage rebuilds.** The Watch stage is rebuilt, showing **UNFOLDING THE ARENA…**, on every return to the Watch tab, and whenever any of these change:
+  - the cards
+  - the recording
+  - the sport
+  - **Lower graphics quality**
+  - the imported mappings
+
+  **Lower graphics quality** is ignored by Play. **Restore arena** reloads a loaded recording paused at the same second. With nothing loaded, it toggles **Lower graphics quality**.
+- **Clean spectator view.** It hides the header and tabs, the lobby title, the event dock, the side station with the playback controls, and the footer. Only the stage's sound and clean-view buttons remain.
+- **Exports and storage.**
+  - **Export local save** exports the save as this tab shows it, so a hidden counted entry is left out.
+  - The Arena save cannot be imported back.
+  - Installed characters live in IndexedDB. They are not touched by **Reset demo**, and there is no uninstall.
+  - If IndexedDB cannot open, the Arena save is never read and Watch cannot start a contest.
 - **Watch lifecycle ownership.** [Contests and recordings](foundations/contests-and-recordings.md) owns the definitions and the single lifecycle diagram. Each state then has one owning document:
 
   | State | Owning document |

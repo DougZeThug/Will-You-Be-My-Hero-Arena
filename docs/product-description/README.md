@@ -264,9 +264,9 @@ Status is one of `not started`, `drafted`, or `verified`.
 | play/cornhole.md | drafted |
 | foundations/input-model.md | drafted |
 | foundations/contests-and-recordings.md | drafted |
-| foundations/app-shell.md | not started |
-| foundations/saved-data.md | not started |
-| foundations/stage.md | not started |
+| foundations/app-shell.md | drafted |
+| foundations/saved-data.md | drafted |
+| foundations/stage.md | drafted |
 | watch/setup-dialog.md | not started |
 | watch/playback-controls.md | not started |
 | watch/result-and-replay.md | not started |

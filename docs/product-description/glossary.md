@@ -269,7 +269,7 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 **Journal.** A temporary second copy written just before each save, so that an interrupted write can be recovered on the next load.
 
 **Export.**
-- **Export local save** in Arena settings downloads the whole save as `clubhouse-save.json`.
+- **Export local save** in Arena settings downloads the Arena save as the page is showing it, as `clubhouse-save.json`. A counted entry still hidden is left out.
 - **Export immutable recording** in the attempt history downloads one recording.
 - Nothing in the page can import an exported save back.
 

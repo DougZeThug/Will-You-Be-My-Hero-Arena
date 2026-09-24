@@ -71,7 +71,7 @@ This is the rule most other documents depend on.
   - History
 - **Revealed at complete.** Playback is complete when the clock reaches the end of the last attempt. That happens by watching, or at once with **Skip to result**. The result panel appears, the chip and Standings include the new points, and History lists the contest.
 
-> Technical note: the ledger itself never changes after lock. Hiding is a display filter (`Game.tsx`, the `hiddenId` line) that removes one contest from the ledger and recording list shown on screen. Anything that reads this browser's save directly sees the points at once. That includes the **Export local save** file and another tab.
+> Technical note: the ledger itself never changes after lock. Hiding is a display filter (`Game.tsx`, the `hiddenId` line) that removes one contest from the ledger and recording list shown on screen. Another tab reads this browser's save directly and sees the points at once. The **Export local save** file, though, is built from what this tab shows, so it leaves the hidden contest out too ([this browser's save](saved-data.md#exports)).
 
 **Entries left** is *not* hidden. The chip counts entries from the full save, so it drops by one the moment a counted entry is locked, while the points and rank beside it still leave that contest out.
 
