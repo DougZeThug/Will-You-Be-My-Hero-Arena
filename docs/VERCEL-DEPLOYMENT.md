@@ -1,7 +1,7 @@
 # Vercel deployment
 
 Arena is a frontend-only static export. The existing React UI uses vinext
-1.0.0-beta.5 with Vite 8.0.13; Phaser 3.90.0 and the current LoongBones adapter
+1.0.0-beta.5 with Vite 8.3.0; Phaser 3.90.0 and the current LoongBones adapter
 run in the browser. `scripts/build.mjs` builds with Vite and runs vinext's static
 prerender, as selected by `next.config.ts` (`output: 'export'`). No engine,
 animation, artwork, rules, or game-flow changes are required for Vercel.
