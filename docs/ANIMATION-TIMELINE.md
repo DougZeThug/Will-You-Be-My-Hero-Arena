@@ -1,6 +1,6 @@
 # Match animation
 
-Current animation: see [Articulated animation](ARTICULATED-ANIMATION.md). New packs can include a version 2 continuous-limb atlas and custom joint tracks; original eight-image packs retain the pose renderer.
+Current animation: see [ANIMATION-HANDOFF](ANIMATION-HANDOFF.md). New packs can include a version 2 continuous-limb atlas and custom joint tracks; original eight-image packs retain the pose renderer.
 
 The existing PixiJS renderer uses one `PlaybackClock`. Pose blends, portal masks, glows and transforms are pure functions of recorded time, so pause, half speed, double speed, replay and backward seeking sample the same action.
 
