@@ -76,7 +76,7 @@ While covered, the page fetches and checks the character rigs, then loads the co
 
 If the match cannot open, the cover is replaced by the error overlay, with the reason. There is no retry button: the player presses **Back to setup**, changes what is needed, and presses **Start** again. The messages are:
 - **No connected rig.** "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." It appears for an installed card whose pack has no connected rig.
-- **A file fails to load.** "Could not load {file}. Return to setup and retry." for an art or equipment file.
+- **A file fails to load.** "Could not load {asset}. Return to setup and retry." for an art or equipment file, where {asset} is the asset's internal name, such as "arena-background", not a file name.
 - **A rig file is missing or altered.** "Error: Cannot load performance asset {file}" or "Error: Performance asset hash mismatch: {file}". The Dash and the Brawl say "side rig asset" instead.
 
 The "Error:" prefix is part of the message as shown.
@@ -129,7 +129,7 @@ Nothing about the match is kept anywhere.
 | Toolbar | Above the stage | **DIRECT PLAY / PRACTICE** and the event's name; **Pause game** or **Resume game**; **Sound on** or **Mute**; **Back to setup** |
 | Stage | The full width of the page, 16:9 | The event, scaled to fit ([the stage](../foundations/stage.md)) |
 | Sign and nameplates | Drawn inside the stage | A hanging sign with the event's title and phase, and a nameplate per player in the top corners |
-| Score strip | Over the top centre of the stage, clipped to a 1-pixel box, so only screen readers get it | One tile per player |
+| Score strip | A 1-pixel box at the stage's top left, so only screen readers get it | One tile per player |
 | Overlays | Over the whole stage, dimming it | **Opening the cards…**, the error, or **PAUSED** |
 | **Release timing** meter | Drawn at the bottom left of the stage as **RELEASE TIMING**, cornhole only, while charging. The page's own copy, labelled **Release in green**, is clipped like the score strip | See [the cornhole throw](cornhole.md) |
 | Caption | Under the stage | The event's message, and "Ns · Practice / no club points" |

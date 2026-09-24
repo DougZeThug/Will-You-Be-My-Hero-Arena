@@ -90,7 +90,7 @@ A script cannot judge how motion looks, whether sound is heard, or real controll
 - **Coverage.** About 45 checks across all five checklist files. Items are marked with the outcome and "scripted pass" in their Result column.
 
 **What the pass could not cover.**
-- **Timing.** Software rendering ran game time and playback time several times slower than wall time, so every item about a duration, a timing window or a speed is `blocked` here. Examples are the cornhole release window, the 2.2 s automatic release, Watch durations, and the Dash and Brawl timers.
+- **Timing.** Software rendering ran game time and playback time several times slower than wall time, so no item about a duration, a timing window or a speed could pass here. The ones the pass attempted are marked `blocked`: the cornhole release window and the 2.2 s automatic release. Others, such as Watch durations and the Dash and Brawl timers, were not attempted and are left at `—`.
 - **Looks and feel.** Nothing about how motion looks, how controls feel, or whether sound is heard was judged.
 - **Emulated conditions.**
   - The controller was emulated by replacing `navigator.getGamepads`.

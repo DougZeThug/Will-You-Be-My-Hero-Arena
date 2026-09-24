@@ -247,7 +247,7 @@ After an interrupt the player stays in the race unless they navigated away or re
 - **The cards' running "recovery" value is unused.** Dan has 0.85 and Doug 0.65 (`profiles/dan.ts` 4, `profiles/doug.ts` 4), but everyone recovers stamina at 13 per second (`RunningPhysics.ts` 60–65).
 - **Player 4's negative progress** comes from measuring progress from x = 170 while they start at x = 75 (`RunningEvent.ts` 34, `RunningPhysics.ts` 75–77). It looks like a bug.
 - **Dead heats.** A dead heat goes to slot order (`RunningEvent.ts` 160–171). It has not been seen on the page.
-- **The AI's obstacle distance** is fixed at 88 pixels (`RunningEvent.ts` 135–153). That is too early for a slide at cruising speed and too late for a jump at full speed.
+- **The AI's obstacle distance** is fixed at 88 pixels (`RunningEvent.ts` 135–153). That is too early for a slide at cruising speed. It is too late for a jump only when burst sprint is added to a full sprint; at a plain full sprint, 88 px falls inside the jump window worked out above.
 - **Hurdle height.** The 52-pixel collision height (`RunningPhysics.ts` 115) is taller than the 42-pixel drawing (`VisualObjectRegistry.ts` 106).
 - **Trailing runners leaving the screen** is read from `CameraManager.ts` 16–22. It has not been seen.
 - **WebGL context loss** during a race has no handler. Whether the stage goes blank and whether the race keeps running are unknown.
