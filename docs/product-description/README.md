@@ -267,11 +267,11 @@ Status is one of `not started`, `drafted`, or `verified`.
 | foundations/app-shell.md | drafted |
 | foundations/saved-data.md | drafted |
 | foundations/stage.md | drafted |
-| watch/setup-dialog.md | not started |
-| watch/playback-controls.md | not started |
-| watch/result-and-replay.md | not started |
-| watch/resume-a-contest.md | not started |
-| watch/lobby.md | not started |
+| watch/setup-dialog.md | drafted |
+| watch/playback-controls.md | drafted |
+| watch/result-and-replay.md | drafted |
+| watch/resume-a-contest.md | drafted |
+| watch/lobby.md | drafted |
 | watch/the-four-sports.md | not started |
 | play/play-setup.md | not started |
 | play/controls-and-remapping.md | not started |
