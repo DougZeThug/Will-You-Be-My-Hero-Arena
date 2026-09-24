@@ -1,5 +1,9 @@
 import { VirtualDevice } from './InputDevice';
-import type { Bindings } from './InputBindings';
+import {
+  KEYBOARD_AIM_KEYS,
+  KEYBOARD_MOVE_KEYS,
+  type Bindings,
+} from './InputBindings';
 import type { Intent } from './InputActions';
 export class KeyboardDevice extends VirtualDevice {
   private down = new Set<string>();
@@ -11,14 +15,8 @@ export class KeyboardDevice extends VirtualDevice {
     scope: HTMLElement,
   ) {
     super(id, 'keyboard');
-    const move =
-        player === 1
-          ? ['KeyT', 'KeyG', 'KeyF', 'KeyH']
-          : ['KeyW', 'KeyS', 'KeyA', 'KeyD'],
-      aim =
-        player === 1
-          ? ['Numpad8', 'Numpad5', 'Numpad4', 'Numpad6']
-          : ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    const move = KEYBOARD_MOVE_KEYS[player === 1 ? 1 : 0],
+      aim = KEYBOARD_AIM_KEYS[player === 1 ? 1 : 0];
     const allowed = new Set([...move, ...aim, ...Object.values(bindings.keys)]);
     const key = (e: KeyboardEvent, pressed: boolean) => {
       if (
@@ -28,6 +26,10 @@ export class KeyboardDevice extends VirtualDevice {
       )
         return;
       if (!allowed.has(e.code)) return;
+      // Only a release of a key this device took is kept from the page, so a
+      // focused page button still receives the Space or Enter it was pressed
+      // with.
+      if (!pressed && !this.down.has(e.code)) return;
       e.preventDefault();
       if (pressed) this.down.add(e.code);
       else this.down.delete(e.code);

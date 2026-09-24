@@ -537,6 +537,53 @@ export async function testLive({ check }) {
   check(() => assert.ok(stop.time > struck, 'The clock resumes'));
   check(() => assert.equal(stop.hitStopSteps, 0));
   stop.destroy();
+  // Fixes from docs/product-description/bug-triage.md, each named by its entry.
+  const { keyConflict, invalidBinding, validateBindings } =
+    await import('../.test-build/engine/input/InputBindings.mjs');
+  const keyboard1 = { layout: 0, keys: bindingsFor(0).keys },
+    keyboard2 = { layout: 1, keys: bindingsFor(1).keys };
+  // B-34: a key already in use is refused, naming what uses it.
+  check(() =>
+    assert.deepEqual(keyConflict('Space', 'celebrate', [keyboard1], 0), {
+      player: 0,
+      use: 'charge',
+    }),
+  );
+  check(() =>
+    assert.equal(keyConflict('KeyC', 'celebrate', [keyboard1], 0), undefined),
+  );
+  check(() =>
+    assert.deepEqual(keyConflict('KeyW', 'charge', [keyboard1], 0), {
+      player: 0,
+      use: 'move',
+    }),
+  );
+  check(() =>
+    assert.deepEqual(
+      keyConflict('Numpad1', 'celebrate', [keyboard1, keyboard2], 0),
+      { player: 1, use: 'primaryAction' },
+    ),
+  );
+  check(() =>
+    assert.equal(
+      keyConflict('KeyZ', 'celebrate', [keyboard1, keyboard2], 0),
+      undefined,
+    ),
+  );
+  check(() =>
+    assert.equal(
+      invalidBinding({
+        ...bindingsFor(0),
+        buttons: { ...bindingsFor(0).buttons, charge: 40 },
+      }),
+      'charge',
+    ),
+  );
+  check(() => assert.equal(invalidBinding(bindingsFor(1)), undefined));
+  // B-18: a malformed saved entry is rejected, never thrown on.
+  check(() => assert.equal(validateBindings({ keys: 'x' }), false));
+  check(() => assert.equal(validateBindings(null), false));
+  check(() => assert.equal(validateBindings(bindingsFor(0)), true));
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',
