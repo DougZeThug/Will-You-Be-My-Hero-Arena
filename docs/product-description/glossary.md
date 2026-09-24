@@ -83,7 +83,7 @@ A read-only dialog never commits. The five phases in [the interaction](#the-inte
 
 **Written.** Stored in this browser's save. Counted-entry awards are written when the contest is locked.
 
-**Revealed.** Shown to the player. A counted entry's awards are written at lock but not revealed until its playback is *complete*. Until then they are left out of the points chip, Standings, member records and History. This is one of the most important rules in the Arena. [Contests and recordings](foundations/contests-and-recordings.md#written-and-revealed) owns it.
+**Revealed.** Shown to the player. A counted entry's awards are written at lock but not revealed until its playback is *complete*. Until then they are left out of the points and rank on the club points chip, Standings, member records and History. The chip's **entries left** is not hidden. This is one of the most important rules in the Arena. [Contests and recordings](foundations/contests-and-recordings.md#written-and-revealed) owns it.
 
 **Playing.** A recording is loaded in Watch and its playback clock is advancing.
 
@@ -91,7 +91,7 @@ A read-only dialog never commits. The five phases in [the interaction](#the-inte
 - **In Watch:** the playback clock is stopped by the pause button, by leaving the tab, or by a WebGL loss. The stage label shows **PAUSED** only when the pause button caused it.
 - **In Play:** the session is stopped and the **PAUSED** overlay is showing. It stays stopped until the player resumes.
 
-**Complete.** A Watch playback is complete when the clock reaches the end of the last attempt. The result panel appears, and a counted entry's points are revealed. A finale of about two seconds may still be animating on the stage.
+**Complete.** A Watch playback is complete when the clock reaches the end of the last attempt. The result panel appears, and a counted entry's points are revealed. A finale of about 2.6 seconds may still be animating on the stage.
 
 **Waiting to resume.** A contest whose playback was left before it was complete. Its position is kept in this browser's save, the *resume banner* offers it, and its points stay hidden. The code calls this the save's `active` contest; the documents do not call it "active", to avoid confusion with the *active player*. See [resuming a contest](watch/resume-a-contest.md).
 
