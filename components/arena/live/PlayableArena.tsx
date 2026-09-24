@@ -76,6 +76,21 @@ const keyName = (code: string) =>
     .replace(/^Digit/, '')
     .replace(/(Left|Right)$/, ' ($1)');
 const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta'];
+// Names for bound inputs the current event does not list, so a refusal never
+// shows an internal name.
+const INPUT_NAMES: Record<string, string> = {
+  primaryAction: 'action 1',
+  secondaryAction: 'action 2',
+  tertiaryAction: 'action 3',
+  specialAction: 'the special action',
+  charge: 'charge',
+  modifierLeft: 'the left modifier',
+  modifierRight: 'the right modifier',
+  celebrate: 'celebrate',
+  pause: 'pause',
+};
+const isKeyboard = (device: string) =>
+  device === 'keyboard' || device === 'keyboard2';
 export default function PlayableArena({
   imports,
   reduced,
@@ -112,14 +127,26 @@ export default function PlayableArena({
           : (playableEvent(event)
             .create()
             .registerControls()
-            .actions.find((a) => a.intent === intent)?.label ?? intent);
+            .actions.find((a) => a.intent === intent)?.label ??
+            INPUT_NAMES[intent] ??
+            intent);
   const bindKey = (i: number, intent: Intent, code: string) => {
+    // Only keyboard players share the physical keyboard; controller, touch
+    // and AI slots never conflict with a key.
     const p = players[i],
-      keyboards = players.map((s) => ({
-        layout: s.device === 'keyboard2' ? 1 : 0,
-        keys: s.device === 'keyboard' || s.device === 'keyboard2' ? s.bindings.keys : {},
-      })),
-      conflict = keyConflict(code, intent, keyboards, i);
+      slots = players
+        .map((s, index) => ({ s, index }))
+        .filter(({ s, index }) => index === i || isKeyboard(s.device)),
+      found = keyConflict(
+        code,
+        intent,
+        slots.map(({ s }) => ({
+          layout: s.device === 'keyboard2' ? 1 : 0,
+          keys: s.bindings.keys,
+        })),
+        slots.findIndex(({ index }) => index === i),
+      ),
+      conflict = found && { ...found, player: slots[found.player].index };
     if (conflict) {
       setRemapNotice({
         player: i,
@@ -212,6 +239,7 @@ export default function PlayableArena({
             aria-pressed={event === e.id}
             onClick={() => {
               setEvent(e.id);
+              setError('');
               setPlayers((p) => {
                 const next = p.slice(0, e.maxPlayers);
                 while (next.length < e.minPlayers)
@@ -276,13 +304,19 @@ export default function PlayableArena({
         <div className="player-count">
           <button
             disabled={players.length >= current.maxPlayers}
-            onClick={() => setPlayers((p) => [...p, slot(p.length)])}
+            onClick={() => {
+              setError('');
+              setPlayers((p) => [...p, slot(p.length)]);
+            }}
           >
             Add player
           </button>
           <button
             disabled={players.length <= current.minPlayers}
-            onClick={() => setPlayers((p) => p.slice(0, -1))}
+            onClick={() => {
+              setError('');
+              setPlayers((p) => p.slice(0, -1));
+            }}
           >
             Remove player
           </button>
@@ -293,7 +327,10 @@ export default function PlayableArena({
           Course controls
           <select
             value={movement}
-            onChange={(e) => setMovement(e.target.value)}
+            onChange={(e) => {
+              setError('');
+              setMovement(e.target.value);
+            }}
           >
             <option value="lanes">Auto forward / change lanes</option>
             <option value="free">Free steering / control acceleration</option>
