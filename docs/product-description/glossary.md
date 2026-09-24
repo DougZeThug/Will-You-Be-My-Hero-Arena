@@ -271,7 +271,7 @@ Two players may not share a keyboard layout or a controller. Any number may use 
 
 **AI player.** A player whose inputs are produced by the event's own simple strategy through the same input path as a person. See [AI players](cross-cutting/ai-players.md).
 
-**Binding.** The key or controller button assigned to a *named input* for one *player slot*. The defaults are listed above. Only the action keys, the controller buttons and the controller's stick axes can be changed, and only in [controls and remapping](play/controls-and-remapping.md). Keyboard movement and aim keys, and the pause key, are fixed.
+**Binding.** The key or controller button assigned to a *named input* for one *player slot*. The defaults are listed above. Only the action keys, the controller buttons and the controller's stick axes can be changed, and only in [controls and remapping](play/controls-and-remapping.md). Keyboard movement and aim keys, and the pause key, cannot be changed in the interface. The pause key is still part of a slot's saved bindings, though, so a slot that inherits keyboard 2's saved keys pauses with Backspace (see bug-triage B-18).
 
 **Stage focus.** Keyboard input counts only while keyboard focus is inside the Play stage's box. The stage takes focus when a match finishes loading, and again when the toolbar's **Pause game** or **Resume game**, the overlay's **Resume game**, or an on-screen action button is used, or when the player presses Tab to reach it. Clicking elsewhere on the page, or pressing a **Move** or **Aim** pad, moves focus away, and presses then do nothing. Clicking the stage's drawing does *not* give it focus. A key that was already held can still be let go, though.
 
