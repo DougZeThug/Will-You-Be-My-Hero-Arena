@@ -199,7 +199,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 
 **Multiple tabs.** The saved bindings are shared. For each device, the last **Start** in any tab that used it wins. A setup already open notices another tab's save only when one of its slots next changes **Controls**.
 
-**Agent tools.** No interaction. `configure_arena_event` switches to Watch, which discards any unsaved change ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** No interaction. `configure_arena_event` is refused while the Play tab is open, so an unsaved change stays where it was ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 

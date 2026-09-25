@@ -223,7 +223,7 @@ After an interrupt the player stays in the race unless they navigated away or re
 
 **Multiple tabs.** Each tab runs its own race. The only shared thing is the saved bindings; for each keyboard layout or controller, the last **Start** in any tab wins.
 
-**Agent tools.** `configure_arena_event` switches the page to the Watch tab. Called during a race (and with no Watch recording loaded), it ends the race exactly as navigating away does. `read_arena` reads only Watch state ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** `configure_arena_event` is refused while the Play tab is open, with "Leave Play before configuring a Watch contest.", so a race carries on unchanged. `read_arena` reads only Watch state ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 

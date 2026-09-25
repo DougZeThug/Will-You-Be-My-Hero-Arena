@@ -142,7 +142,7 @@ The match is owned by [the match shell](match-shell.md) and the event documents 
 | Pause or resume | Not applicable: no game is running on the setup. | Pausing and resuming the match leave the setup's choices unchanged. |
 | Repeated or rapid input | A double-click on **Start** starts one match; the setup is gone after the first click. **Add player** stops at four and **Remove player** at one. Clicking event cards repeatedly keeps cutting the slots to that event's maximum, and topping them up to its minimum. | Each **Play again** draws a new seed. |
 | A panel opens on top | Arena settings, House rules and History open over the setup. The choices are kept and are there when the dialog closes. | The match does not pause behind a dialog ([the match shell](match-shell.md)). |
-| Navigating away | Switching tab, the logo, **Replay** from History or the agent tool changing the event drops every choice without a warning. Unsaved remapping is lost. | The match ends at once, and the setup's choices are lost with it. Returning to Play shows the defaults. |
+| Navigating away | Switching tab, the logo or **Replay** from History drops every choice without a warning. Unsaved remapping is lost. The agent tool cannot do this: it is refused while Play is open. | The match ends at once, and the setup's choices are lost with it. Returning to Play shows the defaults. |
 | Forced finish | Not applicable: the setup has no time limit. | When the match finishes, its result offers **Play again** and **Choose another event**, both keeping the choices. |
 | Focus leaves the game | No effect. The setup waits as it is. | The match pauses ([the input model](../foundations/input-model.md#pause-and-input)). The choices are unaffected. |
 | Reload, close, or back/forward cache | Every choice is lost and the page reopens on the Watch lobby. Only the bindings from the last **Start** survive. | The same; the match leaves no trace. |
@@ -179,7 +179,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 
 **Multiple tabs.** Each tab has its own setup. They share only the saved bindings. For each keyboard layout or controller, the last **Start** in any tab that used it wins; a **Start** leaves the other devices' saved bindings alone.
 
-**Agent tools.** `configure_arena_event` switches the page to Watch, which discards the setup like any other tab switch. `read_arena` reads nothing from Play ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** `configure_arena_event` is refused while the Play tab is open, with "Leave Play before configuring a Watch contest.", so the setup and its choices stay as they were. `read_arena` reads nothing from Play ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 

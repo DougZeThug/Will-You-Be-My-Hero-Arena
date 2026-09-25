@@ -133,7 +133,7 @@ Once the event is over, every action it presses is refused. It can still be the 
 
 **Multiple tabs.** Each tab's AI runs only in that tab's match, and stops when that tab is left, because the match pauses.
 
-**Agent tools.** No interaction. The agent tools cannot add, remove or drive players. `configure_arena_event` ends the match, AI included, by switching to Watch ([agent tools](agent-tools.md)).
+**Agent tools.** No interaction. The agent tools cannot add, remove or drive players. While the Play tab is open `configure_arena_event` is refused with "Leave Play before configuring a Watch contest.", so a match with AI players carries on unchanged ([agent tools](agent-tools.md)).
 
 ## Edge cases
 

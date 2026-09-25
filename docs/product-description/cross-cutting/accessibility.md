@@ -197,7 +197,7 @@ When playback is complete, the narration announces the winner. The pause, speed 
 
 **Multiple tabs.** Each tab has its own focus and live regions. Switching browser tabs pauses a running Play match there, and that tab's hidden live region announces the pause.
 
-**Agent tools.** When a browser agent changes the event, the page changes silently: nothing announces it. If a Play match was showing, it disappears, and any focus inside it falls to the page ([agent tools](agent-tools.md)).
+**Agent tools.** When a browser agent changes the event, the page changes silently: nothing announces it. While the Play tab is open the call is refused, so a Play match and the focus inside it stay where they were ([agent tools](agent-tools.md)).
 
 ## Edge cases
 

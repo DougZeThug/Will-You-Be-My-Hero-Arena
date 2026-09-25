@@ -161,7 +161,7 @@ Cornhole has no sound for the end of the match.
 
 **Multiple tabs.** Each tab has its own switches. Two Watch tabs playing side by side in separate windows both sound, because Watch does not pause when its window loses focus. A Play match in a window without focus is paused, and silent.
 
-**Agent tools.** No interaction. The agent tools cannot read or change either switch. `configure_arena_event` ends a Play match, and its sound with it ([agent tools](agent-tools.md)).
+**Agent tools.** No interaction. The agent tools cannot read or change either switch. `configure_arena_event` is refused while the Play tab is open, so a Play match and its sound carry on ([agent tools](agent-tools.md)).
 
 ## Edge cases
 

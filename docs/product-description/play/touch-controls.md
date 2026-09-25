@@ -177,7 +177,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 
 **Multiple tabs.** Each tab has its own control panel. Switching tabs pauses the match being left, which clears its toggles.
 
-**Agent tools.** No interaction. The agent tools cannot press on-screen controls; `configure_arena_event` ends the match and removes the control panel ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** No interaction. The agent tools cannot press on-screen controls; `configure_arena_event` is refused while the Play tab is open, so the match and its control panel stay ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 

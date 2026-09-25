@@ -200,7 +200,7 @@ After an interrupt the player stays in the match unless they navigated away or r
 
 **Multiple tabs.** Each tab runs its own match. The only shared thing is the saved bindings; for each keyboard layout or controller, the last **Start** in any tab wins.
 
-**Agent tools.** `configure_arena_event` switches the page to the Watch tab. Called while a Play match is running (and no Watch recording is loaded), it ends the match exactly as navigating away does. `read_arena` reads only Watch state ([agent tools](../cross-cutting/agent-tools.md)).
+**Agent tools.** `configure_arena_event` is refused while the Play tab is open, with "Leave Play before configuring a Watch contest.", so a running match carries on unchanged. `read_arena` reads only Watch state ([agent tools](../cross-cutting/agent-tools.md)).
 
 ## Edge cases
 

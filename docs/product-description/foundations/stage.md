@@ -81,7 +81,7 @@ A browser can take away a page's WebGL graphics context, for example after a GPU
 
 - **In Watch**, the page catches this:
   - playback pauses, and the pause button shows **Resume playback**
-  - the error box under the stage reads **Graphics were interrupted. Reload to continue; nothing about the contest has changed.** with a **Reload the arena** button
+  - the error box under the stage reads **Graphics were interrupted. Reload to continue; nothing about the contest has changed.** with a **Reload the arena** button. In the lobby, with no recording loaded, it reads just **Graphics were interrupted. Reload to continue.**
 
   **Reload the arena** clears the message and rebuilds the stage from scratch. With a recording loaded, it stays paused at the same second, and the player presses **Resume playback** to continue. In the lobby, the idle clock starts again.
 - **In Play**, the match pauses under **PAUSED** with the notice **Graphics were interrupted. Resume when the stage is back.** When the browser gives the context back, the notice becomes **Graphics are back. Resume when ready.** **Resume game** resumes. It is an ordinary pause, so held input is cleared ([the input model](input-model.md#pause-and-input)).

@@ -37,7 +37,7 @@ Priorities:
    3. Serve: `PORT=3020 pnpm start`.
    4. Open `http://127.0.0.1:3020/` in a **fresh browser profile**, such as a new profile or a Playwright context, never your everyday profile. Every item starts from a fresh save unless its Setup says otherwise.
 
-   To return to a clean state between sections, close the profile, or clear the site's localStorage (`wybmh-paper-arena-v2`, `wybmh-input-bindings-v1`) and IndexedDB (`wybmh-character-library-v1`) from the browser's developer tools.
+   To return to a clean state between sections, close the profile, or clear the site's storage from the browser's developer tools: the localStorage keys `wybmh-paper-arena-v2`, `wybmh-input-bindings-v2` and the older `wybmh-input-bindings-v1` (still read if present), and the IndexedDB database `wybmh-character-library-v1`.
 2. **Confirm the commit.** Every document says `Verified against Will-You-Be-My-Hero-Arena commit 364e3c1`.
    - Run `git rev-parse --short HEAD` in the repository.
    - Or read `dist/client/arena-build.json`, which the build writes with the full commit.
@@ -58,7 +58,7 @@ Priorities:
 The Device column uses these values:
 
 - **mouse**: pointer clicks on a desktop browser.
-- **keyboard**: a physical keyboard with a numeric keypad for keyboard 2 items. Stage focus matters in Play. Tab to the stage, or use **Pause game** and **Resume game**, before pressing game keys. Clicking the stage's drawing does not focus it.
+- **keyboard**: a physical keyboard with a numeric keypad for keyboard 2 items. Stage focus matters in Play. Click the stage's drawing or Tab to it before pressing game keys; **Pause game** and **Resume game** also return focus to it.
 - **controller**: a real Xbox or PlayStation controller, or a generic USB one. The browser only reveals a controller after one of its buttons is pressed on the page. An emulated controller (see below) proves the page's logic, not real hardware.
 - **touch**: a touch screen, or the on-screen controls clicked with a mouse. Touch dragging on the pads needs a real touch device to judge feel.
 - **two tabs**: two tabs of the same browser profile on the page. Two tabs are *not* two browsers; they share this browser's save.
