@@ -91,7 +91,7 @@ Two scripted passes have been run. The first found the bugs. The second checked 
 - **Build.** The production build of commit `d95832c`, whose source is identical to `3b4ec62`; only documents had changed. It was served by `scripts/serve.mjs`.
 - **Browser.** Headless Chromium with software WebGL (SwiftShader), a fresh context for every check, 1440×1000 unless noted.
 - **Scripts.** Playwright scripts under the ignored `work/qa/product-description/`. They drove the real interface by button names and keys, and read state back from localStorage, downloaded files and on-page text.
-- **Coverage.** About 45 scripted checks. The five checklist files hold 1,302 items, 405 of them P1. Of these, 278 carry a result from this pass, with "(scripted pass 2026-09-24)" in their Result column: 112 pass, 118 partial, 37 confirmed suspected bugs, 9 blocked, and 2 not reproduced. A partial's note says which part was not tried or not seen. The other 1,024 items are still `—`.
+- **Coverage.** About 45 scripted checks. The five checklist files then held 1,302 items, 405 of them P1. Of these, 278 carry a result from this pass, with "(scripted pass 2026-09-24)" in their Result column: 112 pass, 118 partial, 37 confirmed suspected bugs, 9 blocked, and 2 not reproduced. A partial's note says which part was not tried or not seen. The other 1,024 items are still `—`.
 
 **What the pass could not cover.**
 - **Timing.** Software rendering ran game time and playback time several times slower than wall time, so no item about a duration, a timing window or a speed could pass here. The ones the pass attempted are marked `blocked`: the cornhole release window and the 2.2 s automatic release. Others, such as Watch durations and the Dash and Brawl timers, were not attempted and are left at `—`.
@@ -122,5 +122,41 @@ Two scripted passes have been run. The first found the bugs. The second checked 
   - the page's own Watch scoreboard and lobby label are covered by the stage's drawing
   - the stage's height follows its width
   - clicking the Play stage does not give it keyboard focus
+
+### Second scripted pass (fix pass), 2026-09-24 (commits `3c64f06` to `364e3c1`)
+
+This pass checked the bug-triage fixes on the page, and the checklists were then revised to describe the fixed build.
+
+**What was run.**
+- **Builds.** Production builds of `3c64f06` (checks 1–8 and 12–18), `680fa21` (checks 3 and 9–11, re-run once the script waited out the Play entrances) and `364e3c1` (check 19), served by `scripts/serve.mjs`.
+- **Browser.** The same as the first pass: headless Chromium with software WebGL, a fresh context for every check, 1440×1000.
+- **Coverage.** 19 scripted checks, each aimed at one or more fixed triage entries, and all 19 saw what they were looking for. The checklist rows they bear on carry "(fix pass 2026-09-24)" in the Result column. The rule is the same as the first pass: a row is `pass` only when every step and every part of its expected result was covered, and otherwise `partial`, with a note saying what was not.
+- **Node tests, not the page.** Several fixes can only be checked reliably through timing or internal state, so they are covered by `pnpm test` instead:
+  - the Play rules (B-15, B-17, B-25's default shot, B-26, B-28, B-29)
+  - a finished match ignoring the pause key (B-30)
+  - the key-conflict and binding helpers (B-34)
+  - the save API (B-01, B-03's reset, B-21, B-32)
+
+  Rows that rely on those tests stay at `—` here: a Node test is not a check of the page.
+- **Motion.** Lab frame captures of a held guard, two lane changes, and a celebration followed by a jump were looked at frame by frame. Feel was not judged, and the held-guard frames do not show the block pose apart from the guarded idle.
+
+**What it could not cover.** The first pass's limits all still apply: no timing, looks, feel, sound or real hardware. In addition:
+- The controller, WebMCP and a blocked character library were emulated as before.
+- Graphics loss was provoked with the `WEBGL_lose_context` extension.
+
+**The checklists after the fix pass.** Rows describing the old behaviour were rewritten to describe the fixed build, and each ends its Expected with "(fixed, B-NN)". A rewritten row not covered by the fix pass went back to `—`, because its first-pass result described the old behaviour. Rows the fixes did not touch keep their first-pass result. 21 new rows cover new interface and rules, such as **Start anyway**, the lobby's and the collection preview's graphics-loss boxes, solo play, the charged power strike, and a finished match ignoring focus loss. Counts across the five files:
+
+| File | Rows | pass | partial | blocked | — |
+| --- | --- | --- | --- | --- | --- |
+| foundations.md | 237 | 35 | 39 | 2 | 161 |
+| watch.md | 242 | 41 | 20 | 4 | 177 |
+| play.md | 308 | 10 | 34 | 2 | 262 |
+| club-and-collection.md | 375 | 14 | 53 | 1 | 307 |
+| cross-cutting.md | 161 | 4 | 17 | 0 | 140 |
+| **Total** | **1,323** | **104** | **163** | **9** | **1,047** |
+
+- **Where the results come from.** 95 results come from the fix pass (18 pass, 77 partial). The other 181 are first-pass results on rows the fixes did not change (86 pass, 86 partial, 9 blocked).
+- **Nothing left open.** No row is `fail`, and no confirmed suspected bug remains.
+- **Rows that describe a fix.** 395 rows, new ones included, end their Expected with "(fixed, B-NN)".
 
 No document is marked `verified`: a scripted pass alone never moves a document to `verified`, and the timing and feel items still need a person at a real machine.
