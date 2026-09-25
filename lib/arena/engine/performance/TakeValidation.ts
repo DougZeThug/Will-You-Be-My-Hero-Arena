@@ -56,7 +56,8 @@ export interface PerformanceTake {
   channels: Record<TakeChannel, number[]> &
     Partial<Record<TakeFootChannel, number[]>>;
 }
-/** Native hand_L limit; the wrist channel is that joint's local rotation. */
+/** Authored pre-overlap hand intent. The compiler adds wrist/chest lag, then
+ * enforces the native hand_L limit on every baked frame. */
 export const TAKE_WRIST_LIMITS = [-35, 95] as const;
 const FRAME = 1 / 60;
 
