@@ -100,7 +100,7 @@ During a replay, every control in [playback controls](playback-controls.md) work
 | Focus leaves the game | No effect. | Hiding the tab stops the replay's clock until it is visible again. |
 | Reload, close, or back/forward cache | After completion there is nothing to resume; the page reopens on the lobby. | Mid-replay, nothing is written. The page reopens on the lobby with no resume banner for this contest. |
 | Settings or saved data change underneath | **Reset demo** unloads the recording and removes the contest and its points. If the reset fails, the reset dialog shows **The demo could not be reset: {reason}**, and the result panel stays. | The same; a failed reset does not stop the replay. |
-| Graphics or storage failure | A lost graphics context pauses the finale and shows the error box with **Reload the arena**; the result panel stays. The bottom bar then reads **PAUSED** rather than **FULL TIME**. **Reload the arena** rebuilds the stage at the same second, still paused, and at completion there is no pause button to resume the rest of the finale. | During a replay, the same as in [playback controls](playback-controls.md). |
+| Graphics or storage failure | A lost graphics context pauses the finale and shows the error box with **Reload the arena**; the result panel stays. The bottom bar then reads **PAUSED** rather than **FULL TIME**. **Reload the arena** rebuilds the stage at the same second, and the finale resumes by itself. | During a replay, the same as in [playback controls](playback-controls.md). |
 | Input device changes | Not applicable. | Not applicable. |
 
 ## Interactions with other systems
@@ -138,6 +138,6 @@ During a replay, every control in [playback controls](playback-controls.md) work
 - Read from `Game.tsx` (the result panel, `backToLobby`, `replay`) and `persistence.ts` (`awardsFor`, `standings`, `savePlayback`). `scripts/production-smoke.mjs` replays and skips on the production page, but does not check the points display.
 - Fixed: a replay no longer hides a revealed contest's points, and an abandoned replay no longer leaves a resume banner (B-01).
 - Fixed: the headline names the winning user, with the card on the line under it (B-02).
-- **Graphics loss during the finale.** After **Reload the arena** at completion, the stage stays paused with **PAUSED** in the bottom bar, and no control resumes the rest of the finale. This is read from `Game.tsx` (`retryStage` and the bottom bar), not tried. Whether the finale should resume by itself is a product call.
+- Fixed: after a lost graphics context during the finale, **Reload the arena** rebuilds the stage and the finale resumes by itself (B-13).
 
 Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`
