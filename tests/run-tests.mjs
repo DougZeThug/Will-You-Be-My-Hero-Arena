@@ -828,6 +828,9 @@ await (
 checks += await (
   await import('./character-performance.test.mjs')
 ).performanceTests();
+await (
+  await import('./performance-profile-compile-gate.test.mjs')
+).testPerformanceProfileCompileGate({ check });
 const report = {
   checks,
   seededContests: 2000,
