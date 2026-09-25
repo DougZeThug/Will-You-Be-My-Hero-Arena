@@ -1,6 +1,6 @@
 # Character personalities and court presentation
 
-The current renderer uses separate illustrated body parts driven by authored GSAP joint timelines. Dan and Doug now perform different arm and leg sequences. Built-in motion choices are starting points, and each new pack can carry its own custom choreography. See [Articulated animation](ARTICULATED-ANIMATION.md) for the current system and limits.
+The current renderer uses separate illustrated body parts driven by authored GSAP joint timelines. Dan and Doug now perform different arm and leg sequences. Built-in motion choices are starting points, and each new pack can carry its own custom choreography. See [ANIMATION-HANDOFF](ANIMATION-HANDOFF.md) for the current system and limits.
 
 Open **The Collection → Explore motion styles** to try a starting personality, then change individual moves. Selecting a move plays the relevant preview. **Return to this card’s personality** restores the saved profile. Preview changes do not change installed cards or match recordings; Codex saves the chosen profile in a new character pack.
 
