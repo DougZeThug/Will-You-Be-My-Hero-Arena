@@ -269,6 +269,37 @@ try {
     path: path.join(directory, 'production-watch.png'),
     fullPage: true,
   });
+  // A first viewing left part-way keeps its position. These menus are React
+  // state on /, not server routes, so a reload restores the lobby and offers
+  // the waiting contest through the Resume control.
+  const waiting = await page.evaluate(
+    () =>
+      JSON.parse(
+        JSON.parse(localStorage.getItem('wybmh-paper-arena-v2')).payload,
+      ).active,
+  );
+  assert.ok(
+    waiting && waiting.time > 0,
+    'A first viewing must keep its playback position',
+  );
+  assert.equal(new URL(page.url()).pathname, '/');
+  await page.reload();
+  await page.getByRole('button', { name: 'Watch', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Resume contest', exact: true })
+    .click();
+  await page
+    .locator('.arena-loading')
+    .waitFor({ state: 'detached', timeout: 120_000 });
+  // Restoring a nonzero saved position intentionally starts paused.
+  await page
+    .getByRole('button', { name: 'Resume playback', exact: true })
+    .waitFor();
+  report.refreshPreservedMatch = true;
+  await page.screenshot({
+    path: path.join(directory, 'production-resumed.png'),
+    fullPage: true,
+  });
   await page.getByRole('button', { name: 'Enable sound', exact: true }).click();
   await page.getByRole('button', { name: 'Mute sound', exact: true }).waitFor();
   await page
@@ -309,9 +340,15 @@ try {
         recordings: state.recordings,
         ledger: state.ledger,
         policy: state.policy,
+        active: state.active,
       };
     });
   const beforeReplay = await savedFacts();
+  assert.equal(
+    beforeReplay.active,
+    null,
+    'A contest watched to the end is no longer waiting to resume',
+  );
   assert.equal(
     beforeReplay.recordings.at(-1).setup.seed,
     report.completedMatch.seed,
@@ -331,31 +368,33 @@ try {
     .getByRole('button', { name: 'Pause playback', exact: true })
     .click();
   assert.deepEqual(await savedFacts(), beforeReplay);
-  // These menus are React state on /, not server routes. A reload restores the
-  // lobby and offers the saved contest through the existing Resume control.
-  assert.equal(new URL(page.url()).pathname, '/');
+  // A replay of a revealed contest never becomes the contest waiting to
+  // resume, so a reload mid-replay offers nothing and changes nothing.
   await page.reload();
   await page.getByRole('button', { name: 'Watch', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Resume contest', exact: true })
-    .waitFor();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('.competitor-station .primary-cta')?.disabled ===
+      false,
+  );
+  assert.equal(
+    await page
+      .getByRole('button', { name: 'Resume contest', exact: true })
+      .count(),
+    0,
+    'A replay of a revealed contest must not become resumable',
+  );
   assert.deepEqual(await savedFacts(), beforeReplay);
-  report.refreshPreservedMatch = true;
+  report.replayNotResumable = true;
+  // Load the recording again from History to check Skip to result.
+  await page.getByRole('button', { name: 'History', exact: true }).click();
+  await page.locator('.history-list > button').first().click();
   await page
-    .getByRole('button', { name: 'Resume contest', exact: true })
-    .click();
-  await page.locator('.arena-loading').waitFor({ state: 'detached' });
-  // Restoring a nonzero saved position intentionally starts paused.
-  await page
-    .getByRole('button', { name: 'Resume playback', exact: true })
-    .click();
+    .locator('.arena-loading')
+    .waitFor({ state: 'detached', timeout: 120_000 });
   await page
     .getByRole('button', { name: 'Pause playback', exact: true })
-    .click();
-  await page.screenshot({
-    path: path.join(directory, 'production-resumed.png'),
-    fullPage: true,
-  });
+    .waitFor();
   // Skipping only seeks the loaded recording; the live arena must survive.
   const stageCanvas = await page
     .locator('.phaser-host canvas')

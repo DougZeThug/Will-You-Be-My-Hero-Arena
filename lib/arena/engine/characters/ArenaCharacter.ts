@@ -94,6 +94,9 @@ export class ArenaCharacter implements ControllableEntity {
     if (action === 'celebrate') {
       if (this.animation.timeline.active) return false;
       this.celebrate();
+      // A player's celebration or taunt never locks the character: the next
+      // move cuts it short.
+      this.animation.timeline.canCancel = true;
       return true;
     }
     return this.components.some(

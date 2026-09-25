@@ -14,8 +14,12 @@ export class FightingEvent implements PlayableArenaEvent {
   private ctx!: EventContext;
   private state = 'ready';
   private started = 0;
+  /** The fight's own clock starts after the entrance; the 60 s limit counts from here. */
+  private fightStarted = 0;
   private components = new Map<string, CombatComponent>();
   private message = 'Step into the ring';
+  /** Fighters whose taunt the caption has already announced. */
+  private taunting = new Set<string>();
   private think = new Map<
     string,
     { at: number; values: InputFrame['values'] }
@@ -53,6 +57,7 @@ export class FightingEvent implements PlayableArenaEvent {
     const time = this.ctx.time();
     if (this.state === 'ready' && time - this.started > 1.5) {
       this.state = 'fighting';
+      this.fightStarted = time;
       this.ctx.characters.forEach((c) => (c.substate = 'neutral'));
       this.message = 'Fight — light, light, heavy chains into a finisher';
     }
@@ -66,6 +71,10 @@ export class FightingEvent implements PlayableArenaEvent {
         )[0];
       if (enemy && !['attacking', 'dodging'].includes(c.substate))
         c.body.facing = enemy.body.x > c.body.x ? 1 : -1;
+      if (c.state === 'celebrating' && !this.taunting.has(c.id))
+        this.message = c.profile.name + ' taunts';
+      if (c.state === 'celebrating') this.taunting.add(c.id);
+      else this.taunting.delete(c.id);
       moveFighter(c, this.components.get(c.id)!, dt);
     }
     for (let i = 0; i < this.ctx.characters.length; i++)
@@ -84,11 +93,13 @@ export class FightingEvent implements PlayableArenaEvent {
       }
     for (const hit of combatHits(this.ctx.characters, this.components, time)) {
       const component = this.components.get(hit.target.id)!;
+      let guardBroken = false;
       if (hit.blocked) {
         hit.target.health = Math.max(0, hit.target.health - hit.damage);
         hit.target.stamina = Math.max(0, hit.target.stamina - 8);
         hit.target.applyImpulse(hit.impulse);
         if (!hit.target.stamina || !hit.target.health) {
+          guardBroken = true;
           component.interrupt();
           hit.target.takeHit(0, 0);
         }
@@ -101,9 +112,17 @@ export class FightingEvent implements PlayableArenaEvent {
         this.ctx.hitStop?.(hit.damage >= 15 ? 5 : 3);
       }
       hit.attacker.score += hit.damage;
-      this.message = hit.blocked
-        ? hit.target.profile.name + ' blocks'
-        : hit.attacker.profile.name + ' hits ' + hit.target.profile.name;
+      const attacker = hit.attacker.profile.name,
+        target = hit.target.profile.name;
+      this.message = guardBroken
+        ? `${attacker} breaks ${target}’s guard`
+        : hit.blocked
+          ? target + ' blocks'
+          : hit.countered
+            ? `${target} counters ${attacker}, taking less damage`
+            : this.components.get(hit.attacker.id)!.attack === 'chargedSpecial'
+              ? `${attacker} lands a charged power strike on ${target}`
+              : attacker + ' hits ' + target;
       this.ctx.emit({
         kind: 'effect',
         name: hit.blocked ? 'block' : 'hit',
@@ -129,7 +148,7 @@ export class FightingEvent implements PlayableArenaEvent {
     }
     if (
       this.ctx.characters.filter((c) => c.health > 0).length <= 1 ||
-      time - this.started >= 60
+      time - this.fightStarted >= 60
     ) {
       this.state = 'finished';
       this.finish();

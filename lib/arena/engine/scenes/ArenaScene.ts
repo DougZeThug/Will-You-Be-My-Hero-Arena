@@ -7,6 +7,7 @@ import {
   completionTime,
   TIMING,
   attemptLength,
+  shownAttempts,
 } from '../../match-timeline';
 import { placement } from '../../equipment-layout';
 import { previewAttempt } from '../../pose-motion';
@@ -362,9 +363,9 @@ export class ArenaScene extends Phaser.Scene {
         ...(rec
           ? {
               remaining:
-                rec.attempts.filter((a) => a.actor === i).length -
+                shownAttempts(rec, time, i as 0 | 1) -
                 (status?.resolved.filter((a) => a.actor === i).length ?? 0),
-              total: rec.attempts.filter((a) => a.actor === i).length,
+              total: shownAttempts(rec, time, i as 0 | 1),
             }
           : {}),
         status: !rec

@@ -71,6 +71,21 @@ test('graphics context loss is visible in diagnostic errors', async ({
   expect((await snapshot(page)).paused).toBe(true);
 });
 
+test('graphics context loss pauses a live match with a notice', async ({
+  page,
+}) => {
+  await openScenario(page, 'running-live');
+  await page
+    .locator('#arena canvas')
+    .evaluate((canvas) =>
+      canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true })),
+    );
+  await expect
+    .poll(async () => (await snapshot(page)).event?.notice)
+    .toBe('Graphics were interrupted. Resume when the stage is back.');
+  expect((await snapshot(page)).event.paused).toBe(true);
+});
+
 test('character throw inspection retains production release and full recovery timing', async ({
   page,
 }, info) => {

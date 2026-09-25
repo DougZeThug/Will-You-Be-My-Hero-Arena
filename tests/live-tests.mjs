@@ -537,6 +537,267 @@ export async function testLive({ check }) {
   check(() => assert.ok(stop.time > struck, 'The clock resumes'));
   check(() => assert.equal(stop.hitStopSteps, 0));
   stop.destroy();
+  // Fixes from docs/product-description/bug-triage.md, each named by its entry.
+  const { keyConflict, invalidBinding, validateBindings } =
+    await import('../.test-build/engine/input/InputBindings.mjs');
+  const keyboard1 = { layout: 0, keys: bindingsFor(0).keys },
+    keyboard2 = { layout: 1, keys: bindingsFor(1).keys };
+  // B-34: a key already in use is refused, naming what uses it.
+  check(() =>
+    assert.deepEqual(keyConflict('Space', 'celebrate', [keyboard1], 0), {
+      player: 0,
+      use: 'charge',
+    }),
+  );
+  check(() =>
+    assert.equal(keyConflict('KeyC', 'celebrate', [keyboard1], 0), undefined),
+  );
+  check(() =>
+    assert.deepEqual(keyConflict('KeyW', 'charge', [keyboard1], 0), {
+      player: 0,
+      use: 'move',
+    }),
+  );
+  check(() =>
+    assert.deepEqual(
+      keyConflict('Numpad1', 'celebrate', [keyboard1, keyboard2], 0),
+      { player: 1, use: 'primaryAction' },
+    ),
+  );
+  check(() =>
+    assert.equal(
+      keyConflict('KeyZ', 'celebrate', [keyboard1, keyboard2], 0),
+      undefined,
+    ),
+  );
+  check(() =>
+    assert.equal(
+      invalidBinding({
+        ...bindingsFor(0),
+        buttons: { ...bindingsFor(0).buttons, charge: 40 },
+      }),
+      'charge',
+    ),
+  );
+  check(() => assert.equal(invalidBinding(bindingsFor(1)), undefined));
+  // B-18: a malformed saved entry is rejected, never thrown on.
+  check(() => assert.equal(validateBindings({ keys: 'x' }), false));
+  check(() => assert.equal(validateBindings(null), false));
+  check(() => assert.equal(validateBindings(bindingsFor(0)), true));
+  const { resolvePrecisionLanding, bagPoints, precisionTarget } =
+    await import('../.test-build/engine/events/precision/PrecisionPhysics.mjs');
+  const { laneScale } =
+    await import('../.test-build/engine/events/running/RunningPhysics.mjs');
+  const { ATTACKS } =
+    await import('../.test-build/engine/characters/components/CombatComponent.mjs');
+  // B-26: a roll curls around the bags it meets once, however many there are.
+  const hole = precisionTarget();
+  let spot;
+  for (let dy = -30; dy <= 30 && !spot; dy += 2)
+    for (let dx = -60; dx <= 60 && !spot; dx += 2) {
+      const p = { x: hole.x + dx, y: hole.y + dy };
+      if (
+        Math.hypot(dx, dy) > 45 &&
+        [p, { ...p, y: p.y + 16 }, { ...p, x: p.x + 8 }, { ...p, x: p.x - 8 }]
+          .map(bagPoints)
+          .every((n) => n === 1)
+      )
+        spot = p;
+    }
+  check(() => assert.ok(spot, 'a board spot for the roll test'));
+  const around = [8, -8, 0].map((dx, i) => ({
+    id: 'b' + i,
+    owner: 'p1',
+    x: spot.x + dx,
+    y: spot.y + (i === 2 ? -6 : 0),
+    angle: 0,
+    points: 1,
+  }));
+  const rolled = resolvePrecisionLanding(
+    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    around,
+    'roll',
+  );
+  check(() => assert.equal(rolled.y, spot.y + 16, 'Roll offset applies once'));
+  // B-26: players 3 and 4 start inside the throwing line.
+  const fourThrowers = new ArenaSession(config('cornhole', false, 4));
+  check(() =>
+    assert.ok(
+      fourThrowers.characters.every((c) => c.body.x >= 165 && c.body.x <= 350),
+      'Every thrower starts inside the throwing line',
+    ),
+  );
+  fourThrowers.destroy();
+  // B-25, B-27: the caption names the shot, and returns to aiming after a
+  // pause cancels a charge.
+  const shots = new ArenaSession(config('cornhole', false));
+  advance(shots, 1.6);
+  check(() => assert.match(shots.snapshot().message, /Shot: Hole runner/));
+  pulse(shots, 'p0', 'secondaryAction');
+  check(() => assert.match(shots.snapshot().message, /Shot: Slide/));
+  shots.inject('p0', 'charge', 1);
+  advance(shots, 0.3);
+  check(() => assert.match(shots.snapshot().message, /green window/));
+  shots.pause(true);
+  shots.pause(false);
+  shots.inject('p0', 'charge', 0);
+  advance(shots, 0.05);
+  check(() =>
+    assert.match(shots.snapshot().message, /aim, hold charge.*Shot: Slide/),
+  );
+  shots.destroy();
+  // B-25: every turn starts on a shot the player can select again.
+  const danFirst = new ArenaSession({
+    ...config('cornhole', false),
+    players: config('cornhole', false).players.map((p, i) => ({
+      ...p,
+      cardId: i ? 'card-doug' : 'card-dan',
+    })),
+  });
+  advance(danFirst, 1.6);
+  check(() => assert.match(danFirst.snapshot().message, /Shot: Roll/));
+  danFirst.destroy();
+  // B-15: a celebration never blocks the next move.
+  const cheer = new ArenaSession(config('running', false));
+  advance(cheer, 1.7);
+  pulse(cheer, 'p0', 'celebrate');
+  check(() => assert.match(cheer.snapshot().message, /celebrates/));
+  pulse(cheer, 'p0', 'primaryAction');
+  advance(cheer, 0.1);
+  check(() =>
+    assert.ok(cheer.characters[0].body.z > 0, 'Celebrate, then jump, jumps'),
+  );
+  cheer.destroy();
+  const taunt = new ArenaSession(config('fighting', false));
+  advance(taunt, 1.7);
+  pulse(taunt, 'p0', 'celebrate');
+  check(() => assert.match(taunt.snapshot().message, /taunts/));
+  pulse(taunt, 'p0', 'primaryAction');
+  check(() =>
+    assert.equal(
+      taunt.characters[0].substate,
+      'attacking',
+      'Taunt, then jab, attacks',
+    ),
+  );
+  taunt.destroy();
+  // B-17: lane depth follows the lane; B-29: a dodge never wraps.
+  const lanes = new ArenaSession(config('running', false));
+  advance(lanes, 1.7);
+  for (let n = 0; n < 2; n++) {
+    lanes.inject('p0', 'move', { x: 0, y: 1 });
+    advance(lanes, 0.1);
+    lanes.inject('p0', 'move', { x: 0, y: 0 });
+    advance(lanes, 0.3);
+  }
+  advance(lanes, 0.6);
+  const front = lanes.characters[0];
+  check(() =>
+    assert.ok(
+      Math.abs(front.body.scale - laneScale(644)) < 0.002,
+      'Two lane changes reach the front lane scale',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      Math.abs(front.body.scale - lanes.characters[1].body.scale) > 0.03,
+    ),
+  );
+  pulse(lanes, 'p0', 'tertiaryAction');
+  advance(lanes, 0.8);
+  check(() =>
+    assert.ok(
+      Math.abs(front.body.y - 582) < 3,
+      'Dodging from the front lane moves back one lane',
+    ),
+  );
+  lanes.destroy();
+  // B-29: braking stops sprint drain; a sprint leaves enough for a jump;
+  // progress is never negative.
+  const brake = new ArenaSession(config('running', false, 4));
+  check(() =>
+    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+  );
+  advance(brake, 1.7);
+  brake.characters[0].stamina = 60;
+  brake.inject('p0', 'charge', 1);
+  brake.inject('p0', 'modifierLeft', 1);
+  advance(brake, 1);
+  check(() =>
+    assert.ok(brake.characters[0].stamina >= 60, 'Braking stops sprint drain'),
+  );
+  brake.inject('p0', 'modifierLeft', 0);
+  brake.characters[0].stamina = 12;
+  advance(brake, 0.5);
+  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
+  );
+  check(() => assert.ok(brake.characters.every((c) => c.score >= 0)));
+  brake.destroy();
+  // B-29: in free steering nothing creeps forward without a push.
+  const freeRun = new ArenaSession({
+    ...config('running', false),
+    options: { movement: 'free' },
+  });
+  advance(freeRun, 1.7);
+  freeRun.inject('p0', 'modifierLeft', 1);
+  advance(freeRun, 2);
+  check(() =>
+    assert.ok(
+      Math.abs(freeRun.characters[0].body.vx) < 1,
+      'A brake with no push holds still',
+    ),
+  );
+  freeRun.destroy();
+  // B-29: a dead heat is shared.
+  const heat = new ArenaSession(config('running', false));
+  heat.event.state = 'finished';
+  for (const m of heat.event.motions.values()) m.finished = 12.5;
+  check(() => assert.equal(heat.event.resolveOutcome().winners.length, 2));
+  heat.destroy();
+  // B-28: the grapple no longer pays for a counter stance; the time limit
+  // counts from the end of the entrance; the direction special is stronger.
+  const grab = new ArenaSession(config('fighting', false));
+  advance(grab, 1.7);
+  grab.characters[0].body.x = 500;
+  grab.characters[1].body.x = 580;
+  grab.inject('p0', 'modifierRight', 1);
+  grab.inject('p0', 'primaryAction', 1);
+  grab.inject('p0', 'primaryAction', 0);
+  grab.inject('p0', 'modifierRight', 0);
+  grab.advance(1 / 60);
+  check(() => assert.equal(grab.controllers[0].lastCommand, 'grapple'));
+  check(() =>
+    assert.ok(
+      grab.characters[0].stamina >= 84 - 1,
+      'A grapple costs only its own energy',
+    ),
+  );
+  grab.destroy();
+  const limit = new ArenaSession(config('fighting', false));
+  advance(limit, 60.5);
+  check(() =>
+    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+  );
+  advance(limit, 1.3);
+  check(() => assert.equal(limit.snapshot().finished, true));
+  check(() => assert.equal(limit.snapshot().message, 'Draw'));
+  // B-30: a finished match stays on its result; the pause key does nothing.
+  limit.inject('p0', 'pause', 1);
+  limit.advance(1 / 60);
+  limit.inject('p0', 'pause', 0);
+  limit.advance(1 / 60);
+  check(() => assert.equal(limit.paused, false, 'No pause over a result'));
+  limit.destroy();
+  check(() =>
+    assert.equal(
+      FightingActionMap.combos.find((c) => c.id === 'direction-special')
+        .command,
+      'chargedSpecial',
+    ),
+  );
+  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',

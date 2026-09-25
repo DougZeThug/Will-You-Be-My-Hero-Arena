@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { CARDS, type AssetManifest } from '@/lib/arena/model';
 import { cardImageUrl } from '@/lib/arena/character-registry';
 import {
@@ -7,19 +7,90 @@ import {
   playableEvent,
 } from '@/lib/arena/engine/core/EventRegistry';
 import {
+  DEFAULT_BINDINGS,
   bindingsFor,
+  invalidBinding,
+  keyConflict,
   validateBindings,
   type Bindings,
 } from '@/lib/arena/engine/input/InputBindings';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
-const slot = (i: number): PlayerSlot => ({
-  id: 'player-' + (i + 1),
-  cardId: i % 2 ? 'card-dan' : 'card-doug',
-  device: i === 0 ? 'keyboard' : 'ai',
-  bindings: bindingsFor(i),
-});
+// Remaps are remembered per device, so any player slot that picks a keyboard
+// layout or controller gets that device's saved bindings back.
+const BINDINGS_KEY = 'wybmh-input-bindings-v2',
+  LEGACY_BINDINGS_KEY = 'wybmh-input-bindings-v1';
+type SavedBindings = Partial<Record<string, Bindings>>;
+const remappable = (device: string) =>
+  device === 'keyboard' ||
+  device === 'keyboard2' ||
+  device.startsWith('gamepad:');
+function readSavedBindings(): SavedBindings {
+  const saved: SavedBindings = {};
+  if (typeof localStorage === 'undefined') return saved;
+  try {
+    const stored: unknown = JSON.parse(
+      localStorage.getItem(BINDINGS_KEY) ?? 'null',
+    );
+    if (stored && typeof stored === 'object' && !Array.isArray(stored))
+      for (const [device, b] of Object.entries(stored))
+        if (remappable(device) && validateBindings(b as Bindings))
+          saved[device] = b as Bindings;
+  } catch {
+    // An unreadable entry falls back to the device defaults.
+  }
+  if (!saved.keyboard)
+    try {
+      // The first version saved per slot; only player 1's keyboard 1 layout
+      // can be recognised from it.
+      const legacy: unknown = JSON.parse(
+        localStorage.getItem(LEGACY_BINDINGS_KEY) ?? '[]',
+      );
+      const first = Array.isArray(legacy) ? (legacy[0] as Bindings) : null;
+      if (
+        first &&
+        validateBindings(first) &&
+        first.keys.pause === DEFAULT_BINDINGS.keys.pause
+      )
+        saved.keyboard = first;
+    } catch {
+      // Ignore an unreadable legacy entry.
+    }
+  return saved;
+}
+const deviceBindings = (device: string, saved = readSavedBindings()) =>
+  saved[device] ?? bindingsFor(device === 'keyboard2' ? 1 : 0);
+const slot = (i: number, saved?: SavedBindings): PlayerSlot => {
+  const device = i === 0 ? 'keyboard' : 'ai';
+  return {
+    id: 'player-' + (i + 1),
+    cardId: i % 2 ? 'card-dan' : 'card-doug',
+    device,
+    bindings: deviceBindings(device, saved),
+  };
+};
+const keyName = (code: string) =>
+  code
+    .replace(/^Key/, '')
+    .replace(/^Digit/, '')
+    .replace(/(Left|Right)$/, ' ($1)');
+const MODIFIERS = ['Shift', 'Control', 'Alt', 'Meta'];
+// Names for bound inputs the current event does not list, so a refusal never
+// shows an internal name.
+const INPUT_NAMES: Record<string, string> = {
+  primaryAction: 'action 1',
+  secondaryAction: 'action 2',
+  tertiaryAction: 'action 3',
+  specialAction: 'the special action',
+  charge: 'charge',
+  modifierLeft: 'the left modifier',
+  modifierRight: 'the right modifier',
+  celebrate: 'celebrate',
+  pause: 'pause',
+};
+const isKeyboard = (device: string) =>
+  device === 'keyboard' || device === 'keyboard2';
 export default function PlayableArena({
   imports,
   reduced,
@@ -28,27 +99,68 @@ export default function PlayableArena({
   reduced: boolean;
 }) {
   const [event, setEvent] = useState('cornhole'),
-    [players, setPlayers] = useState([slot(0), slot(1)]),
+    [players, setPlayers] = useState(() => {
+      const saved = readSavedBindings();
+      return [slot(0, saved), slot(1, saved)];
+    }),
     [movement, setMovement] = useState('lanes'),
     [active, setActive] = useState<LiveConfig | null>(null),
-    [error, setError] = useState('');
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(
-        localStorage.getItem('wybmh-input-bindings-v1') ?? '[]',
-      );
-      if (Array.isArray(saved))
-        setPlayers((p) =>
-          p.map((s, i) =>
-            saved[i] && validateBindings(saved[i])
-              ? { ...s, bindings: saved[i] }
-              : s,
-          ),
-        );
-    } catch {}
-  }, []);
-  const change = (i: number, patch: Partial<PlayerSlot>) =>
+    [error, setError] = useState(''),
+    [remapNotice, setRemapNotice] = useState<{
+      player: number;
+      text: string;
+    } | null>(null);
+  // A modifier key is bound when it is released with nothing pressed after
+  // it, so Shift+Tab still moves focus instead of binding Shift.
+  const pendingModifier = useRef<string | null>(null);
+  const change = (i: number, patch: Partial<PlayerSlot>) => {
+    setError('');
     setPlayers((p) => p.map((s, j) => (i === j ? { ...s, ...patch } : s)));
+  };
+  const actionLabel = (intent: string) =>
+    intent === 'move'
+      ? 'movement'
+      : intent === 'aim'
+        ? 'aiming'
+        : intent === 'moveAxes' || intent === 'aimAxes'
+          ? `the ${intent === 'moveAxes' ? 'move' : 'aim'} stick axis`
+          : (playableEvent(event)
+            .create()
+            .registerControls()
+            .actions.find((a) => a.intent === intent)?.label ??
+            INPUT_NAMES[intent] ??
+            intent);
+  const bindKey = (i: number, intent: Intent, code: string) => {
+    // Only keyboard players share the physical keyboard; controller, touch
+    // and AI slots never conflict with a key.
+    const p = players[i],
+      slots = players
+        .map((s, index) => ({ s, index }))
+        .filter(({ s, index }) => index === i || isKeyboard(s.device)),
+      found = keyConflict(
+        code,
+        intent,
+        slots.map(({ s }) => ({
+          layout: s.device === 'keyboard2' ? 1 : 0,
+          keys: s.bindings.keys,
+        })),
+        slots.findIndex(({ index }) => index === i),
+      ),
+      conflict = found && { ...found, player: slots[found.player].index };
+    if (conflict) {
+      setRemapNotice({
+        player: i,
+        text: `${keyName(code)} is already used for ${actionLabel(conflict.use)}${
+          conflict.player === i ? '' : ' by player ' + (conflict.player + 1)
+        }. Choose another key.`,
+      });
+      return;
+    }
+    setRemapNotice(null);
+    change(i, {
+      bindings: { ...p.bindings, keys: { ...p.bindings.keys, [intent]: code } },
+    });
+  };
   const start = () => {
     const hardware = players
       .filter((p) => p.device !== 'ai' && p.device !== 'touch')
@@ -59,16 +171,28 @@ export default function PlayableArena({
       );
       return;
     }
-    if (players.some((p) => !validateBindings(p.bindings))) {
-      setError('Check the control bindings.');
+    const invalid = players.findIndex((p) => invalidBinding(p.bindings));
+    if (invalid >= 0) {
+      setError(
+        `Player ${invalid + 1}: ${actionLabel(invalidBinding(players[invalid].bindings)!)} needs a valid key, button or axis.`,
+      );
       return;
     }
     try {
       localStorage.setItem(
-        'wybmh-input-bindings-v1',
-        JSON.stringify(players.map((p) => p.bindings)),
+        BINDINGS_KEY,
+        JSON.stringify({
+          ...readSavedBindings(),
+          ...Object.fromEntries(
+            players
+              .filter((p) => remappable(p.device))
+              .map((p) => [p.device, p.bindings]),
+          ),
+        }),
       );
-    } catch {}
+    } catch {
+      // Storage may be full or blocked; the match still starts.
+    }
     setError('');
     setActive({
       event,
@@ -115,7 +239,13 @@ export default function PlayableArena({
             aria-pressed={event === e.id}
             onClick={() => {
               setEvent(e.id);
-              setPlayers((p) => p.slice(0, e.maxPlayers));
+              setError('');
+              setPlayers((p) => {
+                const next = p.slice(0, e.maxPlayers);
+                while (next.length < e.minPlayers)
+                  next.push(slot(next.length));
+                return next;
+              });
             }}
           >
             <strong>{e.name}</strong>
@@ -152,9 +282,7 @@ export default function PlayableArena({
                   onChange={(e) =>
                     change(i, {
                       device: e.target.value as PlayerSlot['device'],
-                      bindings: bindingsFor(
-                        e.target.value === 'keyboard2' ? 1 : 0,
-                      ),
+                      bindings: deviceBindings(e.target.value),
                     })
                   }
                 >
@@ -172,17 +300,23 @@ export default function PlayableArena({
           </div>
         ))}
       </div>
-      {current.maxPlayers > 2 && (
+      {current.maxPlayers > current.minPlayers && (
         <div className="player-count">
           <button
             disabled={players.length >= current.maxPlayers}
-            onClick={() => setPlayers((p) => [...p, slot(p.length)])}
+            onClick={() => {
+              setError('');
+              setPlayers((p) => [...p, slot(p.length)]);
+            }}
           >
             Add player
           </button>
           <button
-            disabled={players.length <= Math.max(2, current.minPlayers)}
-            onClick={() => setPlayers((p) => p.slice(0, -1))}
+            disabled={players.length <= current.minPlayers}
+            onClick={() => {
+              setError('');
+              setPlayers((p) => p.slice(0, -1));
+            }}
           >
             Remove player
           </button>
@@ -193,7 +327,10 @@ export default function PlayableArena({
           Course controls
           <select
             value={movement}
-            onChange={(e) => setMovement(e.target.value)}
+            onChange={(e) => {
+              setError('');
+              setMovement(e.target.value);
+            }}
           >
             <option value="lanes">Auto forward / change lanes</option>
             <option value="free">Free steering / control acceleration</option>
@@ -262,23 +399,45 @@ export default function PlayableArena({
                           value={p.bindings.keys[c.intent] ?? ''}
                           readOnly
                           onKeyDown={(e) => {
-                            if (e.key === 'Tab') return;
+                            if (e.key === 'Tab') {
+                              pendingModifier.current = null;
+                              return;
+                            }
+                            if (MODIFIERS.includes(e.key)) {
+                              pendingModifier.current = e.code;
+                              return;
+                            }
+                            pendingModifier.current = null;
                             e.preventDefault();
-                            change(i, {
-                              bindings: {
-                                ...p.bindings,
-                                keys: {
-                                  ...p.bindings.keys,
-                                  [c.intent]: e.code,
-                                },
-                              },
-                            });
+                            bindKey(i, c.intent, e.code);
                           }}
+                          onKeyUp={(e) => {
+                            if (pendingModifier.current !== e.code) return;
+                            pendingModifier.current = null;
+                            bindKey(i, c.intent, e.code);
+                          }}
+                          onBlur={() => (pendingModifier.current = null)}
                         />
                       )}
                     </label>
                   ))}
                 </div>
+                {remapNotice?.player === i && (
+                  <p role="alert" className="inline-error">
+                    {remapNotice.text}
+                  </p>
+                )}
+                <button
+                  className="text-button"
+                  onClick={() => {
+                    setRemapNotice(null);
+                    change(i, {
+                      bindings: bindingsFor(p.device === 'keyboard2' ? 1 : 0),
+                    });
+                  }}
+                >
+                  Restore default controls
+                </button>
                 {gamepad && (
                   <div className="binding-grid">
                     {(['moveAxes', 'aimAxes'] as const).flatMap((axis) =>

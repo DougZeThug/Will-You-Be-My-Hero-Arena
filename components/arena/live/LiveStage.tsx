@@ -20,7 +20,11 @@ export default function LiveStage({
   reduced: boolean;
 }) {
   const host = useRef<HTMLDivElement>(null),
-    game = useRef<LiveArenaGame | null>(null);
+    game = useRef<LiveArenaGame | null>(null),
+    // The match is built once per config (the parent keys this stage by
+    // seed). Sound and Reduced motion reach the running game through these.
+    soundOn = useRef(false),
+    reducedMotion = useRef(reduced);
   const [snapshot, setSnapshot] = useState<LiveSnapshot | null>(null),
     [error, setError] = useState(''),
     [ready, setReady] = useState(false),
@@ -28,6 +32,10 @@ export default function LiveStage({
   const map = useRef(
     playableEvent(config.event).create().registerControls(),
   ).current;
+  useEffect(() => {
+    reducedMotion.current = reduced;
+    game.current?.setReducedMotion(reduced);
+  }, [reduced]);
   useEffect(() => {
     let mounted = true;
     import('@/lib/arena/engine/core/LiveArenaGame')
@@ -47,11 +55,16 @@ export default function LiveStage({
           if (!mounted || !host.current) return;
           game.current = new LiveArenaGame(host.current, {
             config,
-            reduced,
-            sound: false,
+            reduced: reducedMotion.current,
+            sound: soundOn.current,
             characterRigs,
             onReady: () => mounted && setReady(true),
-            onSnapshot: (s) => mounted && setSnapshot(s),
+            // A finished match stops its clock at the result.
+            onSnapshot: (s) =>
+              mounted &&
+              setSnapshot((prior) =>
+                s.finished && prior?.finished ? { ...s, time: prior.time } : s,
+              ),
             onError: (e) => mounted && setError(e),
           });
         } catch (e) {
@@ -64,7 +77,7 @@ export default function LiveStage({
       game.current?.destroy();
       game.current = null;
     };
-  }, [config, reduced]);
+  }, [config]);
   return (
     <section className="live-match">
       <div className="live-toolbar">
@@ -78,14 +91,16 @@ export default function LiveStage({
               game.current?.session.pause(!snapshot?.paused);
               host.current?.focus();
             }}
-            disabled={!ready}
+            disabled={!ready || (!!snapshot?.finished && !snapshot.paused)}
           >
             {snapshot?.paused ? 'Resume game' : 'Pause game'}
           </button>
           <button
             onClick={() => {
+              soundOn.current = !sound;
               game.current?.sound(!sound);
               setSound(!sound);
+              host.current?.focus({ preventScroll: true });
             }}
           >
             {sound ? 'Mute' : 'Sound on'}
@@ -134,6 +149,11 @@ export default function LiveStage({
             {error}
           </div>
         )}
+        <p className="sr-only" aria-live="polite">
+          {snapshot?.paused
+            ? 'Paused. ' + (snapshot.notice || 'Resume when you’re ready.')
+            : ''}
+        </p>
         {snapshot?.paused && (
           <div className="live-state-overlay">
             <strong>PAUSED</strong>
@@ -184,7 +204,7 @@ export default function LiveStage({
             {snapshot.winners.length === 1
               ? snapshot.players.find((p) => p.id === snapshot.winners[0])
                   ?.name + ' wins'
-              : 'Session complete'}
+              : 'Draw'}
           </h2>
           <button className="primary-cta" onClick={onReplay}>
             Play again
@@ -212,12 +232,13 @@ export default function LiveStage({
                   {config.event === 'cornhole'
                     ? 'Aim, hold charge, then release in green. On screen: tap charge, then release.'
                     : config.event === 'running'
-                      ? 'Sprint, jump over cones, slide under bars. On-screen sprint toggles.'
+                      ? 'Sprint, jump hurdles, slide under bars. On-screen sprint toggles.'
                       : 'Move into range, attack, guard or dodge. Chain light, light, heavy.'}
                 </span>
               </div>
               <TouchControls
                 key={String(snapshot?.paused)}
+                ready={ready}
                 map={map}
                 bindings={p.bindings}
                 family={

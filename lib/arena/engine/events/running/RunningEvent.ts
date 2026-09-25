@@ -10,6 +10,8 @@ import { RunningComponent } from '../../characters/components/RunningComponent';
 import {
   runPhysics,
   obstacleCollision,
+  laneScale,
+  stumbleTime,
   RUNNING_LENGTH,
   type RunnerMotion,
   type Obstacle,
@@ -23,6 +25,8 @@ export class RunningEvent implements PlayableArenaEvent {
   private motions = new Map<string, RunnerMotion>();
   private obstacles: Obstacle[] = [];
   private message = 'Take your mark';
+  /** Runners whose celebration the caption has already announced. */
+  private cheering = new Set<string>();
   initialize(ctx: EventContext) {
     this.ctx = ctx;
   }
@@ -33,7 +37,7 @@ export class RunningEvent implements PlayableArenaEvent {
     this.ctx.characters.forEach((c, i) => {
       c.body.x = 170 - Math.floor(i / 3) * 95;
       c.body.y = 520 + (i % 3) * 62;
-      c.body.scale = 0.65 + (i % 3) * 0.035;
+      c.body.scale = laneScale(c.body.y);
       c.substate = 'ready';
       const m: RunnerMotion = {
         sprint: 0,
@@ -44,6 +48,7 @@ export class RunningEvent implements PlayableArenaEvent {
         lane: i % 3,
         laneClock: 0,
         hits: new Set(),
+        startX: c.body.x,
       };
       this.motions.set(c.id, m);
       c.attach(
@@ -93,7 +98,7 @@ export class RunningEvent implements PlayableArenaEvent {
       for (const o of this.obstacles)
         if (obstacleCollision(c, o, m)) {
           m.hits.add(o.id);
-          m.stumble = 0.7;
+          m.stumble = stumbleTime(c);
           c.body.vx *= 0.28;
           c.stamina = Math.max(0, c.stamina - 10);
           c.react('running.stumble');
@@ -112,6 +117,11 @@ export class RunningEvent implements PlayableArenaEvent {
           this.ctx.emit({ kind: 'haptic', name: 'runningCrash', player: c.id });
           this.ctx.emit({ kind: 'camera', name: 'stumble', intensity: 0.35 });
         }
+      const celebrating = c.state === 'celebrating' && !m.finished;
+      if (celebrating && !this.cheering.has(c.id))
+        this.message = c.profile.name + ' celebrates';
+      if (celebrating) this.cheering.add(c.id);
+      else this.cheering.delete(c.id);
       if (c.body.x >= RUNNING_LENGTH && !m.finished) {
         m.finished = time - this.started;
         c.body.vx = 0;
@@ -134,10 +144,14 @@ export class RunningEvent implements PlayableArenaEvent {
   }
   ai(c: ArenaCharacter, time: number): InputFrame {
     const m = this.motions.get(c.id)!,
+      // React in time rather than at a fixed distance: a hurdle needs the
+      // runner airborne before it and still clear of it on landing, a bar
+      // needs the slide to last until it is passed.
       obstacle = this.obstacles.find(
         (o) =>
           o.x > c.body.x &&
-          o.x - c.body.x < 88 &&
+          o.x - c.body.x <
+            Math.max(36, c.body.vx * (o.kind === 'bar' ? 0.3 : 0.5)) &&
           Math.abs(o.y - c.body.y) < 35,
       ),
       values: InputFrame['values'] = {
@@ -158,14 +172,17 @@ export class RunningEvent implements PlayableArenaEvent {
     });
   }
   resolveOutcome() {
-    const sorted = [...this.motions].sort(
-      (a, b) => (a[1].finished || Infinity) - (b[1].finished || Infinity),
+    const first = Math.min(
+      ...[...this.motions.values()].map((m) => m.finished || Infinity),
     );
     return {
       finished: this.state === 'finished',
+      // A dead heat is shared: every runner on the first finishing step wins.
       winners:
-        this.state === 'finished' && sorted[0]?.[1].finished
-          ? [sorted[0][0]]
+        this.state === 'finished' && Number.isFinite(first)
+          ? [...this.motions]
+              .filter(([, m]) => m.finished === first)
+              .map(([id]) => id)
           : [],
     };
   }
@@ -175,9 +192,12 @@ export class RunningEvent implements PlayableArenaEvent {
       c.animation.locomotion = '';
       c.substate = 'finished';
     });
-    this.message = this.resolveOutcome().winners.length
-      ? 'Finish — race complete'
-      : 'Time limit';
+    const winners = this.resolveOutcome().winners.length;
+    this.message = !winners
+      ? 'Time limit'
+      : winners > 1
+        ? 'Dead heat — race complete'
+        : 'Finish — race complete';
   }
   cleanup() {
     this.motions.clear();

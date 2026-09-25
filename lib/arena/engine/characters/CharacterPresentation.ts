@@ -58,7 +58,8 @@ export class CharacterPresentation {
     private character: ArenaCharacter,
     private index: number,
     provider?: CharacterRigProvider,
-    private reduced = false,
+    /** Reduced motion; the match shell can change it while the match runs. */
+    public reduced = false,
   ) {
     this.rig =
       provider?.create(scene, loaded, character.profile, {

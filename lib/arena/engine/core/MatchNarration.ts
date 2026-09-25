@@ -1,5 +1,5 @@
 import type { Recording } from '../../model';
-import { cardById } from '../../model';
+import { cardById, userById } from '../../model';
 import { matchState } from '../../match-timeline';
 const shotNames: Record<string, string> = {
   flat: 'a flat hole-runner',
@@ -20,7 +20,10 @@ export function matchNarration(rec: Recording, time: number) {
   if (state.complete)
     return rec.winner === null
       ? 'Honors shared. The rivalry continues.'
-      : cardById(rec.setup.participants[rec.winner].cardId).name + ' takes it.';
+      : userById(rec.setup.participants[rec.winner].userId).name +
+        ' takes it with ' +
+        cardById(rec.setup.participants[rec.winner].cardId).name +
+        '’s card.';
   const a = state.current;
   if (!a) return 'Reset. Next throw.';
   if (['result', 'reset'].includes(state.phase)) return a.commentary;

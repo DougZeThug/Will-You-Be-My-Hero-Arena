@@ -18,6 +18,9 @@ function Stick({
   send: (intent: Intent, value: number | Vector) => void;
 }) {
   const [v, setV] = useState({ x: 0, y: 0 });
+  // A drag keeps going when focus moves (for example to an action button);
+  // only keyboard use of the pad stops when it loses focus.
+  const dragging = useRef(false);
   const update = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect(),
       x = Math.max(
@@ -32,6 +35,7 @@ function Stick({
     send(intent, { x, y });
   };
   const stop = () => {
+    dragging.current = false;
     setV({ x: 0, y: 0 });
     send(intent, { x: 0, y: 0 });
   };
@@ -42,6 +46,10 @@ function Stick({
       aria-label={label}
       tabIndex={0}
       onPointerDown={(e) => {
+        // Keep keyboard focus on the stage: pressing a pad is not a reason to
+        // take it away.
+        e.preventDefault();
+        dragging.current = true;
         e.currentTarget.setPointerCapture(e.pointerId);
         update(e);
       }}
@@ -61,7 +69,9 @@ function Stick({
         }
       }}
       onKeyUp={stop}
-      onBlur={stop}
+      onBlur={() => {
+        if (!dragging.current) stop();
+      }}
     >
       <span style={{ transform: `translate(${v.x * 24}px,${v.y * 24}px)` }} />
       <small>{label}</small>
@@ -75,7 +85,9 @@ export default function TouchControls({
   player,
   send,
   resetCharge,
+  ready,
 }: {
+  ready: boolean;
   map: EventActionMap;
   bindings: Bindings;
   family: DeviceFamily;
@@ -93,12 +105,17 @@ export default function TouchControls({
     }
   }, [resetCharge]);
   const actions = map.actions.filter(
-    (a, i, all) =>
-      !a.hidden &&
-      a.intent !== 'move' &&
-      a.intent !== 'aim' &&
-      all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
-  );
+      (a, i, all) =>
+        !a.hidden &&
+        a.intent !== 'move' &&
+        a.intent !== 'aim' &&
+        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
+    ),
+    // Moves that need a held modifier (the Brawl's grapple) get their own
+    // button, which presses the modifier and the action together.
+    chords = map.actions.filter(
+      (a) => a.hidden && a.phase === 'pressed' && a.modifiers?.length,
+    );
   return (
     <div className="live-controls">
       <div className="stick-pair">
@@ -110,10 +127,15 @@ export default function TouchControls({
       <div className="live-action-buttons">
         {actions.map((a) => {
           const toggle = a.intent === 'charge' || a.phase === 'held',
-            down = held[a.intent];
+            down = held[a.intent],
+            // Charging is only possible on this player's own turn, and nothing
+            // can be held before the match has loaded.
+            unavailable =
+              !ready || (a.intent === 'charge' && resetCharge && !down);
           return (
             <button
               key={a.intent}
+              disabled={unavailable}
               aria-pressed={toggle ? !!down : undefined}
               className={down ? 'held' : ''}
               onClick={() => {
@@ -137,6 +159,25 @@ export default function TouchControls({
             </button>
           );
         })}
+        {chords.map((a) => (
+          <button
+            key={a.command}
+            disabled={!ready}
+            onClick={() => {
+              for (const m of a.modifiers!) send(m, 1);
+              send(a.intent, 1);
+              send(a.intent, 0);
+              for (const m of a.modifiers!) send(m, 0);
+            }}
+          >
+            <kbd>
+              {[...a.modifiers!, a.intent]
+                .map((i) => inputGlyph(i, family, bindings, player))
+                .join('+')}
+            </kbd>
+            <span>{a.label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );

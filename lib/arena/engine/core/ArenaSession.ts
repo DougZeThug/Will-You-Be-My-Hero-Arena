@@ -201,10 +201,14 @@ export class ArenaSession {
     if (!activeInput)
       frame.family = this.frames.get(player)?.family ?? frame.family;
     this.frames.set(player, frame);
-    const down = Number(frame.values.pause ?? 0) > 0.5;
-    if (down && !this.pauseDown.get(player)) this.pause(!this.paused);
+    // A finished match stays on its result: the pause key and a controller
+    // disconnect no longer pause it.
+    const down = Number(frame.values.pause ?? 0) > 0.5,
+      finished = this.event.resolveOutcome().finished;
+    if (down && !this.pauseDown.get(player) && (this.paused || !finished))
+      this.pause(!this.paused);
     this.pauseDown.set(player, down);
-    if (!frame.connected && !this.paused)
+    if (!frame.connected && !this.paused && !finished)
       this.pause(true, 'Controller disconnected. Reconnect it, then resume.');
     return frame;
   }

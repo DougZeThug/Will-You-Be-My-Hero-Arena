@@ -31,8 +31,12 @@ Normal app route:
 
 1. `components/arena/ArenaStage.tsx` creates the recorded `ArenaGame`.
 2. Only when the resolved sport is `cornhole` (`recording.setup.sport` once a
-   recording is loaded, otherwise the stage's `sport` prop), it dynamically
+   recording is loaded, otherwise the stage's `sport` prop), and the stage is
+   either playing a recording or showing the plain idle preview, it dynamically
    loads `lab/performance/provider.ts` and calls `performanceMatchProvider()`.
+   A collection preview of any other clip, library animation or motion style
+   uses the puppet instead, because the performance rig plays only semantic
+   recorded actions and its idle.
 3. The provider hash-checks and preloads side-view-v3 Dan/Doug assets, creates
    `lab/performance/LoongBonesAdapter.ts`, loads the matching profile from
    `lib/arena/engine/performance/profiles/`, and wraps the adapter in

@@ -31,10 +31,12 @@ export async function verifyPackImages(pack:CharacterPack){
  }
  verified.add(pack);
 }
+/** Why this pack cannot be installed next to the cards already here, or an empty string. Checked at review time and again at install. */
+export function packConflict(pack:CharacterPack){return CARDS.some(c=>c.id===pack.card.id)&&registeredManifest(pack.card.id)?.cardImage!==pack.manifest.cardImage?'This character ID is already in use. Ask Codex for a new pack ID.':'';}
 export async function installCharacterPack(raw:unknown){
  const pack=validateCharacterPack(raw);
  await verifyPackImages(pack);
- if(CARDS.some(c=>c.id===pack.card.id)&&registeredManifest(pack.card.id)?.cardImage!==pack.manifest.cardImage)throw Error('This character ID is already in use. Ask Codex for a new pack ID.');
- const db=await openStore();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('characters','readwrite'),store=tx.objectStore('characters'),get=store.get(pack.card.id);let problem='';get.onsuccess=()=>{const previous=get.result as CharacterPack|undefined;if(previous&&JSON.stringify(previous)!==JSON.stringify(pack)){problem='A different pack uses this character ID. Existing characters and saved matches were kept.';tx.abort();return;}store.put(pack);};tx.oncomplete=()=>resolve();tx.onerror=()=>reject(Error('The character could not be saved. Browser storage may be full.'));tx.onabort=()=>reject(Error(problem||'The character was not installed.'));});}finally{db.close();}
+ const conflict=packConflict(pack);if(conflict)throw Error(conflict);
+ const db=await openStore();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('characters','readwrite'),store=tx.objectStore('characters'),get=store.get(pack.card.id);let problem='';get.onsuccess=()=>{const previous=get.result as CharacterPack|undefined;if(previous&&JSON.stringify(previous)!==JSON.stringify(pack)){problem='A different pack uses this character ID. Existing characters and saved matches were kept.';tx.abort();return;}store.put(pack);};tx.oncomplete=()=>resolve();tx.onerror=()=>reject(Error('The character could not be saved. Browser storage may be full.'));tx.onabort=()=>reject(Error(problem||(tx.error?.name==='QuotaExceededError'?'The character could not be saved. Browser storage may be full.':'The character was not installed.')));});}finally{db.close();}
  registerCharacter(pack.card,pack.manifest,packImageMap(pack));return pack;
 }

@@ -109,6 +109,44 @@ const CASES = [
       [244, 'jump', 0],
     ],
   },
+  // A held guard stays up for the whole hold, not only its 0.35 s start-up.
+  {
+    id: 'fighting-guard',
+    scenario: 'fighting-live',
+    start: 'ready',
+    frames: 180,
+    inputs: [
+      [10, 'modifierLeft', 1],
+      [150, 'modifierLeft', 0],
+    ],
+  },
+  // Two lane changes toward the camera: the runner grows with lane depth
+  // while its planted feet stay planted.
+  {
+    id: 'running-lanes',
+    scenario: 'running-live',
+    start: 'ready',
+    frames: 180,
+    inputs: [
+      [10, 'move', { x: 1, y: 1 }],
+      [16, 'move', { x: 1, y: 0 }],
+      [50, 'move', { x: 1, y: 1 }],
+      [56, 'move', { x: 1, y: 0 }],
+    ],
+  },
+  // A celebration mid-race no longer blocks the jump that follows it.
+  {
+    id: 'running-celebrate-jump',
+    scenario: 'running-live',
+    start: 'ready',
+    frames: 150,
+    inputs: [
+      [10, 'celebrate', 1],
+      [14, 'celebrate', 0],
+      [20, 'primaryAction', 1],
+      [24, 'primaryAction', 0],
+    ],
+  },
 ].filter((c) => !only.length || only.includes(c.id));
 
 const JOINTS = [

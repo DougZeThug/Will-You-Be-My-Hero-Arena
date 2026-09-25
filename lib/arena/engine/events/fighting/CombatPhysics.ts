@@ -10,6 +10,8 @@ export interface CombatHit {
   damage: number;
   impulse: number;
   blocked: boolean;
+  /** The target's counter stance reduced the damage. */
+  countered: boolean;
 }
 export function moveFighter(
   c: ArenaCharacter,
@@ -68,17 +70,20 @@ export function combatHits(
           Math.sign(-dx) === b.body.facing &&
           ca.attack !== 'grapple',
         factor = 0.8 + a.stats.event('fighting', 'attack', 0.6) * 0.4,
+        // The target's defence rating takes up to 10% off, or adds up to 10%,
+        // around a middling card. Blocked chip damage is fixed.
+        defence = 1.1 - b.stats.event('fighting', 'defense', 0.5) * 0.2,
+        countered = !blocked && time < cb.counterUntil,
         damage = blocked
           ? 2
-          : Math.round(
-              def.damage * factor * (time < cb.counterUntil ? 0.65 : 1),
-            );
+          : Math.round(def.damage * factor * defence * (countered ? 0.65 : 1));
       hits.push({
         attacker: a,
         target: b,
         damage,
         impulse: a.body.facing * def.knockback * (blocked ? 0.18 : 1),
         blocked,
+        countered,
       });
     }
   }

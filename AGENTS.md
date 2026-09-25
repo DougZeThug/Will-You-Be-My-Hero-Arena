@@ -127,3 +127,4 @@ intentional evidence under `docs/review/`.
 | Lab scenarios | `lab/scenarios.ts`, `lab/LabRuntime.ts` |
 | Tests | `tests/`, `tests/browser/` |
 | Repeatable workflows | `.agents/skills/` |
+| User-facing behaviour description | `docs/product-description/` (start at its `AGENTS.md`) |

@@ -153,6 +153,21 @@ export function attemptState(a: Attempt, time: number, shot?: ShotStyle) {
     flightElapsed: time - a.releaseAt,
   };
 }
+/**
+ * Attempts shown for one competitor so far: the regulation attempts, plus
+ * extra pairs only once the first of them has begun, so the total never gives
+ * away that a contest will be tied.
+ */
+export function shownAttempts(rec: Recording, time: number, actor: 0 | 1) {
+  const regulation = EVENTS[rec.setup.sport].attempts,
+    started = rec.attempts.reduce(
+      (round, a) => (a.start <= time ? Math.max(round, a.round) : round),
+      -1,
+    );
+  return rec.attempts.filter(
+    (a) => a.actor === actor && (a.round < regulation || a.round <= started),
+  ).length;
+}
 export function matchState(
   rec: Recording,
   time: number,

@@ -13,7 +13,7 @@ export const FightingActionMap: EventActionMap = {
       id: 'direction-special',
       sequence: ['down', 'right', 'specialAction'],
       window: 0.65,
-      command: 'special',
+      command: 'chargedSpecial',
     },
   ],
   actions: [

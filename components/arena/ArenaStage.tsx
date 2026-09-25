@@ -1,10 +1,31 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ArenaOptions } from '@/lib/arena/engine/core/ArenaOptions';
 import type { ArenaGame } from '@/lib/arena/engine/core/ArenaGame';
 export type StageProps = ArenaOptions;
 export default function ArenaStage(props: StageProps) {
   const effectiveSport = props.recording?.setup.sport ?? props.sport;
+  // The cornhole performance rig plays recorded Watch contests and the idle
+  // pose only. Any other preview (a clip, a library animation or a motion
+  // style) uses the puppet, which can play it.
+  const usePerformance =
+    effectiveSport === 'cornhole' &&
+    (!!props.recording ||
+      (!props.previewAnimation &&
+        !props.previewPersonality &&
+        (props.previewClip ?? 'idle') === 'idle'));
+  // Rebuild only when the two cards' mappings change, not whenever the save
+  // is re-read and hands over a new array with the same contents.
+  const cardKey = props.cards.join('|');
+  const importKey = useMemo(
+    () =>
+      JSON.stringify(
+        cardKey
+          .split('|')
+          .map((id) => props.imported?.find((a) => a.cardId === id) ?? null),
+      ),
+    [props.imported, cardKey],
+  );
   const host = useRef<HTMLDivElement>(null),
     latest = useRef(props),
     runtime = useRef<ArenaGame | null>(null),
@@ -24,9 +45,7 @@ export default function ArenaStage(props: StageProps) {
     setLoading(true);
     void import('@/lib/arena/engine/core/ArenaGame')
       .then(async ({ ArenaGame }) => {
-        const characterRigs =
-          (latest.current.recording?.setup.sport ?? latest.current.sport) ===
-          'cornhole'
+        const characterRigs = usePerformance
             ? await (
                 await import('../../lab/performance/provider')
               ).performanceMatchProvider()
@@ -58,11 +77,12 @@ export default function ArenaStage(props: StageProps) {
       runtime.current = null;
     };
   }, [
-    props.cards.join('|'),
+    cardKey,
     props.recording?.id,
     effectiveSport,
     props.low,
-    props.imported,
+    importKey,
+    usePerformance,
   ]);
   return (
     <div ref={host} className="pixi-host phaser-host">

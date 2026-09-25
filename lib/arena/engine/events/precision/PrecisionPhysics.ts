@@ -67,6 +67,7 @@ export function resolvePrecisionLanding(
     angle: shot === 'roll' ? -0.2 : 0.08,
     points: bagPoints(f.target),
   };
+  let rolledAround = false;
   if (landed.points === 1)
     for (const old of bags) {
       if (
@@ -80,11 +81,13 @@ export function resolvePrecisionLanding(
       old.x += ((target.x - old.x) / d) * push;
       old.y += ((target.y - old.y) / d) * push;
       old.points = bagPoints(old);
-      if (shot === 'roll') {
-        landed.y += 16;
-        landed.points = bagPoints(landed);
-      }
+      if (shot === 'roll') rolledAround = true;
     }
+  // A roll curls around the bags it meets once, however many there are.
+  if (rolledAround) {
+    landed.y += 16;
+    landed.points = bagPoints(landed);
+  }
   bags.push(landed);
   return landed;
 }
