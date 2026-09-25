@@ -149,7 +149,7 @@ If the viewer leaves mid-replay by the logo, a reload or closing the tab, nothin
 
 ## Open questions and verification
 
-- Read from `components/arena/Panels.tsx` (the history and user panels), `Game.tsx` (`replay`, `displayState`, the clock subscription), `SecondaryViews.tsx` and `app/globals.css`. No test opens either dialog, and `scripts/production-smoke.mjs` does not use them. The fixed behaviour below is read from the code; the scripted pass of 2026-09-24 ran before these fixes.
+- Read from `components/arena/Panels.tsx` (the history and user panels), `Game.tsx` (`replay`, `displayState`, the clock subscription), `SecondaryViews.tsx` and `app/globals.css`. `scripts/production-smoke.mjs` opens History only to reload a recording, and no test checks what either dialog shows. The fixed behaviour below is read from the code; the scripted pass of 2026-09-24 ran before these fixes.
 - **Fixed: replays hid revealed points (B-01).** A replay of a revealed contest now keeps its points and rows, writes no playback position, and never leaves a resume banner.
 - **Fixed: a waiting counted entry revealed by a replay (B-05).** Replaying another recording now leaves the waiting entry waiting.
 - **Fixed: internal mode words (B-36).** Rows now say "Counted entry" and "Exhibition", and points are signed.
