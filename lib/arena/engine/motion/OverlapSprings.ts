@@ -38,6 +38,36 @@ export function bakeOverlap(
     v = 0;
   const passes = loop ? 2 : 1,
     out = new Array<number>(signal.length).fill(0);
+  if (loop) {
+    // The caller sends a sentinel-duplicated table (signal[N] === signal[0]),
+    // so the period is the N unique samples 0..N-1 and the wrap is N-1 -> 0.
+    // Integrating the sentinel as a separate interval would hold the spring on
+    // signal[N] for a full sample every pass, deforming the periodic orbit and
+    // biasing out[0] away from the steady state out[N-1] carries — a wrap-seam
+    // discontinuity. Integrate the N unique samples with true wraparound, then
+    // mirror out[0] into the sentinel slot so the interp table is continuous.
+    const N = signal.length - 1;
+    for (let pass = 0; pass < passes; pass++)
+      for (let i = 0; i < N; i++) {
+        const a = signal[i],
+          b = signal[(i + 1) % N];
+        for (let s = 0; s < substeps; s++) {
+          const target = a + (b - a) * (s / substeps);
+          // Semi-implicit Euler: stable for these stiffness/step ratios.
+          v += (omega * omega * (target - x) - 2 * zeta * omega * v) * h;
+          x += v * h;
+        }
+        if (pass === passes - 1) {
+          const offset = settings.gain * (x - signal[i]);
+          out[i] =
+            settings.limit === undefined
+              ? offset
+              : Math.max(-settings.limit, Math.min(settings.limit, offset));
+        }
+      }
+    out[N] = out[0];
+    return out;
+  }
   for (let pass = 0; pass < passes; pass++)
     for (let i = 0; i < signal.length; i++) {
       const a = signal[i],
@@ -56,12 +86,10 @@ export function bakeOverlap(
             : Math.max(-settings.limit, Math.min(settings.limit, offset));
       }
     }
-  if (!loop) {
-    // Ease the offset in over the first samples: a clip entered from a matching
-    // pose has no history, so the child starts on its parent.
-    const ramp = Math.min(signal.length, Math.round(rate * 0.06));
-    for (let i = 0; i < ramp; i++) out[i] *= i / ramp;
-  }
+  // Ease the offset in over the first samples: a clip entered from a matching
+  // pose has no history, so the child starts on its parent.
+  const ramp = Math.min(signal.length, Math.round(rate * 0.06));
+  for (let i = 0; i < ramp; i++) out[i] *= i / ramp;
   return out;
 }
 
