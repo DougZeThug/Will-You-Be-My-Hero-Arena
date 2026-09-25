@@ -38,11 +38,11 @@ Priorities:
    4. Open `http://127.0.0.1:3020/` in a **fresh browser profile**, such as a new profile or a Playwright context, never your everyday profile. Every item starts from a fresh save unless its Setup says otherwise.
 
    To return to a clean state between sections, close the profile, or clear the site's localStorage (`wybmh-paper-arena-v2`, `wybmh-input-bindings-v1`) and IndexedDB (`wybmh-character-library-v1`) from the browser's developer tools.
-2. **Confirm the commit.** Every document says `Verified against Will-You-Be-My-Hero-Arena commit 3b4ec62`.
+2. **Confirm the commit.** Every document says `Verified against Will-You-Be-My-Hero-Arena commit 364e3c1`.
    - Run `git rev-parse --short HEAD` in the repository.
    - Or read `dist/client/arena-build.json`, which the build writes with the full commit.
 
-   Commits after `3b4ec62` that only touch `docs/product-description/` do not change the page. Any other difference means some failures may be drift, not defects.
+   Commits after `364e3c1` that only touch `docs/product-description/` do not change the page. Any other difference means some failures may be drift, not defects. The description was first written against `3b4ec62`; the bug-triage fixes followed, and the documents and checklists were revised to match `364e3c1`.
 3. **Keep the documents open beside the page.** Read the linked section before each item; the item is a summary, the section is the claim.
 4. **Work in priority order.** Do P1 first across all files, then P2, then P3.
 5. **Record each result** in the Result column as `pass`, `partial`, `fail` or `blocked`, with a short note for anything other than a clean pass.
@@ -83,7 +83,9 @@ A script cannot judge how motion looks, whether sound is heard, or real controll
 
 ## Results so far
 
-### First scripted pass, 2026-09-24
+Two scripted passes have been run. The first found the bugs. The second checked the fixes.
+
+### First scripted pass, 2026-09-24 (commit `3b4ec62`)
 
 **What was run.**
 - **Build.** The production build of commit `d95832c`, whose source is identical to `3b4ec62`; only documents had changed. It was served by `scripts/serve.mjs`.
