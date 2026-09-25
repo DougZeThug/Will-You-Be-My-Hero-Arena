@@ -67,10 +67,7 @@ export class CharacterPresentation {
         scale: character.body.scale,
       }) ?? createCharacterRig(scene, loaded, character.profile, true);
     if (this.rig.performance) {
-      const runtime = this.rig.performance.runtime as {
-        reducedMotion?: boolean;
-      };
-      if ('reducedMotion' in runtime) runtime.reducedMotion = this.reduced;
+      this.setReduced(this.reduced);
       character.setPresentedHand(() => this.hand());
       character.attach({
         can: () => false,
@@ -98,6 +95,15 @@ export class CharacterPresentation {
         .setStrokeStyle(3, 0xffcc25),
       scene.add.image(0, -68, loaded.cardKey).setDisplaySize(86, 126),
     ]);
+  }
+  /** Keep runtime-owned presentation effects aligned with the live setting. */
+  setReduced(reduced: boolean) {
+    this.reduced = reduced;
+    const runtime = this.rig.performance?.runtime as
+      | { reducedMotion?: boolean }
+      | undefined;
+    if (runtime && 'reducedMotion' in runtime)
+      runtime.reducedMotion = reduced;
   }
   /** Cartoon beats from the simulation: stretch on takeoff, squash on
    * landing, recoil on a hit. Evaluated from the beat times, so it is
