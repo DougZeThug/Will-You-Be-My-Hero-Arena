@@ -67,6 +67,10 @@ export class CharacterPresentation {
         scale: character.body.scale,
       }) ?? createCharacterRig(scene, loaded, character.profile, true);
     if (this.rig.performance) {
+      const runtime = this.rig.performance.runtime as {
+        reducedMotion?: boolean;
+      };
+      if ('reducedMotion' in runtime) runtime.reducedMotion = this.reduced;
       character.setPresentedHand(() => this.hand());
       character.attach({
         can: () => false,

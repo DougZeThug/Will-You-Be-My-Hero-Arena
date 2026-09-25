@@ -5,8 +5,24 @@ import assert from 'node:assert/strict';
 export async function testAnimationSmoothness({ check }) {
   const { ballisticFlight } =
     await import('../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs');
+  const { bakeOverlap } =
+    await import('../.test-build/engine/motion/OverlapSprings.mjs');
   const { softReach, softReachDrop, SOFT_REACH_MAX, SOFT_REACH_START } =
     await import('../.test-build/engine/performance/KneeReach.mjs');
+
+  const loopOverlap = bakeOverlap(
+    [0, 1, 0, -1, 0],
+    60,
+    { frequency: 2.3, damping: 0.38, gain: 0.55 },
+    true,
+  );
+  check(() =>
+    assert.equal(
+      loopOverlap.at(-1),
+      loopOverlap[0],
+      'loop overlap duplicates its periodic first sample at the sentinel',
+    ),
+  );
 
   // Bag flight: exact landing, continuous release, ballistic after the blend,
   // bounded gravity and a velocity blend that never reverses.

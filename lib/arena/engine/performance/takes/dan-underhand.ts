@@ -9,7 +9,7 @@ const take: PerformanceTake = {
   character: "dan",
   technique: "underhand",
   provenance: {"kind":"authored","source":"Arena hand-authored cartoon take v1","notes":"Real underhand mechanics (pendulum swing, weight transfer, held follow-through toward the board) with cartoon timing: slow load, moving hold, snap drive, overshoot and settle. Not motion capture."},
-  units: {"time":"seconds at movementTempo 1","armSwing":"degrees; world upper-arm swing from bind, + = backward (rig clockwise)","angles":"degrees in local rig sign; wrist = hand_L local rotation","weightX":"normalised pelvis travel (× profile.weightTransfer rig px)","compression":"rig px of pelvis drop"},
+  units: {"time":"seconds at movementTempo 1","armSwing":"degrees; world upper-arm swing from bind, + = backward (rig clockwise)","angles":"degrees in local rig sign; wrist is pre-overlap hand intent; compiler enforces baked hand_L limits","weightX":"normalised pelvis travel (× profile.weightTransfer rig px)","compression":"rig px of pelvis drop"},
   duration: 2.75,
   markers: {"anticipate":0.1,"windup":0.42,"windupPeak":0.92,"equipmentRelease":1.3,"finish":1.52,"holdEnd":2.2},
   times: [0, 0.066667, 0.133333, 0.2, 0.266667, 0.333333, 0.4, 0.466667, 0.533333, 0.6, 0.666667, 0.733333, 0.8, 0.866667, 0.9, 0.933333, 0.966667, 1, 1.033333, 1.066667, 1.1, 1.133333, 1.166667, 1.2, 1.233333, 1.266667, 1.3, 1.333333, 1.366667, 1.4, 1.433333, 1.466667, 1.5, 1.533333, 1.566667, 1.6, 1.666667, 1.733333, 1.8, 1.866667, 1.933333, 2, 2.066667, 2.133333, 2.2, 2.266667, 2.333333, 2.4, 2.466667, 2.533333, 2.6, 2.666667, 2.733333, 2.75],

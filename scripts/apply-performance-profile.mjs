@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import ts from 'typescript';
+import { createServer } from 'vite';
 // Reuse the pure runtime validator; no browser or debug hook writes source files.
 const source = await readFile(
   'lib/arena/engine/performance/ProfileValidation.ts',
@@ -22,6 +23,21 @@ if (!file)
 const candidate = validatePerformanceProfile(
   JSON.parse(await readFile(file, 'utf8')),
 );
+// Promotion must apply the same per-frame native-limit gate as the runtime.
+const vite = await createServer({
+  configFile: false,
+  appType: 'custom',
+  logLevel: 'silent',
+  server: { middlewareMode: true },
+});
+try {
+  const { compilePerformance } = await vite.ssrLoadModule(
+    '/lab/performance/compile.ts',
+  );
+  compilePerformance(candidate);
+} finally {
+  await vite.close();
+}
 const target = `lib/arena/engine/performance/profiles/${candidate.id}.json`;
 await writeFile(target, JSON.stringify(candidate, null, 2) + '\n');
 console.log(

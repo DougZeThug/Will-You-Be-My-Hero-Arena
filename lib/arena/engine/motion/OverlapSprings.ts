@@ -37,11 +37,16 @@ export function bakeOverlap(
   let x = signal[0],
     v = 0;
   const passes = loop ? 2 : 1,
-    out = new Array<number>(signal.length).fill(0);
+    out = new Array<number>(signal.length).fill(0),
+    // Loop tables include a duplicate end sentinel for interpolation. Simulate
+    // only the unique samples so the sentinel does not become a phantom hold.
+    sampleCount = loop ? signal.length - 1 : signal.length;
   for (let pass = 0; pass < passes; pass++)
-    for (let i = 0; i < signal.length; i++) {
+    for (let i = 0; i < sampleCount; i++) {
       const a = signal[i],
-        b = signal[Math.min(signal.length - 1, i + 1)];
+        b = loop
+          ? signal[(i + 1) % sampleCount]
+          : signal[Math.min(signal.length - 1, i + 1)];
       for (let s = 0; s < substeps; s++) {
         const target = a + (b - a) * (s / substeps);
         // Semi-implicit Euler: stable for these stiffness/step ratios.
@@ -56,6 +61,7 @@ export function bakeOverlap(
             : Math.max(-settings.limit, Math.min(settings.limit, offset));
       }
     }
+  if (loop) out[sampleCount] = out[0];
   if (!loop) {
     // Ease the offset in over the first samples: a clip entered from a matching
     // pose has no history, so the child starts on its parent.
