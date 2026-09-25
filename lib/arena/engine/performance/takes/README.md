@@ -29,7 +29,7 @@ character faces +x, so + tips backward for the arm and forward for the torso).
 | `hips`, `lowerSpine`, `upperSpine`, `chest` | Local spine rotations (pelvis → chest). Their sum is the torso lean. |
 | `shoulder` | Throwing clavicle (`clavicle_L`). |
 | `elbow` | Throwing forearm (`forearm_L`). |
-| `wrist` | Throwing hand local rotation (`hand_L`), limited to −35…95. |
+| `wrist` | Authored pre-overlap throwing hand intent (not the baked `hand_L` local rotation). The compiler bakes `hand_L` by adding wrist and chest overlap and rejects any frame outside the native `hand_L` limit; the `wrist` channel itself is sanity-checked to −35…95. |
 | `counterArm`, `counterElbow` | Free arm (`upper_arm_R`, `forearm_R`). |
 | `weightX` | Normalised pelvis travel (× profile `weightTransfer` rig px). |
 | `compression` | Pelvis drop in rig px (knees bend through planted IK). |

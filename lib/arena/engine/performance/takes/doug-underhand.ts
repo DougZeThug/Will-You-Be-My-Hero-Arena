@@ -9,7 +9,7 @@ const take: PerformanceTake = {
   character: "doug",
   technique: "underhand",
   provenance: {"kind":"authored","source":"Arena hand-authored cartoon take v1","notes":"Showman variant: lock-in bounce, bigger backswing, longer hang at the top, harder snap and compact finish. Not motion capture."},
-  units: {"time":"seconds at movementTempo 1","armSwing":"degrees; world upper-arm swing from bind, + = backward (rig clockwise)","angles":"degrees in local rig sign; wrist = hand_L local rotation","weightX":"normalised pelvis travel (× profile.weightTransfer rig px)","compression":"rig px of pelvis drop"},
+  units: {"time":"seconds at movementTempo 1","armSwing":"degrees; world upper-arm swing from bind, + = backward (rig clockwise)","angles":"degrees in local rig sign; wrist = authored pre-overlap hand intent; compiler bakes hand_L = wrist + wristLag - chestLag","weightX":"normalised pelvis travel (× profile.weightTransfer rig px)","compression":"rig px of pelvis drop"},
   duration: 2.6,
   markers: {"anticipate":0.083333,"windup":0.466667,"windupPeak":0.983333,"equipmentRelease":1.333333,"finish":1.566667,"holdEnd":2.133333},
   times: [0, 0.066667, 0.133333, 0.2, 0.266667, 0.333333, 0.4, 0.466667, 0.533333, 0.6, 0.666667, 0.733333, 0.8, 0.866667, 0.933333, 0.966667, 1, 1.033333, 1.066667, 1.1, 1.133333, 1.166667, 1.2, 1.233333, 1.266667, 1.3, 1.333333, 1.366667, 1.4, 1.433333, 1.466667, 1.5, 1.533333, 1.566667, 1.6, 1.633333, 1.666667, 1.733333, 1.8, 1.866667, 1.933333, 2, 2.066667, 2.133333, 2.2, 2.266667, 2.333333, 2.4, 2.466667, 2.533333, 2.6],
