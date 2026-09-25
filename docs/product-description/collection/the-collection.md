@@ -147,7 +147,7 @@ The preview stage always rebuilds on return.
 | Focus leaves the game | Hiding the browser tab freezes the loop, which continues from the same moment when the tab is shown again. Losing window focus has no effect. | Not applicable. |
 | Reload, close, or back/forward cache | The page reopens on the Watch lobby. The collection then starts from Dan and **Personality idle**, with no draft or library clip. | Not applicable. |
 | Settings or saved data change underneath | **Reduced motion** applies at once. The stage rebuilds only if the previewed card's mapping changed (see Saved state above). | Not applicable. |
-| Graphics or storage failure | A lost graphics context freezes the preview. Its message, like any preview load error, shows in the preview's own error box under the stage, with **Reload the preview**, which rebuilds the preview and restarts its clock. The Watch error box is not used. A character library that cannot open leaves installed cards out of the grid, with a notice under the header. | Not applicable. |
+| Graphics or storage failure | A lost graphics context freezes the preview. Its message, "Graphics were interrupted. Reload to continue.", like any preview load error, shows in the preview's own error box under the stage, with **Reload the preview**, which rebuilds the preview and restarts its clock. The Watch error box is not used. A character library that cannot open leaves installed cards out of the grid, with a notice under the header. | Not applicable. |
 | Input device changes | No effect. | Not applicable. |
 
 ## Interactions with other systems
@@ -179,7 +179,7 @@ The preview stage always rebuilds on return.
 - **The grid does not wrap.** All cards sit in one row, so with several installed cards they get narrower.
 - **Another tab playing a contest** saves its playback position every 2 s. Each save is read here, but the preview stage keeps playing without rebuilding.
 - **Switching to the collection just after locking a contest.** The preview becoming ready does not start the Watch contest. The contest waits for its own stage when the player returns to Watch.
-- **The graphics-loss message** in the preview's error box is the Watch one, "Graphics were interrupted. Reload to continue; nothing about the contest has changed.", although no contest is involved here.
+- **The graphics-loss message** in the preview's error box is the short one, "Graphics were interrupted. Reload to continue.", since no contest is involved here.
 - **Dan and Doug's own clips** come from their character profiles. The same-named styles in [Explore motion styles](explore-motion-styles.md) use a different set of clips, so they can look different.
 
 ## Open questions and verification
@@ -192,6 +192,7 @@ The preview stage always rebuilds on return.
 - **Fixed: preview errors were invisible here (B-10).** The preview now has its own error box and **Reload the preview**, and its canvas is named "Character preview".
 - **Fixed: the preview could start a Watch contest (B-35).** Its ready signal no longer releases a pending automatic start.
 - **Fixed: rebuilds from other tabs (B-12).** The stage now rebuilds only when the previewed card's mapping changes.
+- **Fixed: the preview's graphics-loss message spoke of a contest (B-36).** It no longer mentions one.
 - **How the puppet looks** for Dan and Doug on the cornhole court, next to the side-view idle it replaces, has not been seen.
 - **How the grid lays out** with three or more cards, and whether the cards stay readable, has not been seen.
 
