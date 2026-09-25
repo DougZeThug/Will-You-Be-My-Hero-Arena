@@ -811,6 +811,9 @@ await (
 await (
   await import('./cornhole-presentation-timing-tests.mjs')
 ).testCornholePresentationTiming({ check, setup, s });
+await (
+  await import('./impact-effects-tests.mjs')
+).testImpactEffects({ check, setup, s });
 await (await import('./motion-v3-tests.mjs')).testMotionV3({ check });
 await (await import('./motion-v31-tests.mjs')).testMotionV31({ check });
 await (

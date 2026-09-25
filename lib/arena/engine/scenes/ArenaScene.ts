@@ -317,6 +317,7 @@ export class ArenaScene extends Phaser.Scene {
             : active,
           time,
           p.reduced || p.low,
+          active.contactAt,
         );
       }
       this.director!.advance(
