@@ -136,8 +136,9 @@ the front-view puppet and separate contracts.
   a forward counterbalance needs new far-arm art. Do not substitute the
   near-arm drawing (it reads as a second right arm). The rig also reuses
   Play's `repairFootMaterial`, and `lab/performance/LegMaterialRepair.ts`
-  moves the far-thigh seam onto the near thigh's painted outline with a skin
-  backing that is visible only while the thighs stay nearly parallel.
+  blends each shorts leg from the pelvis at hip height onto its thigh by the
+  hem (the relaxed stance turns the thighs ~15° under otherwise rigid shorts)
+  and welds the split leg seam under the shorts, fading out by the crotch.
 - Bag flight: performance releases use `ballisticFlight`
   (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
   velocity, blends to a ballistic cruise with bounded gravity and lands

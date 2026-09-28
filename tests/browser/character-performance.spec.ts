@@ -554,7 +554,7 @@ test('performance: miss, pause, frame step, speed and profile validation', async
   expect(errors).toEqual([]);
 });
 
-test('performance: painted far arm stays on the torso; thigh seam and shoe tips keep material', async ({
+test('performance: painted far arm stays on the torso; shorts follow the thighs', async ({
   page,
 }) => {
   await page.goto('/performance/');
@@ -572,14 +572,10 @@ test('performance: painted far arm stays on the torso; thigh seam and shoe tips 
         return api.getState().rig;
       });
     }, character);
-    const [idle, preparation, follow] = sample;
+    const [idle] = sample;
     expect(idle.repairedFootWeights).toBeGreaterThan(0);
-    expect(idle.repairedThighWeights).toBeGreaterThan(0);
-    // The seam backing is present while the thighs stay parallel and gone
-    // once they spread, so it never hangs below the hem.
-    expect(Math.abs(idle.thighDivergence)).toBeLessThan(5);
-    expect(Math.abs(preparation.thighDivergence)).toBeLessThan(5);
-    expect(Math.abs(follow.thighDivergence)).toBeGreaterThan(9);
+    // Shorts legs follow their thighs; the leg seam is welded under them.
+    expect(idle.shortsFollowVertices).toBeGreaterThan(0);
     for (const s of sample) {
       // The painted far (left) arm never swings forward off the torso.
       for (const name of ['upper_arm_R', 'forearm_R'])

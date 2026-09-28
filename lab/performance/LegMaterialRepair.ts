@@ -2,199 +2,129 @@ interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
   uvs?: number[];
-  triangles?: number[];
-  edges?: number[];
-  userEdges?: number[];
 }
 interface WeightedArmature {
   bone: { name: string }[];
-  slot: { name: string; parent: string }[];
   skin: { slot: { name: string; display: WeightedMesh[] }[] }[];
 }
 
-/** Inspected painted ink line of the near thigh's front edge, below the
- * shorts hem, in atlas pixels (top to bottom). Everything right of it down to
- * the crotch is far-thigh skin. */
-const nearThighOutline: Record<'dan' | 'doug', [number, number][]> = {
-  dan: [
-    [526.7, 818.9],
-    [520.6, 836.7],
-    [512.8, 846.7],
-    [510.6, 862.2],
-    [508.3, 867.8],
-  ],
-  doug: [
-    [530, 804.4],
-    [526.1, 815.6],
-    [521.1, 824.4],
-    [518.9, 844.4],
-    [512.8, 852.2],
-    [506.1, 860],
-  ],
-};
-const outlineX = (line: [number, number][], y: number) => {
-  for (let i = 1; i < line.length; i++) {
-    const [x0, y0] = line[i - 1],
-      [x1, y1] = line[i];
-    if (y >= y0 && y <= y1) return x0 + ((x1 - x0) * (y - y0)) / (y1 - y0);
-  }
-  return undefined;
+/** Atlas rows (px): hip joints, where the shorts start following the thighs,
+ * and the existing pelvis-to-thigh blend end just below the hem. */
+const HIP_Y = 690;
+const HEM_Y = 815;
+/** Atlas column (px) where the near shorts leg meets the far one at the hem. */
+const LEG_SPLIT_X = 550;
+const smooth = (a: number, b: number, x: number) => {
+  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
 };
 
-/** The source leg partition follows a projected inner-leg diagonal, so a wedge
- * of painted far-thigh skin below the hem is owned by the near thigh. The two
- * thighs pivot at different hips; once the knees soften that wedge shears away
- * from the rest of the far thigh and exposes the court through the crotch.
- * Reassign those WHOLE faces to the far leg (independent vertices at the new
- * seam, which is the near thigh's painted outline) and draw them with the far
- * leg, under the near thigh. Bind positions and UVs stay unchanged; only this
- * private runtime copy is derived. */
-export function repairThighSeam(id: string, arm: WeightedArmature) {
+/** The source binds the whole shorts to the pelvis down to the hem, while the
+ * performance keeps the knees softly bent: each thigh turns ~15° under a rigid
+ * shorts leg, so the leg slides forward out of the hem. Blend the shorts legs
+ * from the pelvis at hip height onto their own thigh by the hem, as fabric
+ * does. Bind positions, UVs and topology are unchanged; only this private
+ * runtime copy's weights are derived. Returns the reweighted vertex count. */
+export function followShortsToThighs(id: string, arm: WeightedArmature) {
   if (id !== 'dan' && id !== 'doug') return 0;
-  const line = nearThighOutline[id];
   const index = (name: string) => arm.bone.findIndex((b) => b.name === name);
-  const swap = new Map([
-    [index('thigh_L'), index('thigh_R')],
-    [index('shin_L'), index('shin_R')],
-  ]);
+  const pelvis = index('pelvis'),
+    near = index('thigh_L'),
+    far = index('thigh_R');
   const mesh = arm.skin[0].slot.find((s) => s.name === 'body')?.display[0];
-  if (
-    !mesh?.vertices ||
-    !mesh.weights ||
-    !mesh.uvs ||
-    !mesh.triangles ||
-    [...swap].some(([a, b]) => a < 0 || b < 0)
-  )
+  if (!mesh?.weights || !mesh.uvs || pelvis < 0 || near < 0 || far < 0)
     return 0;
-  const weights: number[][] = [];
-  for (let cursor = 0; cursor < mesh.weights.length;) {
+  const output: number[] = [];
+  let changed = 0;
+  for (let cursor = 0, v = 0; cursor < mesh.weights.length; v++) {
     const count = mesh.weights[cursor];
-    weights.push(mesh.weights.slice(cursor, cursor + 1 + count * 2));
+    const influences = new Map<number, number>();
+    for (let j = 0; j < count; j++)
+      influences.set(
+        mesh.weights[cursor + 1 + j * 2],
+        mesh.weights[cursor + 2 + j * 2],
+      );
+    cursor += 1 + count * 2;
+    const x = mesh.uvs[v * 2] * 1254,
+      y = mesh.uvs[v * 2 + 1] * 1254;
+    const cloth = [...influences.keys()].every((b) =>
+      [pelvis, near, far].includes(b),
+    );
+    const follow = smooth(HIP_Y, HEM_Y, y);
+    const thigh = (influences.get(near) ?? 0) + (influences.get(far) ?? 0);
+    if (!cloth || !influences.has(pelvis) || y > HEM_Y || follow <= thigh) {
+      output.push(count, ...[...influences].flat());
+      continue;
+    }
+    // Keep an existing leg partition; otherwise split at the hem seam.
+    const farShare =
+      thigh > 0
+        ? (influences.get(far) ?? 0) / thigh
+        : smooth(LEG_SPLIT_X - 12, LEG_SPLIT_X + 12, x);
+    const next = [
+      [pelvis, 1 - follow],
+      [near, follow * (1 - farShare)],
+      [far, follow * farShare],
+    ].filter(([, w]) => w > 1e-4);
+    output.push(next.length, ...next.flat());
+    changed++;
+  }
+  // The source splits the mesh between the two legs from the shorts seam down
+  // to the crotch. Both thighs now carry cloth, and they pivot at hips ~80px
+  // apart, so the split opens. Weld coincident seam vertices to their shared
+  // average (fully under the shorts, fading out by the crotch so the legs
+  // still part below it); the neighbouring faces keep their own leg.
+  const vertices: Map<number, number>[] = [];
+  for (let cursor = 0; cursor < output.length;) {
+    const count = output[cursor],
+      influences = new Map<number, number>();
+    for (let j = 0; j < count; j++)
+      influences.set(output[cursor + 1 + j * 2], output[cursor + 2 + j * 2]);
+    vertices.push(influences);
     cursor += 1 + count * 2;
   }
-  const vertices: number[] = [],
-    uvs: number[] = [],
-    output: number[][] = [],
-    original: number[][] = [],
-    moved: number[] = [],
-    kept: number[] = [],
-    map = new Map<string, number>();
-  let repaired = 0;
-  for (let f = 0; f < mesh.triangles.length; f += 3) {
-    const face = mesh.triangles.slice(f, f + 3);
-    // Same 1254 px atlas as the foot material repair.
-    const x = face.reduce((n, i) => n + mesh.uvs![i * 2] * 1254, 0) / 3;
-    const y = face.reduce((n, i) => n + mesh.uvs![i * 2 + 1] * 1254, 0) / 3;
-    const edge = outlineX(line, y);
-    const owns =
-      edge !== undefined &&
-      x > edge &&
-      face.some((i) => weights[i].some((b, j) => j % 2 === 1 && swap.has(b)));
-    for (const i of face) {
-      const key = i + ':' + owns;
-      if (!map.has(key)) {
-        map.set(key, vertices.length / 2);
-        vertices.push(mesh.vertices[i * 2], mesh.vertices[i * 2 + 1]);
-        uvs.push(mesh.uvs[i * 2], mesh.uvs[i * 2 + 1]);
-        const w = [...weights[i]];
-        if (owns)
-          for (let k = 1; k < w.length; k += 2)
-            if (swap.has(w[k])) {
-              w[k] = swap.get(w[k])!;
-              repaired++;
-            }
-        output.push(w);
-        original.push(weights[i]);
-      }
-      (owns ? moved : kept).push(map.get(key)!);
-    }
-  }
-  mesh.vertices = vertices;
-  mesh.uvs = uvs;
-  mesh.weights = output.flat();
-  // Material order is far arm, far leg, near leg, torso: leading with the
-  // reassigned far-thigh faces keeps them under the near thigh's outline.
-  mesh.triangles = [...moved, ...kept];
-  const remap = (edges: number[] = []) =>
-    edges
-      .map((i) => map.get(i + ':false') ?? map.get(i + ':true'))
-      .filter((i): i is number => i !== undefined);
-  mesh.edges = remap(mesh.edges);
-  mesh.userEdges = remap(mesh.userEdges);
-  // Behind the whole body, so these show only through an opened seam:
-  // - the far thigh's own painted skin beside the outline, slid under the near
-  //   thigh and moving with the far leg (the far thigh continues, unpainted,
-  //   behind the near thigh);
-  // - the reassigned wedge in place, still moving with the near thigh, and the
-  //   far thigh's top in place on the pelvis: the far thigh vacates both spots
-  //   under the hem when it swings forward.
-  const near = (i: number) =>
-    output[i].some((b, j) => j % 2 === 1 && swap.has(b));
-  const wedge = new Set(moved),
-    pelvis = index('pelvis');
-  const underlay = structuredClone(mesh);
-  const compact = new Map<string, number>(),
-    underlayWeights: number[][] = [],
-    faces: number[] = [];
-  underlay.vertices = [];
-  underlay.uvs = [];
-  const add = (i: number, slide: number, w: number[]) => {
-    const key = i + ':' + slide;
-    if (!compact.has(key)) {
-      compact.set(key, underlayWeights.length);
-      underlay.vertices!.push(vertices[i * 2] - slide, vertices[i * 2 + 1]);
-      underlay.uvs!.push(uvs[i * 2], uvs[i * 2 + 1]);
-      underlayWeights.push(w);
-    }
-    faces.push(compact.get(key)!);
-  };
-  for (let f = 0; f < mesh.triangles.length; f += 3) {
-    const face = mesh.triangles.slice(f, f + 3);
-    const x = face.reduce((n, i) => n + uvs[i * 2] * 1254, 0) / 3;
-    const y = face.reduce((n, i) => n + uvs[i * 2 + 1] * 1254, 0) / 3;
-    if (y < line[0][1] - UNDERLAY_HEM_REACH) continue;
-    // Reach up under the hem too: the seam opens right below it.
-    const edge = outlineX(line, Math.max(y, line[0][1]));
+  const seams = new Map<string, number[]>();
+  vertices.forEach((_, v) => {
+    const y = mesh.uvs![v * 2 + 1] * 1254;
+    if (y < HIP_Y || y > WELD_END_Y) return;
+    const key = (mesh.uvs![v * 2] * 1254).toFixed(1) + ',' + y.toFixed(1);
+    seams.set(key, [...(seams.get(key) ?? []), v]);
+  });
+  const leg = new Set(
+    ['pelvis', 'thigh_L', 'thigh_R', 'shin_L', 'shin_R'].map(index),
+  );
+  let welded = 0;
+  for (const group of seams.values()) {
+    // Only the leg seam: never weld cloth to the far hand's cut edge.
     if (
-      edge !== undefined &&
-      x > edge &&
-      x < edge + UNDERLAY_SOURCE_WIDTH &&
-      !face.some(near)
+      group.length < 2 ||
+      group.some((v) => [...vertices[v].keys()].some((b) => !leg.has(b)))
     )
-      for (const i of face) add(i, UNDERLAY_SLIDE, output[i]);
-    if (face.every((i) => wedge.has(i)))
-      for (const i of face) add(i, 0, original[i]);
-    else if (
-      edge !== undefined &&
-      x > edge &&
-      x < edge + UNDERLAY_SOURCE_WIDTH &&
-      y < line[0][1] + UNDERLAY_HEM_REACH &&
-      !face.some(near)
-    )
-      for (const i of face) add(i, 0, [1, pelvis, 1]);
+      continue;
+    const average = new Map<number, number>();
+    for (const v of group)
+      for (const [bone, w] of vertices[v])
+        average.set(bone, (average.get(bone) ?? 0) + w / group.length);
+    const y = mesh.uvs![group[0] * 2 + 1] * 1254,
+      weld = 1 - smooth(WELD_FULL_Y, WELD_END_Y, y);
+    for (const v of group) {
+      const own = vertices[v],
+        next = new Map<number, number>();
+      for (const bone of new Set([...own.keys(), ...average.keys()]))
+        next.set(
+          bone,
+          (own.get(bone) ?? 0) * (1 - weld) + (average.get(bone) ?? 0) * weld,
+        );
+      vertices[v] = new Map([...next].filter(([, w]) => w > 1e-4));
+      welded++;
+    }
   }
-  underlay.triangles = faces;
-  underlay.weights = underlayWeights.flat();
-  underlay.edges = [];
-  underlay.userEdges = [];
-  (underlay as { name?: string }).name = 'thighUnderlay';
-  arm.slot.unshift({ name: 'thighUnderlay', parent: 'root' });
-  arm.skin[0].slot.unshift({ name: 'thighUnderlay', display: [underlay] });
-  return repaired;
+  mesh.weights = vertices.flatMap((influences) => [
+    influences.size,
+    ...[...influences].flat(),
+  ]);
+  return changed + welded;
 }
-/** Far-thigh skin taken from beside the outline, in atlas pixels. */
-const UNDERLAY_SOURCE_WIDTH = 62;
-/** How far above the outline's top the backing reaches, in atlas pixels. */
-const UNDERLAY_HEM_REACH = 32;
-/** How far that skin slides under the near thigh, in atlas pixels. */
-const UNDERLAY_SLIDE = 36;
-
-/** The seam backing belongs to nearly parallel thighs, where the far thigh is
- * tucked behind the near one. Once they spread (release, follow-through) the
- * court between them is real and the backing would hang below the hem as a
- * lump. Opacity from the thighs' divergence from their rest angles (degrees):
- * a stateless pose function, so seeks and replays reproduce it. */
-export function thighUnderlayAlpha(divergence: number) {
-  const d = Math.abs(divergence);
-  return Math.max(0, Math.min(1, (9 - d) / 4));
-}
+/** Atlas rows (px) over which the leg seam weld fades out toward the crotch. */
+const WELD_FULL_Y = 830;
+const WELD_END_Y = 865;
