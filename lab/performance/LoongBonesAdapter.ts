@@ -12,7 +12,6 @@ import {
   SIDE_RIG_BONES,
 } from '../../lib/arena/engine/motion/HumanSkeleton';
 import { registerArmMaterial } from '../human-motion/ArmMaterialRegistration';
-import { restoreFarArm } from '../human-motion/FarArmMaterial';
 import { repairFootMaterial } from '../human-motion/FootMaterialRepair';
 import { repairThighSeam, thighUnderlayAlpha } from './LegMaterialRepair';
 import {
@@ -59,6 +58,12 @@ const segments = [
   ['leftShin', 'shin_R', 'foot_R'],
 ] as const;
 const limits = NATIVE_LIMITS;
+/** Forward far-arm rotation (degrees below zero) the painted strip supports. */
+const FAR_ARM_FORWARD = 1.5;
+const farArmReach = (degrees: number) =>
+  degrees >= 0
+    ? degrees
+    : -FAR_ARM_FORWARD * Math.tanh(-degrees / FAR_ARM_FORWARD);
 
 /** The only mutable native-rig boundary for character performances.
  * Native states persist. Game time drives blends and playheads together. All
@@ -109,7 +114,6 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   readonly wristBlendVertices: number;
   readonly repairedFootWeights: number;
   readonly repairedThighWeights: number;
-  readonly farArmEdgeTriangles: number;
   /** Rest global rotations of the thighs, for the seam backing's opacity. */
   private thighRest = new Map<string, number>();
   private thighDivergence = 0;
@@ -149,17 +153,11 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         ? DOUG_ARM_MATERIAL_RECIPE
         : null;
     }
-    // The body source paints only a narrow far-arm edge and leaves unpainted
-    // overlaps behind the far limbs; any off-bind far-arm pose tears that edge
-    // away from the torso. Runtime-only repairs on this private copy: Play's
-    // whole-face shoe tips and complete far arm/hand behind the body, plus the
+    // The body source leaves unpainted overlaps behind the far leg. Runtime-only
+    // repairs on this private copy: Play's whole-face shoe tips, plus the
     // far-thigh seam that opens under the shorts once the knees soften.
     this.repairedFootWeights = repairFootMaterial(definition.id, arm);
     this.repairedThighWeights = repairThighSeam(definition.id, arm);
-    this.farArmEdgeTriangles = restoreFarArm(
-      definition.id as 'dan' | 'doug',
-      arm,
-    ).removedEdgeTriangles;
     const library = compilePerformance(profile);
     this.clips = library.clips;
     installShippedPerformanceClips(arm, definition, library);
@@ -470,6 +468,20 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         this.warnings.add('Clamped ' + name);
       }
     }
+    // The far (left) arm is painted only as the strip visible along the front
+    // of the torso; the rest of it is hidden and unpainted. Swinging it forward
+    // pulls that strip off the torso and shows the court where the arm should
+    // be. Saturate forward rotation softly (stateless, continuous) so the real
+    // left-arm drawing stays attached; swinging back behind the body is free.
+    for (const name of ['upper_arm_R', 'forearm_R']) {
+      const b = this.bones.get(name)!,
+        r = (b.animationPose.rotation * 180) / Math.PI,
+        reach = farArmReach(r);
+      if (reach !== r) {
+        b.offset.rotation = ((reach - r) * Math.PI) / 180;
+        b.invalidUpdate();
+      }
+    }
     // Soft knee reach: lower the pelvis just enough that neither planted leg
     // enters the two-bone singularity near full extension (where a pixel of
     // hip drop swings the knee by ~8°). Feet and IK targets stay fixed.
@@ -763,7 +775,6 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       wristBlendVertices: this.wristBlendVertices,
       repairedFootWeights: this.repairedFootWeights,
       repairedThighWeights: this.repairedThighWeights,
-      farArmEdgeTriangles: this.farArmEdgeTriangles,
       thighDivergence: this.thighDivergence,
       armSurfaceDepth: arm.depth,
       starts: this.starts,

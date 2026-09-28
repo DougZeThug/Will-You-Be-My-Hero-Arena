@@ -554,7 +554,7 @@ test('performance: miss, pause, frame step, speed and profile validation', async
   expect(errors).toEqual([]);
 });
 
-test('performance: far arm, thigh seam and shoe tips keep painted material', async ({
+test('performance: painted far arm stays on the torso; thigh seam and shoe tips keep material', async ({
   page,
 }) => {
   await page.goto('/performance/');
@@ -573,8 +573,6 @@ test('performance: far arm, thigh seam and shoe tips keep painted material', asy
       });
     }, character);
     const [idle, preparation, follow] = sample;
-    // The body's narrow far-arm edge is replaced by the complete far arm.
-    expect(idle.farArmEdgeTriangles).toBeGreaterThan(0);
     expect(idle.repairedFootWeights).toBeGreaterThan(0);
     expect(idle.repairedThighWeights).toBeGreaterThan(0);
     // The seam backing is present while the thighs stay parallel and gone
@@ -583,6 +581,12 @@ test('performance: far arm, thigh seam and shoe tips keep painted material', asy
     expect(Math.abs(preparation.thighDivergence)).toBeLessThan(5);
     expect(Math.abs(follow.thighDivergence)).toBeGreaterThan(9);
     for (const s of sample) {
+      // The painted far (left) arm never swings forward off the torso.
+      for (const name of ['upper_arm_R', 'forearm_R'])
+        expect(
+          (s.bones.find((b) => b.name === name)!.localRotation * 180) /
+            Math.PI,
+        ).toBeGreaterThanOrEqual(-1.5);
       expect(s.feet.every((f) => f.error <= 2)).toBe(true);
       expect(s.soles.every((f) => f.error <= 2)).toBe(true);
     }

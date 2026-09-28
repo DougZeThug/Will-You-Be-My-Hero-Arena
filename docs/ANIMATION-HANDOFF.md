@@ -130,12 +130,14 @@ the front-view puppet and separate contracts.
   applies stateless squash pulses at root level only and counter-scales the
   held-object layer so the bag keeps its shape.
 - Far-limb material (runtime-only, on the adapter's private skeleton copy):
-  the performance rig reuses Play's `restoreFarArm` (complete far arm/hand
-  behind the body instead of the body's narrow far-arm edge) and
-  `repairFootMaterial`, and `lab/performance/LegMaterialRepair.ts` moves the
-  far-thigh seam onto the near thigh's painted outline with a skin backing
-  that is visible only while the thighs stay nearly parallel. Doug's far-wrist
-  watch is not on the reused near-arm drawing.
+  the far (left) arm is painted only as the strip along the front of the
+  torso, so the adapter softly caps its forward swing (`upper_arm_R`,
+  `forearm_R` at about -1.5°) and keeps the real left-arm drawing attached;
+  a forward counterbalance needs new far-arm art. Do not substitute the
+  near-arm drawing (it reads as a second right arm). The rig also reuses
+  Play's `repairFootMaterial`, and `lab/performance/LegMaterialRepair.ts`
+  moves the far-thigh seam onto the near thigh's painted outline with a skin
+  backing that is visible only while the thighs stay nearly parallel.
 - Bag flight: performance releases use `ballisticFlight`
   (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
   velocity, blends to a ballistic cruise with bounded gravity and lands
