@@ -33,6 +33,8 @@ export interface RigDriveFrame {
   clipRevision: number;
   /** Seconds the simulation scheduled for that clip (e.g. a jump's airtime). */
   clipDuration: number;
+  /** Entity state (e.g. 'celebrating') and the event's substate. */
+  state: string;
   substate: string;
   reduced: boolean;
   /** Presentation-only whole-figure squash (volume-preserving scales). */

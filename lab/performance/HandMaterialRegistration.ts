@@ -107,15 +107,26 @@ export function registerHandMaterial(
     )?.display[0];
     if (!mesh?.vertices || !mesh?.weights)
       throw Error('Missing registered hand mesh: ' + name);
+    // The release drawing is stored already turned by its art angle. Measure
+    // its forearm skin in the unturned art frame so the stub follows the
+    // forearm alone; the distal hand keeps the turned release pose.
+    const art =
+      name === 'releaseHand' ? (releaseHands[id].angle * Math.PI) / 180 : 0;
+    const artCos = Math.cos(art),
+      artSin = Math.sin(art);
     const weights: number[] = [];
     for (let i = 0; i < mesh.vertices.length; i += 2) {
       const x = mesh.vertices[i] + rig.origin.x - rig.wrist.x;
       const y = mesh.vertices[i + 1] + rig.origin.y - rig.wrist.y;
+      const ax = artCos * x + artSin * y,
+        ay = -artSin * x + artCos * y;
+      // The release crop keeps under 10px of forearm skin, too little to reach
+      // the painted cuff sample window, so only the three held exposures sample.
       if (name !== 'releaseHand' && x >= -36 && x <= -18 && Math.abs(y) < 10)
         samples.push({ name, index: i / 2 });
-      const blend = smooth(-12, 20, x);
-      const fx = cos * x - sin * y,
-        fy = sin * x + cos * y;
+      const blend = smooth(-12, 20, ax);
+      const fx = cos * ax - sin * ay,
+        fy = sin * ax + cos * ay;
       mesh.vertices[i] =
         rig.wrist.x - rig.origin.x + fx * (1 - blend) + x * blend;
       mesh.vertices[i + 1] =

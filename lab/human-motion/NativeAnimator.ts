@@ -71,7 +71,9 @@ export class NativeAnimator {
     { x: number; y: number; age: number }
   >();
   private previousFeet = new Map<string, Vec2>();
+  /** Rest ankle heights above the motor, captured once at `groundScale`. */
   private groundOffsets = new Map<string, number>();
+  private groundScale = 1;
   private touchdowns = new Map<string, { from: Vec2; age: number }>();
   private contactPoses = new Map<
     string,
@@ -268,10 +270,18 @@ export class NativeAnimator {
       ),
     };
   }
+  /** Rest ankle height at the actor's current scale: Play changes the scale
+   * when a runner changes lane, and the ground contact must follow it. */
+  private groundOffset(side: string) {
+    const offset = this.groundOffsets.get(side);
+    return offset === undefined
+      ? undefined
+      : (offset * this.definition.scale) / this.groundScale;
+  }
   floorPoint(side: string, motor: CharacterMotor): Vec2 {
     return {
       x: this.joint(side + 'Ankle').x + 7,
-      y: motor.position.y + (this.groundOffsets.get(side) ?? -14) + 14,
+      y: motor.position.y + (this.groundOffset(side) ?? -14) + 14,
     };
   }
   anchors() {
@@ -425,8 +435,8 @@ export class NativeAnimator {
               planner.profile.strideScale,
           y: this.groundOffsets.has(side)
             ? motor.position.y +
-              this.groundOffsets.get(side)! +
-              (ankle.y - motor.position.y - this.groundOffsets.get(side)!) *
+              this.groundOffset(side)! +
+              (ankle.y - motor.position.y - this.groundOffset(side)!) *
                 planner.gaitResponse.liftScale
             : ankle.y,
         });
@@ -482,12 +492,14 @@ export class NativeAnimator {
       }
       this.actor.armature.advanceTime(0);
     }
-    if (!this.groundOffsets.size)
+    if (!this.groundOffsets.size) {
+      this.groundScale = this.definition.scale;
       for (const side of ['right', 'left'])
         this.groundOffsets.set(
           side,
           this.joint(side + 'Ankle').y - motor.position.y,
         );
+    }
     // Capture contact at the evaluated native pose, then preserve its world target above moving roots.
     for (const e of events)
       if (e.foot) {
@@ -496,7 +508,7 @@ export class NativeAnimator {
             this.previousFeet.get(e.foot) ?? this.joint(e.foot + 'Ankle');
           const point = {
             x: from.x,
-            y: motor.position.y + this.groundOffsets.get(e.foot)!,
+            y: motor.position.y + this.groundOffset(e.foot)!,
           };
           if (Math.abs(motor.velocity.x) > 6) {
             // Place the upcoming support under the moving hip, within this

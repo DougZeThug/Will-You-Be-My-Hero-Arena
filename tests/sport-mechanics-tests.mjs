@@ -39,6 +39,10 @@ export async function testSportMechanics({ check, setup, m, s, a }) {
           const state=at(time);
           surface.apply(state.pose,state.joints);
           check(() => assert.ok(surface.positions.every(Number.isFinite),'Finite wrist/shoulder mesh'));
+          for(const key of ['leftArm','rightArm']){
+            const arm=state.joints[key];
+            check(() => assert.ok(distance(arm.root,arm.joint)<=asset.arm[0]+.001&&distance(arm.joint,arm.end)<=asset.arm[1]+.001,'Both arm bones stay within their lengths: '+id+' '+sport+' '+key));
+          }
           for(const [side,foot] of [['left',rest.leftLeg.end],['right',rest.rightLeg.end]]){
             const end=state.joints[side+'Leg'].end;
             if(!jumps)check(() => assert.ok(distance(end,foot)<.01,'Throwing weight shift preserves planted ankles'));

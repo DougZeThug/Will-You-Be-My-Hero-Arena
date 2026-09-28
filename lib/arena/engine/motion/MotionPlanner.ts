@@ -1,6 +1,9 @@
 import { AnimationGraph } from './AnimationGraph';
 import { clamp, type MotionClip, type MotionProfile } from './MotionTypes';
-import type { CharacterMotor } from '../movement/CharacterMotor';
+import {
+  PLANT_TURN_SPEED,
+  type CharacterMotor,
+} from '../movement/CharacterMotor';
 import { matchRecovery, type RecoveryPose } from './RecoveryMatcher';
 import { sampleRoot } from './RootCurve';
 import { matchStride, type StrideFit } from './StrideMatcher';
@@ -10,6 +13,8 @@ export class MotionPlanner {
   readonly gaitResponse = new GaitResponse();
   readonly clips: Map<string, MotionClip>;
   strideFit?: StrideFit;
+  /** A reversal's plant, committed from the plant speed through its recovery. */
+  private pivoting = false;
   idle = 'idle';
   /** Event-selected authored locomotion variants; input and motor remain universal. */
   locomotionVariants: Record<string, string> = {};
@@ -48,8 +53,10 @@ export class MotionPlanner {
       reaction = this.graph.get('reaction');
     for (const layer of ['action', 'reaction', 'personality'] as const)
       if (this.graph.get(layer)?.completed) this.graph.remove(layer);
-    if ((action && !action.completed) || (reaction && !reaction.completed))
+    if ((action && !action.completed) || (reaction && !reaction.completed)) {
+      this.pivoting = false;
       return;
+    }
     this.strideFit = matchStride(
       speed,
       [...this.clips.values()],
@@ -61,7 +68,21 @@ export class MotionPlanner {
         ? this.idle
         : (this.strideFit?.clip ?? 'walk')
       : 'airborne';
-    if (motor.turning && motor.grounded) id = 'pivot';
+    // The gait carries a reversed runner through its deceleration slide; the
+    // in-place pivot plants at the motor's turn speed and plays through its
+    // recovery, although the motor stops reporting the turn once facing flips.
+    const pivot = this.locomotionVariants.pivot ?? 'pivot',
+      base = this.graph.get('base');
+    if (!motor.grounded) this.pivoting = false;
+    else if (motor.turning && Math.abs(motor.velocity.x) < PLANT_TURN_SPEED)
+      this.pivoting = true;
+    else if (this.pivoting && base?.clip.id === pivot) {
+      const recovery =
+        base.clip.phases.find((p) => p.phase === 'recovery')?.at ??
+        base.clip.duration;
+      if (base.time >= recovery) this.pivoting = false;
+    }
+    if (this.pivoting) id = 'pivot';
     id = this.locomotionVariants[id] ?? id;
     const incoming = this.clips.get(id),
       previous = this.graph.get('base');

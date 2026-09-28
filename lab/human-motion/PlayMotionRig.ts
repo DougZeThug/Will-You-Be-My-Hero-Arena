@@ -128,7 +128,12 @@ export class PlayMotionRig implements CharacterRig {
     }
   }
   /** Start the rig's action for a new simulation clip. */
-  private start(clip: string, substate: string, duration: number) {
+  private start(
+    clip: string,
+    substate: string,
+    state: string,
+    duration: number,
+  ) {
     const planner = this.planner!;
     if (clip === 'athletic.jump') {
       // The simulation leaves the ground on the jump input: enter the
@@ -145,7 +150,8 @@ export class PlayMotionRig implements CharacterRig {
     } else if (clip === 'running.slide') planner.request('slide', true);
     else if (clip === 'running.stumble') planner.request('hit', true);
     else if (COMBAT[clip]) planner.request(COMBAT[clip], true);
-    else if (substate === 'finished' || substate === 'celebrating')
+    // Match-end wins finish the event; a mid-match taunt only celebrates.
+    else if (substate === 'finished' || state === 'celebrating')
       planner.request('success', true);
   }
   drive(frame: RigDriveFrame) {
@@ -156,7 +162,12 @@ export class PlayMotionRig implements CharacterRig {
       motor = this.motor!;
     if (frame.clipRevision !== this.revision) {
       this.revision = frame.clipRevision;
-      this.start(frame.clip, frame.substate, frame.clipDuration);
+      this.start(
+        frame.clip,
+        frame.substate,
+        frame.state,
+        frame.clipDuration,
+      );
     }
     // A held guard ends when the simulation lets go of the block, not when
     // its short start-up clip ends.
