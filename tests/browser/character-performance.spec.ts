@@ -553,3 +553,38 @@ test('performance: miss, pause, frame step, speed and profile validation', async
   expect((await state(page)).performance.state).toBe('recover');
   expect(errors).toEqual([]);
 });
+
+test('performance: painted far arm stays on the torso; shorts follow the thighs', async ({
+  page,
+}) => {
+  await page.goto('/performance/');
+  await expect(page.getByRole('status').first()).toContainText('idle');
+  for (const character of ['doug', 'dan'] as const) {
+    const sample = await page.evaluate((character) => {
+      const api = window.__HERO_PERFORMANCE__;
+      api.load(character);
+      api.step(8);
+      const release = api
+        .getState()
+        .performance.events.find((e) => e.name === 'OBJECT_RELEASED')!.time;
+      return [0.05, release - 0.45, release + 0.35].map((t) => {
+        api.seek(t);
+        return api.getState().rig;
+      });
+    }, character);
+    const [idle] = sample;
+    expect(idle.repairedFootWeights).toBeGreaterThan(0);
+    // Shorts legs follow their thighs; the leg seam is welded under them.
+    expect(idle.shortsFollowVertices).toBeGreaterThan(0);
+    for (const s of sample) {
+      // The painted far (left) arm never swings forward off the torso.
+      for (const name of ['upper_arm_R', 'forearm_R'])
+        expect(
+          (s.bones.find((b) => b.name === name)!.localRotation * 180) /
+            Math.PI,
+        ).toBeGreaterThanOrEqual(-1.5);
+      expect(s.feet.every((f) => f.error <= 2)).toBe(true);
+      expect(s.soles.every((f) => f.error <= 2)).toBe(true);
+    }
+  }
+});

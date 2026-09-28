@@ -129,6 +129,16 @@ the front-view puppet and separate contracts.
   planted leg reaches the two-bone singularity (no knee pops); the adapter
   applies stateless squash pulses at root level only and counter-scales the
   held-object layer so the bag keeps its shape.
+- Far-limb material (runtime-only, on the adapter's private skeleton copy):
+  the far (left) arm is painted only as the strip along the front of the
+  torso, so the adapter softly caps its forward swing (`upper_arm_R`,
+  `forearm_R` at about -1.5°) and keeps the real left-arm drawing attached;
+  a forward counterbalance needs new far-arm art. Do not substitute the
+  near-arm drawing (it reads as a second right arm). The rig also reuses
+  Play's `repairFootMaterial`, and `lab/performance/LegMaterialRepair.ts`
+  blends each shorts leg from the pelvis at hip height onto its thigh by the
+  hem (the relaxed stance turns the thighs ~15° under otherwise rigid shorts)
+  and welds the split leg seam under the shorts, fading out by the crotch.
 - Bag flight: performance releases use `ballisticFlight`
   (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
   velocity, blends to a ballistic cruise with bounded gravity and lands
