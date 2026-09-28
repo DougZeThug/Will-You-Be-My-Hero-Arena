@@ -206,4 +206,68 @@ export async function testHumanMotion({ check }) {
       ) < 1e-6,
     ),
   );
+  // A reversed sprint keeps its gait through the deceleration slide; the
+  // pivot plant starts at the plant speed and plays through its recovery,
+  // even though the motor stops reporting a turn once facing flips.
+  const { MotionPlanner } =
+    await import('../.test-build/engine/motion/MotionPlanner.mjs');
+  const { PLANT_TURN_SPEED } =
+    await import('../.test-build/engine/movement/CharacterMotor.mjs');
+  check(() => assert.ok(PLANT_TURN_SPEED > 0));
+  const baseClip = (id, extra = {}) => ({
+    id,
+    native: 'native_' + id,
+    duration: 0.6,
+    loop: true,
+    layer: 'base',
+    priority: 0,
+    fade: 0.14,
+    phases: [],
+    markers: [],
+    ...extra,
+  });
+  const planner = new MotionPlanner(
+    [
+      baseClip('idle'),
+      baseClip('walk'),
+      baseClip('pivot', {
+        phases: [
+          { phase: 'plant', at: 0 },
+          { phase: 'recovery', at: 0.35 },
+        ],
+      }),
+    ],
+    motionProfiles.doug,
+  );
+  const runner = new CharacterMotor(motionProfiles.doug, { x: 0, y: 0 });
+  runner.sprint = true;
+  runner.move({ x: 1, y: 0 });
+  for (let i = 0; i < 120; i++) runner.update(1 / 60);
+  runner.move({ x: -1, y: 0 });
+  let pivotStart = -1,
+    pivotEnd = -1,
+    fastPivot = 0;
+  // Before the plant, the base clip must stay a gait.
+  for (let i = 0; i < 180; i++) {
+    const speed = Math.abs(runner.velocity.x);
+    planner.locomotion(runner);
+    planner.graph.advance(1 / 60, i / 60);
+    const base = planner.graph.get('base').clip.id;
+    if (base === 'pivot' && pivotStart < 0) {
+      pivotStart = i;
+      if (speed >= PLANT_TURN_SPEED) fastPivot++;
+    }
+    if (base !== 'pivot' && pivotStart >= 0 && pivotEnd < 0) pivotEnd = i;
+    runner.update(1 / 60);
+  }
+  check(() =>
+    assert.equal(fastPivot, 0, 'No stationary pivot during a fast slide'),
+  );
+  check(() => assert.ok(pivotStart > 0, 'The reversal plants a pivot'));
+  check(() =>
+    assert.ok(
+      pivotEnd - pivotStart >= Math.floor(0.35 * 60),
+      'The pivot plays through its recovery: ' + (pivotEnd - pivotStart),
+    ),
+  );
 }

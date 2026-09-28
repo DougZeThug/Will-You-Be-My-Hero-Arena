@@ -318,6 +318,34 @@ export async function testLive({ check }) {
     ),
   );
   check(() => assert.deepEqual(validateProfile(doug), []));
+  // Authored overrides may script every PuppetPose joint, wrists and palms included.
+  const override = (pose) => ({
+    ...doug,
+    overrides: {
+      'combat.cross': {
+        duration: 1,
+        keys: [
+          { at: 0, pose },
+          { at: 1, pose: {} },
+        ],
+      },
+    },
+  });
+  check(() =>
+    assert.deepEqual(
+      validateProfile(
+        override({ wristR: 30, palmR: 0.8, wristL: -10, palmL: 1 }),
+      ),
+      [],
+      'Wrist and palm keys are valid override joints',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      validateProfile(override({ palmR: 2 })).length > 0,
+      'Out-of-range palm exposure is still rejected',
+    ),
+  );
   const nameless = structuredClone(doug);
   delete nameless.name;
   for (const profile of [

@@ -9,6 +9,8 @@ export interface MotorSweep {
   blockedX?: boolean;
   blockedY?: boolean;
 }
+/** Horizontal speed (px/s) below which a reversed runner plants and turns. */
+export const PLANT_TURN_SPEED = 28;
 export type MovementCollision = (from: Vec2, desired: Vec2) => MotorSweep;
 /** Sole authority for world translation. Animation submits displacement, never writes position. */
 export class CharacterMotor {
@@ -72,7 +74,7 @@ export class CharacterMotor {
     }
     this.turning = this.facingTarget !== this.facing;
     // Facing changes at a low-speed plant, not on the first reversed input frame.
-    if (this.turning && Math.abs(this.velocity.x) < 28)
+    if (this.turning && Math.abs(this.velocity.x) < PLANT_TURN_SPEED)
       this.facing = this.facingTarget;
     const requested = {
       x: this.velocity.x * dt + clamp(authored.x, -40, 40),

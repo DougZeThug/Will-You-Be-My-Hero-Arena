@@ -18,6 +18,19 @@ export function joinedBodyPoint(skin:JoinedSkin,x:number,y:number):JointPoint{
  const slope=lateral*lateral*(3-2*lateral)*height*height*(3-2*height);
  return{x:x*p.width,y:y*p.torsoHeight+p.shoulderDrop*slope};
 }
+// Keep an elbow inside both bone reaches: the lens where the shoulder and palm
+// disks overlap. Elbows already inside are untouched; projection onto a convex
+// set is continuous, so a correction never pops the elbow between frames.
+function intoLens(p:JointPoint,a:JointPoint,ra:number,b:JointPoint,rb:number):JointPoint{
+ const inside=(q:JointPoint,c:JointPoint,r:number)=>Math.hypot(q.x-c.x,q.y-c.y)<=r+1e-9,onto=(c:JointPoint,r:number)=>{const d=Math.max(1e-9,Math.hypot(p.x-c.x,p.y-c.y));return{x:c.x+(p.x-c.x)/d*r,y:c.y+(p.y-c.y)/d*r};};
+ const inA=inside(p,a,ra),inB=inside(p,b,rb);
+ if(inA&&inB)return p;
+ if(!inA){const q=onto(a,ra);if(inside(q,b,rb))return q;}
+ if(!inB){const q=onto(b,rb);if(inside(q,a,ra))return q;}
+ const d=Math.max(1e-9,Math.hypot(b.x-a.x,b.y-a.y)),ux=(b.x-a.x)/d,uy=(b.y-a.y)/d,along=(ra*ra-rb*rb+d*d)/(2*d),h=Math.sqrt(Math.max(0,ra*ra-along*along));
+ const m={x:a.x+ux*along,y:a.y+uy*along},c1={x:m.x-uy*h,y:m.y+ux*h},c2={x:m.x+uy*h,y:m.y-ux*h};
+ return Math.hypot(p.x-c1.x,p.y-c1.y)<=Math.hypot(p.x-c2.x,p.y-c2.y)?c1:c2;
+}
 export function rotatePoint(p:JointPoint,angle:number):JointPoint{const a=angle*rad;return{x:p.x*Math.cos(a)-p.y*Math.sin(a),y:p.x*Math.sin(a)+p.y*Math.cos(a)};}
 export function solveLimb(root:JointPoint,target:JointPoint,l1:number,l2:number,bend:number){
  const dx=target.x-root.x,dy=target.y-root.y,raw=Math.hypot(dx,dy),d=Math.max(Math.abs(l1-l2)+.0001,Math.min(l1+l2-.0001,raw)),ux=raw>0?dx/raw:0,uy=raw>0?dy/raw:1;
@@ -78,7 +91,8 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
    const foreX=joint.x-end.x,foreY=joint.y-end.y,limit=Math.sqrt(Math.max(0,asset.arm[1]**2-foreX**2));
    if(Math.abs(foreX)<=asset.arm[1]&&Math.abs(foreY)>limit)joint.y=end.y+Math.sign(foreY)*limit;
    if(Math.abs(foreX)>asset.arm[1]){joint.x=end.x+Math.sign(foreX)*asset.arm[1];joint.y=end.y;}
-   return{root,end,joint,reachable:d<=reach+.001};
+   // The clamps above bound only the forearm; the upper arm must stay bounded too.
+   return{root,end,joint:intoLens(joint,root,asset.arm[0],end,asset.arm[1]),reachable:d<=reach+.001};
   }
   // A virtual depth component accounts for foreshortening; only x/y render.
   // The pole points down and slightly out, keeping elbows below raised hands.

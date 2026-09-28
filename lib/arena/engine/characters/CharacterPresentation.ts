@@ -262,6 +262,7 @@ export class CharacterPresentation {
       clip: c.animation.timeline.clip,
       clipRevision: c.animation.timeline.revision,
       clipDuration: c.animation.timeline.duration,
+      state: c.state,
       substate: c.substate,
       reduced: this.reduced,
       squash: this.reduced ? { x: 1, y: 1 } : this.squash(shown),
