@@ -12,6 +12,9 @@ import {
   SIDE_RIG_BONES,
 } from '../../lib/arena/engine/motion/HumanSkeleton';
 import { registerArmMaterial } from '../human-motion/ArmMaterialRegistration';
+import { restoreFarArm } from '../human-motion/FarArmMaterial';
+import { repairFootMaterial } from '../human-motion/FootMaterialRepair';
+import { repairThighSeam, thighUnderlayAlpha } from './LegMaterialRepair';
 import {
   DOUG_ARM_MATERIAL_RECIPE,
   readDougArmMaterialMarker,
@@ -104,6 +107,12 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   readonly armCorrectionRecipe: string | null;
   readonly geometryBudget: ReturnType<typeof assertInterchangeBudget>;
   readonly wristBlendVertices: number;
+  readonly repairedFootWeights: number;
+  readonly repairedThighWeights: number;
+  readonly farArmEdgeTriangles: number;
+  /** Rest global rotations of the thighs, for the seam backing's opacity. */
+  private thighRest = new Map<string, number>();
+  private thighDivergence = 0;
   constructor(
     scene: Phaser.Scene,
     readonly definition: WeightedRigDefinition,
@@ -140,6 +149,17 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         ? DOUG_ARM_MATERIAL_RECIPE
         : null;
     }
+    // The body source paints only a narrow far-arm edge and leaves unpainted
+    // overlaps behind the far limbs; any off-bind far-arm pose tears that edge
+    // away from the torso. Runtime-only repairs on this private copy: Play's
+    // whole-face shoe tips and complete far arm/hand behind the body, plus the
+    // far-thigh seam that opens under the shorts once the knees soften.
+    this.repairedFootWeights = repairFootMaterial(definition.id, arm);
+    this.repairedThighWeights = repairThighSeam(definition.id, arm);
+    this.farArmEdgeTriangles = restoreFarArm(
+      definition.id as 'dan' | 'doug',
+      arm,
+    ).removedEdgeTriangles;
     const library = compilePerformance(profile);
     this.clips = library.clips;
     installShippedPerformanceClips(arm, definition, library);
@@ -247,6 +267,8 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     this.actor.add(this.heldObjectLayer).sort('depth');
     for (const m of this.meshes) m.setTint(0xfff2df);
     this.actor.armature.advanceTime(0);
+    for (const side of ['L', 'R'])
+      this.thighRest.set(side, this.bones.get('thigh_' + side)!.global.rotation);
     this.wristBlendVertices = blendWristCut(
       this.meshes.find((mesh) => mesh.name === 'arm')!.vertices,
       this.local('forearm_L'),
@@ -583,6 +605,28 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         slot._setColor(color);
       }
     }
+    // The thigh seam backing shows only while the thighs stay nearly parallel.
+    const turned = (side: string) =>
+      this.bones.get('thigh_' + side)!.global.rotation -
+      this.thighRest.get(side)!;
+    this.thighDivergence =
+      (Math.atan2(
+        Math.sin(turned('R') - turned('L')),
+        Math.cos(turned('R') - turned('L')),
+      ) *
+        180) /
+      Math.PI;
+    const backing = this.actor.armature.getSlot('thighUnderlay');
+    const backingAlpha = thighUnderlayAlpha(this.thighDivergence);
+    if (
+      backing &&
+      Math.abs(backing._colorTransform.alphaMultiplier - backingAlpha) > 1e-4
+    ) {
+      const color = new db.ColorTransform();
+      color.copyFrom(backing._colorTransform);
+      color.alphaMultiplier = backingAlpha;
+      backing._setColor(color);
+    }
     this.actor.armature.advanceTime(0);
     this.drawSmear(action);
     for (const b of this.bones.values())
@@ -717,6 +761,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       armCorrectionRecipe: this.armCorrectionRecipe,
       geometryBudget: this.geometryBudget,
       wristBlendVertices: this.wristBlendVertices,
+      repairedFootWeights: this.repairedFootWeights,
+      repairedThighWeights: this.repairedThighWeights,
+      farArmEdgeTriangles: this.farArmEdgeTriangles,
+      thighDivergence: this.thighDivergence,
       armSurfaceDepth: arm.depth,
       starts: this.starts,
       ticks: this.ticks,

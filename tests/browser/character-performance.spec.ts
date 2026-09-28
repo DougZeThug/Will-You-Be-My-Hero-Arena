@@ -553,3 +553,38 @@ test('performance: miss, pause, frame step, speed and profile validation', async
   expect((await state(page)).performance.state).toBe('recover');
   expect(errors).toEqual([]);
 });
+
+test('performance: far arm, thigh seam and shoe tips keep painted material', async ({
+  page,
+}) => {
+  await page.goto('/performance/');
+  await expect(page.getByRole('status').first()).toContainText('idle');
+  for (const character of ['doug', 'dan'] as const) {
+    const sample = await page.evaluate((character) => {
+      const api = window.__HERO_PERFORMANCE__;
+      api.load(character);
+      api.step(8);
+      const release = api
+        .getState()
+        .performance.events.find((e) => e.name === 'OBJECT_RELEASED')!.time;
+      return [0.05, release - 0.45, release + 0.35].map((t) => {
+        api.seek(t);
+        return api.getState().rig;
+      });
+    }, character);
+    const [idle, preparation, follow] = sample;
+    // The body's narrow far-arm edge is replaced by the complete far arm.
+    expect(idle.farArmEdgeTriangles).toBeGreaterThan(0);
+    expect(idle.repairedFootWeights).toBeGreaterThan(0);
+    expect(idle.repairedThighWeights).toBeGreaterThan(0);
+    // The seam backing is present while the thighs stay parallel and gone
+    // once they spread, so it never hangs below the hem.
+    expect(Math.abs(idle.thighDivergence)).toBeLessThan(5);
+    expect(Math.abs(preparation.thighDivergence)).toBeLessThan(5);
+    expect(Math.abs(follow.thighDivergence)).toBeGreaterThan(9);
+    for (const s of sample) {
+      expect(s.feet.every((f) => f.error <= 2)).toBe(true);
+      expect(s.soles.every((f) => f.error <= 2)).toBe(true);
+    }
+  }
+});
