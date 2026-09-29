@@ -227,7 +227,8 @@ export class ArenaSession {
       );
       // Hit-stop holds the clock: nothing moves, but input is still sampled
       // so a press made during the hold is buffered rather than lost.
-      const held = this.stopSteps > 0;
+      const held = this.stopSteps > 0,
+        stepStart = this.time;
       if (held) this.stopSteps--;
       else this.time += 1 / 60;
       for (const c of this.controllers) {
@@ -235,7 +236,13 @@ export class ArenaSession {
         if (this.paused) break;
         c.update(frame, this.time);
       }
-      if (this.paused) break;
+      if (this.paused) {
+        // A pause pressed during this step cancels it, so the clock and the
+        // hit-stop hold stay with the steps that actually ran.
+        this.time = stepStart;
+        if (held) this.stopSteps++;
+        break;
+      }
       this.fixedSteps++;
       if (held) continue;
       for (const c of this.characters)
