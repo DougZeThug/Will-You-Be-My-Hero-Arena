@@ -543,7 +543,9 @@ export async function testLive({ check }) {
   const struck = stop.time,
     frozen = JSON.stringify(stop.characters.map((c) => c.body)),
     held = stop.hitStopSteps;
-  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() =>
+    assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'),
+  );
   check(() => assert.equal(stop.characters[1].beats.hit, struck));
   check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
   const inputs = () =>
@@ -566,7 +568,7 @@ export async function testLive({ check }) {
   check(() => assert.equal(stop.hitStopSteps, 0));
   stop.destroy();
   // Fixes from docs/product-description/bug-triage.md, each named by its entry.
-  const { keyConflict, invalidBinding, validateBindings } =
+  const { keyConflict, invalidBinding, validateBindings, crossKeyConflict } =
     await import('../.test-build/engine/input/InputBindings.mjs');
   const keyboard1 = { layout: 0, keys: bindingsFor(0).keys },
     keyboard2 = { layout: 1, keys: bindingsFor(1).keys };
@@ -612,6 +614,129 @@ export async function testLive({ check }) {
   check(() => assert.equal(validateBindings({ keys: 'x' }), false));
   check(() => assert.equal(validateBindings(null), false));
   check(() => assert.equal(validateBindings(bindingsFor(0)), true));
+  // Start-side cross-key guard: the two keyboard layouts share one physical
+  // keyboard, so two keyboard players may never share a key. The press path
+  // only checks a key while it is pressed and only against the slots that are
+  // keyboards at that moment, so an overlap bound while the other slot was
+  // non-keyboard and then brought back by a device change or Restore default
+  // controls (both of which replace a whole slot's bindings without re-running
+  // the check) reaches Start. crossKeyConflict re-runs it across all keyboard
+  // slots so Start refuses the overlap.
+  const p1Numpad5 = {
+      ...bindingsFor(0),
+      keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' },
+    },
+    p1Numpad1 = {
+      ...bindingsFor(0),
+      keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad1' },
+    },
+    p2RemappedAway = {
+      ...bindingsFor(1),
+      keys: { ...bindingsFor(1).keys, primaryAction: 'KeyZ' },
+    };
+  // No conflict: the two default layouts are mutually disjoint.
+  check(() =>
+    assert.equal(
+      crossKeyConflict([
+        { device: 'keyboard', bindings: bindingsFor(0) },
+        { device: 'keyboard2', bindings: bindingsFor(1) },
+      ]),
+      undefined,
+      'Default two-keyboard layout has no cross-player key conflict',
+    ),
+  );
+  // No conflict: a single keyboard player may bind into the other layout's
+  // numpad region because no other keyboard slot is using it.
+  check(() =>
+    assert.equal(
+      crossKeyConflict([{ device: 'keyboard', bindings: p1Numpad5 }]),
+      undefined,
+      'Single keyboard player on the numpad does not conflict',
+    ),
+  );
+  // No conflict: AI, touch and gamepad slots are never compared with a key.
+  check(() =>
+    assert.equal(
+      crossKeyConflict([
+        { device: 'keyboard', bindings: p1Numpad5 },
+        { device: 'ai', bindings: bindingsFor(1) },
+        { device: 'gamepad:0', bindings: bindingsFor(0) },
+        { device: 'touch', bindings: bindingsFor(0) },
+      ]),
+      undefined,
+      'Non-keyboard slots are ignored by the cross-key check',
+    ),
+  );
+  // device-change path: Player 1 bound primaryAction -> Numpad5 while Player 2
+  // was 'ai' (press-path check excluded the AI slot). Player 2 then switched to
+  // keyboard2, whose fixed aim key is Numpad5. Start must refuse the overlap.
+  check(() => {
+    const hit = crossKeyConflict([
+      { device: 'keyboard', bindings: p1Numpad5 },
+      { device: 'keyboard2', bindings: bindingsFor(1) },
+    ]);
+    assert.ok(hit, 'Start catches an overlap manufactured via device change');
+    assert.equal(hit.code, 'Numpad5');
+    assert.equal(hit.use, 'aim');
+    assert.equal(hit.slotIndex, 0);
+    assert.equal(hit.otherSlot, 1);
+    assert.equal(hit.own, false);
+  });
+  // Restore-default-controls path: Player 1 bound primaryAction -> Numpad1
+  // while Player 2 was non-keyboard, then Player 2 went keyboard2 and remapped
+  // its primaryAction away to KeyZ. The overlap is latent. Restore default
+  // controls resets Player 2's primaryAction to Numpad1, recreating it.
+  check(() =>
+    assert.equal(
+      crossKeyConflict([
+        { device: 'keyboard', bindings: p1Numpad1 },
+        { device: 'keyboard2', bindings: p2RemappedAway },
+      ]),
+      undefined,
+      'No conflict while Player 2 is remapped away from Numpad1',
+    ),
+  );
+  check(() => {
+    const hit = crossKeyConflict([
+      { device: 'keyboard', bindings: p1Numpad1 },
+      { device: 'keyboard2', bindings: bindingsFor(1) },
+    ]);
+    assert.ok(hit, 'Start catches an overlap recreated by Restore defaults');
+    assert.equal(hit.code, 'Numpad1');
+    assert.equal(hit.use, 'primaryAction');
+    assert.equal(hit.slotIndex, 0);
+    assert.equal(hit.otherSlot, 1);
+  });
+  // Switching the conflicting slot away from a keyboard layout dissolves the
+  // overlap, so Start no longer refuses it.
+  check(() =>
+    assert.equal(
+      crossKeyConflict([
+        { device: 'keyboard', bindings: p1Numpad5 },
+        { device: 'ai', bindings: bindingsFor(1) },
+      ]),
+      undefined,
+      'Switching a slot away from keyboard dissolves the overlap',
+    ),
+  );
+  // A self-conflict (a key the same player's fixed move/aim already uses) is
+  // caught too; the press path refuses it, and Start re-checks it.
+  check(() => {
+    const hit = crossKeyConflict([
+      {
+        device: 'keyboard',
+        bindings: {
+          ...bindingsFor(0),
+          keys: { ...bindingsFor(0).keys, primaryAction: 'KeyW' },
+        },
+      },
+    ]);
+    assert.ok(hit, 'A self-conflict with a fixed move key is caught');
+    assert.equal(hit.code, 'KeyW');
+    assert.equal(hit.use, 'move');
+    assert.equal(hit.own, true);
+  });
+
   const { resolvePrecisionLanding, bagPoints, precisionTarget } =
     await import('../.test-build/engine/events/precision/PrecisionPhysics.mjs');
   const { laneScale } =
@@ -642,7 +767,16 @@ export async function testLive({ check }) {
     points: 1,
   }));
   const rolled = resolvePrecisionLanding(
-    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    {
+      id: 'r',
+      owner: 'p0',
+      origin: spot,
+      target: { ...spot },
+      age: 1,
+      duration: 1,
+      arc: 0,
+      spin: 0,
+    },
     around,
     'roll',
   );
@@ -744,7 +878,10 @@ export async function testLive({ check }) {
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
   check(() =>
-    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+    assert.ok(
+      brake.characters.every((c) => c.score >= 0),
+      'No negative progress',
+    ),
   );
   advance(brake, 1.7);
   brake.characters[0].stamina = 60;
@@ -757,7 +894,9 @@ export async function testLive({ check }) {
   brake.inject('p0', 'modifierLeft', 0);
   brake.characters[0].stamina = 12;
   advance(brake, 0.5);
-  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'),
+  );
   check(() =>
     assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
   );
@@ -806,7 +945,11 @@ export async function testLive({ check }) {
   const limit = new ArenaSession(config('fighting', false));
   advance(limit, 60.5);
   check(() =>
-    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+    assert.equal(
+      limit.snapshot().finished,
+      false,
+      'The entrance is not fight time',
+    ),
   );
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
@@ -825,7 +968,9 @@ export async function testLive({ check }) {
       'chargedSpecial',
     ),
   );
-  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  check(() =>
+    assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage),
+  );
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',

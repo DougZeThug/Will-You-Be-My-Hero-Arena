@@ -66,6 +66,58 @@ export const KEYBOARD_AIM_KEYS = [
   ['Numpad8', 'Numpad5', 'Numpad4', 'Numpad6'],
 ] as const;
 /**
+ * The first cross-player key conflict among the keyboard slots, or undefined.
+ * `keyConflict` checks one key for one player; this scans every keyboard
+ * player's action keys against every keyboard slot's fixed and action keys,
+ * so it also catches overlaps introduced by a whole-bindings swap (a device
+ * change or Restore default controls) and not only by the press-path remap.
+ * The two layouts' fixed move/aim sets are disjoint by design and not
+ * user-remappable, so looping the action keys is enough to catch every
+ * collision that can actually arise.
+ */
+export function crossKeyConflict(
+  slots: { device: string; bindings: Bindings }[],
+):
+  | {
+      slotIndex: number;
+      code: string;
+      use: Intent | 'move' | 'aim';
+      otherSlot: number;
+      own: boolean;
+    }
+  | undefined {
+  const kbd = slots
+    .map((s, slotIndex) => ({ s, slotIndex }))
+    .filter(({ s }) => s.device === 'keyboard' || s.device === 'keyboard2');
+  for (const { slotIndex } of kbd) {
+    const ownIndexInKbd = kbd.findIndex((k) => k.slotIndex === slotIndex);
+    for (const intent of Object.keys(
+      slots[slotIndex].bindings.keys,
+    ) as Intent[]) {
+      const code = slots[slotIndex].bindings.keys[intent];
+      if (!code) continue;
+      const hit = keyConflict(
+        code,
+        intent,
+        kbd.map((k) => ({
+          layout: k.s.device === 'keyboard2' ? 1 : 0,
+          keys: k.s.bindings.keys,
+        })),
+        ownIndexInKbd,
+      );
+      if (hit)
+        return {
+          slotIndex,
+          code,
+          use: hit.use,
+          otherSlot: kbd[hit.player].slotIndex,
+          own: hit.player === ownIndexInKbd,
+        };
+    }
+  }
+  return undefined;
+}
+/**
  * What already uses a key among the keyboard players, or undefined. Both
  * keyboard layouts read the same physical keyboard, so a key used by the other
  * layout conflicts too. `own` is the index of the player being remapped.

@@ -9,6 +9,7 @@ import {
 import {
   DEFAULT_BINDINGS,
   bindingsFor,
+  crossKeyConflict,
   invalidBinding,
   keyConflict,
   validateBindings,
@@ -175,6 +176,18 @@ export default function PlayableArena({
     if (invalid >= 0) {
       setError(
         `Player ${invalid + 1}: ${actionLabel(invalidBinding(players[invalid].bindings)!)} needs a valid key, button or axis.`,
+      );
+      return;
+    }
+    // A whole-bindings swap (device change or Restore default controls) does
+    // not re-run the press-path conflict check, so Start re-checks every
+    // keyboard player's action keys against all keyboard slots here. Without
+    // it, two KeyboardDevices can share a key and one keypress fires both.
+    const conflict = crossKeyConflict(players);
+    if (conflict) {
+      setError(
+        `Player ${conflict.slotIndex + 1}: ${keyName(conflict.code)} is already used for ` +
+          `${actionLabel(conflict.use)}${conflict.own ? '' : ' by player ' + (conflict.otherSlot + 1)}. Choose another key.`,
       );
       return;
     }
