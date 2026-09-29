@@ -269,6 +269,45 @@ try {
     path: path.join(directory, 'production-watch.png'),
     fullPage: true,
   });
+  // Regression: a stage-failure error set while a contest is mounted must not
+  // survive the trip back to the lobby. backToLobby clears error/stageFailed
+  // so the lobby is clean even after a graphics interruption.
+  await page
+    .locator('.phaser-host canvas')
+    .first()
+    .evaluate((canvas) =>
+      canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true })),
+    );
+  await page.locator('.error-box:not(.save-recovery)').waitFor({
+    state: 'visible',
+    timeout: 15_000,
+  });
+  assert.equal(
+    await page
+      .getByRole('button', { name: 'Reload the arena', exact: true })
+      .count(),
+    1,
+    'A Watch stage failure must surface the Reload-the-arena error box',
+  );
+  await page.locator('.brand').click();
+  await page
+    .locator('.arena-loading')
+    .waitFor({ state: 'detached', timeout: 120_000 });
+  assert.equal(
+    await page.locator('.error-box:not(.save-recovery)').count(),
+    0,
+    'backToLobby must clear a stage-failure error so the lobby is clean',
+  );
+  assert.equal(
+    await page.getByRole('button', { name: /Set up showdown/i }).count(),
+    1,
+    'The lobby must be interactive (idle, no rec) after returning from a failed contest',
+  );
+  report.lobbyCleanAfterStageFailure = true;
+  await page.screenshot({
+    path: path.join(directory, 'production-lobby-clean-after-failure.png'),
+    fullPage: true,
+  });
   // A first viewing left part-way keeps its position. These menus are React
   // state on /, not server routes, so a reload restores the lobby and offers
   // the waiting contest through the Resume control.
