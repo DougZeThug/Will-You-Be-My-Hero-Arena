@@ -97,12 +97,12 @@ Keys are checked against other bindings as they are pressed (see [conflicts](#co
 
 ### Saving at Start
 
-**Start {event}** first checks that no two slots share a keyboard layout or controller, then that every slot's bindings are valid. The limits are:
+**Start {event}** first checks that no two slots share a keyboard layout or controller, then that every slot's bindings are valid, then that no two keyboard slots share a key — the same check as during remapping ([conflicts](#conflicts)), applied to the whole setup because changing a slot's **Controls** or pressing **Restore default controls** replaces a whole layout at once. The limits are:
 - controller buttons: whole numbers 0–31
 - axes: whole numbers 0–15
 - key codes: a letter followed by up to 25 letters or digits, which every physical key's code satisfies
 
-A bad number refuses the start with a message naming the first slot and action at fault: "Player {N}: {action} needs a valid key, button or axis.", for example "Player 2: Hold / release needs a valid key, button or axis." An axis is named "the move stick axis" or "the aim stick axis". The message clears as soon as a binding, card or **Controls** choice changes.
+A bad number refuses the start with a message naming the first slot and action at fault: "Player {N}: {action} needs a valid key, button or axis.", for example "Player 2: Hold / release needs a valid key, button or axis." An axis is named "the move stick axis" or "the aim stick axis". A shared keyboard key refuses the start with a message naming the first slot, key and use: "Player {N}: {key} is already used for {action}. Choose another key." or "… by player {M}. …" when another slot uses the key. The message clears as soon as a binding, card or **Controls** choice changes.
 
 When the checks pass, the bindings of every slot on a keyboard layout or controller are written under that device's name, `keyboard`, `keyboard2` or `gamepad:0` to `gamepad:3`, in `wybmh-input-bindings-v2`. Devices not in this match keep what was saved for them before. Touch and AI slots are not saved. The match then begins with the bindings on screen ([Play setup](play-setup.md#committing)). If the browser refuses the write, nothing says so; the match still uses the bindings on screen, and the next visit gets the older ones.
 
