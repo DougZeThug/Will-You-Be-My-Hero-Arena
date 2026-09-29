@@ -159,7 +159,8 @@ export class MotionSession {
       this.event.pause();
       this.actors.forEach((a) => {
         a.motor.stopIntent();
-        this.awaitingNeutral.add(a.id);
+        if (this.input.device(a.id)?.family !== 'ai')
+          this.awaitingNeutral.add(a.id);
       });
     }
   }

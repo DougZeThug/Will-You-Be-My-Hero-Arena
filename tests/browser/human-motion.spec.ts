@@ -223,6 +223,28 @@ test('Human Motion V2: gamepad adapters control both actors and blur requires ne
       .motor.desired.x,
   ).toBeGreaterThan(0);
 });
+test('Human Motion V2: AI runner does not freeze after blur', async ({
+  page,
+}) => {
+  await page.goto('/human-motion/?event=running');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  const start = await page.evaluate(() => window.__HERO_MOTION__.getState());
+  await page.evaluate(() => window.__HERO_MOTION__.step(1.5));
+  const running = await page.evaluate(() => window.__HERO_MOTION__.getState());
+  expect(running.actors.every((a) => a.motor.desired.x > 0)).toBe(true);
+  expect(running.actors[0].motor.position.x).toBeGreaterThan(
+    start.actors[0].motor.position.x + 100,
+  );
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event('blur'));
+    window.__HERO_MOTION__.step(2);
+  });
+  const resumed = await page.evaluate(() => window.__HERO_MOTION__.getState());
+  expect(resumed.actors.every((a) => a.motor.desired.x > 0)).toBe(true);
+  expect(resumed.actors[0].motor.position.x).toBeGreaterThan(
+    running.actors[0].motor.position.x + 100,
+  );
+});
 test('Human Motion V2: measured reference import and retarget keep target proportions', async ({
   page,
 }) => {
