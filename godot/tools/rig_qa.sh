@@ -16,8 +16,10 @@ while [ $# -gt 0 ]; do
     *) echo "rig_qa: unknown argument $1" >&2; exit 2 ;;
   esac
 done
+case "$inject" in ''|*[!a-z_]*) [ -z "$inject" ] || { echo "rig_qa: unsafe defect name '$inject'" >&2; exit 2; } ;; esac
+[ -z "$name" ] || arena_qa_subdir "$name" >/dev/null || exit 2   # validate a user-supplied name on its own
 name="${name:-testpuppet${inject:+-$inject}}"
-out="$ARENA_QA_DIR/rig-qa/$name"
+out="$(arena_qa_subdir "rig-qa/$name")" || exit 2
 rm -rf "$out"; mkdir -p "$out"
 
 timeout 600 xvfb-run -a -s "-screen 0 900x1100x24" "$GODOT_BIN" \

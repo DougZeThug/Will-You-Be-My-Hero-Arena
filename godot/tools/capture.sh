@@ -13,7 +13,7 @@ name="${2:?capture name}"
 frames="${3:-120}"
 size="${4:-1280x720}"
 
-out="$ARENA_QA_DIR/$name"
+out="$(arena_qa_subdir "$name")" || exit 2
 rm -rf "$out"
 mkdir -p "$out"
 

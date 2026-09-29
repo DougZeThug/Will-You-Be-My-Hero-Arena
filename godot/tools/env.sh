@@ -18,3 +18,22 @@ ARENA_GODOT_HOME="${ARENA_GODOT_HOME:-$HOME/.cache/arena-godot}"
 GODOT_BIN="${GODOT_BIN:-$ARENA_GODOT_HOME/Godot_v${GODOT_VERSION}_linux.x86_64}"
 # Disposable evidence lives under the git-ignored work/ folder (AGENTS.md).
 ARENA_QA_DIR="${ARENA_QA_DIR:-$ARENA_REPO_ROOT/work/qa/godot}"
+
+# arena_qa_subdir <relative path>: print the absolute directory under ARENA_QA_DIR for a
+# capture/QA run, or fail (status 2). Rejects absolute paths, "..", and anything outside
+# [A-Za-z0-9._/-], then checks the resolved path stays strictly beneath ARENA_QA_DIR. Every
+# script that clears an output folder goes through this before `rm -rf`.
+arena_qa_subdir() {
+  local rel="${1:-}" base resolved
+  case "$rel" in
+    ''|/*|*..*|*[!A-Za-z0-9._/-]*)
+      echo "unsafe QA path '$rel' (use letters, digits, '.', '_', '-', '/'; no '..', no absolute paths)" >&2
+      return 2 ;;
+  esac
+  base="$(realpath -m "$ARENA_QA_DIR")"
+  resolved="$(realpath -m "$base/$rel")"
+  case "$resolved" in
+    "$base"/?*) printf '%s\n' "$resolved" ;;
+    *) echo "QA path '$rel' resolves outside $base" >&2; return 2 ;;
+  esac
+}

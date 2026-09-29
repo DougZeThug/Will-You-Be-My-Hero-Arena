@@ -2,10 +2,13 @@
 """Summarise a PNG frame sequence and build a contact sheet an agent can view.
 
   contact_sheet.py <frames_dir> <out.png> [--cols 6] [--count 12] [--width 320]
-                   [--expect-frames N] [--expect-size WxH]
+                   [--expect-frames N] [--expect-size WxH] [--min-distinct N]
 
 Prints frame count, size, how many frames are non-uniform and how many are
 distinct. Exits non-zero if an --expect-* check fails, so it can gate a capture.
+A sequence of more than one frame must contain at least --min-distinct different
+frames (default 2): a frozen render is not motion evidence. Pass --min-distinct 1
+only for a deliberate still.
 """
 import argparse
 import glob
@@ -24,6 +27,7 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=320)
     ap.add_argument("--expect-frames", type=int)
     ap.add_argument("--expect-size")
+    ap.add_argument("--min-distinct", type=int, default=2)
     a = ap.parse_args()
 
     files = sorted(glob.glob(f"{a.frames_dir}/*.png"))
@@ -60,6 +64,9 @@ def main() -> int:
         ok = False
     if a.expect_frames is not None and non_uniform != len(files):
         print("FAIL: some frames are uniform (blank render)", file=sys.stderr)
+        ok = False
+    if len(files) > 1 and len(digests) < a.min_distinct:
+        print(f"FAIL: only {len(digests)} distinct frame(s) in {len(files)} (need at least {a.min_distinct}); the render looks frozen", file=sys.stderr)
         ok = False
     return 0 if ok else 1
 
