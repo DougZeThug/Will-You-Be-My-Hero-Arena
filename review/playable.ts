@@ -37,7 +37,10 @@ function start() {
     },
   });
 }
-document.querySelector('#start')!.addEventListener('click', start);
+document.querySelector('#start')!.addEventListener('click', () => {
+  if (exporting) return;
+  start();
+});
 document
   .querySelector('#pause')!
   .addEventListener('click', () =>
