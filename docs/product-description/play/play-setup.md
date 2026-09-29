@@ -99,10 +99,11 @@ Leaving the Play tab, clicking the logo, or reloading drops every choice without
 
 ### Committing
 
-The setup commits when **Start {event}** is pressed and passes its two checks, in this order:
+The setup commits when **Start {event}** is pressed and passes its three checks, in this order:
 
 1. **One keyboard layout or controller per player.** Two slots on the same keyboard layout, or on the same controller number, are refused with "Assign a different keyboard layout or controller to each player." Any number of slots may use **Touch / on-screen** or **AI player**.
 2. **Valid bindings.** A controller button outside 0–31 or not a whole number, or a stick axis outside 0–15, is refused with a message that names the first slot and action at fault: "Player {N}: {action} needs a valid key, button or axis." For example "Player 2: Hold / release needs a valid key, button or axis." or, for an axis, "Player 2: the aim stick axis needs a valid key, button or axis."
+3. **No key shared between the two keyboard layouts.** When two slots are on keyboard layouts, they may not share a key: a bound action key that either layout uses for movement, aim or an action is refused, with the same message as [controls and remapping](controls-and-remapping.md#conflicts). This catches a **Controls** switch or **Restore default controls**, which replace every key at once.
 
 A refusal shows the message in a red box under the **Start** row, announced to screen readers. It clears as soon as anything in setup changes: a slot's card, **Controls** or a binding, **Restore default controls**, the event, the number of players, or **Course controls**.
 
@@ -203,4 +204,4 @@ See [accessibility](../cross-cutting/accessibility.md).
 - **Missing WebGL.** What the player sees if WebGL is unavailable when **Start** is pressed has not been determined.
 - **Imported asset mappings.** What an asset mapping attached to a built-in card changes in a Play match has not been determined.
 
-Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`
+Verified against Will-You-Be-My-Hero-Arena commit `095da1c`
