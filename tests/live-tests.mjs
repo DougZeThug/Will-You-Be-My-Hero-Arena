@@ -826,6 +826,125 @@ export async function testLive({ check }) {
     ),
   );
   check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  // A pause pressed mid-step cancels that step, so the clock stays with the
+  // steps that actually ran.
+  const clock = new ArenaSession(config('running', false));
+  advance(clock, 1);
+  for (let i = 0; i < 3; i++) {
+    clock.inject('p0', 'pause', 1);
+    clock.advance(1 / 60);
+    clock.inject('p0', 'pause', 0);
+    clock.advance(1 / 60);
+    clock.pause(false);
+    advance(clock, 0.2);
+  }
+  check(() =>
+    assert.ok(
+      Math.abs(clock.time - clock.debugSnapshot().fixedSteps / 60) < 1e-9,
+      'A button pause does not advance the clock',
+    ),
+  );
+  clock.destroy();
+  // A runner who crosses the line mid-jump still lands.
+  const { RUNNING_LENGTH } =
+    await import('../.test-build/engine/events/running/RunningPhysics.mjs');
+  for (const both of [false, true]) {
+    const leap = new ArenaSession(config('running', false));
+    advance(leap, 1.7);
+    for (const c of both ? leap.characters : leap.characters.slice(0, 1)) {
+      c.body.x = RUNNING_LENGTH - 1;
+      c.body.z = 40;
+      c.body.vz = 200;
+    }
+    advance(leap, 2);
+    check(() =>
+      assert.ok(leap.event.motions.get('p0').finished, 'The runner finished'),
+    );
+    check(() =>
+      assert.deepEqual(
+        [leap.characters[0].body.z, leap.characters[0].body.vz],
+        [0, 0],
+        both ? 'Lands after the race ends' : 'Lands after finishing',
+      ),
+    );
+    leap.destroy();
+  }
+  // A grapple out of a counter stance counts the stance's refund toward its
+  // cost, and one it cannot afford leaves the stance in place.
+  const stance = new ArenaSession(config('fighting', false));
+  advance(stance, 1.7);
+  const guard = stance.event.components.get('p0');
+  guard.counterUntil = stance.time + 0.5;
+  stance.characters[0].stamina = 2;
+  check(() => assert.equal(guard.perform('grapple'), false));
+  check(() => assert.equal(stance.characters[0].stamina, 2));
+  check(() =>
+    assert.ok(guard.counterUntil > stance.time, 'A failed grapple keeps the stance'),
+  );
+  stance.characters[0].stamina = 4;
+  check(() => assert.equal(guard.perform('grapple'), true));
+  check(() => assert.equal(stance.characters[0].stamina, 0));
+  check(() => assert.equal(guard.counterUntil, 0));
+  stance.destroy();
+  // Two keyboard layouts may not share a key, whichever way it got there.
+  const { bindingsConflict } =
+    await import('../.test-build/engine/input/InputBindings.mjs');
+  const layouts = [
+    { layout: 0, keys: bindingsFor(0).keys },
+    { layout: 1, keys: bindingsFor(1).keys },
+  ];
+  check(() => assert.equal(bindingsConflict(layouts), undefined));
+  check(() =>
+    assert.deepEqual(
+      bindingsConflict([
+        { layout: 0, keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' } },
+        layouts[1],
+      ]),
+      {
+        player: 0,
+        intent: 'primaryAction',
+        code: 'Numpad5',
+        other: 1,
+        use: 'aim',
+      },
+    ),
+  );
+  // An action key does not replay a held direction after it is released.
+  const { KeyboardDevice } =
+    await import('../.test-build/engine/input/KeyboardDevice.mjs');
+  const saved = { window: globalThis.window, document: globalThis.document };
+  const listeners = {};
+  globalThis.window = {
+    addEventListener: (type, f) => (listeners[type] = f),
+    removeEventListener: (type) => delete listeners[type],
+  };
+  globalThis.document = { activeElement: null };
+  const keyboard = new KeyboardDevice('kb', bindingsFor(0), 0, {
+    contains: () => true,
+  });
+  const key = (type, code) =>
+    listeners[type]({ code, repeat: false, target: {}, preventDefault() {} });
+  const dodge = bindingsFor(0).keys.tertiaryAction;
+  key('keydown', 'KeyD');
+  check(() => assert.deepEqual(keyboard.poll(0).values.move, { x: 1, y: 0 }));
+  key('keydown', dodge);
+  key('keyup', 'KeyD');
+  const ghost = keyboard.poll(1 / 60).values;
+  check(() => assert.deepEqual(ghost.move, { x: 0, y: 0 }, 'No ghost move'));
+  check(() => assert.ok(!ghost.aim?.x && !ghost.aim?.y, 'No ghost aim'));
+  check(() => assert.equal(ghost.tertiaryAction, 1));
+  key('keyup', dodge);
+  key('keydown', 'KeyA');
+  key('keyup', 'KeyA');
+  check(() =>
+    assert.deepEqual(
+      keyboard.poll(2 / 60).values.move,
+      { x: -1, y: 0 },
+      'A tap inside one step still registers',
+    ),
+  );
+  keyboard.destroy();
+  Object.assign(globalThis, saved);
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',
