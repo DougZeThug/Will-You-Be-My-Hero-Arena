@@ -1,0 +1,64 @@
+name: CI
+
+# Cheap, path-independent checks. The Cornhole visual review workflow only runs
+# for changes under its path filter, so simulation, scoring, persistence, input
+# and event-rule changes would otherwise merge with no automated check at all.
+# Browser, visual and production checks stay in cornhole-visual-review.yml.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: '1'
+
+jobs:
+  typecheck-and-test:
+    name: Typecheck and simulation tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Simulation, animation and observability tests
+        run: pnpm test
+
+  lint:
+    name: Lint (report only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      # oxlint currently reports pre-existing diagnostics (see
+      # docs/review/github-integration/README.md). Remove continue-on-error once
+      # they are fixed or configured away so this becomes a required gate.
+      - name: Lint
+        continue-on-error: true
+        run: pnpm lint
