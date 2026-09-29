@@ -30,6 +30,17 @@ export function laneScale(y: number) {
 export function stumbleTime(c: ArenaCharacter) {
   return 0.9 - c.stats.event('running', 'recovery', 0.5) * 0.4;
 }
+/** Gravity and landing. Returns true on the step the runner touches down. */
+export function settleAirborne(c: ArenaCharacter, dt: number, time: number) {
+  const b = c.body;
+  if (!(b.z > 0 || b.vz > 0)) return false;
+  b.vz -= RUN_GRAVITY * dt;
+  b.z = Math.max(0, b.z + b.vz * dt);
+  if (b.z) return false;
+  b.vz = 0;
+  c.beat('land', time);
+  return true;
+}
 /** Advances one runner. Returns true on the step the runner touches down. */
 export function runPhysics(
   c: ArenaCharacter,
@@ -39,8 +50,9 @@ export function runPhysics(
   mode: string,
 ) {
   const b = c.body;
-  let landed = false;
-  if (m.finished) return landed;
+  // A finished runner stops moving forward but still comes down from a jump
+  // taken over the line.
+  if (m.finished) return settleAirborne(c, dt, time);
   m.slide = Math.max(0, m.slide - dt);
   m.stumble = Math.max(0, m.stumble - dt);
   m.laneClock = Math.max(0, m.laneClock - dt);
@@ -76,15 +88,7 @@ export function runPhysics(
     0,
     100,
   );
-  if (b.z > 0 || b.vz > 0) {
-    b.vz -= RUN_GRAVITY * dt;
-    b.z = Math.max(0, b.z + b.vz * dt);
-    if (!b.z) {
-      b.vz = 0;
-      landed = true;
-      c.beat('land', time);
-    }
-  }
+  const landed = settleAirborne(c, dt, time);
   const start = m.startX ?? 170;
   c.score = Math.round(
     clamp(((b.x - start) / (RUNNING_LENGTH - start)) * 100, 0, 100),

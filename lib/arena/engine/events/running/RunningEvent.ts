@@ -9,6 +9,7 @@ import { RunningActionMap } from './RunningActionMap';
 import { RunningComponent } from '../../characters/components/RunningComponent';
 import {
   runPhysics,
+  settleAirborne,
   obstacleCollision,
   laneScale,
   stumbleTime,
@@ -84,10 +85,15 @@ export class RunningEvent implements PlayableArenaEvent {
       this.state = 'running';
       this.message = 'Go — jump hurdles, slide under bars';
     }
+    if (this.state === 'finished')
+      // The race can end on the step a runner jumps over the line.
+      for (const c of this.ctx.characters) settleAirborne(c, dt, time);
     if (this.state !== 'running') return;
     for (const c of this.ctx.characters) {
       const m = this.motions.get(c.id)!;
-      if (runPhysics(c, m, dt, time, String(this.ctx.options.movement ?? 'lanes')))
+      if (
+        runPhysics(c, m, dt, time, String(this.ctx.options.movement ?? 'lanes'))
+      )
         this.ctx.emit({
           kind: 'effect',
           name: 'dust',
