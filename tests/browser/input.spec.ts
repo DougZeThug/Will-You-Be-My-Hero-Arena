@@ -67,6 +67,47 @@ test('keyboard: editable fields and focus loss do not leave stuck actions', asyn
   expect((await snapshot(page)).characters[0].substate).toBe('aiming');
 });
 
+test('keyboard: action press + held-direction release in one step leaves no ghost move', async ({
+  page,
+}) => {
+  await openScenario(page, 'running-live');
+  await checkpoint(page, 'ready');
+  await page.locator('#arena').focus();
+  // Hold KeyD (forward) across several fixed steps so vectorTaps has cleared.
+  await page.keyboard.down('KeyD');
+  await step(page, 5);
+  expect((await snapshot(page)).inputs[0].values.move).toEqual({
+    x: 1,
+    y: 0,
+  });
+  // Same fixed step: press KeyL (dodge, an unrelated action key) then release
+  // the held KeyD. The next poll must reflect only physically held keys, not
+  // a stale re-seeded vector. Previously the unconditional move/aim recompute
+  // re-seeded vectorTaps with {x:1,y:0} on the KeyL keydown, so the KeyD
+  // keyup left a one-frame ghost {x:1,y:0}.
+  await page.keyboard.down('KeyL');
+  await page.keyboard.up('KeyD');
+  await step(page, 1);
+  const ghostA = await snapshot(page);
+  expect(ghostA.inputs[0].values.move).toEqual({ x: 0, y: 0 });
+  expect(ghostA.inputs[0].values.tertiaryAction).toBe(1);
+  // Reverse in-step ordering must be ghost-free too: release KeyD first,
+  // then press KeyL inside the same fixed step.
+  await page.keyboard.down('KeyD');
+  await step(page, 5);
+  expect((await snapshot(page)).inputs[0].values.move).toEqual({
+    x: 1,
+    y: 0,
+  });
+  await page.keyboard.up('KeyD');
+  await page.keyboard.down('KeyL');
+  await step(page, 1);
+  const ghostB = await snapshot(page);
+  expect(ghostB.inputs[0].values.move).toEqual({ x: 0, y: 0 });
+  expect(ghostB.inputs[0].values.tertiaryAction).toBe(1);
+  await page.keyboard.up('KeyL');
+});
+
 type PadPatch = {
   id?: string;
   connected?: boolean;

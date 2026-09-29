@@ -167,6 +167,111 @@ export async function testLive({ check }) {
   check(() =>
     assert.deepEqual(vectorTap.poll(0.01).values.move, { x: 0, y: 0 }),
   );
+  // KeyboardDevice attaches window listeners, so a minimal DOM shim lets the
+  // node suite reproduce the one-frame ghost move/aim an action-key press can
+  // seed into vectorTaps when it lands in the same fixed step as a held
+  // direction release. The recompute guard keeps the release authoritative
+  // and still preserves a genuine sub-tick tap.
+  {
+    const saved = {
+      window: globalThis.window,
+      document: globalThis.document,
+      KeyboardEvent: globalThis.KeyboardEvent,
+    };
+    const handlers = {};
+    const scope = { contains: (n) => n === scope };
+    globalThis.window = {
+      addEventListener(t, fn) {
+        (handlers[t] ??= []).push(fn);
+      },
+      removeEventListener(t, fn) {
+        handlers[t] = (handlers[t] ?? []).filter((f) => f !== fn);
+      },
+      dispatchEvent(e) {
+        (handlers[e.type] ?? []).slice().forEach((fn) => fn(e));
+      },
+    };
+    globalThis.document = { activeElement: scope };
+    globalThis.KeyboardEvent = class {
+      constructor(type, init = {}) {
+        this.type = type;
+        this.code = init.code ?? '';
+        this.repeat = !!init.repeat;
+        this.target = scope;
+        this.defaultPrevented = false;
+      }
+      preventDefault() {
+        this.defaultPrevented = true;
+      }
+    };
+    try {
+      const { KeyboardDevice } =
+        await import('../.test-build/engine/input/KeyboardDevice.mjs');
+      const fire = (type, code) =>
+        globalThis.window.dispatchEvent(
+          new globalThis.KeyboardEvent(type, { code }),
+        );
+      const kb = new KeyboardDevice('kb:0', bindingsFor(0), 0, scope);
+      // Hold KeyD (move right) across two polls so vectorTaps has cleared.
+      fire('keydown', 'KeyD');
+      check(() => assert.deepEqual(kb.poll(0).values.move, { x: 1, y: 0 }));
+      check(() =>
+        assert.deepEqual(kb.poll(1 / 60).values.move, { x: 1, y: 0 }),
+      );
+      // Same fixed step: press KeyL (dodge) then release the held KeyD. The
+      // release must win, not a re-seeded held vector surviving into the poll.
+      fire('keydown', 'KeyL');
+      fire('keyup', 'KeyD');
+      const ghost = kb.poll(2 / 60);
+      check(() =>
+        assert.deepEqual(
+          ghost.values.move,
+          { x: 0, y: 0 },
+          'no ghost move after action-key press + held-direction release in one step',
+        ),
+      );
+      check(() => assert.equal(ghost.values.tertiaryAction, 1));
+      fire('keyup', 'KeyL');
+      // Either ordering inside the step is ghost-free.
+      fire('keydown', 'KeyD');
+      check(() =>
+        assert.deepEqual(kb.poll(3 / 60).values.move, { x: 1, y: 0 }),
+      );
+      fire('keyup', 'KeyD');
+      fire('keydown', 'KeyL');
+      check(() =>
+        assert.deepEqual(kb.poll(4 / 60).values.move, { x: 0, y: 0 }),
+      );
+      fire('keyup', 'KeyL');
+      // A genuine sub-tick tap (press and release inside one step) survives.
+      fire('keydown', 'KeyA');
+      fire('keyup', 'KeyA');
+      check(() =>
+        assert.deepEqual(kb.poll(5 / 60).values.move, { x: -1, y: 0 }),
+      );
+      check(() =>
+        assert.deepEqual(kb.poll(6 / 60).values.move, { x: 0, y: 0 }),
+      );
+      // An action key alone never populates move/aim.
+      fire('keydown', 'KeyJ');
+      const actionOnly = kb.poll(7 / 60);
+      check(() => assert.deepEqual(actionOnly.values.move, { x: 0, y: 0 }));
+      check(() => assert.equal(actionOnly.values.primaryAction, 1));
+      fire('keyup', 'KeyJ');
+      kb.destroy();
+      check(() =>
+        assert.equal(
+          handlers.keydown.length,
+          0,
+          'destroy detaches the keyboard window listener',
+        ),
+      );
+    } finally {
+      globalThis.window = saved.window;
+      globalThis.document = saved.document;
+      globalThis.KeyboardEvent = saved.KeyboardEvent;
+    }
+  }
   const restart = new ActionTimeline();
   restart.start('jab', 0.5, [{ name: 'hitboxOn', at: 0.1 }]);
   restart.update(0.2, (m) => {
@@ -543,7 +648,9 @@ export async function testLive({ check }) {
   const struck = stop.time,
     frozen = JSON.stringify(stop.characters.map((c) => c.body)),
     held = stop.hitStopSteps;
-  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() =>
+    assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'),
+  );
   check(() => assert.equal(stop.characters[1].beats.hit, struck));
   check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
   const inputs = () =>
@@ -642,7 +749,16 @@ export async function testLive({ check }) {
     points: 1,
   }));
   const rolled = resolvePrecisionLanding(
-    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    {
+      id: 'r',
+      owner: 'p0',
+      origin: spot,
+      target: { ...spot },
+      age: 1,
+      duration: 1,
+      arc: 0,
+      spin: 0,
+    },
     around,
     'roll',
   );
@@ -744,7 +860,10 @@ export async function testLive({ check }) {
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
   check(() =>
-    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+    assert.ok(
+      brake.characters.every((c) => c.score >= 0),
+      'No negative progress',
+    ),
   );
   advance(brake, 1.7);
   brake.characters[0].stamina = 60;
@@ -757,7 +876,9 @@ export async function testLive({ check }) {
   brake.inject('p0', 'modifierLeft', 0);
   brake.characters[0].stamina = 12;
   advance(brake, 0.5);
-  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'),
+  );
   check(() =>
     assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
   );
@@ -806,7 +927,11 @@ export async function testLive({ check }) {
   const limit = new ArenaSession(config('fighting', false));
   advance(limit, 60.5);
   check(() =>
-    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+    assert.equal(
+      limit.snapshot().finished,
+      false,
+      'The entrance is not fight time',
+    ),
   );
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
@@ -825,7 +950,9 @@ export async function testLive({ check }) {
       'chargedSpecial',
     ),
   );
-  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  check(() =>
+    assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage),
+  );
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',

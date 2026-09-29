@@ -16,8 +16,13 @@ export class KeyboardDevice extends VirtualDevice {
   ) {
     super(id, 'keyboard');
     const move = KEYBOARD_MOVE_KEYS[player === 1 ? 1 : 0],
-      aim = KEYBOARD_AIM_KEYS[player === 1 ? 1 : 0];
-    const allowed = new Set([...move, ...aim, ...Object.values(bindings.keys)]);
+      aim = KEYBOARD_AIM_KEYS[player === 1 ? 1 : 0],
+      moveAim = new Set<string>([...move, ...aim]),
+      allowed = new Set<string>([
+        ...move,
+        ...aim,
+        ...Object.values(bindings.keys),
+      ]);
     const key = (e: KeyboardEvent, pressed: boolean) => {
       if (
         pressed &&
@@ -35,14 +40,20 @@ export class KeyboardDevice extends VirtualDevice {
       else this.down.delete(e.code);
       for (const [intent, code] of Object.entries(bindings.keys))
         if (code === e.code) this.set(intent as Intent, pressed ? 1 : 0);
-      for (const [intent, keys] of [
-        ['move', move],
-        ['aim', aim],
-      ] as const)
-        this.set(intent, {
-          x: Number(this.down.has(keys[3])) - Number(this.down.has(keys[2])),
-          y: Number(this.down.has(keys[1])) - Number(this.down.has(keys[0])),
+      // Only recompute move/aim when one of their keys actually changed, so an
+      // unrelated action key (e.g. dodge) cannot re-seed vectorTaps with a
+      // still-held vector that a same-step release of the direction key would
+      // leave behind as a one-frame ghost move/aim.
+      if (moveAim.has(e.code)) {
+        this.set('move', {
+          x: Number(this.down.has(move[3])) - Number(this.down.has(move[2])),
+          y: Number(this.down.has(move[1])) - Number(this.down.has(move[0])),
         });
+        this.set('aim', {
+          x: Number(this.down.has(aim[3])) - Number(this.down.has(aim[2])),
+          y: Number(this.down.has(aim[1])) - Number(this.down.has(aim[0])),
+        });
+      }
     };
     const down = (e: KeyboardEvent) => {
         if (!e.repeat) key(e, true);
