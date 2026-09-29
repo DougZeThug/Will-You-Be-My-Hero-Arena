@@ -37,7 +37,11 @@ function start() {
     },
   });
 }
-document.querySelector('#start')!.addEventListener('click', start);
+// An export has stopped the runtime's loop, so a restart then could never
+// finish destroying it.
+document.querySelector('#start')!.addEventListener('click', () => {
+  if (!exporting) start();
+});
 document
   .querySelector('#pause')!
   .addEventListener('click', () =>

@@ -8,6 +8,7 @@ import {
 } from '@/lib/arena/engine/core/EventRegistry';
 import {
   DEFAULT_BINDINGS,
+  bindingsConflict,
   bindingsFor,
   invalidBinding,
   keyConflict,
@@ -125,9 +126,9 @@ export default function PlayableArena({
         : intent === 'moveAxes' || intent === 'aimAxes'
           ? `the ${intent === 'moveAxes' ? 'move' : 'aim'} stick axis`
           : (playableEvent(event)
-            .create()
-            .registerControls()
-            .actions.find((a) => a.intent === intent)?.label ??
+              .create()
+              .registerControls()
+              .actions.find((a) => a.intent === intent)?.label ??
             INPUT_NAMES[intent] ??
             intent);
   const bindKey = (i: number, intent: Intent, code: string) => {
@@ -175,6 +176,27 @@ export default function PlayableArena({
     if (invalid >= 0) {
       setError(
         `Player ${invalid + 1}: ${actionLabel(invalidBinding(players[invalid].bindings)!)} needs a valid key, button or axis.`,
+      );
+      return;
+    }
+    // Switching a device or restoring defaults replaces a whole layout without
+    // the per-key check, so the keyboard players are checked together here.
+    const keyboards = players
+        .map((s, index) => ({ s, index }))
+        .filter(({ s }) => isKeyboard(s.device)),
+      clash = bindingsConflict(
+        keyboards.map(({ s }) => ({
+          layout: s.device === 'keyboard2' ? 1 : 0,
+          keys: s.bindings.keys,
+        })),
+      );
+    if (clash) {
+      const player = keyboards[clash.player].index,
+        other = keyboards[clash.other].index;
+      setError(
+        `Player ${player + 1}: ${keyName(clash.code)} is already used for ${actionLabel(clash.use)}${
+          other === player ? '' : ' by player ' + (other + 1)
+        }. Choose another key.`,
       );
       return;
     }
@@ -242,8 +264,7 @@ export default function PlayableArena({
               setError('');
               setPlayers((p) => {
                 const next = p.slice(0, e.maxPlayers);
-                while (next.length < e.minPlayers)
-                  next.push(slot(next.length));
+                while (next.length < e.minPlayers) next.push(slot(next.length));
                 return next;
               });
             }}

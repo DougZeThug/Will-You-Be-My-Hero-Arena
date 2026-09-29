@@ -159,7 +159,10 @@ export class MotionSession {
       this.event.pause();
       this.actors.forEach((a) => {
         a.motor.stopIntent();
-        this.awaitingNeutral.add(a.id);
+        // Only physical inputs can be stuck down across a blur; an AI keeps
+        // steering and would never read as neutral.
+        if (this.input.device(a.id)?.family !== 'ai')
+          this.awaitingNeutral.add(a.id);
       });
     }
   }

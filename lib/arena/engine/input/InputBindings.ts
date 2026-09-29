@@ -77,9 +77,7 @@ export function keyConflict(
   own: number,
 ): { player: number; use: Intent | 'move' | 'aim' } | undefined {
   for (const [player, p] of players.entries()) {
-    if (
-      (KEYBOARD_MOVE_KEYS[p.layout] as readonly string[]).includes(code)
-    )
+    if ((KEYBOARD_MOVE_KEYS[p.layout] as readonly string[]).includes(code))
       return { player, use: 'move' };
     if ((KEYBOARD_AIM_KEYS[p.layout] as readonly string[]).includes(code))
       return { player, use: 'aim' };
@@ -87,6 +85,37 @@ export function keyConflict(
       if (bound === code && !(player === own && use === intent))
         return { player, use: use as Intent };
   }
+  return undefined;
+}
+/**
+ * The first key any keyboard player shares with another use, or undefined.
+ * Remapping refuses these one key at a time; this checks a whole setup, since
+ * changing a device or restoring defaults replaces every key at once.
+ */
+export function bindingsConflict(
+  players: { layout: number; keys: Bindings['keys'] }[],
+):
+  | {
+      player: number;
+      intent: Intent;
+      code: string;
+      other: number;
+      use: Intent | 'move' | 'aim';
+    }
+  | undefined {
+  for (const [player, p] of players.entries())
+    for (const [intent, code] of Object.entries(p.keys)) {
+      if (!code) continue;
+      const found = keyConflict(code, intent as Intent, players, player);
+      if (found)
+        return {
+          player,
+          intent: intent as Intent,
+          code,
+          other: found.player,
+          use: found.use,
+        };
+    }
   return undefined;
 }
 /** The first binding that is not a usable key, button or axis, or undefined when all are. */

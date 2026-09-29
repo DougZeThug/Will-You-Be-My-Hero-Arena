@@ -223,6 +223,23 @@ test('Human Motion V2: gamepad adapters control both actors and blur requires ne
       .motor.desired.x,
   ).toBeGreaterThan(0);
 });
+test('Human Motion V2: AI runners keep running after a blur and resume', async ({
+  page,
+}) => {
+  await page.goto('/human-motion/?event=running');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  await page.evaluate(() => window.__HERO_MOTION__.step(0.5));
+  const running = await page.evaluate(() => window.__HERO_MOTION__.getState());
+  expect(running.actors.every((a) => a.motor.desired.x > 0)).toBe(true);
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event('blur'));
+    window.__HERO_MOTION__.resume();
+    window.__HERO_MOTION__.step(0.3);
+  });
+  // Only physical inputs wait for neutral; an AI never lets go of its stick.
+  const resumed = await page.evaluate(() => window.__HERO_MOTION__.getState());
+  expect(resumed.actors.every((a) => a.motor.desired.x > 0)).toBe(true);
+});
 test('Human Motion V2: measured reference import and retarget keep target proportions', async ({
   page,
 }) => {
