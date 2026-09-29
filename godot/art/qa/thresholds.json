@@ -1,0 +1,12 @@
+{
+  "_doc": "Registered before any result exists (see godot/EVALUATION.md). Change a value only in its own commit with the reason.",
+  "mask": {"key_rgb": [255, 0, 255], "key_tolerance": 40},
+  "components": {"max": 1, "min_area_px": 30},
+  "coverage": {"under_ratio_max": 0.005, "under_blob_max_px": 40, "over_blob_max_px": 250, "over_margin_px": 4},
+  "holes": {"min_area_px": 25},
+  "adjacency": {"k": 2, "min_px": 3, "min_visible_px": 30, "joint_probe_r_px": 8},
+  "grounding": {"tol_px": 1.5},
+  "socket": {"tol_px": 0.5},
+  "limb_length": {"tol_px": 0.5},
+  "skin_influences_max": 4
+}

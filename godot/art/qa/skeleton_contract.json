@@ -1,0 +1,44 @@
+{
+  "_doc": "Engine-neutral skeleton contract used by the rig-QA gate. Joints are exported per pose by the renderer; bones define the expected occupancy (a union of capsules) the rendered silhouette is judged against. min_r is the half-width the art must ALWAYS cover (gap/tear/strip detector); max_r bounds stray or detached geometry. inset_a/inset_b shorten the core at a free end so its rounded cap stays inside the segment (used at the head, hand tip, toe and hip). Radii are px at native scale (standing height 720 px). Real characters may override radii in a per-character file; joint and part names are fixed by art/SPEC.md.",
+  "units": "px at native scale, standing height 720",
+  "_pairs": "contact_pairs are [partA, partB, shared joint]; a pair is judged only where that joint is visible in the view (otherwise it is counted as occluded).",
+  "joints": [
+    "hip_c", "waist", "chest_top", "neck_top", "head_top",
+    "shoulder_near", "elbow_near", "wrist_near", "hand_tip_near",
+    "shoulder_far", "elbow_far", "wrist_far", "hand_tip_far",
+    "hip_near", "knee_near", "ankle_near", "toe_near",
+    "hip_far", "knee_far", "ankle_far", "toe_far"
+  ],
+  "bones": [
+    {"name": "torso_lower", "a": "hip_c", "b": "waist", "min_r": 46, "max_r": 70, "inset_a": 46},
+    {"name": "torso_upper", "a": "waist", "b": "chest_top", "min_r": 50, "max_r": 76, "inset_b": 50},
+    {"name": "neck", "a": "chest_top", "b": "neck_top", "min_r": 14, "max_r": 28},
+    {"name": "head", "a": "neck_top", "b": "head_top", "min_r": 40, "max_r": 68, "inset_a": 40, "inset_b": 40},
+    {"name": "upper_arm_near", "a": "shoulder_near", "b": "elbow_near", "min_r": 18, "max_r": 30},
+    {"name": "forearm_near", "a": "elbow_near", "b": "wrist_near", "min_r": 15, "max_r": 26},
+    {"name": "hand_near", "a": "wrist_near", "b": "hand_tip_near", "min_r": 12, "max_r": 24, "inset_b": 12},
+    {"name": "upper_arm_far", "a": "shoulder_far", "b": "elbow_far", "min_r": 18, "max_r": 30},
+    {"name": "forearm_far", "a": "elbow_far", "b": "wrist_far", "min_r": 15, "max_r": 26},
+    {"name": "hand_far", "a": "wrist_far", "b": "hand_tip_far", "min_r": 12, "max_r": 24, "inset_b": 12},
+    {"name": "thigh_near", "a": "hip_near", "b": "knee_near", "min_r": 28, "max_r": 44},
+    {"name": "shin_near", "a": "knee_near", "b": "ankle_near", "min_r": 22, "max_r": 34},
+    {"name": "foot_near", "a": "ankle_near", "b": "toe_near", "min_r": 14, "max_r": 30, "inset_b": 14},
+    {"name": "thigh_far", "a": "hip_far", "b": "knee_far", "min_r": 28, "max_r": 44},
+    {"name": "shin_far", "a": "knee_far", "b": "ankle_far", "min_r": 22, "max_r": 34},
+    {"name": "foot_far", "a": "ankle_far", "b": "toe_far", "min_r": 14, "max_r": 30, "inset_b": 14}
+  ],
+  "rigid_limbs": [
+    ["shoulder_near", "elbow_near"], ["elbow_near", "wrist_near"], ["wrist_near", "hand_tip_near"],
+    ["shoulder_far", "elbow_far"], ["elbow_far", "wrist_far"], ["wrist_far", "hand_tip_far"],
+    ["hip_near", "knee_near"], ["knee_near", "ankle_near"],
+    ["hip_far", "knee_far"], ["knee_far", "ankle_far"]
+  ],
+  "contact_pairs": [
+    ["upper_arm_near", "forearm_near", "elbow_near"], ["forearm_near", "hand_near", "wrist_near"],
+    ["upper_arm_far", "forearm_far", "elbow_far"], ["forearm_far", "hand_far", "wrist_far"],
+    ["thigh_near", "shin_near", "knee_near"], ["shin_near", "foot_near", "ankle_near"],
+    ["thigh_far", "shin_far", "knee_far"], ["shin_far", "foot_far", "ankle_far"],
+    ["torso_lower", "torso_upper", "waist"], ["torso_upper", "neck", "chest_top"], ["neck", "head", "neck_top"]
+  ],
+  "feet": {"foot_near": "foot_near", "foot_far": "foot_far"}
+}

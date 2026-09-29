@@ -42,6 +42,24 @@ in [`docs/CHARACTER-PERFORMANCE.md`](docs/CHARACTER-PERFORMANCE.md) and its
 linked review documents. Consult the specific document relevant to the code
 being changed; do not treat every historical review as required reading.
 
+## Godot client experiment and the frozen Phaser build
+
+The owner is evaluating a **Godot 4.7.2 desktop client** (Steam-first) in
+[`godot/`](godot/AGENTS.md); start with [`godot/EVALUATION.md`](godot/EVALUATION.md).
+The Phaser/React build above is **frozen at tag `phaser-legacy-095da1c`: bug fixes
+only**, and stays the oracle for recordings, scoring, timing and world constants. A fix
+that changes contract-exported data regenerates the goldens in the same change.
+
+- Work under `godot/` follows `godot/AGENTS.md`. The TypeScript simulation stays
+  authoritative; Godot never re-implements it without a recorded Gate 2 decision.
+- **Explicit art request (owner):** characters, equipment and court are being
+  *regenerated for Godot*, characters by AI image generation plus cleanup. That
+  authorises new art under `godot/assets/` only, with `PROVENANCE.json`. Everything
+  else in "Art, motion, and provenance invariants" below still holds for the legacy
+  build: original cards, source files, exports and hashes stay byte-preserved, and the
+  approved printed-sunset direction and both characters' likenesses are the references.
+- Do not route routine Phaser animation work to the Godot slice, or the reverse.
+
 ## Architecture and gameplay boundaries
 
 - React owns menus, accessible HUD, persistence, and results. Phaser owns the
