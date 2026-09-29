@@ -2,5 +2,8 @@
 .godot/
 # Pinned test framework, installed by tools/bootstrap.sh at the tag in tools/env.sh.
 addons/gut/
+# Pinned prototype addons, installed by tools/bootstrap.sh (see ADDONS.md).
+addons/phantom_camera/
+addons/curved_lines_2d/
 # Local editor binaries, if someone unpacks one here.
 bin/

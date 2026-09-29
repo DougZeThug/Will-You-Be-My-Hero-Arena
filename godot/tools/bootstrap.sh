@@ -39,6 +39,27 @@ if ! grep -q "version=\"${GUT_TAG#v}\"" "$gut_dir/plugin.cfg" 2>/dev/null; then
   rm -rf "$tmp"
 fi
 
+# install_addon <name> <repo> <tag> <commit> <path-in-repo>: idempotent, refuses a moved tag.
+install_addon() {
+  local name="$1" repo="$2" tag="$3" commit="$4" src="$5"
+  local dest="$ARENA_GODOT_PROJECT/addons/$name"
+  if [ "$(cat "$dest/.pinned_commit" 2>/dev/null)" = "$commit" ]; then return 0; fi
+  echo "bootstrap: installing $name $tag"
+  local tmp; tmp="$(mktemp -d)"
+  git clone -q --depth 1 --branch "$tag" "$repo" "$tmp/src"
+  if [ "$(git -C "$tmp/src" rev-parse HEAD)" != "$commit" ]; then
+    echo "bootstrap: $name $tag no longer points at $commit" >&2
+    rm -rf "$tmp"; exit 4
+  fi
+  mkdir -p "$ARENA_GODOT_PROJECT/addons"
+  rm -rf "$dest"
+  cp -r "$tmp/src/$src" "$dest"
+  printf '%s\n' "$commit" > "$dest/.pinned_commit"
+  rm -rf "$tmp"
+}
+install_addon phantom_camera "$PCAM_REPO" "$PCAM_TAG" "$PCAM_COMMIT" addons/phantom_camera
+install_addon curved_lines_2d "$SVS_REPO" "$SVS_TAG" "$SVS_COMMIT" addons/curved_lines_2d
+
 python3 -c "import PIL, numpy, scipy" 2>/dev/null || python3 -m pip install --quiet -r "$ARENA_GODOT_TOOLS/requirements-qa.txt"
 
 # Registers class_names (GUT needs them) and creates the git-ignored .godot cache.
