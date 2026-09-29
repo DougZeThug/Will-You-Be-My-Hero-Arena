@@ -35,14 +35,18 @@ export class KeyboardDevice extends VirtualDevice {
       else this.down.delete(e.code);
       for (const [intent, code] of Object.entries(bindings.keys))
         if (code === e.code) this.set(intent as Intent, pressed ? 1 : 0);
+      // Only the group whose key changed is set again: re-setting a held
+      // direction would record it as a fresh tap and replay it for one poll
+      // after it is released.
       for (const [intent, keys] of [
         ['move', move],
         ['aim', aim],
       ] as const)
-        this.set(intent, {
-          x: Number(this.down.has(keys[3])) - Number(this.down.has(keys[2])),
-          y: Number(this.down.has(keys[1])) - Number(this.down.has(keys[0])),
-        });
+        if ((keys as readonly string[]).includes(e.code))
+          this.set(intent, {
+            x: Number(this.down.has(keys[3])) - Number(this.down.has(keys[2])),
+            y: Number(this.down.has(keys[1])) - Number(this.down.has(keys[0])),
+          });
     };
     const down = (e: KeyboardEvent) => {
         if (!e.repeat) key(e, true);
