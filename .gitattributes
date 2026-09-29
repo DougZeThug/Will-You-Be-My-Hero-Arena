@@ -8,3 +8,9 @@
 /motion-reference/** -text whitespace=cr-at-eol
 /tests/fixtures/** -text whitespace=cr-at-eol
 /docs/review/** -text whitespace=cr-at-eol
+
+# Godot client: generated art, contract exports and shell scripts compare exact bytes.
+/godot/assets/** -text whitespace=cr-at-eol
+/contract/** -text whitespace=cr-at-eol
+/docs/showcase-recording.json -text whitespace=cr-at-eol
+*.sh text eol=lf

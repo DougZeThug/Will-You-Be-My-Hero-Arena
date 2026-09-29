@@ -50,7 +50,7 @@ pnpm typecheck
 pnpm test
 ```
 
-The suite passes 31,777 checks across 2,000 deterministic contests: equal attempt budgets, scoring and contact paths, immutable recordings, ownership, journal recovery, ledger idempotency, historical policies, exhibitions, prepared asset snapshots, hand/release geometry artwork/contact registration, portable character-pack validation, dynamic ownership and recorded play with installed characters. Exact counts are in `docs/test-results.json`.
+The suite passes well over 100,000 checks (the exact count is in `docs/test-results.json` and is rewritten by each run) across 2,000 deterministic contests: equal attempt budgets, scoring and contact paths, immutable recordings, ownership, journal recovery, ledger idempotency, historical policies, exhibitions, prepared asset snapshots, hand/release geometry artwork/contact registration, portable character-pack validation, dynamic ownership and recorded play with installed characters. Exact counts are in `docs/test-results.json`.
 
 - `docs/ADDING-CHARACTERS.md`: the complete card-in-Codex → character-pack → install workflow and its current boundaries.
 - `docs/CHARACTER-PIPELINE.md`: six authored poses per person, alpha preparation, ground origins and palm sockets.

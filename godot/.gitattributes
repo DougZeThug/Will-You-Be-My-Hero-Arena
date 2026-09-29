@@ -1,0 +1,3 @@
+# Byte-exact rules travel with the folder if it is ever split into its own repo.
+/assets/** -text whitespace=cr-at-eol
+*.sh text eol=lf

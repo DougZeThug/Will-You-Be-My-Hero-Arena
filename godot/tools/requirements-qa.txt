@@ -1,0 +1,5 @@
+# Python dependencies for godot/tools (contact sheets and the rig-QA gate).
+# Versions are those the tools were validated with (2026-09-29).
+Pillow==12.3.0
+numpy==2.4.6
+scipy==1.17.1
