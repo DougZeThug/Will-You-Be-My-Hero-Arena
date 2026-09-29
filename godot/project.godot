@@ -5,6 +5,12 @@ config_version=5
 config/name="Arena Godot Client"
 run/main_scene="res://scenes/smoke/capture_smoke.tscn"
 
+[autoload]
+
+; Registered by hand (the addon plugin would do it on enable in the editor) so the camera_spike
+; prototype runs headless and under capture.sh. Remove with the prototype if it is not adopted.
+PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
+
 [display]
 window/size/viewport_width=1280
 window/size/viewport_height=720
