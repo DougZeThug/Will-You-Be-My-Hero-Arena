@@ -46,7 +46,8 @@ being changed; do not treat every historical review as required reading.
 
 The owner is evaluating a **Godot 4.7.2 desktop client** (Steam-first) in
 [`godot/`](godot/AGENTS.md); start with [`godot/EVALUATION.md`](godot/EVALUATION.md).
-The Phaser/React build above is **frozen at tag `phaser-legacy-095da1c`: bug fixes
+The Phaser/React build above is **frozen at commit `095da1c` (tag
+`phaser-legacy-095da1c`; see godot/EVALUATION.md for the tag status): bug fixes
 only**, and stays the oracle for recordings, scoring, timing and world constants. A fix
 that changes contract-exported data regenerates the goldens in the same change.
 

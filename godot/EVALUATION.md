@@ -27,8 +27,13 @@ separate the two. It also says nothing about the web build.
 - Regenerate characters, equipment and court; characters via AI image generation plus
   cleanup. Original collectible cards, likenesses and the approved printed-sunset
   direction are the references; the art request is explicit (see root `AGENTS.md`).
-- The Phaser build is frozen at tag `phaser-legacy-095da1c` (bug fixes only) and is
-  the oracle for recordings, scoring, timing and world constants.
+- The Phaser build is frozen at commit `095da1c`, tag `phaser-legacy-095da1c` (bug fixes
+  only), and is the oracle for recordings, scoring, timing and world constants.
+  **Tag status:** the tag was created locally, but pushing it from the cloud session failed
+  ("remote end hung up", four retries, no proxy relay failure recorded, while the branch
+  push worked), so it is not on the remote. The commit hash is authoritative; create the
+  tag on GitHub (`git tag phaser-legacy-095da1c 095da1c && git push origin phaser-legacy-095da1c`
+  from a machine that can push tags) if you want the named marker.
 - The TypeScript simulation stays authoritative. Godot plays exported recordings; the
   rules port is decided only after Gate 1 passes.
 
