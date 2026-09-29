@@ -45,6 +45,9 @@ func _ready() -> void:
 func _bone(bone_name: String, parent_name: String, world_deg: float, length: float, offset := Vector2.ZERO, at_tip := true) -> Bone2D:
 	var b := Bone2D.new()
 	b.name = bone_name
+	# Off before add_child: a leaf bone otherwise warns "No Bone2D children" on entering the tree
+	# (GUT counts that as an unexpected error). Length and angle are set explicitly below.
+	b.set_autocalculate_length_and_angle(false)
 	var parent: Node2D = _skeleton if parent_name == "" else bones[parent_name]
 	parent.add_child(b)
 	var parent_deg: float = 0.0 if parent_name == "" else _bone_world_deg[parent_name]

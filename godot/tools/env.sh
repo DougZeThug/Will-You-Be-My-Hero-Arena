@@ -11,6 +11,15 @@ GODOT_SHA512="9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467
 GUT_REPO="https://github.com/bitwes/Gut"
 GUT_TAG="v9.7.1"
 
+# Prototype addons (anim_compare / camera_spike only; see godot/ADDONS.md). Pinned by tag; the
+# commit is recorded so a moved tag is detected. Both are MIT (checked 2026-09-29).
+PCAM_REPO="https://github.com/ramokz/phantom-camera"
+PCAM_TAG="v0.11.0.3"
+PCAM_COMMIT="cb6e0966ac305202c47f1d1a81c105966e29da96"
+SVS_REPO="https://github.com/Teaching-myself-Godot/ez-curved-lines-2d"
+SVS_TAG="2.35.1"
+SVS_COMMIT="d477ee3a8f47101fbcc5fbf3a915574589f38d2c"
+
 ARENA_GODOT_TOOLS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARENA_GODOT_PROJECT="$(cd "$ARENA_GODOT_TOOLS/.." && pwd)"
 ARENA_REPO_ROOT="$(cd "$ARENA_GODOT_PROJECT/.." && pwd)"
