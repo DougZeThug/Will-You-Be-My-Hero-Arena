@@ -122,6 +122,7 @@ desktop, Steam integration, export builds, real-GPU performance. Gate 2 covers t
 |---|---|---|
 | 2026-09-29 | 0 | Baseline recorded; toolchain probes pass; see PROBES.md. |
 | 2026-09-29 | 1 | Art spec, 18-pose battery and rig-QA gate written. Clean test puppet passes all 18 poses; six injected defects each fail on the intended metric (`tools/rig_qa_selftest.sh`). |
+| 2026-09-29 | prototype | Exploratory animation and camera prototype, not a gate: Skeleton2D skinned mesh vs Scalable Vector Shapes vs SpriteFrames hybrid on one Doug (scripted placeholder art), plus a Phantom Camera spike. Skinned joints were smoother than SVS at the elbow, shoulder and knee; SVS cost about 28× more script time per pose; Phantom's camera is history-dependent. No adoption decision. See [`PROTOTYPES.md`](PROTOTYPES.md). |
 
 ### Harness calibration during Step 1 (disclosed)
 
@@ -140,3 +141,19 @@ themselves stayed as registered except where noted.
   loosened from 20 to 3 (meaning "touches at all"); detached parts are still caught by the
   component and coverage metrics. This is the one numeric loosening; it is recorded here
   rather than hidden.
+
+### Prototype corrections (disclosed)
+
+While building the `anim_compare` prototype (scripted placeholder art, nothing tuned to a
+gate threshold):
+
+- Arm art was first drawn 90 px below the rig's real shoulder (the clavicle hangs off the
+  tip of `spine_upper`), so wrists pivoted about the wrong point and hands floated off the
+  forearm at `release`. Found from the battery renders and fixed in the art generator.
+- My first tear metric counted a hand that reached into the neighbouring column's window.
+  It now labels components over the whole frame and assigns each to the nearest column.
+- `art/qa/test_puppet.gd` (the rig-QA fixture) now turns `autocalculate` off before
+  `add_child` so leaf bones stop emitting engine warnings that GUT counts as errors.
+  Behaviour is otherwise unchanged; `tools/rig_qa_selftest.sh` still passes.
+- `project.godot` gained a `PhantomCameraManager` autoload for the camera spike. Remove it
+  with the prototype if the addon is not adopted.

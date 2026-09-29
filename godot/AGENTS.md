@@ -62,6 +62,8 @@ bash godot/tools/rig_qa_selftest.sh        # mutation test: clean passes, each i
 
 - Small checks while iterating (`run_tests.sh`, one `capture.sh`); before reporting a step
   done, run the checks named in `EVALUATION.md` and report any not run.
+- Prototype results and how to repeat them are in [`PROTOTYPES.md`](PROTOTYPES.md) (exploratory, no adoption
+  decision); the two prototype addons and their pins are in [`ADDONS.md`](ADDONS.md).
 - Do not update thresholds, or any baseline, merely to silence a failure.
 - Do not publish, deploy or rewrite history, and do not download export templates
   (about 1.28 GB) until an export is decided at Gate 2.

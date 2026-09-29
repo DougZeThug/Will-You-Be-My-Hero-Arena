@@ -1,0 +1,308 @@
+{
+ "rest_setup": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 21954
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 21671
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 21965
+  }
+ },
+ "idle_relaxed": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 24297
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23940
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 24292
+  }
+ },
+ "crouch_deep": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 25001
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 24576
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 25001
+  }
+ },
+ "stance_ready": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27553
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 27070
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27575
+  }
+ },
+ "windup_peak": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 30352
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 29740
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 30355
+  }
+ },
+ "plant_weight_shift": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27799
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27367
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27806
+  }
+ },
+ "release": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 29368
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28856
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 29383
+  }
+ },
+ "follow_through": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28461
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 2,
+   "area_px": 28026
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28472
+  }
+ },
+ "recovery": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27026
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 26633
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 27032
+  }
+ },
+ "arms_overhead": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 25027
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 24670
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 25043
+  }
+ },
+ "arms_forward_reach": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28819
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28372
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 28828
+  }
+ },
+ "chest_tap": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 25657
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 25291
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 25666
+  }
+ },
+ "torso_twist_forward": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 24936
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 24535
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 24940
+  }
+ },
+ "torso_lean_back": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23849
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23507
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23858
+  }
+ },
+ "walk_contact": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 29821
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 29256
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 29829
+  }
+ },
+ "walk_passing": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23054
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 22583
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 1,
+   "area_px": 23055
+  }
+ },
+ "step_lunge": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 31235
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 30710
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 31249
+  }
+ },
+ "celebrate_jump": {
+  "A_skinned": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 27955
+  },
+  "B_svs": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 27522
+  },
+  "C_hybrid": {
+   "components": 1,
+   "holes": 0,
+   "area_px": 27959
+  }
+ }
+}

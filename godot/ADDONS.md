@@ -14,6 +14,7 @@ Review of the code at the pinned versions (`grep` for `HTTPRequest`, `OS.execute
 - Phantom Camera: no network or process calls in `addons/`.
 - Scalable Vector Shapes 2D: one `OS.shell_open` for an in-editor help-video button; no other process or network calls.
 
-Neither has been verified against Godot 4.7.2 yet. Results (compatibility, renderer, behaviour) belong in
-`PROBES.md` once measured. Lit is deliberately not pinned: it needs Forward+ and this project is
-`gl_compatibility`.
+Both were exercised on Godot 4.7.2 under the `gl_compatibility` renderer (llvmpipe) by the prototypes; the
+measured behaviour is in `PROBES.md` and `PROTOTYPES.md`. Phantom Camera additionally needs its
+`PhantomCameraManager` autoload, which is registered by hand in `project.godot` (the editor plugin would
+add it when enabled). Lit is deliberately not pinned: it needs Forward+ and this project is `gl_compatibility`.
