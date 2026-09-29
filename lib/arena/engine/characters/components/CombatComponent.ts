@@ -116,15 +116,17 @@ export class CombatComponent implements CharacterComponent {
     const def = ATTACKS[action];
     // A grapple is set up by holding the counter-stance key. Pressing it for
     // the grapple is not a counter stance, so a stance still running is
-    // cancelled and refunded.
-    if (action === 'grapple' && time < this.counterUntil) {
-      c.stamina += 12;
-      this.counterUntil = 0;
-    }
-    if (!def || c.stamina < def.cost) return false;
+    // cancelled and refunded. The refund counts toward the grapple's cost, but
+    // the stance is only given up once the grapple actually starts.
+    const refund = action === 'grapple' && time < this.counterUntil ? 12 : 0;
+    if (!def || c.stamina + refund < def.cost) return false;
     if (action === 'special' || action === 'chargedSpecial') {
       const ability = c.abilities.activate('powerStrike', time, c.stamina);
       if (!ability) return false;
+    }
+    if (refund) {
+      c.stamina += refund;
+      this.counterUntil = 0;
     }
     c.stamina -= def.cost;
     this.blocking = false;
