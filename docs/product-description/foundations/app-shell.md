@@ -156,7 +156,7 @@ Closing the dialog returns focus to the page. It does not return focus to the Pl
 ## Edge cases
 
 - **No active-tab signal for assistive technology.** The active tab has no `aria-current` or pressed state; only its styling shows it.
-- **The logo with no recording loaded** still reloads this browser's save and shows the lobby. Error text already in the Watch error box stays until **Dismiss** or **Reload the arena** clears it.
+- **The logo with no recording loaded** still reloads this browser's save and shows the lobby. It clears any message already in the Watch error box, and rebuilds the stage if it had failed.
 - **Replay from History while a Play match runs** discards the match and switches to Watch.
 - **Clicking Watch while watching** pauses a playing contest, as any tab click does, although the view does not change.
 - **Opening Arena settings from Play** and changing **Lower graphics quality** has no visible effect until the player returns to Watch or opens The collection's preview stage.
