@@ -129,6 +129,9 @@ for (const sport of m.SPORTS) {
         );
     }
     const ot = s.simulate({ ...cfg, tie: 'paired' });
+    // Pong overtime can outlast both racks; those throws aim at a cup already
+    // gone and must still validate.
+    check(() => assert.deepEqual(s.validateRecording(ot), []));
     check(() => assert.ok(ot.attempts.length <= rec.attempts.length + 6));
     check(() =>
       assert.equal(
