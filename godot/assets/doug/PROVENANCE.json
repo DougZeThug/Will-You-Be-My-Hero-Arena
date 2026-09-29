@@ -1,0 +1,168 @@
+{
+ "schema": "arena-provenance-v1",
+ "subject": "Doug prototype parts for godot/scenes/prototypes/anim_compare",
+ "label": "generated (scripted vector geometry, tools/gen_doug_art.py); not AI-image generation, not a verified likeness",
+ "tool": "godot/tools/gen_doug_art.py (Python, Pillow, numpy, scipy)",
+ "generator_sha256": "fd68027aed2755cf69823bc8d5475fb3934a78ad0570b1773046bfdd114ed298",
+ "references": [
+  "public/assets/doug/character.png (colour and costume reference only; not copied or re-published)"
+ ],
+ "cleanup_steps": [
+  "4x supersampled rasterisation with Lanczos downsample",
+  "colour bled into transparent texels via nearest-opaque copy (SPEC: 8-bit alpha, no dark fringe)"
+ ],
+ "manual_paint_over_repairs": 0,
+ "files": {
+  "leg_far": {
+   "svg_sha256": "9e9d605c53a084acb4023784a2bbc858d06108dc5a4d7050bbd66a9cacb3abb0",
+   "png_sha256": "d737a8e6d55e92afabda735c4568a04d2d333a4fc2a9202909602a4601173e43",
+   "label": "generated"
+  },
+  "sock_far": {
+   "svg_sha256": "b3acf82a4181797cc0ba36fe25bae41c3e040969ffe918e096dd1da09d2a68ac",
+   "png_sha256": "04a62d1530a4b189f6914152c4ab460cc995998c338a30f5b036b74479b2f0f3",
+   "label": "generated"
+  },
+  "shoe_far": {
+   "svg_sha256": "d3a9ee51c534883fcec01eda299bcdcea0a753c110a3caa5899642d01f0bf90b",
+   "png_sha256": "f820e9f87f67d936920572a84256b472d9e89c5a5670c2f9a3f3711fc9f9a2d9",
+   "label": "generated"
+  },
+  "shorts_far": {
+   "svg_sha256": "d6b4cc24dcecef113ea7a41fe053335808423f6dda74dbe8cfe47b18af49084e",
+   "png_sha256": "8f925514ec7128aeed79255b67afbae297144edf625f2bcfc7ff3dab58aaa6e8",
+   "label": "generated"
+  },
+  "arm_far": {
+   "svg_sha256": "59df901bc86e4035f655f0fb5f2a9e87ec868e6452e066987fb6d8346288dbda",
+   "png_sha256": "c6891852b2622c563399efca9b8b9179a6ed85ce9f9f8c98420dac5b631d1f21",
+   "label": "generated"
+  },
+  "sleeve_far": {
+   "svg_sha256": "0f04d3f7f9e35da82b522aac167412dd229a1140acf0a24bcb79a673e6a39cd9",
+   "png_sha256": "0c986ce31e61eb56999ac49e037aa88558dded63afa09112ed058bea43b6842e",
+   "label": "generated"
+  },
+  "sleeve_cuff_far": {
+   "svg_sha256": "98c073c578ae2a941c46aac6bb423a606d8f6fa63838b5b8b784a02fcaf93736",
+   "png_sha256": "30d0d354d8fbe813e7ecdedb88105bfd3acfaaf6be8e752b7c9b67c20a1d466c",
+   "label": "generated"
+  },
+  "hand_relaxed_far": {
+   "svg_sha256": "91373c402b4d8fea661d234e91717871e43de3a66c6e5def31594d47f212ba6c",
+   "png_sha256": "03d4ff98ec5975d3b938137defcc389014a66097316df841b7ef02fa6617e408",
+   "label": "generated"
+  },
+  "hand_grip_far": {
+   "svg_sha256": "989525e070d127f901fa2eaa3369431f8ea9ab2f99b515b8dec6ec7bd3c710e8",
+   "png_sha256": "92cc129eb412397c10f285fa46cb19187d010a1eee02642b27b94b8525e76b7d",
+   "label": "generated"
+  },
+  "hand_open_far": {
+   "svg_sha256": "b08fd512e9617c296f4c9e5a79654bfa4aa7ff3f8c959e4b33cb25503ffbca23",
+   "png_sha256": "849de17aec8fb90633b916741c5435860bb61771a0bca7077e53f6887912a011",
+   "label": "generated"
+  },
+  "leg_near": {
+   "svg_sha256": "2881eda1d4c6ae44f18961a457e013edf2241e12b005a0e8c6bc49fcea76b16e",
+   "png_sha256": "1c2bc8538ca791d3adeb814c1077f84c99d34995a88bd36380cb6b999ff1b820",
+   "label": "generated"
+  },
+  "sock_near": {
+   "svg_sha256": "ab801ef2b94e0d0c82be866182ddc23db646d6d293c0aeb5f02627a0f911d1a0",
+   "png_sha256": "44cc8c8599cbcc28f3e0ee88f5e4fa88a09b0bd6dc23564f97a15a3d79349abf",
+   "label": "generated"
+  },
+  "shoe_near": {
+   "svg_sha256": "d3e9ffbef77d9adb3c465c98fa1a82a4b786ba679fcf7a2ae24ffd5d064fa999",
+   "png_sha256": "4f2c274004ff441452558fd52e6934e093fea220e8a700f72ea31f3d9fbaca2a",
+   "label": "generated"
+  },
+  "shorts_near": {
+   "svg_sha256": "ad2c2820861298c8c876399a881f18b0512790d68f0f0e4e2ee2900f455252a8",
+   "png_sha256": "fcf10114b7c50db686529b09dd258e8035f6bd2986b2b67a0e6ca44e3f2fce7a",
+   "label": "generated"
+  },
+  "arm_near": {
+   "svg_sha256": "bf2f118768a1204967c8e1b37761ff372ca45e416ffb5ce46fdf00839c244848",
+   "png_sha256": "8ecc3feac35f545bbfff4ca6163b5afe405e770eb68832d9c68df87b89e365bb",
+   "label": "generated"
+  },
+  "sleeve_near": {
+   "svg_sha256": "f8c4657e2482ca0a09c0bd541a4c06834234b8ff93ae596420520f8569cb33db",
+   "png_sha256": "08b7c209018e0679632780e994724a1f9eccf5f3622cedc96102e1902de6d7cc",
+   "label": "generated"
+  },
+  "sleeve_cuff_near": {
+   "svg_sha256": "b0b7901a038760a96d30c11c03ffe283415577ca63c671973ad90cab8956401e",
+   "png_sha256": "c94776fb00ea69d53fff0444dabbf142d169143323d37cf6e8383f4c44db0d00",
+   "label": "generated"
+  },
+  "hand_relaxed_near": {
+   "svg_sha256": "0032dd80c7164d810ecefc53617c892def3875265036ff2d792db4aa00922917",
+   "png_sha256": "9230c93eda14ce761765ce71cb5f48eef8a057da92536ea28b7818fbfc72d62a",
+   "label": "generated"
+  },
+  "hand_grip_near": {
+   "svg_sha256": "0c629f032e4d734a17ad1ed0f28cc67d4d78188611c648a447686779c6e57282",
+   "png_sha256": "422b86bc21fea5c981441d232e29dcb4c064c4d5ad00023cc40afe239b4b5be6",
+   "label": "generated"
+  },
+  "hand_open_near": {
+   "svg_sha256": "5952622ad2cc13d5b1555830bc70635a33fa43b9fbc4719b45c3a07d97defab0",
+   "png_sha256": "b7165e9bfc9f48d539d0c1d1a4b997df52bdb4bc2051fe3f6b33d36c5258bce6",
+   "label": "generated"
+  },
+  "torso_tee": {
+   "svg_sha256": "3830365b73d29631d6fcb552f508c03ed8629751e1ce3e786489fe36df155164",
+   "png_sha256": "06b08e24878e7f7b43ffad18b06d70693aa6d52974aa8510aa661b1de8e8e452",
+   "label": "generated"
+  },
+  "overshirt_front": {
+   "svg_sha256": "fcfdb2027fb9200b1edad626ea9938dd7674d17f71339cfb14a2048369454cef",
+   "png_sha256": "cdb2facb65d6495e728ab5a0ca23d2c91d1179e7dbdcfeea27f04cff3ff460ff",
+   "label": "generated"
+  },
+  "logo": {
+   "svg_sha256": "e82ce7c3a9896e274503a9324f0a3093635acd1c66421e35f8b29608d421f208",
+   "png_sha256": "79882d86bb70a0736df0051ea1fbbcd959bfd72a36de42ada881aca6e0ba70e8",
+   "label": "generated"
+  },
+  "neck": {
+   "svg_sha256": "eeb4e8e849992e6e30ad5a8f3eb6433757cf822b634e5e63125f856d806e104a",
+   "png_sha256": "d1e6321fcdc48536036f9906868ab1c4afefdc9d8481f19aa0351b01cfaee35b",
+   "label": "generated"
+  },
+  "head": {
+   "svg_sha256": "72ea6ddaa3b5c30eb3e289d64f6108eebafd9a36c544e3eba9a800cc18c4bd34",
+   "png_sha256": "9eed1a5e672d3f3a44fea9f569a9c3f7236ea6fba72a1e0471537df151c4be43",
+   "label": "generated"
+  },
+  "beard": {
+   "svg_sha256": "3e0c9d18e3e97de6e823bc8132b0b03f01a14b7f4c0e19db23aabf6a184ecee2",
+   "png_sha256": "9c3ba09eb105a237955f0dda78177cbe14c07809c02dd74dcaceecc7d471ec2c",
+   "label": "generated"
+  },
+  "sunglasses": {
+   "svg_sha256": "e2483cf1c4235eac776cad971331e346cc6c17b382f9dbf4e625c5b83bf3ee39",
+   "png_sha256": "632a637c860efd4858ce38dee43466423521443fc39c3d380ce095caf684dd2a",
+   "label": "generated"
+  },
+  "cap_crown": {
+   "svg_sha256": "c80a20d0452af382728041de835acfdd77a747ae308e43d6875ec97b0791db37",
+   "png_sha256": "232236426636e802b3fe4266ca492d2fe051d805836a119f0058f58fe218984a",
+   "label": "generated"
+  },
+  "cap_brim": {
+   "svg_sha256": "3dcd51a181416ba045866b851a7e78fd77255989ec2abf93919c8937ffedba54",
+   "png_sha256": "18332750e2d4dff5ff7b593a2a33fd369130b9642320ae69b5ece203f62162e2",
+   "label": "generated"
+  },
+  "bag": {
+   "svg_sha256": "47373f3033fe2609f36e40d92f365259636b427d017a058fc302c58c37786386",
+   "png_sha256": "44cbeeedddb65c71a61e50adb3ebebc4f2b47385de90247651af98caa3a3080c",
+   "label": "generated"
+  }
+ },
+ "notes": "Legacy Doug art under public/ and lab/ is untouched. Owner approved new art for godot/assets/ in the session that produced this; likeness sign-off is still owed and no claim of likeness is made."
+}
