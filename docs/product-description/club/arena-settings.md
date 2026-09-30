@@ -66,7 +66,7 @@ The gear opens the dialog over whatever view is showing. Nothing behind it pause
 
 Each time the dialog opens, the scoring fields re-read this browser's save. The four numbers and **Counted entries enabled** start from the saved policy, including one another tab saved moments ago. Edits left unsaved at an earlier visit are gone. If the save cannot be read, the fields keep what they last showed in this visit: the default policy unless something was typed.
 
-The checkboxes show the current state of the two switches. An error line left by a refused save at an earlier visit is still shown (see [edge cases](#edge-cases)). The **Performance snapshot** is there only if the Watch stage has reported at least once since the page loaded.
+The checkboxes show the current state of the two switches. An error line from a refused save is cleared when the dialog is closed, so a later visit shows none (see [edge cases](#edge-cases)). The **Performance snapshot** is there only if the Watch stage has reported at least once since the page loaded.
 
 ### Backing out at once
 
@@ -102,7 +102,7 @@ The two checkboxes still apply at once. **Export local save** exports the *saved
   - the save's own reason when it cannot be read, such as **The local save did not pass its integrity check.**
   - the browser's own message when storage refuses the write
 
-  The message clears when the next save is tried. Closing the dialog does not clear it.
+  The message clears when the next save is tried. Closing the dialog also clears it.
 
 After a successful save:
 - **Counted entries locked from now on** award the new points and are checked against the new allowance and switch.
@@ -193,7 +193,7 @@ After any interrupt, the next opening shows the saved policy, not the unsaved ed
 - **Unchanged values.** Pressing **Save for future entries** without changing anything still writes, but the policy keeps its name.
 - **Lowering the allowance** below the entries a demo user has already used shows **0 entries left**. Nothing already played is taken back.
 - **An allowance above 4** is refused with "Entries / user can be at most 4, one for each scheduled pairing." Each demo user has only four scheduled pairings.
-- **A lingering error.** A refused save's message stays in the dialog until the next save is tried. Closing and reopening the dialog shows it again, above fields freshly re-read from the save. Pressing **Reset demo data** or **Validate & attach** in between clears it.
+- **A lingering error.** A refused save's message stays in the dialog until the next save is tried or the dialog is closed. Pressing **Reset demo data** or **Validate & attach** also clears it.
 - **Saving leaves the stage alone.** A save does not rebuild the Watch stage or the collection preview, in this tab or in others, because the shown cards' mappings did not change ([the stage](../foundations/stage.md#loading-and-rebuilding)).
 - **Reduced motion follows the operating system only at load.** Changing the system preference during a visit does not tick or untick the box.
 - **The export is the whole stored save.** `clubhouse-save.json` holds every recording and every award, including a contest loaded and not yet complete or waiting to resume, and names the contest waiting to resume. It is the save's parsed contents, with no checksum, and cannot be imported ([this browser's save](../foundations/saved-data.md#exports)).
@@ -210,7 +210,7 @@ After any interrupt, the next opening shows the saved policy, not the unsaved ed
 - **Fixed: the policy name changed on every save (B-21).** The name now follows the values. Whether returning to the default values should restore `club-points-v1` is a product call.
 - **Fixed: the export left out unfinished contests (B-11)**, and an unreadable save now exports as its stored text (B-03).
 - **Fixed: an allowance above the schedule (B-32).** **Entries / User** is now capped at 4.
-- **The lingering error line.** The settings message is kept per dialog, not per opening, so it reappears when the dialog is reopened. This is read from the code and may be worth treating as a small bug.
+- **Fixed: the lingering error line (B-09).** The settings message now clears when the dialog is closed, so it does not reappear when the dialog is reopened.
 - **An empty field showing 0** is how the page reads an empty number field. It has not been tried in each browser.
 - **The first snapshot after a rebuild** covering a single frame, and whether the figures keep changing after a lost graphics context, have not been measured.
 
