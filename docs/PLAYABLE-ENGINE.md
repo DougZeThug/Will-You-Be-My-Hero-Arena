@@ -64,7 +64,7 @@ Precision action-map examples for basketball, football and beer pong are availab
 
 ## Character and animation authoring
 
-The reference Dan/Doug characters use the calibrated connected paper mesh. The library now registers 117 clip IDs: 66 authored gesture/movement definitions, 19 parameterized shot profiles and 32 compatibility aliases. Those counts do not mean 117 separately drawn animations. This pass adds combat, jump, slide, stumble and live throw tracks; it reuses the existing artwork.
+Dan and Doug run on side-view LoongBones rigs in Watch and Play cornhole and in Play running and fighting; the calibrated connected paper mesh covered here serves the other Watch sports and any character without side art — see [`ANIMATION-HANDOFF.md`](ANIMATION-HANDOFF.md) for the current runtime. The library now registers 118 clip IDs: 67 authored gesture/movement definitions, 19 parameterized shot profiles and 32 compatibility aliases. Those counts do not mean 118 separately drawn animations. This pass adds combat, jump, slide, stumble and live throw tracks; it reuses the existing artwork.
 
 `AnimationComponent` resolves semantic requests through `gameplay.animations` and per-character joint-curve `overrides`. Safe spline interpolation, short pose blends, lower-body layering and bounded locomotion rates preserve connected shoulders. Physics owns world translation, jump height and contact shadows. Authored effector paths supply stance, anticipation and follow-through.
 
