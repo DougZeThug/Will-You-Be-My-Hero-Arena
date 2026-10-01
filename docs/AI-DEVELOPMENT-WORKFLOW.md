@@ -34,9 +34,8 @@ For the character performance installed in normal recorded-cornhole Watch, use
 
 Do not substitute `character-doug` or `character-dan`; those are legacy
 connected-paper clip previews. `cornhole-recorded` is an earlier weighted-rig
-comparison. Other recorded sports, non-cornhole live Play, and `/human-motion/`
-use separate runtime paths and should be opened only when that boundary is
-actually under review.
+comparison. Other recorded sports and `/human-motion/` use separate runtime
+paths and should be opened only when that boundary is actually under review.
 
 The Lab opens paused with a manual clock. **Load / reset** uses the selected
 seed. **Play**, **Pause**, **+1 frame**, **+1 second**, and named checkpoints
@@ -151,7 +150,7 @@ Synthetic controller tests establish mapping and software behavior. Physical Xbo
 
 The completed task should leave a launchable local result and explain the practical change first. Include checks actually run, any remaining limitation, a usable preview and relevant screenshots/state evidence. For shared-runtime edits, include Play and Watch regression coverage. For art or motion changes, show the result rather than only describing code.
 
-Local verification does not publish the site. Hosting is a separate requested action using the repository's Sites configuration. Current characters remain connected paper rigs; installing a library does not transform them into authored skeletal animations.
+Local verification does not publish the site. Hosting is a separate requested action using the repository's Sites configuration. Installing an animation library alone does not by itself produce authored skeletal animations.
 
 Character anatomy work also uses the Lab's **Anatomy / rig inspection** panel: actual current joints, black silhouette, mirror and court scale. Dan's setup/idle skeleton proposals are separate, unfinished authoring views. The API adds `setRigQA(options)` and a serializable `rigQA` snapshot. The user selected LoongBones for evaluation instead of Spine; see [the active compatibility gate](LOONGBONES-COMPATIBILITY.md). **Load verified editor export** opens the user's unchanged LoongBones 1.2.3 example: its textured bones and mesh deformation pass in Phaser 3.90.0, but it has no blended skin weights or release markers. **Dan · weighted rig review** is the newer Astra-authored 30-bone foundation with seven clips, foot IK and an actual release marker. Its [review and import instructions](review/dan-weighted-v1/README.md) distinguish local success from the still-required editor round trip, hidden art and full motion review. The dedicated `__HERO_DAN_RIG__` API remains Lab-only; the approved source-fit view is still static. The [earlier pipeline plan](SPINE-PRODUCTION-PIPELINE.md) retains the anatomy/source quality requirements.
 
