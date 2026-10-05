@@ -6,6 +6,7 @@ type State = ReturnType<MotionSession['snapshot']> & {
     | import('../../lib/arena/engine/presentation/ArenaTheme').PresentationState
     | null;
 };
+type TestPads = { axes: number[]; connected: boolean }[];
 declare global {
   interface Window {
     __HERO_MOTION__: {
@@ -343,4 +344,105 @@ test('Human Motion V2: repeated attacks restart and interrupted dodge clears imm
   expect(result.during).toBe(true);
   expect(result.after.dodging).toBe(false);
   expect(result.after.graph.some((g) => g.layer === 'reaction')).toBe(true);
+});
+test('Human Motion V2: gamepad disconnect tick does not advance the clock without simulating', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const pads = [0, 1].map((index) => ({
+      id: index ? 'Sony DualSense' : 'Xbox',
+      mapping: 'standard',
+      connected: true,
+      index,
+      axes: [0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({ value: 0, pressed: false })),
+    }));
+    Object.defineProperty(navigator, 'getGamepads', { value: () => pads });
+    (window as unknown as { testPads: typeof pads }).testPads = pads;
+  });
+  await page.goto('/human-motion/?event=running');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  await page.selectOption('#device', 'gamepad');
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: TestPads }).testPads;
+    pads[0].axes[0] = 0.75;
+    pads[1].axes[0] = 0.5;
+    window.__HERO_MOTION__.step(0.48);
+  });
+  const before = await page.evaluate(() => {
+    const s = window.__HERO_MOTION__.getState();
+    return {
+      time: s.time,
+      steps: s.steps,
+      motorX: s.actors[1].motor.position.x,
+    };
+  });
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: TestPads }).testPads;
+    pads[1].connected = false;
+    window.__HERO_MOTION__.resume();
+  });
+  await page.waitForFunction(
+    () => window.__HERO_MOTION__!.getState().paused,
+    undefined,
+    { timeout: 2000, polling: 5 },
+  );
+  const after = await page.evaluate(() => {
+    const s = window.__HERO_MOTION__.getState();
+    return {
+      time: s.time,
+      steps: s.steps,
+      motorX: s.actors[1].motor.position.x,
+      paused: s.paused,
+    };
+  });
+  expect(after.paused).toBe(true);
+  expect(after.time).toBe(before.time);
+  expect(after.steps).toBe(before.steps);
+  expect(after.motorX).toBe(before.motorX);
+});
+test('Human Motion V2: workshop loop does not restart early on a disconnect at the drift boundary', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const pads = [0, 1].map((index) => ({
+      id: index ? 'Sony DualSense' : 'Xbox',
+      mapping: 'standard',
+      connected: true,
+      index,
+      axes: [0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({ value: 0, pressed: false })),
+    }));
+    Object.defineProperty(navigator, 'getGamepads', { value: () => pads });
+    (window as unknown as { testPads: typeof pads }).testPads = pads;
+  });
+  await page.goto('/human-motion/?event=running&loop=1&loopTo=0.4833');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  await page.selectOption('#device', 'gamepad');
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: TestPads }).testPads;
+    pads[0].axes[0] = 0.75;
+    pads[1].axes[0] = 0.5;
+    window.__HERO_MOTION__.step(0.48);
+  });
+  const before = await page.evaluate(() => {
+    const s = window.__HERO_MOTION__.getState();
+    const w = window.__HERO_MOTION__.workshop();
+    return { time: s.time, loopCount: w.loopCount };
+  });
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: TestPads }).testPads;
+    pads[1].connected = false;
+    window.__HERO_MOTION__.resume();
+  });
+  await page.waitForTimeout(250);
+  const after = await page.evaluate(() => {
+    const s = window.__HERO_MOTION__.getState();
+    const w = window.__HERO_MOTION__.workshop();
+    return { hasActors: Array.isArray(s.actors), loopCount: w.loopCount };
+  });
+  expect(before.loopCount).toBe(0);
+  expect(before.time).toBeCloseTo(0.475, 3);
+  expect(after.loopCount).toBe(0);
+  expect(after.hasActors).toBe(true);
 });

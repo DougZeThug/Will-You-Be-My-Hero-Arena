@@ -184,6 +184,8 @@ export class MotionSession {
     }
   }
   private tick() {
+    const stepStart = this.time;
+    const startSteps = this.steps;
     this.time += 1 / 120;
     this.steps++;
     for (const c of this.controllers) {
@@ -198,6 +200,8 @@ export class MotionSession {
       this.frames.set(c.id, structuredClone(frame));
       if (!frame.connected) {
         this.pause(true);
+        this.time = stepStart;
+        this.steps = startSteps;
         return;
       }
       c.update(frame, this.time);
