@@ -543,7 +543,9 @@ export async function testLive({ check }) {
   const struck = stop.time,
     frozen = JSON.stringify(stop.characters.map((c) => c.body)),
     held = stop.hitStopSteps;
-  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() =>
+    assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'),
+  );
   check(() => assert.equal(stop.characters[1].beats.hit, struck));
   check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
   const inputs = () =>
@@ -642,7 +644,16 @@ export async function testLive({ check }) {
     points: 1,
   }));
   const rolled = resolvePrecisionLanding(
-    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    {
+      id: 'r',
+      owner: 'p0',
+      origin: spot,
+      target: { ...spot },
+      age: 1,
+      duration: 1,
+      arc: 0,
+      spin: 0,
+    },
     around,
     'roll',
   );
@@ -934,7 +945,10 @@ export async function testLive({ check }) {
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
   check(() =>
-    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+    assert.ok(
+      brake.characters.every((c) => c.score >= 0),
+      'No negative progress',
+    ),
   );
   advance(brake, 1.7);
   brake.characters[0].stamina = 60;
@@ -947,7 +961,9 @@ export async function testLive({ check }) {
   brake.inject('p0', 'modifierLeft', 0);
   brake.characters[0].stamina = 12;
   advance(brake, 0.5);
-  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'),
+  );
   check(() =>
     assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
   );
@@ -996,7 +1012,11 @@ export async function testLive({ check }) {
   const limit = new ArenaSession(config('fighting', false));
   advance(limit, 60.5);
   check(() =>
-    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+    assert.equal(
+      limit.snapshot().finished,
+      false,
+      'The entrance is not fight time',
+    ),
   );
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
@@ -1015,7 +1035,9 @@ export async function testLive({ check }) {
       'chargedSpecial',
     ),
   );
-  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  check(() =>
+    assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage),
+  );
   // A pause pressed mid-step cancels that step, so the clock stays with the
   // steps that actually ran.
   const clock = new ArenaSession(config('running', false));
@@ -1069,7 +1091,10 @@ export async function testLive({ check }) {
   check(() => assert.equal(guard.perform('grapple'), false));
   check(() => assert.equal(stance.characters[0].stamina, 2));
   check(() =>
-    assert.ok(guard.counterUntil > stance.time, 'A failed grapple keeps the stance'),
+    assert.ok(
+      guard.counterUntil > stance.time,
+      'A failed grapple keeps the stance',
+    ),
   );
   stance.characters[0].stamina = 4;
   check(() => assert.equal(guard.perform('grapple'), true));
@@ -1087,7 +1112,10 @@ export async function testLive({ check }) {
   check(() =>
     assert.deepEqual(
       bindingsConflict([
-        { layout: 0, keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' } },
+        {
+          layout: 0,
+          keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' },
+        },
         layouts[1],
       ]),
       {
@@ -1135,6 +1163,102 @@ export async function testLive({ check }) {
   );
   keyboard.destroy();
   Object.assign(globalThis, saved);
+  // OS auto-repeat keydowns of a key this device owns still cancel the browser
+  // default (so an embedded Arena page does not scroll while a player holds an
+  // aim/charge key), without re-recording the held key as a fresh tap. Keys the
+  // device never took, and owned keys whose focus has left scope, are left to
+  // the page. See KeyboardDevice.ts `down`.
+  const saved2 = { window: globalThis.window, document: globalThis.document };
+  const listeners2 = {};
+  globalThis.window = {
+    addEventListener: (type, f) => (listeners2[type] = f),
+    removeEventListener: (type) => delete listeners2[type],
+  };
+  const inScope = { tag: 'arena' };
+  const outScope = { tag: 'page-button' };
+  globalThis.document = { activeElement: inScope };
+  const scope2 = { contains: (el) => el === inScope };
+  const kb2 = new KeyboardDevice('kb2', bindingsFor(0), 0, scope2);
+  let prevented = false;
+  const dispatch = (type, code, { repeat = false, target = {} } = {}) => {
+    prevented = false;
+    listeners2[type]({
+      code,
+      repeat,
+      target,
+      preventDefault() {
+        prevented = true;
+      },
+    });
+  };
+  // Initial non-repeat press of an owned aim key is prevented and sets the
+  // aim vector.
+  dispatch('keydown', 'ArrowRight');
+  check(() =>
+    assert.equal(prevented, true, 'press of owned aim key prevented'),
+  );
+  check(() => assert.deepEqual(kb2.poll(0).values.aim, { x: 1, y: 0 }));
+  // OS auto-repeat of the held key is prevented without mutating aim state.
+  for (let i = 0; i < 5; i++) {
+    dispatch('keydown', 'ArrowRight', { repeat: true });
+    check(() =>
+      assert.equal(prevented, true, 'repeat of held aim key prevented'),
+    );
+    check(() =>
+      assert.deepEqual(
+        kb2.poll(0).values.aim,
+        { x: 1, y: 0 },
+        'aim held across repeat',
+      ),
+    );
+  }
+  // Repeat of a key the device does NOT own (PageDown) is left for the page.
+  dispatch('keydown', 'PageDown', { repeat: true });
+  check(() =>
+    assert.equal(prevented, false, 'repeat of unowned key not prevented'),
+  );
+  // Repeat of an allowed but never-pressed key is not prevented (device never took it).
+  dispatch('keydown', 'ArrowLeft', { repeat: true });
+  check(() =>
+    assert.equal(
+      prevented,
+      false,
+      'repeat of never-pressed allowed key not prevented',
+    ),
+  );
+  // Charge (Space) is prevented on press and on repeat; release clears it.
+  dispatch('keydown', 'Space');
+  check(() => assert.equal(prevented, true, 'press of Space prevented'));
+  check(() => assert.equal(kb2.poll(0).values.charge, 1));
+  dispatch('keydown', 'Space', { repeat: true });
+  check(() => assert.equal(prevented, true, 'repeat of held Space prevented'));
+  check(() =>
+    assert.equal(kb2.poll(0).values.charge, 1, 'charge held across repeat'),
+  );
+  // If focus migrates out of scope mid-hold, repeat keydowns are not cancelled.
+  globalThis.document.activeElement = outScope;
+  dispatch('keydown', 'ArrowRight', { repeat: true });
+  check(() =>
+    assert.equal(
+      prevented,
+      false,
+      'repeat with focus out of scope not prevented',
+    ),
+  );
+  // The held aim vector is untouched (state not re-recorded by repeats).
+  check(() => assert.deepEqual(kb2.poll(0).values.aim, { x: 1, y: 0 }));
+  // Releasing back in scope still cancels the default and clears the aim.
+  globalThis.document.activeElement = inScope;
+  dispatch('keyup', 'ArrowRight');
+  check(() =>
+    assert.equal(prevented, true, 'keyup of owned aim key prevented'),
+  );
+  check(() => assert.deepEqual(kb2.poll(0).values.aim, { x: 0, y: 0 }));
+  dispatch('keyup', 'Space');
+  check(() => assert.equal(prevented, true, 'keyup of owned Space prevented'));
+  check(() => assert.equal(kb2.poll(0).values.charge, 0));
+  kb2.destroy();
+  Object.assign(globalThis, saved2);
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
     'docs/review/live-engine-tests.json',

@@ -49,7 +49,16 @@ export class KeyboardDevice extends VirtualDevice {
           });
     };
     const down = (e: KeyboardEvent) => {
-        if (!e.repeat) key(e, true);
+        if (e.repeat) {
+          if (
+            allowed.has(e.code) &&
+            this.down.has(e.code) &&
+            scope.contains(document.activeElement)
+          )
+            e.preventDefault();
+          return;
+        }
+        key(e, true);
       },
       up = (e: KeyboardEvent) => key(e, false),
       blur = () => this.clear();
