@@ -1408,6 +1408,43 @@ export async function testLive({ check }) {
       },
     ),
   );
+  // The remap-refusal and Start-refusal messages label a conflicting intent
+  // with the visible action the remap grid shows, never a hidden variant
+  // riding the same input. `visibleAction` (EventActionMap) and the grid's
+  // `controls` filter both take the first non-hidden action per intent; the
+  // helper originally omitted the `!a.hidden` guard (bug a049c0d), so the
+  // Brawl surfaced the hidden "Grapple" for a primary refusal.
+  const { playableEvents } =
+    await import('../.test-build/engine/core/EventRegistry.mjs');
+  const labelMaps = playableEvents().map((e) => e.create().registerControls()),
+    brawl = labelMaps.find((m) => m.id === 'fighting');
+  // The Brawl hidden grapple rides primaryAction ahead of the visible light
+  // attack, so the refusal must surface "Light attack", not "Grapple".
+  check(() =>
+    assert.equal(
+      visibleAction(brawl.actions, 'primaryAction')?.label,
+      'Light attack',
+      'Brawl primary refusal names the visible action',
+    ),
+  );
+  // Parity with the remap grid the same component renders: for every event,
+  // the first non-hidden label per intent matches what `controls` filters in.
+  for (const m of labelMaps) {
+    const grid = m.actions.filter(
+      (a, i, all) =>
+        !a.hidden &&
+        !['move', 'aim'].includes(a.intent) &&
+        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
+    );
+    for (const c of grid)
+      check(() =>
+        assert.equal(
+          visibleAction(m.actions, c.intent)?.label,
+          c.label,
+          m.id + ' grid and refusal agree on ' + c.intent,
+        ),
+      );
+  }
   // An action key does not replay a held direction after it is released.
   const { KeyboardDevice } =
     await import('../.test-build/engine/input/KeyboardDevice.mjs');
