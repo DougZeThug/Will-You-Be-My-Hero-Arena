@@ -62,39 +62,56 @@ for (const [id, intent] of [
 document.querySelector('#export')!.addEventListener('click', async () => {
   if (exporting) return;
   exporting = true;
-  // A failed start leaves its error in the status and the exporter retryable.
-  const error = await new Promise<string | undefined>((resolve) => {
-    readyResolve = resolve;
-    start();
-  });
-  if (error) {
-    exporting = false;
-    return;
-  }
-  runtime.game.loop.stop();
+  let booted = false;
+  let error: string | undefined;
   try {
-    for (let i = 0; i < 300; i++) {
-      runtime.session.paused = false;
-      runtime.game.isPaused = false;
-      const blob = await new Promise<Blob>((resolve) => {
-        runtime.game.events.once('postrender', () =>
-          runtime.game.canvas.toBlob((b) => resolve(b!), 'image/png'),
-        );
-        runtime.game.step(performance.now(), 1000 / 30);
-      });
-      const response = await fetch(
-        `/review-capture?name=after-playable-${event.value}-${String(i).padStart(4, '0')}.png`,
-        { method: 'POST', body: blob },
-      );
-      if (!response.ok) throw Error('Capture failed');
-      status.textContent = `Captured ${i + 1}/300`;
+    // A failed start settles the gate with its error (never rejects it), so the
+    // handler reaches the outer finally, resets `exporting`, and surfaces the
+    // error in `#status`. Without the inner try/catch a synchronous throw out
+    // of `start()` (e.g. WebGL boot fails on the reboot canvas) would reject
+    // the promise here, the `await` would re-throw out of the listener, and
+    // both buttons would wedge until the page is reloaded.
+    error = await new Promise<string | undefined>((resolve) => {
+      readyResolve = resolve;
+      try {
+        start();
+      } catch (e) {
+        resolve(String(e));
+      }
+    });
+    if (error) {
+      status.textContent = error;
+      return;
     }
-    status.textContent = 'Complete';
-  } catch (e) {
-    status.textContent = String(e);
+    booted = true;
+    runtime.game.loop.stop();
+    try {
+      for (let i = 0; i < 300; i++) {
+        runtime.session.paused = false;
+        runtime.game.isPaused = false;
+        const blob = await new Promise<Blob>((resolve) => {
+          runtime.game.events.once('postrender', () =>
+            runtime.game.canvas.toBlob((b) => resolve(b!), 'image/png'),
+          );
+          runtime.game.step(performance.now(), 1000 / 30);
+        });
+        const response = await fetch(
+          `/review-capture?name=after-playable-${event.value}-${String(i).padStart(4, '0')}.png`,
+          { method: 'POST', body: blob },
+        );
+        if (!response.ok) throw Error('Capture failed');
+        status.textContent = `Captured ${i + 1}/300`;
+      }
+      status.textContent = 'Complete';
+    } catch (e) {
+      status.textContent = String(e);
+    }
   } finally {
     exporting = false;
-    runtime.game.loop.start(runtime.game.step.bind(runtime.game));
+    // Only restart the loop for a cleanly booted new runtime. On a sync start()
+    // throw `runtime` still points at the previous (pendingDestroy) game, and
+    // calling loop.start on it is pointless; the harness recovers via #start.
+    if (booted) runtime.game.loop.start(runtime.game.step.bind(runtime.game));
   }
 });
 start();
