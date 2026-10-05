@@ -129,7 +129,9 @@ export function obstacleCollision(
   return (
     !m.hits.has(o.id) &&
     Math.abs(c.body.x - o.x) < o.width / 2 + 15 &&
-    Math.abs(c.body.y - o.y) < 30 &&
+    // Half the 62-px lane pitch: adjacent lane hit-windows tile without a
+    // gap (free steering can't park between lanes to skip every obstacle).
+    Math.abs(c.body.y - o.y) < 31 &&
     (o.kind === 'bar' ? m.slide <= 0 : c.body.z < o.height)
   );
 }

@@ -543,7 +543,9 @@ export async function testLive({ check }) {
   const struck = stop.time,
     frozen = JSON.stringify(stop.characters.map((c) => c.body)),
     held = stop.hitStopSteps;
-  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() =>
+    assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'),
+  );
   check(() => assert.equal(stop.characters[1].beats.hit, struck));
   check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
   const inputs = () =>
@@ -642,7 +644,16 @@ export async function testLive({ check }) {
     points: 1,
   }));
   const rolled = resolvePrecisionLanding(
-    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    {
+      id: 'r',
+      owner: 'p0',
+      origin: spot,
+      target: { ...spot },
+      age: 1,
+      duration: 1,
+      arc: 0,
+      spin: 0,
+    },
     around,
     'roll',
   );
@@ -744,7 +755,10 @@ export async function testLive({ check }) {
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
   check(() =>
-    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+    assert.ok(
+      brake.characters.every((c) => c.score >= 0),
+      'No negative progress',
+    ),
   );
   advance(brake, 1.7);
   brake.characters[0].stamina = 60;
@@ -757,7 +771,9 @@ export async function testLive({ check }) {
   brake.inject('p0', 'modifierLeft', 0);
   brake.characters[0].stamina = 12;
   advance(brake, 0.5);
-  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'),
+  );
   check(() =>
     assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
   );
@@ -778,6 +794,54 @@ export async function testLive({ check }) {
     ),
   );
   freeRun.destroy();
+  // A free-steering runner can't park on the 2-px seam between adjacent lane
+  // hit-windows (y ≈ 552) to skip every obstacle. The 62-px lane pitch makes
+  // the half-pitch 31, so the Y-tolerance must cover the half-lane.
+  const seam = new ArenaSession({
+    ...config('running', false),
+    options: { movement: 'free' },
+  });
+  advance(seam, 1.7);
+  // A 12-step down tap (≈0.20 s at 160 px/s) lands y on 552 — the upper edge
+  // of the old uncovered seam between lanes 0 (520) and 1 (582).
+  seam.inject('p0', 'move', { x: 0, y: 1 });
+  for (let i = 0; i < 12; i++) seam.advance(1 / 60);
+  check(() =>
+    assert.ok(
+      Math.abs(seam.characters[0].body.y - 552) < 0.01,
+      'The down tap lands on the lane seam',
+    ),
+  );
+  // Holding only forward (no jump, no slide, no vertical nudge) used to clear
+  // all 14 obstacles with zero hits; closing the seam forces a crash.
+  seam.inject('p0', 'move', { x: 1, y: 0 });
+  advance(seam, 20);
+  check(() =>
+    assert.ok(
+      seam.event.motions.get('p0').hits.size > 0,
+      'A runner on the seam no longer skips every obstacle',
+    ),
+  );
+  seam.destroy();
+  // The lane midpoint itself (y = 551) is not in either adjacent hit-window:
+  // strict < 31 makes the windows tile without overlap, so a runner parked
+  // exactly between two same-row obstacles hits neither (no double-hit step).
+  const edge = new ArenaSession({
+    ...config('running', false),
+    options: { movement: 'free' },
+  });
+  advance(edge, 1.7);
+  edge.characters[0].body.x = 515; // row 0 overlaps lane 0 (x=490) and lane 1 (x=540)
+  edge.characters[0].body.y = 551; // exactly 31 px from both lane centers
+  edge.advance(1 / 60);
+  check(() =>
+    assert.equal(
+      edge.event.motions.get('p0').hits.size,
+      0,
+      'The lane midpoint touches neither adjacent obstacle',
+    ),
+  );
+  edge.destroy();
   // B-29: a dead heat is shared.
   const heat = new ArenaSession(config('running', false));
   heat.event.state = 'finished';
@@ -806,7 +870,11 @@ export async function testLive({ check }) {
   const limit = new ArenaSession(config('fighting', false));
   advance(limit, 60.5);
   check(() =>
-    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+    assert.equal(
+      limit.snapshot().finished,
+      false,
+      'The entrance is not fight time',
+    ),
   );
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
@@ -825,7 +893,9 @@ export async function testLive({ check }) {
       'chargedSpecial',
     ),
   );
-  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  check(() =>
+    assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage),
+  );
   // A pause pressed mid-step cancels that step, so the clock stays with the
   // steps that actually ran.
   const clock = new ArenaSession(config('running', false));
@@ -879,7 +949,10 @@ export async function testLive({ check }) {
   check(() => assert.equal(guard.perform('grapple'), false));
   check(() => assert.equal(stance.characters[0].stamina, 2));
   check(() =>
-    assert.ok(guard.counterUntil > stance.time, 'A failed grapple keeps the stance'),
+    assert.ok(
+      guard.counterUntil > stance.time,
+      'A failed grapple keeps the stance',
+    ),
   );
   stance.characters[0].stamina = 4;
   check(() => assert.equal(guard.perform('grapple'), true));
@@ -897,7 +970,10 @@ export async function testLive({ check }) {
   check(() =>
     assert.deepEqual(
       bindingsConflict([
-        { layout: 0, keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' } },
+        {
+          layout: 0,
+          keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' },
+        },
         layouts[1],
       ]),
       {
