@@ -24,6 +24,11 @@ export class ArenaCharacter implements ControllableEntity {
   health = 100;
   stamina = 100;
   score = 0;
+  /** Points scored by this character's most recent throw (3 = hole, 1 = board,
+   * 0 = miss). Set by `PrecisionEvent` to the landed bag's own points at the
+   * same step the substate becomes `result`, so the live presentation rig can
+   * distinguish a hole-in from a board where the cumulative `score` delta cannot. */
+  lastThrowPoints = 0;
   state: EntityState = 'idle';
   substate = 'ready';
   moveIntent: Vector = { x: 0, y: 0 };

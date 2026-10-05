@@ -434,6 +434,46 @@ export async function performanceTests() {
   check(() =>
     assert.deepEqual(states(liveEvents), states(large.events).slice(2)),
   );
+  // Live cornhole confirmResult must reserve the signature celebration for a
+  // hole-in. CharacterPresentation.updatePerformance passes
+  //   success  = c.lastThrowPoints >= 1   (board 1 or hole 3)
+  //   celebrate = c.lastThrowPoints === 3 (hole-in only)
+  // so a routine board landing is a positive reaction WITHOUT the reserved
+  // chestTap/nod. This guards that decision against collapsing `celebrate` back
+  // onto any "positive score" expression (the original live-path bug, where
+  // `celebrate = c.score > scoreAtThrow` fired CELEBRATION_STARTED on a +1
+  // board). The controller branches on `success && celebrate`; feeding the
+  // fix's exact args demonstrates the contract directly.
+  const liveDecision = (lastThrowPoints) => {
+    const controller = make(),
+      events = [];
+    controller.onEvent((e) => {
+      events.push(e);
+      if (e.name === 'OBJECT_RELEASED')
+        controller.confirmResult(
+          e.actionId,
+          lastThrowPoints >= 1,
+          lastThrowPoints === 3,
+        );
+    });
+    controller.perform('liveCornholeThrow', { objectId: 'held', queue: false });
+    for (let t = 0; t < 12 - 1e-8; t += 1 / 60)
+      controller.advance(Math.min(1 / 60, 12 - t));
+    return events.filter((e) => e.name === 'CELEBRATION_STARTED').length;
+  };
+  check(() =>
+    assert.equal(liveDecision(0), 0, 'miss: no signature celebration'),
+  );
+  check(() =>
+    assert.equal(
+      liveDecision(1),
+      0,
+      'board landing: no signature celebration (success without celebrate)',
+    ),
+  );
+  check(() =>
+    assert.equal(liveDecision(3), 1, 'hole-in: signature celebration'),
+  );
   const bare = (name, extra, segments) =>
     new CharacterPerformanceController(
       new Runtime(),

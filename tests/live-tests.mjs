@@ -647,6 +647,63 @@ export async function testLive({ check }) {
     'roll',
   );
   check(() => assert.equal(rolled.y, spot.y + 16, 'Roll offset applies once'));
+  // Live cornhole presentation threads this throw's own contact classification
+  // (bag.points: 3 = hole, 1 = board, 0 = miss) onto the thrower's
+  // ArenaCharacter.lastThrowPoints at the same step the substate becomes
+  // 'result'. The cumulative `score` delta cannot distinguish a board (+1) from
+  // a hole-in (+3) — and pushes can move other bags — so the live performance
+  // rig must read lastThrowPoints, not the score delta, to fire the signature
+  // celebration on hole-ins only. Assert the field is set to the landed bag's
+  // own points for every throw across deterministic AI matches, covering board,
+  // hole and miss.
+  const throwsByPoints = { 0: 0, 1: 0, 3: 0 };
+  for (
+    let seed = 0;
+    seed < 100 &&
+    (!throwsByPoints[0] || !throwsByPoints[1] || !throwsByPoints[3]);
+    seed++
+  ) {
+    const match = new ArenaSession(
+      config('cornhole', true, 2, 'last-throw-points-' + seed),
+    );
+    const substates = match.characters.map((c) => c.substate);
+    for (let f = 0; f < 60 * 60 && !match.event.resolveOutcome().finished; f++) {
+      match.advance(1 / 60);
+      for (let i = 0; i < match.characters.length; i++) {
+        const was = substates[i];
+        substates[i] = match.characters[i].substate;
+        if (was !== 'result' && substates[i] === 'result') {
+          const message = match.event.view().message;
+          const expected = message.includes('three points')
+            ? 3
+            : message.includes('one point')
+              ? 1
+              : 0;
+          check(() =>
+            assert.equal(
+              match.characters[i].lastThrowPoints,
+              expected,
+              `seed last-throw-points-${seed}: expected ${expected} from "${message}"`,
+            ),
+          );
+          throwsByPoints[expected]++;
+        }
+      }
+    }
+    match.destroy();
+  }
+  check(() =>
+    assert.ok(throwsByPoints[0] > 0, 'saw a live miss (lastThrowPoints 0)'),
+  );
+  check(() =>
+    assert.ok(
+      throwsByPoints[1] > 0,
+      'saw a live board landing (lastThrowPoints 1)',
+    ),
+  );
+  check(() =>
+    assert.ok(throwsByPoints[3] > 0, 'saw a live hole-in (lastThrowPoints 3)'),
+  );
   // B-26: players 3 and 4 start inside the throwing line.
   const fourThrowers = new ArenaSession(config('cornhole', false, 4));
   check(() =>

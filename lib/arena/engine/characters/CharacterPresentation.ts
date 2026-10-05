@@ -40,7 +40,6 @@ export class CharacterPresentation {
   private resultReported = false;
   private liveRelease: number | null = null;
   private rate = 1;
-  private scoreAtThrow = 0;
   private facing?: number;
   private flipFrom = 1;
   private flipAt = -Infinity;
@@ -308,7 +307,6 @@ export class CharacterPresentation {
         queue: false,
       });
       this.resultReported = false;
-      this.scoreAtThrow = c.score;
       this.liveRelease = null;
       this.rate = 1;
     };
@@ -378,8 +376,8 @@ export class CharacterPresentation {
       performance.confirmContact(this.performanceAction);
       performance.confirmResult(
         this.performanceAction,
-        c.score > this.scoreAtThrow,
-        c.score > this.scoreAtThrow,
+        c.lastThrowPoints >= 1, // success: contacted the board (1) or hole (3)
+        c.lastThrowPoints === 3, // celebrate: hole-in only, not a board landing
       );
     }
     if (this.performanceAction && performance.segmentClip === null) {

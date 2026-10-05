@@ -215,6 +215,10 @@ export class PrecisionEvent implements PlayableArenaEvent {
           p.score = this.bags
             .filter((b) => b.owner === p.id)
             .reduce((n, b) => n + b.points, 0);
+        // Thread this throw's own contact classification onto the thrower so
+        // the live presentation rig can tell a board (+1) from a hole-in (+3);
+        // the cumulative `score` delta above cannot (pushes can move other bags).
+        c.lastThrowPoints = bag.points;
         this.flight = undefined;
         this.state = c.substate = 'result';
         this.phaseAt = time;
