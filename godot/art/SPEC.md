@@ -113,10 +113,16 @@ and [`qa/thresholds.json`](qa/thresholds.json)):
    line; a held object's socket on the evaluated palm; rigid segment lengths equal
    their setup lengths.
 2. At most 4 influences per vertex; 8-bit alpha; colour bled into transparent texels.
-3. The owner signs off likeness on 3 stills, and the rendered action is inspected as
-   continuous frames at normal speed around release, contact and recovery. Numbers are not
-   proof of natural motion.
-4. Per-character radii: the gate's capsule radii are declared per character in
+3. The owner signs off likeness and the printed-sunset style on 3 stills, each rendered
+   at play size on the current court beside the legacy side-v3 rig at the same camera and
+   scale. The rendered action is inspected as continuous frames at normal speed around
+   release, contact and recovery. Numbers are not proof of natural motion.
+4. **Hand swap at release**: on every frame from 10 before to 20 after the release marker,
+   the palm socket moves at most 1 px relative to the evaluated hand bone across the
+   grip-to-open drawing swap, no frame shows both hand drawings, and the hand never
+   detaches from the forearm. The static battery cannot see this; it is a frame-sequence
+   check on the slice throw.
+5. Per-character radii: the gate's capsule radii are declared per character in
    `godot/assets/<character>/rig_contract.json` (same schema as
    `qa/skeleton_contract.json`), set conservatively from the drawn part widths before
    any result is known.
