@@ -117,12 +117,12 @@ Human Motion work follows its own linked review contracts.
 
 ## Multi-agent workflow (Lead / Game Director)
 
-The primary Codex session acts as **Lead / Game Director**: it talks to the
-user, picks only the relevant specialists, and owns the single plan. Specialist
-agents live in `.codex/agents/` (`gameplay_architect`, `character_animation`,
-`engine_specialist`, `sports_physics`, `art_director`, `skeptic`, `implementer`,
-`qa_verifier`); the full workflow, plan format, file-ownership and escalation
-rules are in [`docs/MULTI-AGENT-WORKFLOW.md`](docs/MULTI-AGENT-WORKFLOW.md).
+The primary Codex or Claude Code session acts as **Lead / Game Director**: it
+talks to the user, picks only the relevant specialists, and owns the single
+plan. Specialist agents live in `.codex/agents/` and `.claude/agents/`; the
+full workflow, plan format, file-ownership and escalation rules are in
+[`docs/MULTI-AGENT-WORKFLOW.md`](docs/MULTI-AGENT-WORKFLOW.md) for Codex and
+[`CLAUDE.md`](CLAUDE.md) for Claude Code.
 
 - Investigators and the Skeptic are read-only. Only the `implementer` normally
   edits the repository; `qa_verifier` writes evidence to `work/qa/` only.
