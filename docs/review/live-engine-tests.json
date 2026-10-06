@@ -2,18 +2,18 @@
   "referenceEvents": [
     {
       "event": "cornhole",
-      "seconds": 31.849999999999472,
+      "seconds": 31.183333333332843,
       "scores": [
-        10,
-        10
+        6,
+        8
       ],
       "health": [
         100,
         100
       ],
       "commands": [
-        3830,
-        3830
+        3750,
+        3750
       ],
       "buffered": [
         0,

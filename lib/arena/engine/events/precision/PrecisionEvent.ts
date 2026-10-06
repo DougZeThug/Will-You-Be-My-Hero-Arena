@@ -18,6 +18,18 @@ const SHOTS: Record<string, string> = Object.fromEntries(
 );
 /** Where each thrower stands: inside the throwing line, one depth row each. */
 const START_X = [215, 345, 280, 190];
+/** Landing drift per unit of power error beyond the release window (stage px). */
+const MISS_X = 490,
+  MISS_Y = 60,
+  /** The hole's radius in stage px (PrecisionPhysics bagPoints). */
+  HOLE_RADIUS = 13,
+  /**
+   * The AI's timing error per throw, in units of its own release window:
+   * uniform from AI_EARLY windows early to AI_LATE windows late. Misses lean
+   * short, where the board is long, rather than long off its back edge.
+   */
+  AI_EARLY = 4,
+  AI_LATE = 1.6;
 import {
   precisionTarget,
   flightPosition,
@@ -41,6 +53,9 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private complete = false;
   private perfect = false;
   private releasePower = 0;
+  private releaseWindow = 0;
+  /** The AI's seeded timing error for the throw in progress (drawn once per throw). */
+  private aiError?: { throw: number; value: number };
   private serial = 0;
   initialize(context: EventContext) {
     this.ctx = context;
@@ -104,9 +119,10 @@ export class PrecisionEvent implements PlayableArenaEvent {
     }
     if (a === 'release') {
       this.releasePower = this.power();
+      this.releaseWindow = this.window();
       this.perfect =
-        timingGrade(this.releasePower, this.ideal(), this.window()).grade ===
-        'perfect';
+        timingGrade(this.releasePower, this.ideal(), this.releaseWindow)
+          .grade === 'perfect';
       this.state = c.substate = 'throwing';
       c.startAction(
         this.shot === 'airmail'
@@ -138,15 +154,16 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private ideal() {
     return 0.7 + (215 - this.active().body.x) / 1400;
   }
+  /** Half-width of the green band in power units: ±0.040 (±60 ms) for a 0.6 shot skill, ±0.050 at 0.9, plus precision mode and clutch. */
   private window() {
     const c = this.active();
     return (
-      0.035 +
-      c.stats.event('cornhole', this.shot, 0.6) * 0.045 +
-      (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.035 : 0) +
+      0.02 +
+      c.stats.event('cornhole', this.shot, 0.6) / 30 +
+      (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.015 : 0) +
       (this.throws >= this.ctx.characters.length * 3 &&
       c.abilities.has('clutchPerformer')
-        ? 0.025
+        ? 0.01
         : 0)
     );
   }
@@ -170,7 +187,17 @@ export class PrecisionEvent implements PlayableArenaEvent {
       spread =
         (1 - accuracy) *
         22 *
-        (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.4 : 1);
+        (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.4 : 1),
+      // Inside the window the miss grows linearly to an edge offset that still
+      // lands in the hole after the widest scatter, with a pixel to spare;
+      // beyond it, misses continue from that edge at the full drift.
+      edge = Math.max(
+        0,
+        (HOLE_RADIUS - 1 - (spread / 2) * Math.SQRT2) /
+          Math.hypot(1, MISS_Y / MISS_X),
+      ),
+      reach = Math.min(1, Math.abs(error) / this.releaseWindow) * edge,
+      beyond = Math.max(0, Math.abs(error) - this.releaseWindow);
     this.flight = {
       id: 'live-bag-' + this.serial++,
       owner: c.id,
@@ -179,12 +206,13 @@ export class PrecisionEvent implements PlayableArenaEvent {
         x:
           target.x +
           this.aim.x * 115 +
-          error * 490 +
+          Math.sign(error) * (reach + beyond * MISS_X) +
           (this.ctx.random() - 0.5) * spread,
         y:
           target.y +
           this.aim.y * 48 +
-          Math.abs(error) * 60 +
+          (reach * MISS_Y) / MISS_X +
+          beyond * MISS_Y +
           (this.ctx.random() - 0.5) * spread,
       },
       age: 0,
@@ -278,12 +306,15 @@ export class PrecisionEvent implements PlayableArenaEvent {
       if (this.state === 'aiming' && time - this.phaseAt > 0.4)
         values.charge = 1;
       if (this.state === 'charging') {
-        // The release nudge follows this thrower's own bags, so every AI
-        // thrower gets the same spread of early and late releases.
-        const own = Math.floor(this.throws / this.ctx.characters.length);
+        // One seeded timing error per throw, in units of this thrower's own
+        // window, so every AI thrower misses the green band about as often.
+        if (this.aiError?.throw !== this.throws)
+          this.aiError = {
+            throw: this.throws,
+            value: this.ctx.random() * (AI_EARLY + AI_LATE) - AI_EARLY,
+          };
         values.charge =
-          this.power() <
-          this.ideal() + Math.sin((own + 1) * 4.7 + this.turn * 1.9) * 0.03
+          this.power() < this.ideal() + this.aiError.value * this.window()
             ? 1
             : 0;
       }

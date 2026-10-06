@@ -9,7 +9,7 @@ An AI player never pauses the match and never resumes it. It exists only in Play
 ## The simple case
 
 With the defaults, player 2 is Dan as an **AI player**. He has no control panel under the stage, and his tile in the *score strip*, which only screen readers get, ends in "· AI".
-- **In cornhole**, Dan's turn starts on his favourite shot, **Roll**, and 0.4 s later he begins to charge from wherever he stands, aimed at the centre of the board. He lets go close to the ideal power, and the caption reads **Perfect release**.
+- **In cornhole**, Dan's turn starts on his favourite shot, **Roll**, and 0.4 s later he begins to charge from wherever he stands, aimed at the centre of the board. He lets go near the ideal power, a little early or late by a seeded amount, so the caption reads **Perfect release** about a third of the time and **Early release** or **Late release** otherwise.
 - **In Clubhouse Dash**, Dan runs straight down his lane from the start, sprinting whenever he has the stamina, and jumps or slides as each obstacle in his lane comes up.
 - **In Backyard Brawl**, Dan walks toward his opponent until he is in range. Then, a few times a second, he picks a light attack, a heavy attack, a dodge, a power strike, or a block if his opponent is attacking.
 
@@ -63,8 +63,8 @@ Once the event is over, every action it presses is refused. It can still be the 
 - **Where it stands.** It never moves or aims. It throws from its starting spot, at the centre of the board. Every starting spot is inside the throwing line, so the AI never jumps to a new spot on its first turn.
 - **The shot.** Each turn starts on the character's favourite shot among the four a player can select: **Hole runner** for Doug, **Roll** for Dan. The AI never changes shot and never uses precision mode.
 - **The charge.** It starts a charge 0.4 s after its turn begins.
-- **The release.** It holds until the power reaches the ideal for its spot, nudged early or late by up to 0.03. The nudge follows a fixed pattern set by how many bags *this thrower* has thrown, and by its slot, so every AI thrower gets the same spread of early and late releases. The *release window* is at least ±0.035 wide: ±0.062 for Doug's Hole runner and about ±0.074 for Dan's Roll. So every AI release is graded **Perfect release**.
-- **Where it lands.** An on-target release usually drops into the hole. A 0.03 miss lands about 15 stage pixels short of or past it.
+- **The release.** It holds until the power reaches the ideal for its spot plus a timing error. The error is drawn once per throw from the match's seeded random numbers, so the same seed always plays the same match, and a charge cancelled by a pause keeps the same error when it starts again. It is measured in this thrower's own *release window* (±0.040 for Doug's Hole runner, ±0.049 for Dan's Roll, ±0.059 on Dan's clutch bag) and falls evenly anywhere from 4 windows early to 1.6 windows late, so misses lean short, where the board is long, rather than off its back edge. Because the AI lets go on the first game step at or past its target, its releases land up to about 0.011 later than that. About 31% of AI releases are graded **Perfect release**; the rest are **Early release** or **Late release**.
+- **Where it lands.** A perfect release drops into the hole. Over 60 AI-against-AI matches (30 seeds, each with both seatings), 51% of AI bags went in the hole and 0.4% missed the board; the first thrower won 36, the second 15, and 9 were drawn. Doug won 31 and Dan 20: scaling the error to each thrower's own window gives Dan's wider Roll window larger misses.
 
 **Clubhouse Dash:**
 - **Direction.** It holds full forward and never steers, changes lane, brakes or dodges. In **Free steering / control acceleration** it holds full throttle along its starting line.
@@ -137,7 +137,7 @@ Once the event is over, every action it presses is refused. It can still be the 
 
 ## Edge cases
 
-- **Cornhole treats every AI thrower alike.** The early-or-late nudge follows each thrower's own bag count, not the number of bags in the match, so no slot is favoured. The engine's reference match of two AI players ended 10–10.
+- **Cornhole treats every AI thrower alike.** Each throw's timing error comes from the same seeded draw in units of the thrower's own window, so no slot is favoured by the AI itself. The engine's reference match of two AI players ended 6–8.
 - **The cornhole AI never moves.** Every slot starts inside the throwing line, so an AI in slot 3 or 4 throws from its starting spot, as in [the cornhole throw](../play/cornhole.md). Dan's AI always throws **Roll**, and Doug's **Hole runner**.
 - **The Dash AI never changes lane.** Each row of obstacles leaves one lane clear, but the AI stays in its own and meets every obstacle there. Players 1 and 4 share a lane.
 - **The Dash AI's timing follows its speed.** It reacts about half a second before a hurdle and 0.3 s before a bar, so a fast runner reacts farther away. At low speed, for example after a stumble, it still reacts no closer than 36 pixels ([Clubhouse Dash](../play/clubhouse-dash.md)).
@@ -148,10 +148,11 @@ Once the event is over, every action it presses is refused. It can still be the 
 
 - Read from `PrecisionEvent.ts`, `RunningEvent.ts` and `FightingEvent.ts` (each `ai()` method), `AIController.ts`, `ArenaSession.ts` and `LiveStage.tsx`. `tests/live-tests.mjs` proves that AI players go through the player-controller path, that the cornhole AI scores, that AI runners reach at least 90% of the course, that AI fighters land hits, and that two AI sessions with the same seed match. It runs against the session, not the page, and nothing about AI players is confirmed on the production page.
 - **Reference results.** The engine's reference AI-against-AI run (seed `live-proof`, Doug against Dan, in `docs/review/live-engine-tests.json`):
-  - cornhole ended 10–10 after 31.85 s
+  - cornhole ended 6–8 after 31.18 s
   - both runners finished at 100% after 12.62 s
   - the Brawl ended with Doug knocked out and Dan on 64 HP after 13.12 s; the scores were 36 and 105
 - **Fixed: cornhole bias (B-26).** The release nudge used to count every bag in the match, which made player 1's AI more accurate than player 2's. It now follows each thrower's own bag count (`PrecisionEvent.ts`, `ai()`).
+- **Fixed: the cornhole AI was always perfect.** The nudge kept every AI release inside the window, and the first thrower never lost in 60 AI matches. It is now a seeded per-throw error, as above.
 - **Dash AI crashes.** Whether the time-based reaction ever still meets a hurdle or bar has not been measured in play. The reference run has both runners finishing.
 - **Brawl decisions during pause.** The Brawl AI can re-decide while paused (`FightingEvent.ts` lines 138–176; `ArenaSession.ts` lines 211–214). Whether that is intended is a product call; players cannot see it directly.
 - **Blocking percentages** are computed from the personality values in the character profiles, as 1 − 0.4 × (intensity + showmanship × 0.25). They have not been measured in play.
