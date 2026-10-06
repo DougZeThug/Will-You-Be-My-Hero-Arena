@@ -16,6 +16,8 @@ const SHOTS: Record<string, string> = Object.fromEntries(
     .filter((a) => a.command.startsWith('select.'))
     .map((a) => [a.command.slice(7), a.label]),
 );
+/** The card rating that sets a shot's window, where it differs from the shot: a Hole runner is a slide shot. */
+const SKILL: Record<string, string> = { flat: 'slide' };
 /** Where each thrower stands: inside the throwing line, one depth row each. */
 const START_X = [215, 345, 280, 190];
 /** Landing drift per unit of power error outside the release window's blend (stage px). */
@@ -161,7 +163,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
     const c = this.active();
     return (
       0.02 +
-      c.stats.event('cornhole', this.shot, 0.6) / 30 +
+      c.stats.event('cornhole', SKILL[this.shot] ?? this.shot, 0.6) / 30 +
       (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.015 : 0) +
       (this.throws >= this.ctx.characters.length * 3 &&
       c.abilities.has('clutchPerformer')

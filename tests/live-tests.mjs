@@ -712,6 +712,27 @@ export async function testLive({ check }) {
       flight,
     };
   };
+  // A Hole runner is a slide shot: its window comes from the card's Slide skill.
+  for (const [cardId, skill] of [
+    ['card-doug', 0.9],
+    ['card-dan', 0.72],
+  ]) {
+    const s = new ArenaSession({
+      ...config('cornhole', false),
+      players: config('cornhole', false).players.map((p, i) => ({
+        ...p,
+        cardId: i ? 'card-doug' : cardId,
+      })),
+    });
+    const e = s.event;
+    while (e.state !== 'aiming') step(s);
+    pulse(s, 'p0', 'primaryAction');
+    const holeRunner = e.window();
+    pulse(s, 'p0', 'secondaryAction');
+    check(() => assert.equal(holeRunner, e.window(), cardId));
+    check(() => assert.ok(Math.abs(holeRunner - (0.02 + skill / 30)) < 1e-12));
+    s.destroy();
+  }
   // Beyond two windows a miss lands exactly where it always has: 490 px per
   // unit of error along the board and 60 px toward its front, scatter aside.
   for (const held of [0.05, 0.18, 0.4, 1.4, 2]) {
