@@ -94,8 +94,8 @@ existing Playwright setup: installed Chrome on Windows, Chromium elsewhere.
 browser; these are local QA options, not Vercel application variables.
 
 The check compares all public files byte-for-byte, validates Vite manifest and
-CSS paths with case-sensitive names even on Windows, and compares the eight
-weighted-character source assets to their exported files. It opens real Play
+CSS paths with case-sensitive names even on Windows, and compares every
+listed character source asset to its exported file. It opens real Play
 and Watch UI, completes Dan/Doug's showcase at normal speed, enables sound,
 checks replay preserves recorded facts, then reloads and resumes the save.
 It collects console errors and HTTP failures and rejects unexpected external
