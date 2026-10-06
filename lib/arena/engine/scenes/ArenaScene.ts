@@ -29,11 +29,21 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
-import { presentationPushStart } from '../events/cornhole/ReleasedBagPhysics';
+import { presentationPush } from '../events/cornhole/ReleasedBagPhysics';
 import {
   firstImpactTime,
   presentationShot,
 } from '../events/cornhole/CornholePresentationTiming';
+/** Watch cornhole draw order: the thrown bag from release until contactAt
+ * draws above the board bags, which stack in throw order. */
+const THROWN_BAG_DEPTH = 60.5;
+const cornholeBagDepth = (rec: Recording, id: string) =>
+  60 +
+  0.001 *
+    Math.max(
+      0,
+      rec.attempts.findIndex((a) => a.id === id),
+    );
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -303,18 +313,24 @@ export class ArenaScene extends Phaser.Scene {
           take?.release && active?.boardResolution
             ? new Map(
                 active.boardResolution.interactions.flatMap((hit) => {
-                  const at = presentationPushStart(
+                  const push = presentationPush(
                     active,
                     take.shot,
                     take.release!,
                     hit,
                   );
-                  return at === undefined ? [] : [[hit.id, at] as const];
+                  return push ? [[hit.id, push] as const] : [];
                 }),
               )
             : undefined;
-      for (const object of this.event.persistentObjects(time, pushStarts))
-        this.projectile(object.id, object.actor).show(object.frame, false);
+      for (const object of this.event.persistentObjects(time, pushStarts)) {
+        const bag = this.projectile(object.id, object.actor);
+        bag.show(object.frame, false);
+        // Cornhole board bags stack in throw order, so a cold seek draws
+        // them as playback did.
+        if (p.sport === 'cornhole')
+          bag.sprite.setDepth(cornholeBagDepth(rec, object.id));
+      }
       if (
         active &&
         time >= active.releaseAt &&
@@ -471,10 +487,18 @@ export class ArenaScene extends Phaser.Scene {
         hand.flatten,
       );
     else if (take.frame) {
-      this.projectile(attempt.id, c.actor).release(
+      const bag = this.projectile(attempt.id, c.actor);
+      bag.release(
         take.frame,
         c.rig.heldObjectLayer,
         controller.runtime.attachment('rightHand'),
+      );
+      // The thrown bag draws above every board bag until it comes to rest at
+      // contactAt, then joins them in throw order.
+      bag.sprite.setDepth(
+        time < attempt.contactAt
+          ? THROWN_BAG_DEPTH
+          : cornholeBagDepth(rec, attempt.id),
       );
       // The ring and hole star mark the bag arriving at the target
       // (contactAt); the landing puff marks the first impact at its touch.
@@ -598,6 +622,7 @@ export class ArenaScene extends Phaser.Scene {
         attached: o.attached,
         kinematics: o.kinematics,
         visible: o.sprite.visible,
+        depth: o.sprite.depth,
         ...o.worldFrame(),
         alpha: o.sprite.alpha,
       })),

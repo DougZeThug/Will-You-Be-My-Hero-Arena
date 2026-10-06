@@ -53,11 +53,12 @@ export interface ArenaEvent {
     time: number,
   ): ProjectileFrame;
   resolveResult(attempt: Attempt): { points: number; outcome: string };
-  /** `pushStarts`: optional presentation times (by moved object id) at which
-   * the active attempt's thrown object reaches what it pushes. */
+  /** `pushStarts`: optional presentation timing (by moved object id): when
+   * the active attempt's thrown object reaches what it pushes, and how long
+   * the push lasts (seconds). */
   persistentObjects(
     time: number,
-    pushStarts?: ReadonlyMap<string, number>,
+    pushStarts?: ReadonlyMap<string, { start: number; duration: number }>,
   ): PersistentObject[];
   playReaction(direction: DirectedAction): string;
   finish(): void;
