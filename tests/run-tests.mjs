@@ -363,10 +363,12 @@ class CappedStorage extends MemoryStorage {
       (this.map.has(k) ? k.length + this.map.get(k).length : 0) +
       k.length +
       v.length;
-    if (after > this.cap || this.refuse(k))
+    // refuse(k) may name another error, such as a SecurityError.
+    const refusal = this.refuse(k);
+    if (after > this.cap || refusal)
       throw new DOMException(
-        'The quota has been exceeded.',
-        'QuotaExceededError',
+        'The write was refused.',
+        typeof refusal === 'string' ? refusal : 'QuotaExceededError',
       );
     this.map.set(k, v);
   }
@@ -380,12 +382,12 @@ const QUOTA = 5_242_880,
     st.setItem(key, JSON.stringify({ payload: text, checksum: s.hash(text) }));
   };
 {
-  // (a) ~40 exhibitions under a 5,242,880-character store.
+  // (a) 70 exhibitions under a 5,242,880-character store (it fills after about 60).
   const st = new CappedStorage(QUOTA),
     repo = new p.LocalArenaRepository(st),
     committed = [];
   let removed = 0;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 70; i++) {
     const result = await repo.commit(setup('cornhole', 'full-' + i));
     committed.push(result.recording.id);
     removed += result.removedExhibitions ?? 0;
@@ -403,21 +405,33 @@ const QUOTA = 5_242_880,
     .load()
     .recordings.filter((r) => r.setup.mode !== 'ranked')
     .map((r) => r.id);
-  check(() => assert.equal(kept.length + removed, 40));
+  check(() => assert.equal(kept.length + removed, 70));
   check(() =>
     assert.deepEqual(
       kept,
-      committed.slice(40 - kept.length),
+      committed.slice(70 - kept.length),
       'The oldest exhibitions go first',
     ),
   );
-  // (e) A playback position at the cap is best effort and never prunes.
-  st.cap = st.used();
-  const before = st.getItem(p.STORAGE_KEY);
-  repo.savePlayback(committed.at(-1), 5);
+  // (e) With no room even to replace the save in place, a mid-viewing position
+  // is best effort and never prunes, but the write that completes the viewing
+  // is reported.
+  st.cap = st.used() - 1;
+  const before = st.getItem(p.STORAGE_KEY),
+    last = repo.load().recordings.find((r) => r.id === committed.at(-1));
+  repo.savePlayback(last.id, 5);
   checks++;
   check(() => assert.equal(st.getItem(p.STORAGE_KEY), before));
   check(() => assert.equal(st.getItem(JOURNAL), null));
+  // Completing shrinks the save, so refuse every write to reach the refusal.
+  st.refuse = () => true;
+  assert.throws(
+    () => repo.savePlayback(last.id, last.duration),
+    (e) => e instanceof p.StorageFullError,
+  );
+  checks++;
+  check(() => assert.equal(repo.load().active.id, last.id));
+  check(() => assert.equal(st.getItem(p.STORAGE_KEY), before));
 }
 {
   // (b) Counted contests, their awards and the waiting contest are never removed.
@@ -446,9 +460,8 @@ const QUOTA = 5_242_880,
       .map((r) => r.id),
     ledger = JSON.stringify(waiting.ledger),
     table = JSON.stringify(p.standings(waiting));
-  // A write needs room for the journal beside the save, so this leaves room for
-  // the new contest only once an older exhibition is gone.
-  st.cap = 2 * st.used() + 20_000;
+  // The new contest only fits once an older exhibition is gone.
+  st.cap = st.used() + 20_000;
   const result = await repo.commit(setup('pong', 'kept-new'));
   const after = repo.load(),
     ids = after.recordings.map((r) => r.id);
@@ -476,7 +489,7 @@ const QUOTA = 5_242_880,
   waitingAgain.active = { id: exhibitions[0], time: 3 };
   waitingAgain.revision++;
   putSave(st, p.STORAGE_KEY, waitingAgain);
-  st.cap = 2 * st.used() - 1000;
+  st.cap = st.used() - 1000;
   await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 9 });
   const policyAfter = repo.load(),
     policyIds = policyAfter.recordings.map((r) => r.id);
@@ -510,19 +523,15 @@ const QUOTA = 5_242_880,
   );
 }
 {
-  // (d) A refused journal write, and a refused save write, each leave the previous
-  // revision readable and no journal; a single refused save write is retried.
+  // (d) The journal is a best-effort copy: a refused journal write still saves.
+  // A refused save write leaves the previous revision readable and no journal;
+  // a single refused save write is retried.
   const st = new CappedStorage(),
     repo = new p.LocalArenaRepository(st);
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 3 });
+  st.refuse = (k) => k === JOURNAL;
   await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 4 });
   const revision = storedRevision(st);
-  st.refuse = (k) => k === JOURNAL;
-  await assert.rejects(
-    repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 5 }),
-    (e) => e instanceof p.StorageFullError,
-  );
-  checks++;
-  check(() => assert.equal(repo.load().revision, revision));
   check(() => assert.equal(repo.load().policy.win, 4));
   check(() => assert.equal(st.getItem(JOURNAL), null));
   st.refuse = (k) => k === p.STORAGE_KEY;
@@ -539,6 +548,56 @@ const QUOTA = 5_242_880,
   await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 5 });
   check(() => assert.equal(repo.load().revision, revision + 1));
   check(() => assert.equal(repo.load().policy.win, 5));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+}
+{
+  // (g) Above half the store, where the journal copy never fits beside the save,
+  // same-size writes still save directly: a finished counted contest leaves the
+  // resume slot and shows its awards, and an unchanged policy prunes nothing.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st),
+    entry = m.SCHEDULE[0];
+  for (let i = 0; i < 6; i++) await repo.commit(setup('cornhole', 'half-' + i));
+  st.cap = Math.floor(1.5 * st.used());
+  const counted = await repo.commit({
+    ...setup('cornhole', entry.seed),
+    id: 'counted-half',
+    mode: 'ranked',
+    entryId: entry.id,
+    policy: { ...repo.load().policy },
+  });
+  check(() => assert.equal(counted.removedExhibitions, 0));
+  check(() =>
+    assert.ok(st.used() > st.cap / 2, 'The save is above half the store'),
+  );
+  repo.savePlayback(counted.recording.id, counted.recording.duration);
+  const watched = repo.load();
+  check(() => assert.equal(watched.active, null));
+  check(() =>
+    assert.ok(watched.ledger.some((a) => a.contestId === counted.recording.id)),
+  );
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  await repo.updatePolicy(watched.policy);
+  check(() =>
+    assert.equal(repo.load().recordings.length, watched.recordings.length),
+  );
+  check(() => assert.equal(repo.load().revision, watched.revision + 1));
+  // Only a quota refusal is "full": any other storage error is passed on and
+  // never removes an exhibition.
+  st.refuse = () => 'SecurityError';
+  for (const write of [
+    () => repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 6 }),
+    () => repo.commit(setup('cornhole', 'blocked')),
+  ])
+    await assert.rejects(
+      write(),
+      (e) => e.name === 'SecurityError' && !(e instanceof p.StorageFullError),
+    );
+  checks += 2;
+  check(() =>
+    assert.equal(repo.load().recordings.length, watched.recordings.length),
+  );
+  check(() => assert.equal(repo.load().revision, watched.revision + 1));
   check(() => assert.equal(st.getItem(JOURNAL), null));
 }
 {

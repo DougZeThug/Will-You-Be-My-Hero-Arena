@@ -779,7 +779,7 @@ export async function testLive({ check }) {
     );
     check(() =>
       assert.ok(
-        perfect.filter((n) => n === 3).length >= 0.95 * perfect.length,
+        perfect.every((n) => n === 3),
         sweep.name + ': perfect releases land in the hole',
       ),
     );
