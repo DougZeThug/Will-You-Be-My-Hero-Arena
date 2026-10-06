@@ -465,6 +465,7 @@ export class ArenaScene extends Phaser.Scene {
         time,
         this.bridge.current.reduced || this.bridge.current.low,
         attempt.contactAt,
+        take.frame.kinematics?.touch,
       );
     }
   }

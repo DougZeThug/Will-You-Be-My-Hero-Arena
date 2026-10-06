@@ -1,4 +1,4 @@
-import type { Attempt } from '../../../model';
+import type { Attempt, V3 } from '../../../model';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
 import {
@@ -22,6 +22,69 @@ export {
 /** Court projection: vertical render pixels per metre (see equipment-layout). */
 const COURT_PX_PER_METRE_Y = 78;
 const quintic = (u: number) => u * u * u * (10 - 15 * u + 6 * u * u);
+/** Longest presented board slide, in screen px. */
+const MAX_SLIDE_PX = 90;
+/** Hole drop: share of the 0.28 s fall spent easing over the drawn hole. */
+const HOLE_SETTLE = 0.3;
+
+/** Hand→cruise velocity blend window shared by flight and touch solving. */
+export const blendSeconds = (air: number) => Math.min(0.22, 0.35 * air);
+
+/** Board-surface point (the same slope form the board solver records). */
+const onBoard = (x: number, z: number): V3 => ({
+  x,
+  y: 0.16 + ((x - 8) / 1.9) * 0.34,
+  z,
+});
+
+/**
+ * The single owner of a bag's first-impact touch point (simulation space).
+ *
+ * A recorded touch (misses) is returned as is. A performance (ballistic)
+ * release that travels on the board touches down short of the immutable target
+ * by the velocity-matched slide distance: the bag lands at the horizontal speed
+ * the flight arrives with and decelerates to rest exactly on the target at
+ * `contactAt`. The slide never starts off the front of the board, never runs
+ * backwards, and a board bag behind the hole never slides across the hole.
+ * Presentation only: target, timing and scoring are unchanged.
+ */
+export function presentationTouch(
+  a: Attempt,
+  shot: ShotStyle,
+  release: ReleaseFrame,
+): V3 {
+  if (a.boardResolution?.touch) return a.boardResolution.touch;
+  const slide = surfaceTravelSeconds(a, shot);
+  if (release.flatten === undefined || !release.velocity || !slide)
+    return a.target;
+  // Velocity match: ballistic arrival speed (dx - v0·τ/2)/span equals the
+  // slide's initial speed 2d/slide, with dx = D - d.
+  const target = surfacePoint('cornhole', a.actor, a.target),
+    air = Math.max(0.3, a.duration - slide),
+    tau = blendSeconds(air),
+    span = air - tau / 2,
+    ideal =
+      (slide * (target.x - release.x - (release.velocity.x * tau) / 2)) /
+      (2 * span + slide),
+    distance = Math.max(0, Math.min(MAX_SLIDE_PX, ideal));
+  // At fixed depth the registered board maps x piecewise linearly (knee at
+  // the hole), so three samples invert it exactly.
+  const screenX = (x: number) =>
+      surfacePoint('cornhole', a.actor, onBoard(x, a.target.z)).x,
+    front = screenX(8),
+    hole = screenX(9.2),
+    back = screenX(9.9),
+    want = target.x - distance;
+  let x =
+    want <= hole
+      ? 8 + ((want - front) / (hole - front)) * 1.2
+      : 9.2 + ((want - hole) / (back - hole)) * 0.7;
+  x = Math.max(x, Math.min(8.12, 8 + (a.target.x - 8) / 2));
+  const dz = a.target.z - a.actor * 3.5;
+  if (a.contact === 'board' && a.target.x > 9.2 && Math.abs(dz) < 0.19)
+    x = Math.max(x, 9.2 + Math.sqrt(0.19 ** 2 - dz ** 2));
+  return onBoard(Math.min(x, a.target.x), a.target.z);
+}
 
 /**
  * Ballistic flight that leaves the hand at the hand's own evaluated velocity.
@@ -41,7 +104,7 @@ export function ballisticFlight(
   touch: { x: number; y: number },
   air: number,
 ) {
-  const tau = Math.min(0.22, 0.35 * air),
+  const tau = blendSeconds(air),
     dx = touch.x - release.x,
     dy = touch.y - release.y,
     reference = 9.8 * COURT_PX_PER_METRE_Y * (release.scale ?? 1),
@@ -95,14 +158,18 @@ export function releasedBag(
     'drag',
     'desperation',
   ].includes(shot);
-  const touch = a.boardResolution?.touch
-    ? surfacePoint('cornhole', a.actor, a.boardResolution.touch)
-    : target;
+  const touch = surfacePoint(
+    'cornhole',
+    a.actor,
+    presentationTouch(a, shot, release),
+  );
   const slide = surfaceTravelSeconds(a, shot);
   const air = Math.max(0.3, a.duration - slide),
     elapsed = Math.max(0, time - a.releaseAt),
     t = Math.min(air, elapsed);
   const performance = release.flatten !== undefined;
+  // The presentation solver (not a recording) chose this touch point.
+  const presented = performance && !a.boardResolution?.touch && slide > 0;
   const ballistic = performance
     ? ballisticFlight(release, velocity, touch, air)
     : null;
@@ -145,14 +212,37 @@ export function releasedBag(
       (0.52 - flatten) * travel -
       0.07 * Math.sin(Math.PI * clamp01(u / 0.35));
   }
+  // Shadow: on the court under the flight, toward the touch point for a
+  // presented slide; on the board surface under the bag after it lands.
+  let ground =
+    presented && elapsed >= air
+      ? y
+      : 610 -
+        a.actor * 133 +
+        ((presented ? touch.y : target.y) - (610 - a.actor * 133)) *
+          clamp01(t / air);
   const after = Math.max(0, elapsed - a.duration),
-    fall = clamp01(after / 0.28);
+    fall = clamp01(after / 0.28),
+    anchor = placement('cornhole', a.actor).anchor,
+    // Ballistic hole bags first ease from the target over the drawn hole,
+    // then drop through it; the historical path drops at the target.
+    lateral = ballistic ? smooth(clamp01(fall / HOLE_SETTLE)) : 0,
+    sink = ballistic
+      ? smooth(clamp01((fall - HOLE_SETTLE) / (1 - HOLE_SETTLE)))
+      : fall;
   if (elapsed >= a.duration) {
     x = target.x;
     y = target.y;
     vx = 0;
     vy = 0;
-    if (a.contact === 'hole') {
+    if (a.contact === 'hole' && ballistic) {
+      x += (anchor.x - target.x) * lateral;
+      y += (anchor.y - target.y) * lateral;
+      ground = y;
+      y += 42 * sink * boardDepthScale(a.actor);
+      alpha = fall >= 1 ? 0 : 1;
+      flatten *= 1 - 0.15 * sink;
+    } else if (a.contact === 'hole') {
       y += 42 * smooth(fall) * boardDepthScale(a.actor);
       alpha = fall >= 1 ? 0 : 1;
       flatten *= 1 - 0.15 * fall;
@@ -204,23 +294,21 @@ export function releasedBag(
     angle,
     flatten,
     alpha,
-    scale: depth * stretch * (a.contact === 'hole' ? 1 - 0.2 * fall : 1),
-    ...(a.contact === 'hole' && elapsed >= a.duration
+    scale: depth * stretch * (a.contact === 'hole' ? 1 - 0.2 * sink : 1),
+    // Mask the hole's front lip only once the bag is over the drawn hole, so
+    // no bag is clipped on the board in front of it.
+    ...(a.contact === 'hole' &&
+    elapsed >= a.duration &&
+    (!ballistic || fall >= HOLE_SETTLE)
       ? {
           occlusion: {
-            ...placement('cornhole', a.actor).anchor,
-            y: placement('cornhole', a.actor).anchor.y + 5 * depth,
+            ...anchor,
+            y: anchor.y + 5 * depth,
             slope: -0.1,
           },
         }
       : {}),
-    ground: {
-      x,
-      y:
-        610 -
-        a.actor * 133 +
-        (target.y - (610 - a.actor * 133)) * clamp01(t / air),
-    },
+    ground: { x, y: ground },
     kinematics: {
       model: ballistic
         ? 'release-ballistic-blend-v1'
@@ -236,6 +324,7 @@ export function releasedBag(
           }
         : {}),
       airTime: air,
+      ...(presented ? { touch: { x: touch.x, y: touch.y } } : {}),
       phase:
         elapsed < air
           ? 'flight'

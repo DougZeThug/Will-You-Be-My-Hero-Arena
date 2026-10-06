@@ -1,0 +1,5900 @@
+{
+ "description": "Legacy releasedBag frames, as a SHA-256 of JSON.stringify of the rounded frame sequence (time releaseAt + k/60, k < count) plus readable sample frames, (misses with a recorded touch, direct shots, constant-acceleration path) generated from the source commit before the presentation-slide change. Recordings: presentation-slide-0..11 (steady/bold alternating) and docs/showcase-recording.json. Release frames: Lab-captured performance releases; the constant-acceleration path drops flatten. Performance-release hole cases stop before contactAt (the post-contact drop and occlusion gating are the intended change).",
+ "sourceCommit": "e9a0bf65ac76bdc9bb615b50fa83f52d445bfc66",
+ "rounding": 1e-9,
+ "recordings": {
+  "seeds": "presentation-slide-0..31",
+  "strategies": "even: steady/bold, odd: bold/steady",
+  "sha256": "5fedacc5b74a65332f9221ce6506d81bdd4170f37e52ffebd52377cb9d35c484",
+  "showcaseSha256": "b59853fd40910546117b9186f90ff3a9d9632ebf961627921938fdd65a03ef41"
+ },
+ "cases": [
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 0,
+   "attemptId": "test-presentation-slide-0:attempt:0",
+   "shot": "soft",
+   "contact": "board",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "d135de85a0178e003431b966f2ed9862f0e9537ea1c098cab20af69bdeeebefb",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -223.973765498,
+       "y": 2824.630942833
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 774.32655736,
+     "y": 557.966263444,
+     "angle": 0.416737965,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 774.32655736,
+      "y": 563.267779682
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 359.492814277,
+       "y": 1537.403477099
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -223.973765498,
+       "y": 2824.630942833
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 775.523622442,
+     "y": 563.106634095,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 775.523622442,
+      "y": 563.106634095
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -223.973765498,
+       "y": 2824.630942833
+      },
+      "airTime": 0.97,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 775.523622442,
+     "y": 563.106634095,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 775.523622442,
+      "y": 563.106634095
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -223.973765498,
+       "y": 2824.630942833
+      },
+      "airTime": 0.97,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-0:attempt:1",
+   "shot": "slide",
+   "contact": "board",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "c33b742b4611d95b12fcc69cbf4e31314a78330e82416197d879fe91835064a5",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -206.678914477,
+       "y": 1749.418802492
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 1096.116856951,
+     "y": 437.452875177,
+     "angle": 0.703153326,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1096.116856951,
+      "y": 440.730420981
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 544.265731995,
+       "y": 942.827788883
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -206.678914477,
+       "y": 1749.418802492
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1097.929927841,
+     "y": 440.605353467,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1097.929927841,
+      "y": 440.605353467
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -206.678914477,
+       "y": 1749.418802492
+      },
+      "airTime": 0.97,
+      "phase": "board-slide"
+     }
+    },
+    "93": {
+     "x": 1097.929927841,
+     "y": 440.605353467,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1097.929927841,
+      "y": 440.605353467
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -206.678914477,
+       "y": 1749.418802492
+      },
+      "airTime": 0.97,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 2,
+   "attemptId": "test-presentation-slide-0:attempt:2",
+   "shot": "blocker",
+   "contact": "board",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "0cd644623f393d5c269e81e8d1abf3d278bda827026f1f6b2fc64b247584fca3",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -246.743602621,
+       "y": 2876.946613888
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 763.68798346,
+     "y": 582.409307531,
+     "angle": 0.416737965,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 763.68798346,
+      "y": 587.795110128
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 337.481971724,
+       "y": 1587.975292452
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -246.743602621,
+       "y": 2876.946613888
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 764.811552568,
+     "y": 587.718541543,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 764.811552568,
+      "y": 587.718541543
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -246.743602621,
+       "y": 2876.946613888
+      },
+      "airTime": 0.97,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 764.811552568,
+     "y": 587.718541543,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 764.811552568,
+      "y": 587.718541543
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": -246.743602621,
+       "y": 2876.946613888
+      },
+      "airTime": 0.97,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 3,
+   "attemptId": "test-presentation-slide-0:attempt:3",
+   "shot": "airmail",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "547f4d1e1102d07aed39b6533126551042686033276649f6247c9bd666f98c9a",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 538.330186783,
+       "y": -407.76060319
+      },
+      "impliedGravity": 1299.50160433,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1168.970835672,
+     "y": 423.30933123,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1168.970835672,
+      "y": 423.30933123
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 538.330186783,
+       "y": -407.76060319
+      },
+      "impliedGravity": 1299.50160433,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 1168.970835672,
+     "y": 423.30933123,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 0.700591625,
+     "ground": {
+      "x": 1168.970835672,
+      "y": 423.30933123
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 538.330186783,
+       "y": -407.76060319
+      },
+      "impliedGravity": 1299.50160433,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 4,
+   "attemptId": "test-presentation-slide-0:attempt:4",
+   "shot": "airmail",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "57637e565bf087aa3fcca872eee51c283c887cc1926db9fbd525a4c821059786",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 552.060060924,
+       "y": -548.920581345
+      },
+      "impliedGravity": 2086.547356641,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1014.879872545,
+     "y": 530.313661142,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 1014.879872545,
+      "y": 530.313661142
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 552.060060924,
+       "y": -548.920581345
+      },
+      "impliedGravity": 2086.547356641,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 1014.879872545,
+     "y": 530.313661142,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 1.000845178,
+     "ground": {
+      "x": 1014.879872545,
+      "y": 530.313661142
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 552.060060924,
+       "y": -548.920581345
+      },
+      "impliedGravity": 2086.547356641,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-0:attempt:5",
+   "shot": "airmail",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "6d5ba19a58ce584c04b80d87c5b193fc76a22ff85cfd2986c80b074509b82810",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 154.762786053,
+       "y": -347.610169884
+      },
+      "impliedGravity": 1387.273116611,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 731.70399884,
+     "y": 491.880825199,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 731.70399884,
+      "y": 491.880825199
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 154.762786053,
+       "y": -347.610169884
+      },
+      "impliedGravity": 1387.273116611,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 751.70399884,
+     "y": 498.880825199,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 751.70399884,
+      "y": 491.880825199
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 154.762786053,
+       "y": -347.610169884
+      },
+      "impliedGravity": 1387.273116611,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-0:attempt:5",
+   "shot": "airmail",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "e2571aa6c9272e9fddda2452cf9e1cfe7db3740ed04edba50b1e43e0287637e9",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -859.895708322,
+       "y": 1387.273116611
+      },
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 731.70399884,
+     "y": 491.880825199,
+     "angle": 0.825819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 731.70399884,
+      "y": 491.880825199
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -859.895708322,
+       "y": 1387.273116611
+      },
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 751.70399884,
+     "y": 498.880825199,
+     "angle": 1.075819992,
+     "flatten": 0.68,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 751.70399884,
+      "y": 491.880825199
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -859.895708322,
+       "y": 1387.273116611
+      },
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-0:attempt:7",
+   "shot": "fast",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "0fa96e1eb95980517c5e03ec63d10df8cb4517af1bf40b8d0137074a40a95204",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 558.785797914,
+       "y": -273.786997248
+      },
+      "impliedGravity": 1625.56439019,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1070.328118475,
+     "y": 435.404079894,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1070.328118475,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 289.005378191,
+       "y": 127.656376278
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 558.785797914,
+       "y": -273.786997248
+      },
+      "impliedGravity": 1625.56439019,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1101.637034446,
+     "y": 449.233520657,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1101.637034446,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 558.785797914,
+       "y": -273.786997248
+      },
+      "impliedGravity": 1625.56439019,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1121.637034446,
+     "y": 456.233520657,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1121.637034446,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 558.785797914,
+       "y": -273.786997248
+      },
+      "impliedGravity": 1625.56439019,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-0",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-0:attempt:7",
+   "shot": "fast",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "f8cba07405f59a94d78cb624cf6481d2341a26bb4c0206738e7313d41500ad59",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -321.327151091,
+       "y": 1625.56439019
+      },
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1070.328118475,
+     "y": 435.404079894,
+     "angle": 0.707668989,
+     "flatten": 0.665697588,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1070.328118475,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 289.005378191,
+       "y": 127.656376278
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -321.327151091,
+       "y": 1625.56439019
+      },
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1101.637034446,
+     "y": 449.233520657,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1101.637034446,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -321.327151091,
+       "y": 1625.56439019
+      },
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1121.637034446,
+     "y": 456.233520657,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1121.637034446,
+      "y": 449.233520657
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -321.327151091,
+       "y": 1625.56439019
+      },
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-1",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-1:attempt:1",
+   "shot": "fast",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "c38aae8fc947a70de5cf7a21ddc379a166b4240d889cc8fddc53583f80525f31",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -271.057358884,
+       "y": 1388.67805104
+      },
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1191.733959339,
+     "y": 492.978430223,
+     "angle": 0.725819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1191.733959339,
+      "y": 492.978430223
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -271.057358884,
+       "y": 1388.67805104
+      },
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1211.733959339,
+     "y": 499.978430223,
+     "angle": 0.975819992,
+     "flatten": 0.68,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1211.733959339,
+      "y": 492.978430223
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -271.057358884,
+       "y": 1388.67805104
+      },
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-1",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 3,
+   "attemptId": "test-presentation-slide-1:attempt:3",
+   "shot": "slide",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "8eb254f8544a15e2159e7fd60209c4ac978fa15554fc823a4d08b35eec96bdf4",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 664.75303648,
+       "y": -279.340758136
+      },
+      "impliedGravity": 1615.932077969,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1167.159889313,
+     "y": 430.989683031,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1167.159889313,
+      "y": 467.236236975
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 93.085858548,
+       "y": 334.583574867
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 664.75303648,
+       "y": -279.340758136
+      },
+      "impliedGravity": 1615.932077969,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1177.244190656,
+     "y": 467.236236975,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1177.244190656,
+      "y": 467.236236975
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 664.75303648,
+       "y": -279.340758136
+      },
+      "impliedGravity": 1615.932077969,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1197.244190656,
+     "y": 474.236236975,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1197.244190656,
+      "y": 467.236236975
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 664.75303648,
+       "y": -279.340758136
+      },
+      "impliedGravity": 1615.932077969,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-1",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 4,
+   "attemptId": "test-presentation-slide-1:attempt:4",
+   "shot": "airmail",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "464c4e14023f8f2c99182dcb6863e4bf84a8c35a72a7a5a4af65ecbbb1320b70",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 395.406171903,
+       "y": -536.072385189
+      },
+      "impliedGravity": 2105.295444471,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 836.294439062,
+     "y": 544.96060476,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 836.294439062,
+      "y": 544.96060476
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 395.406171903,
+       "y": -536.072385189
+      },
+      "impliedGravity": 2105.295444471,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 836.294439062,
+     "y": 544.96060476,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 1.000845178,
+     "ground": {
+      "x": 836.294439062,
+      "y": 544.96060476
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 395.406171903,
+       "y": -536.072385189
+      },
+      "impliedGravity": 2105.295444471,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-1",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-1:attempt:5",
+   "shot": "flat",
+   "contact": "hole",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "52e0a6ca5def0cf1f7ea9316c44c2b6172aaeea28cf89609274fcb0d77a6a464",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -100.585367035,
+       "y": 1743.194753479
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 1145.68611995,
+     "y": 434.544861166,
+     "angle": 0.703153326,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1145.68611995,
+      "y": 437.812379335
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 646.822827855,
+       "y": 936.81120817
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -100.585367035,
+       "y": 1743.194753479
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1147.841637235,
+     "y": 437.677249609,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "occlusion": {
+      "x": 1145,
+      "y": 437.896192203,
+      "slope": -0.1
+     },
+     "ground": {
+      "x": 1147.841637235,
+      "y": 437.677249609
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -100.585367035,
+       "y": 1743.194753479
+      },
+      "airTime": 0.97,
+      "phase": "hole-drop"
+     }
+    },
+    "93": {
+     "x": 1147.841637235,
+     "y": 467.077249609,
+     "angle": -0.1,
+     "flatten": 0.442,
+     "alpha": 0,
+     "scale": 0.56,
+     "occlusion": {
+      "x": 1145,
+      "y": 437.896192203,
+      "slope": -0.1
+     },
+     "ground": {
+      "x": 1147.841637235,
+      "y": 437.677249609
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": -100.585367035,
+       "y": 1743.194753479
+      },
+      "airTime": 0.97,
+      "phase": "hole-drop"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-2",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-2:attempt:5",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "c6391c2ee7be45f81ab446999483fd725114fd247c6e937de244af7d99a2d0ca",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 494.760209296,
+       "y": -246.861338585
+      },
+      "impliedGravity": 1672.26361909,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1011.624787459,
+     "y": 460.453636591,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1011.624787459,
+      "y": 483.24751873
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 348.61003445,
+       "y": 210.405065905
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 494.760209296,
+       "y": -246.861338585
+      },
+      "impliedGravity": 1672.26361909,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1049.390874525,
+     "y": 483.24751873,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1049.390874525,
+      "y": 483.24751873
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 494.760209296,
+       "y": -246.861338585
+      },
+      "impliedGravity": 1672.26361909,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1069.390874525,
+     "y": 490.24751873,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1069.390874525,
+      "y": 483.24751873
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 494.760209296,
+       "y": -246.861338585
+      },
+      "impliedGravity": 1672.26361909,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-2",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-2:attempt:7",
+   "shot": "airmail",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "2c37757e2101fffc83524bc04d09b9c8d55a0d4283f7ff2612656b8c1e4a3875",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 524.127907078,
+       "y": -390.009163277
+      },
+      "impliedGravity": 1325.404505452,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1152.780236809,
+     "y": 443.545972732,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1152.780236809,
+      "y": 443.545972732
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 524.127907078,
+       "y": -390.009163277
+      },
+      "impliedGravity": 1325.404505452,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 1152.780236809,
+     "y": 443.545972732,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 0.700591625,
+     "ground": {
+      "x": 1152.780236809,
+      "y": 443.545972732
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 524.127907078,
+       "y": -390.009163277
+      },
+      "impliedGravity": 1325.404505452,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-3",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-3:attempt:1",
+   "shot": "slide",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "ff9e8032b813e4b355af8ae1c7bbcd85bd36b0ef1afbe16f6fd05216ab95e335",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 670.438698828,
+       "y": -267.764596034
+      },
+      "impliedGravity": 1636.009501165,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1172.61054925,
+     "y": 441.855685558,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1172.61054925,
+      "y": 485.066503511
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 158.537556889,
+       "y": 398.869088797
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 670.438698828,
+       "y": -267.764596034
+      },
+      "impliedGravity": 1636.009501165,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1189.785451246,
+     "y": 485.066503511,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1189.785451246,
+      "y": 485.066503511
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 670.438698828,
+       "y": -267.764596034
+      },
+      "impliedGravity": 1636.009501165,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1209.785451246,
+     "y": 492.066503511,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1209.785451246,
+      "y": 485.066503511
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 670.438698828,
+       "y": -267.764596034
+      },
+      "impliedGravity": 1636.009501165,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-3",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 3,
+   "attemptId": "test-presentation-slide-3:attempt:3",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "625347ae15a9e77c20f7cb501a903afab4b963dd7ba549702e79ae4433580510",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 661.097154056,
+       "y": -283.759109034
+      },
+      "impliedGravity": 1608.268994124,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1164.089428649,
+     "y": 426.90887825,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1164.089428649,
+      "y": 462.641918745
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 180.30032753,
+       "y": 329.843450728
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 661.097154056,
+       "y": -283.759109034
+      },
+      "impliedGravity": 1608.268994124,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1183.621964131,
+     "y": 462.641918745,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1183.621964131,
+      "y": 462.641918745
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 661.097154056,
+       "y": -283.759109034
+      },
+      "impliedGravity": 1608.268994124,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1203.621964131,
+     "y": 469.641918745,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1203.621964131,
+      "y": 462.641918745
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 661.097154056,
+       "y": -283.759109034
+      },
+      "impliedGravity": 1608.268994124,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-3",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-3:attempt:7",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "e5e5a63c2a30395eb12cb2f09058b1897c8877da49491e592731207e11a2b239",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.195130488,
+       "y": -265.828818025
+      },
+      "impliedGravity": 1639.366868999,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1153.025950756,
+     "y": 443.456819498,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1153.025950756,
+      "y": 480.86933042
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 146.475654355,
+       "y": 345.346254658
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.195130488,
+       "y": -265.828818025
+      },
+      "impliedGravity": 1639.366868999,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1168.894146644,
+     "y": 480.86933042,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1168.894146644,
+      "y": 480.86933042
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.195130488,
+       "y": -265.828818025
+      },
+      "impliedGravity": 1639.366868999,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1188.894146644,
+     "y": 487.86933042,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1188.894146644,
+      "y": 480.86933042
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.195130488,
+       "y": -265.828818025
+      },
+      "impliedGravity": 1639.366868999,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-4",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 0,
+   "attemptId": "test-presentation-slide-4:attempt:0",
+   "shot": "collect",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "6e3751740a22beb008aac744db52a17bd041e962d2b7edd37c58e4bff4f639e6",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 284.086491046,
+       "y": -476.350293762
+      },
+      "impliedGravity": 2192.441920282,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 709.390002884,
+     "y": 613.043788987,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 709.390002884,
+      "y": 613.043788987
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 284.086491046,
+       "y": -476.350293762
+      },
+      "impliedGravity": 2192.441920282,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 729.390002884,
+     "y": 620.043788987,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 1,
+     "ground": {
+      "x": 729.390002884,
+      "y": 613.043788987
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 284.086491046,
+       "y": -476.350293762
+      },
+      "impliedGravity": 2192.441920282,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-4",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 4,
+   "attemptId": "test-presentation-slide-4:attempt:4",
+   "shot": "soft",
+   "contact": "hole",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "390960afefefee76eda319a0fcbd065cc425aa55eb8aa18939416793d1fe4192",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 169.556104132,
+       "y": 2781.413489044
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 958.192457559,
+     "y": 537.774108646,
+     "angle": 0.416737965,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 958.192457559,
+      "y": 543.005996764
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 739.905021586,
+       "y": 1495.626605104
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 169.556104132,
+       "y": 2781.413489044
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 960.65974961,
+     "y": 542.77498296,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 960.65974961,
+      "y": 542.77498296
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 169.556104132,
+       "y": 2781.413489044
+      },
+      "airTime": 0.97,
+      "phase": "board-slide"
+     }
+    },
+    "93": {
+     "x": 960.65974961,
+     "y": 584.77498296,
+     "angle": -0.1,
+     "flatten": 0.442,
+     "alpha": 0,
+     "scale": 0.8,
+     "occlusion": {
+      "x": 980,
+      "y": 548.99456029,
+      "slope": -0.1
+     },
+     "ground": {
+      "x": 960.65974961,
+      "y": 542.77498296
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 169.556104132,
+       "y": 2781.413489044
+      },
+      "airTime": 0.97,
+      "phase": "hole-drop"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-5",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 3,
+   "attemptId": "test-presentation-slide-5:attempt:3",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "b2d77ba80521ad5206cc9b0e165c0e97d9b9804e28a54b341acd2803ae868b3a",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 546.625915198,
+       "y": -274.415039069
+      },
+      "impliedGravity": 1624.475129232,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1059.118629973,
+     "y": 434.687297977,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1059.118629973,
+      "y": 444.034257521
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 282.33774669,
+       "y": 86.279626553
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 546.625915198,
+       "y": -274.415039069
+      },
+      "impliedGravity": 1624.475129232,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1089.705219198,
+     "y": 444.034257521,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1089.705219198,
+      "y": 444.034257521
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 546.625915198,
+       "y": -274.415039069
+      },
+      "impliedGravity": 1624.475129232,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1109.705219198,
+     "y": 451.034257521,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1109.705219198,
+      "y": 444.034257521
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 546.625915198,
+       "y": -274.415039069
+      },
+      "impliedGravity": 1624.475129232,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-5",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-5:attempt:7",
+   "shot": "slide",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "3e219f74a7fd77f01a4f1a3edf62ae27ed5f60fab74376e03149321950805635",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 594.174101677,
+       "y": -258.056412328
+      },
+      "impliedGravity": 1652.847146578,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1103.242952769,
+     "y": 450.391365326,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1103.242952769,
+      "y": 480.835289824
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 395.464908118,
+       "y": 281.020841522
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 594.174101677,
+       "y": -258.056412328
+      },
+      "impliedGravity": 1652.847146578,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1146.084984482,
+     "y": 480.835289824,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1146.084984482,
+      "y": 480.835289824
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 594.174101677,
+       "y": -258.056412328
+      },
+      "impliedGravity": 1652.847146578,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1166.084984482,
+     "y": 487.835289824,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1166.084984482,
+      "y": 480.835289824
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 594.174101677,
+       "y": -258.056412328
+      },
+      "impliedGravity": 1652.847146578,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "constant-acceleration",
+   "recording": {
+    "seed": "presentation-slide-6",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 4,
+   "attemptId": "test-presentation-slide-6:attempt:4",
+   "shot": "standard",
+   "contact": "hole",
+   "surfaceTravelSeconds": 0.28,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "847a9682e907a58bcd6ac4ca6d2ace81c9bea6cf751ad41dda214355d041f728",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 189.299588677,
+       "y": 2771.814588303
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "58": {
+     "x": 967.417052283,
+     "y": 533.28928891,
+     "angle": 0.416737965,
+     "flatten": 0.68,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 967.417052283,
+      "y": 538.505712133
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 758.990389979,
+       "y": 1486.34766772
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 189.299588677,
+       "y": 2771.814588303
+      },
+      "airTime": 0.97,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 969.948071914,
+     "y": 538.259180106,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "occlusion": {
+      "x": 980,
+      "y": 548.99456029,
+      "slope": -0.1
+     },
+     "ground": {
+      "x": 969.948071914,
+      "y": 538.259180106
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 189.299588677,
+       "y": 2771.814588303
+      },
+      "airTime": 0.97,
+      "phase": "hole-drop"
+     }
+    },
+    "93": {
+     "x": 969.948071914,
+     "y": 580.259180106,
+     "angle": -0.1,
+     "flatten": 0.442,
+     "alpha": 0,
+     "scale": 0.8,
+     "occlusion": {
+      "x": 980,
+      "y": 548.99456029,
+      "slope": -0.1
+     },
+     "ground": {
+      "x": 969.948071914,
+      "y": 538.259180106
+     },
+     "kinematics": {
+      "model": "release-constant-acceleration",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 189.299588677,
+       "y": 2771.814588303
+      },
+      "airTime": 0.97,
+      "phase": "hole-drop"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-6",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-6:attempt:5",
+   "shot": "cut",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "9a303ca79c509955a9527fb74d88ba198524b4470e22c3109d468798f50e7128",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 668.920020582,
+       "y": -266.944626468
+      },
+      "impliedGravity": 1637.431637089,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1171.223463836,
+     "y": 442.607314572,
+     "angle": -0.090158229,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1171.223463836,
+      "y": 485.729665966
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 161.544002091,
+       "y": 398.052474406
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 668.920020582,
+       "y": -266.944626468
+      },
+      "impliedGravity": 1637.431637089,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1188.724064063,
+     "y": 485.729665966,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1188.724064063,
+      "y": 485.729665966
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 668.920020582,
+       "y": -266.944626468
+      },
+      "impliedGravity": 1637.431637089,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1208.724064063,
+     "y": 492.729665966,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1208.724064063,
+      "y": 485.729665966
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 668.920020582,
+       "y": -266.944626468
+      },
+      "impliedGravity": 1637.431637089,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-7",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 0,
+   "attemptId": "test-presentation-slide-7:attempt:0",
+   "shot": "highArc",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "36971d2f6218b08d6fb7699df70d8a91369f51b58649f837b759c69bf4b5aa82",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 542.200630006,
+       "y": -491.932224211
+      },
+      "impliedGravity": 2169.70476737,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1003.640121299,
+     "y": 595.280388275,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 1003.640121299,
+      "y": 595.280388275
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 542.200630006,
+       "y": -491.932224211
+      },
+      "impliedGravity": 2169.70476737,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1023.640121299,
+     "y": 602.280388275,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 1,
+     "ground": {
+      "x": 1023.640121299,
+      "y": 595.280388275
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 542.200630006,
+       "y": -491.932224211
+      },
+      "impliedGravity": 2169.70476737,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-8",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-8:attempt:1",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "a9ada7d3ba760cca4d249f78654b45c4e04a2a7f11b7de9e43d8ce3bd35e489e",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 500.763558738,
+       "y": -246.021913959
+      },
+      "impliedGravity": 1673.719497412,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1017.168003288,
+     "y": 461.27640761,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1017.168003288,
+      "y": 485.699022829
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 354.60422788,
+       "y": 225.439525106
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 500.763558738,
+       "y": -246.021913959
+      },
+      "impliedGravity": 1673.719497412,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1055.583461308,
+     "y": 485.699022829,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1055.583461308,
+      "y": 485.699022829
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 500.763558738,
+       "y": -246.021913959
+      },
+      "impliedGravity": 1673.719497412,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1075.583461308,
+     "y": 492.699022829,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1075.583461308,
+      "y": 485.699022829
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 500.763558738,
+       "y": -246.021913959
+      },
+      "impliedGravity": 1673.719497412,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-8",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 3,
+   "attemptId": "test-presentation-slide-8:attempt:3",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "ee0459a2c02c48757283b2e145d6f53988ce8c68daf34fb24b31e1e3d85dd054",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 474.503555876,
+       "y": -242.782257449
+      },
+      "impliedGravity": 1679.338281443,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 992.964784858,
+     "y": 464.202062388,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 992.964784858,
+      "y": 486.85633094
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 341.50028824,
+       "y": 209.116325091
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 474.503555876,
+       "y": -242.782257449
+      },
+      "impliedGravity": 1679.338281443,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1029.960649417,
+     "y": 486.85633094,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1029.960649417,
+      "y": 486.85633094
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 474.503555876,
+       "y": -242.782257449
+      },
+      "impliedGravity": 1679.338281443,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1049.960649417,
+     "y": 493.85633094,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1049.960649417,
+      "y": 486.85633094
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 474.503555876,
+       "y": -242.782257449
+      },
+      "impliedGravity": 1679.338281443,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-8",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 7,
+   "attemptId": "test-presentation-slide-8:attempt:7",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "637ddfd84e3491d075320c20168ff8e766b4d0a0ee3f35eb527f224cb8d1cf3f",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.745662123,
+       "y": -287.810634268
+      },
+      "impliedGravity": 1601.242124078,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1153.118935864,
+     "y": 422.91107042,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1153.118935864,
+      "y": 449.923046077
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 23.371411407,
+       "y": 249.341313759
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.745662123,
+       "y": -287.810634268
+      },
+      "impliedGravity": 1601.242124078,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1155.650838767,
+     "y": 449.923046077,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1155.650838767,
+      "y": 449.923046077
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.745662123,
+       "y": -287.810634268
+      },
+      "impliedGravity": 1601.242124078,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1175.650838767,
+     "y": 456.923046077,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1175.650838767,
+      "y": 449.923046077
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 649.745662123,
+       "y": -287.810634268
+      },
+      "impliedGravity": 1601.242124078,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-9",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-9:attempt:1",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "cb28a53064f3ebc9b6ec47138dde0d755830d0b254322f5703620700240b297f",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 451.094111971,
+       "y": -239.141376299
+      },
+      "impliedGravity": 1685.652940049,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 971.350017609,
+     "y": 467.539623539,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 971.350017609,
+      "y": 489.805272491
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 318.255437916,
+       "y": 205.529067246
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 451.094111971,
+       "y": -239.141376299
+      },
+      "impliedGravity": 1685.652940049,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1005.82769005,
+     "y": 489.805272491,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1005.82769005,
+      "y": 489.805272491
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 451.094111971,
+       "y": -239.141376299
+      },
+      "impliedGravity": 1685.652940049,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1025.82769005,
+     "y": 496.805272491,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1025.82769005,
+      "y": 489.805272491
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 451.094111971,
+       "y": -239.141376299
+      },
+      "impliedGravity": 1685.652940049,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-9",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-9:attempt:5",
+   "shot": "fast",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "6196b792ed3bc0aacdd9a5bb9de4d51c19b2bfe603ddd8b63058509e33182b60",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 660.431132546,
+       "y": -284.56403556
+      },
+      "impliedGravity": 1606.872948494,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1163.256531781,
+     "y": 426.108610261,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1163.256531781,
+      "y": 459.915064152
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 114.757380771,
+       "y": 312.059574382
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 660.431132546,
+       "y": -284.56403556
+      },
+      "impliedGravity": 1606.872948494,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1175.688581365,
+     "y": 459.915064152,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1175.688581365,
+      "y": 459.915064152
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 660.431132546,
+       "y": -284.56403556
+      },
+      "impliedGravity": 1606.872948494,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1195.688581365,
+     "y": 466.915064152,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1195.688581365,
+      "y": 459.915064152
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 660.431132546,
+       "y": -284.56403556
+      },
+      "impliedGravity": 1606.872948494,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "seed": "presentation-slide-9",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 6,
+   "attemptId": "test-presentation-slide-9:attempt:6",
+   "shot": "roll",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "40d1b852b955ea8956e1fe47df7f719dd513c4d21f6aecf24ed622f4ade96e9d",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 540.76353078,
+       "y": -322.902223039
+      },
+      "impliedGravity": 2655.803898009,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 884.903183677,
+     "y": 572.409194494,
+     "angle": -0.090158229,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 1.003586856,
+     "ground": {
+      "x": 884.903183677,
+      "y": 603.480548066
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 556.518766458,
+       "y": 286.812494508
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 540.76353078,
+       "y": -322.902223039
+      },
+      "impliedGravity": 2655.803898009,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 945.192716709,
+     "y": 603.480548066,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 1.00547403,
+     "ground": {
+      "x": 945.192716709,
+      "y": 603.480548066
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 540.76353078,
+       "y": -322.902223039
+      },
+      "impliedGravity": 2655.803898009,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 965.192716709,
+     "y": 610.480548066,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 1,
+     "ground": {
+      "x": 965.192716709,
+      "y": 603.480548066
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 540.76353078,
+       "y": -322.902223039
+      },
+      "impliedGravity": 2655.803898009,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-10",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-presentation-slide-10:attempt:1",
+   "shot": "airmail",
+   "contact": "hole",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 75,
+    "from": "releaseAt"
+   },
+   "sha256": "cf2fa4b4f71be16a59d7376f26ea7daa804b6c0884a8404b3b2120c5f74a586c",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 521.261897135,
+       "y": -400.829711481
+      },
+      "impliedGravity": 1309.615161513,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "74": {
+     "x": 1140.825287188,
+     "y": 421.281267971,
+     "angle": -0.097616676,
+     "flatten": 0.520271229,
+     "alpha": 1,
+     "scale": 0.700060595,
+     "ground": {
+      "x": 1140.825287188,
+      "y": 431.821073809
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 521.261897135,
+       "y": 589.068288519
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 521.261897135,
+       "y": -400.829711481
+      },
+      "impliedGravity": 1309.615161513,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-10",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 2,
+   "attemptId": "test-presentation-slide-10:attempt:2",
+   "shot": "collect",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "7dae2fbca7470d231f1409de8785d0907d6578a988342d907e3312b48963c738",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 480.790957294,
+       "y": -529.93106023
+      },
+      "impliedGravity": 2114.256865852,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 933.633094408,
+     "y": 551.961715213,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 933.633094408,
+      "y": 551.961715213
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 480.790957294,
+       "y": -529.93106023
+      },
+      "impliedGravity": 2114.256865852,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 933.633094408,
+     "y": 551.961715213,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 1.000845178,
+     "ground": {
+      "x": 933.633094408,
+      "y": 551.961715213
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 480.790957294,
+       "y": -529.93106023
+      },
+      "impliedGravity": 2114.256865852,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-10",
+    "strategies": [
+     "steady",
+     "bold"
+    ]
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-presentation-slide-10:attempt:5",
+   "shot": "airmail",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "86f4133ebf9f89e6264a64607b676796088e889982fe8adfc72a83835e7610e4",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 569.979832103,
+       "y": -356.06383246
+      },
+      "impliedGravity": 1374.93753218,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1205.051431337,
+     "y": 482.243649863,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1205.051431337,
+      "y": 482.243649863
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 569.979832103,
+       "y": -356.06383246
+      },
+      "impliedGravity": 1374.93753218,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1225.051431337,
+     "y": 489.243649863,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1225.051431337,
+      "y": 482.243649863
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 569.979832103,
+       "y": -356.06383246
+      },
+      "impliedGravity": 1374.93753218,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "seed": "presentation-slide-11",
+    "strategies": [
+     "bold",
+     "steady"
+    ]
+   },
+   "attemptIndex": 6,
+   "attemptId": "test-presentation-slide-11:attempt:6",
+   "shot": "collect",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "9cc3b8e904c1734dd5821c3b66d2fce3de11f84e64ed5cb172100b47a01b7b1a",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 436.035997618,
+       "y": -524.769780241
+      },
+      "impliedGravity": 2121.788205612,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 882.612440377,
+     "y": 557.845574401,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 882.612440377,
+      "y": 557.845574401
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 436.035997618,
+       "y": -524.769780241
+      },
+      "impliedGravity": 2121.788205612,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 882.612440377,
+     "y": 557.845574401,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 1.000845178,
+     "ground": {
+      "x": 882.612440377,
+      "y": 557.845574401
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 436.035997618,
+       "y": -524.769780241
+      },
+      "impliedGravity": 2121.788205612,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "file": "docs/showcase-recording.json"
+   },
+   "attemptIndex": 1,
+   "attemptId": "test-velvet-paw-29:attempt:1",
+   "shot": "flat",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "dfae6b241920adfc2f7bf58bf430fd5f9105f859103eea7c691ecd14c29237e2",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 624.964939013,
+       "y": -283.4393824
+      },
+      "impliedGravity": 1608.823520475,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1130.564665297,
+     "y": 426.754421641,
+     "angle": -0.1,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 0.702510799,
+     "ground": {
+      "x": 1130.564665297,
+      "y": 448.019091179
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 96.011053027,
+       "y": 196.289257273
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 624.964939013,
+       "y": -283.4393824
+      },
+      "impliedGravity": 1608.823520475,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1140.965862708,
+     "y": 448.019091179,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 0.703831821,
+     "ground": {
+      "x": 1140.965862708,
+      "y": 448.019091179
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 624.964939013,
+       "y": -283.4393824
+      },
+      "impliedGravity": 1608.823520475,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1160.965862708,
+     "y": 455.019091179,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 0.7,
+     "ground": {
+      "x": 1160.965862708,
+      "y": 448.019091179
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 624.964939013,
+       "y": -283.4393824
+      },
+      "impliedGravity": 1608.823520475,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "miss-recorded-touch",
+   "recording": {
+    "file": "docs/showcase-recording.json"
+   },
+   "attemptIndex": 2,
+   "attemptId": "test-velvet-paw-29:attempt:2",
+   "shot": "roll",
+   "contact": "miss",
+   "surfaceTravelSeconds": 0.22,
+   "release": {
+    "x": 322.1713164567981,
+    "y": 391.5399149823486,
+    "scale": 1,
+    "angle": 0.33940463165302626,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 576.0007875917854,
+     "y": -1193.0731009725962
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 121,
+    "from": "releaseAt"
+   },
+   "sha256": "4b0daea5f009ed624e2b77b8cafb97ce02894a1bb545fd07aaf97b205795aad4",
+   "sampleFrames": {
+    "0": {
+     "x": 322.171316457,
+     "y": 391.539914982,
+     "angle": 0.339404632,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 1,
+     "ground": {
+      "x": 322.171316457,
+      "y": 610
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 682.609118602,
+       "y": -356.725636898
+      },
+      "impliedGravity": 2597.141364782,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "flight"
+     }
+    },
+    "62": {
+     "x": 1014.198887564,
+     "y": 541.498492347,
+     "angle": -0.090158229,
+     "flatten": 0.505055145,
+     "alpha": 1,
+     "scale": 1.003586856,
+     "ground": {
+      "x": 1014.198887564,
+      "y": 579.240785578
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 198.600908118,
+       "y": 348.390399059
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 682.609118602,
+       "y": -356.725636898
+      },
+      "impliedGravity": 2597.141364782,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "board-slide"
+     }
+    },
+    "75": {
+     "x": 1035.713985943,
+     "y": 579.240785578,
+     "angle": -0.1,
+     "flatten": 0.511553159,
+     "alpha": 1,
+     "scale": 1.00547403,
+     "ground": {
+      "x": 1035.713985943,
+      "y": 579.240785578
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 682.609118602,
+       "y": -356.725636898
+      },
+      "impliedGravity": 2597.141364782,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    },
+    "120": {
+     "x": 1055.713985943,
+     "y": 586.240785578,
+     "angle": 0.15,
+     "flatten": 0.52,
+     "alpha": 0,
+     "scale": 1,
+     "ground": {
+      "x": 1055.713985943,
+      "y": 579.240785578
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 576.000787592,
+       "y": -1193.073100973
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 1146.6
+      },
+      "cruiseVelocity": {
+       "x": 682.609118602,
+       "y": -356.725636898
+      },
+      "impliedGravity": 2597.141364782,
+      "blendSeconds": 0.22,
+      "airTime": 1.03,
+      "phase": "settle"
+     }
+    }
+   }
+  },
+  {
+   "kind": "direct",
+   "recording": {
+    "file": "docs/showcase-recording.json"
+   },
+   "attemptIndex": 5,
+   "attemptId": "test-velvet-paw-29:attempt:5",
+   "shot": "airmail",
+   "contact": "board",
+   "surfaceTravelSeconds": 0,
+   "release": {
+    "x": 473.428334314085,
+    "y": 343.42001975517303,
+    "scale": 0.7,
+    "angle": 0.6258199922757343,
+    "flatten": 0.46,
+    "velocity": {
+     "x": 744.0553493225564,
+     "y": -748.2770535262795
+    }
+   },
+   "samples": {
+    "rate": 60,
+    "count": 94,
+    "from": "releaseAt"
+   },
+   "sha256": "e80a98d7b76433f82fc0fda0b34bef8b189fb620720a9c1e9082ef10583bef51",
+   "sampleFrames": {
+    "0": {
+     "x": 473.428334314,
+     "y": 343.420019755,
+     "angle": 0.625819992,
+     "flatten": 0.46,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 473.428334314,
+      "y": 477
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 478.640561969,
+       "y": -393.879494297
+      },
+      "impliedGravity": 1319.756918427,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "flight"
+     }
+    },
+    "75": {
+     "x": 1100.924663384,
+     "y": 439.133795368,
+     "angle": -0.1,
+     "flatten": 0.52,
+     "alpha": 1,
+     "scale": 0.7,
+     "ground": {
+      "x": 1100.924663384,
+      "y": 439.133795368
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 478.640561969,
+       "y": -393.879494297
+      },
+      "impliedGravity": 1319.756918427,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    },
+    "93": {
+     "x": 1100.924663384,
+     "y": 439.133795368,
+     "angle": -0.1,
+     "flatten": 0.518683748,
+     "alpha": 1,
+     "scale": 0.700591625,
+     "ground": {
+      "x": 1100.924663384,
+      "y": 439.133795368
+     },
+     "kinematics": {
+      "model": "release-ballistic-blend-v1",
+      "velocity": {
+       "x": 0,
+       "y": 0
+      },
+      "initialVelocity": {
+       "x": 744.055349323,
+       "y": -748.277053526
+      },
+      "acceleration": {
+       "x": 0,
+       "y": 802.62
+      },
+      "cruiseVelocity": {
+       "x": 478.640561969,
+       "y": -393.879494297
+      },
+      "impliedGravity": 1319.756918427,
+      "blendSeconds": 0.22,
+      "airTime": 1.25,
+      "phase": "settle"
+     }
+    }
+   }
+  }
+ ]
+}

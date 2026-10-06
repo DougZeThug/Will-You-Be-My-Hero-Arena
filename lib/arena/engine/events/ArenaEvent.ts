@@ -31,6 +31,9 @@ export interface ProjectileFrame extends XY {
     impliedGravity?: number;
     blendSeconds?: number;
     airTime: number;
+    /** Cornhole: screen point where a presented bag first lands (then slides
+     * to the target); absent when the touch is recorded or is the target. */
+    touch?: XY;
     phase: string;
   };
 }

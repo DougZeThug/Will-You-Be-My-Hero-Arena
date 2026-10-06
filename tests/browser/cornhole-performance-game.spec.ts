@@ -194,3 +194,94 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   expect((await snapshot(page)).event.recordingHash).toBe(hash);
   expect(errors).toEqual([]);
 });
+test('cornhole performance: board bags land short and slide to the target; hole bags drop through the drawn hole', async ({
+  page,
+}) => {
+  test.setTimeout(240000);
+  const errors = await openScenario(page, 'cornhole-performance');
+  type Sample = {
+    time: number;
+    x: number;
+    y: number;
+    visible: boolean;
+    alpha: number;
+    touch?: { x: number; y: number };
+  };
+  let presented = 0,
+    holes = 0;
+  for (const seed of ['arena-lab:cornhole-recorded:v1', 'velvet-paw-29']) {
+    await page.evaluate(
+      (value) =>
+        window.__HERO_ARENA__.loadScenario('cornhole-performance', {
+          seed: value,
+        }),
+      seed,
+    );
+    const holeAnchors = (
+      await snapshot(page)
+    ).rendering!.equipmentRegistration.map((r) => r.hole);
+    const duration = (await snapshot(page)).event.duration;
+    let at = 0;
+    while (at < duration) {
+      await seekTime(page, at);
+      const current = (await snapshot(page)).event.current;
+      if (!current) {
+        at += 0.5; // intro or between turns
+        continue;
+      }
+      at = current.end + 0.02;
+      if (current.contact !== 'board' && current.contact !== 'hole') continue;
+      // Board travel is 0.28 s for every non-direct board/hole bag.
+      const impact = current.contactAt - 0.28;
+      await seekTime(page, Math.max(current.releaseAt, impact - 2 / 60));
+      const samples: Sample[] = [];
+      for (let k = 0; k < 40; k++) {
+        const s = await snapshot(page),
+          o = s.event.projectile.find(
+            (p: { id: string }) => p.id === current.id,
+          );
+        if (o)
+          samples.push({
+            time: s.time,
+            x: o.x,
+            y: o.y,
+            visible: o.visible,
+            alpha: o.alpha,
+            touch: o.kinematics?.touch,
+          });
+        if (s.time > current.contactAt + 0.3) break;
+        await step(page, 1);
+      }
+      const touch = samples.find((p) => p.touch)?.touch;
+      if (!touch) continue; // direct shot: drops in without a board slide
+      presented++;
+      const slide = samples.filter(
+        (p) => p.time >= impact - 1e-6 && p.time <= current.contactAt + 1e-6,
+      );
+      // It lands at the presentation touch point and travels forward.
+      expect(Math.abs(slide[0].x - touch.x)).toBeLessThan(25);
+      const travel = slide.at(-1)!.x - slide[0].x;
+      expect(travel, `${seed} ${current.id} board travel`).toBeGreaterThan(1);
+      for (let i = 1; i < slide.length; i++)
+        expect(slide[i].x - slide[i - 1].x).toBeGreaterThanOrEqual(-0.01);
+      if (current.contact === 'hole') {
+        holes++;
+        const visible = samples.filter(
+          (p) => p.time > current.contactAt && p.visible && p.alpha > 0.001,
+        );
+        const last = visible.at(-1)!,
+          hole = holeAnchors.reduce((best, h) =>
+            Math.abs(h.x - last.x) < Math.abs(best.x - last.x) ? h : best,
+          );
+        expect(Math.abs(last.x - hole.x), `${seed} ${current.id}`).toBeLessThan(
+          6,
+        );
+      }
+    }
+  }
+  expect(presented).toBeGreaterThan(0);
+  console.log(
+    `presented board/hole slides: ${presented}, hole drops: ${holes}`,
+  );
+  expect(errors).toEqual([]);
+});

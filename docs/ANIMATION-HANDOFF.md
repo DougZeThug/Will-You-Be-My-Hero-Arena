@@ -142,7 +142,17 @@ the front-view puppet and separate contracts.
 - Bag flight: performance releases use `ballisticFlight`
   (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
   velocity, blends to a ballistic cruise with bounded gravity and lands
-  exactly on the recorded touch point and time.
+  exactly on the touch point at the first-impact time. The touch point has
+  one owner, `presentationTouch` (`ReleasedBagPhysics.ts`): a miss uses its
+  recorded touch; a non-direct board or hole bag touches down short of the
+  immutable target by the velocity-matched slide distance (at most 90 px,
+  never off the front of the board, never across the hole for a board bag)
+  and slides to rest on the target at `contactAt`; direct shots land on the
+  target. The landing puff sits at `kinematics.touch`. A hole bag then eases
+  over the drawn hole and drops through it; the lip mask applies only once it
+  is over the hole. Presentation only: recordings, timing and scoring are
+  unchanged, and the constant-acceleration and `sampleBag` paths keep their
+  frames (`tests/cornhole-presentation-slide-tests.mjs`).
 - Play clock: the charge plays the take into a held top of the backswing;
   the release input drives it so the release marker lands on the live
   release step (no speed snap).
