@@ -18,16 +18,18 @@ const SHOTS: Record<string, string> = Object.fromEntries(
 );
 /** Where each thrower stands: inside the throwing line, one depth row each. */
 const START_X = [215, 345, 280, 190];
-/** Landing drift per unit of power error beyond the release window (stage px). */
+/** Landing drift per unit of power error outside the release window's blend (stage px). */
 const MISS_X = 490,
   MISS_Y = 60,
   /** The hole's radius in stage px (PrecisionPhysics bagPoints). */
   HOLE_RADIUS = 13,
   /**
-   * The AI's timing error per throw, in units of its own release window:
-   * uniform from AI_EARLY windows early to AI_LATE windows late. Misses lean
+   * The AI's timing error per throw, in units of AI_SCALE (the release window
+   * of a 0.6 shot skill): uniform from AI_EARLY early to AI_LATE late. A fixed
+   * scale lets a card with a wider window land more of them; misses lean
    * short, where the board is long, rather than long off its back edge.
    */
+  AI_SCALE = 0.04,
   AI_EARLY = 4,
   AI_LATE = 1.6;
 import {
@@ -189,15 +191,28 @@ export class PrecisionEvent implements PlayableArenaEvent {
         22 *
         (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.4 : 1),
       // Inside the window the miss grows linearly to an edge offset that still
-      // lands in the hole after the widest scatter, with a pixel to spare;
-      // beyond it, misses continue from that edge at the full drift.
+      // lands in the hole after the widest scatter, with a pixel to spare.
+      // Between one and two windows it blends back to the full drift, and
+      // beyond two windows a miss lands exactly where it always has.
+      w = this.releaseWindow,
+      miss = Math.abs(error),
       edge = Math.max(
         0,
         (HOLE_RADIUS - 1 - (spread / 2) * Math.SQRT2) /
           Math.hypot(1, MISS_Y / MISS_X),
       ),
-      reach = Math.min(1, Math.abs(error) / this.releaseWindow) * edge,
-      beyond = Math.max(0, Math.abs(error) - this.releaseWindow);
+      blend = Math.min(1, Math.max(0, (miss - w) / w)),
+      drift =
+        miss > 2 * w
+          ? { x: miss * MISS_X, y: miss * MISS_Y }
+          : miss <= w
+            ? { x: (miss / w) * edge, y: ((miss / w) * edge * MISS_Y) / MISS_X }
+            : {
+                x: edge + blend * (2 * w * MISS_X - edge),
+                y:
+                  (edge * MISS_Y) / MISS_X +
+                  blend * (2 * w * MISS_Y - (edge * MISS_Y) / MISS_X),
+              };
     this.flight = {
       id: 'live-bag-' + this.serial++,
       owner: c.id,
@@ -206,13 +221,12 @@ export class PrecisionEvent implements PlayableArenaEvent {
         x:
           target.x +
           this.aim.x * 115 +
-          Math.sign(error) * (reach + beyond * MISS_X) +
+          Math.sign(error) * drift.x +
           (this.ctx.random() - 0.5) * spread,
         y:
           target.y +
           this.aim.y * 48 +
-          (reach * MISS_Y) / MISS_X +
-          beyond * MISS_Y +
+          drift.y +
           (this.ctx.random() - 0.5) * spread,
       },
       age: 0,
@@ -306,17 +320,15 @@ export class PrecisionEvent implements PlayableArenaEvent {
       if (this.state === 'aiming' && time - this.phaseAt > 0.4)
         values.charge = 1;
       if (this.state === 'charging') {
-        // One seeded timing error per throw, in units of this thrower's own
-        // window, so every AI thrower misses the green band about as often.
+        // One seeded timing error per throw, on the same scale for every
+        // thrower, so a card with a wider window is perfect more often.
         if (this.aiError?.throw !== this.throws)
           this.aiError = {
             throw: this.throws,
             value: this.ctx.random() * (AI_EARLY + AI_LATE) - AI_EARLY,
           };
         values.charge =
-          this.power() < this.ideal() + this.aiError.value * this.window()
-            ? 1
-            : 0;
+          this.power() < this.ideal() + this.aiError.value * AI_SCALE ? 1 : 0;
       }
     }
     return { values, family: 'ai', connected: true };

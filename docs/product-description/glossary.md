@@ -222,7 +222,7 @@ Every action is described in the same five phases.
 
 **Game step.** One 1/60 s step of Play game time. Input is read once per step.
 
-**Precision mode.** The cornhole active ability, on the right modifier while aiming or charging. It costs 15 stamina, lasts 3 s and has a 10 s cooldown. It narrows scatter to 40% and widens the release window by 0.035.
+**Precision mode.** The cornhole active ability, on the right modifier while aiming or charging. It costs 15 stamina, lasts 3 s and has a 10 s cooldown. It narrows scatter to 40% and widens the release window by 0.015.
 
 **Combo and finisher.** A combo is a timed sequence of presses in the Brawl. Light, light, heavy within 1.15 s makes a *finisher*. Down, forward, special within 0.65 s makes a *charged power strike*.
 

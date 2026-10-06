@@ -698,13 +698,37 @@ export async function testLive({ check }) {
     step(s);
     advance(s, held);
     s.inject(player, 'charge', 0);
-    let perfect;
+    let perfect, flight;
     while (e.bags.length === before) {
       step(s);
       if (perfect === undefined && e.state === 'throwing') perfect = e.perfect;
+      if (!flight && e.flight) flight = { ...e.flight.target };
     }
-    return { perfect, points: e.bags.at(-1).points };
+    return {
+      perfect,
+      points: e.bags.at(-1).points,
+      error: e.releasePower - e.ideal(),
+      window: e.releaseWindow,
+      flight,
+    };
   };
+  // Beyond two windows a miss lands exactly where it always has: 490 px per
+  // unit of error along the board and 60 px toward its front, scatter aside.
+  for (const held of [0.05, 0.18, 0.4, 1.4, 2]) {
+    const s = new ArenaSession(config('cornhole', false, 2, 'old-miss')),
+      shot = throwBag(s, 'p0', held, 'primaryAction', false),
+      scatter = ((1 - 0.68) * 22) / 2;
+    check(() => assert.ok(Math.abs(shot.error) > 2 * shot.window));
+    check(() =>
+      assert.ok(
+        Math.abs(shot.flight.x - (hole.x + shot.error * 490)) <= scatter &&
+          Math.abs(shot.flight.y - (hole.y + Math.abs(shot.error) * 60)) <=
+            scatter,
+        'A miss beyond two windows keeps the old landing: ' + held,
+      ),
+    );
+    s.destroy();
+  }
   for (const sweep of [
     {
       name: 'Doug Hole runner, bag 1',
