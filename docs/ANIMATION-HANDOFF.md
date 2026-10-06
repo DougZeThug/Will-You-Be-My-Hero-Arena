@@ -150,25 +150,33 @@ the front-view puppet and separate contracts.
   across the scoring disc or the drawn hole opening, though its body may pass
   over the rim; a board target over the opening lands without sliding);
   direct shots land on the target (`presentationSlide` reports the limit that
-  applied). `slideMotion` owns the slide: the bag lands at the flight's speed
+  applied). The touch point depends on the Phaser performance release
+  (position and velocity), so a future contract exporter must evaluate it
+  from a normal-motion (not reduced-motion) release and export the point
+  itself rather than re-derive it. `slideMotion` owns the slide: the bag lands at the flight's speed
   and decelerates uniformly; a board bag stops after `min(0.28 s, 2d/vIn)`
   and holds on the target until `contactAt` (a shortened slide stops early
   instead of creeping), a hole bag passes the target at `contactAt` still
   moving and glides forward (never back) on a C1 Hermite to its rest over
-  the drawn opening (`holeRest`: the nearest point of the opening shrunk to
-  0.8, or, for a target already over it, a run-out of up to 4 px) while it
-  sinks (accelerating from fall 0.1). Resting bags do not
+  the drawn opening (`holeRest`, closed form on a shrunk copy of the
+  opening: the radial projection toward the hole centre, or a short forward
+  run-out for a target already over it or beside the centre); it sinks
+  (accelerating) from the moment its centre is over the drawn opening, when
+  the lip mask turns on, to the end of the 0.28 s fall. Resting bags do not
   block a slide: the bag rides over drawn bags (resting, or a pushed bag
   where it is now) with a lift of up to 6 px × depth scale, zero at first
-  impact and at `contactAt`, weighted by each bag's drawn opacity
+  impact and once the bag stops (the envelope runs over its moving time and
+  ramps at most 0.6 px/frame × depth scale), weighted by each bag's drawn
+  opacity
   (`pushedBag` is shared with `CornholeEvent`); its shadow stays on the
   board. A pushed bag
   rests until the thrown bag's footprint reaches it, then is shoved
   (`presentationPush`: start and `clamp(2·|to − from| / speed, 0.12,
   0.34)` s, ease-out from the thrown bag's speed, passed to
   `CornholeEvent.persistentObjects`) and holds its end until the board state
-  takes over at `contactAt`. Short shoves hit the 0.12 s floor and leave
-  slower than the thrown bag. Known limitations: the board solver pushes bags
+  takes over at `contactAt`. A shove whose duration is clamped leaves at a
+  different speed than the thrown bag: slower at the 0.12 s floor (short
+  shoves), faster at the 0.34 s ceiling. Known limitations: the board solver pushes bags
   lying anywhere along the path from the front of the board, so a pushed bag
   the presented slide never reaches keeps its recorded push window and moves
   without visible contact (about 5 of 23 pushes in the seeded unit set);
@@ -180,7 +188,8 @@ the front-view puppet and separate contracts.
   mask on; board bags draw at `60 + 0.001 · throw index`, so a cold seek
   matches playback. The landing puff sits at
   `kinematics.touch` at first impact; the ring and hole star mark
-  `contactAt` at the target. The lip mask applies only while a hole bag's
+  `contactAt` at the target (a miss's ring fires when the bag reaches its
+  spot). The lip mask applies only while a hole bag's
   centre is over the drawn opening. Presentation only: recordings, timing
   and scoring are unchanged, and the constant-acceleration and `sampleBag`
   paths keep their frames (`tests/cornhole-presentation-slide-tests.mjs`).

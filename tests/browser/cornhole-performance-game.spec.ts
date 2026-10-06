@@ -403,22 +403,22 @@ test('cornhole performance: board bags land short and slide to the target; pushe
             ((target.x - hole.x) / (20 * half)) ** 2 +
               ((target.y - hole.y) / (8.3 * half)) ** 2 >=
             1;
-        // No stop between the slide and the drop (the sink starts at fall
-        // 0.1 of the 0.28 s drop) for a target in front of the opening.
+        // No stop between the slide and the drop: every hole bag passes its
+        // target still moving (one in front of the opening glides on to it;
+        // one over it sinks as it runs on).
         const glide = samples.filter(
           (p) =>
             p.time >= impact - 1e-6 &&
-            p.time <= current.contactAt + 0.028 + 1e-6,
+            p.time <= current.contactAt + (inFront ? 0.028 : 1 / 60) + 1e-6,
         );
-        if (inFront)
-          for (let i = 1; i < glide.length; i++)
-            expect(
-              Math.hypot(
-                glide[i].x - glide[i - 1].x,
-                glide[i].y - glide[i - 1].y,
-              ),
-              `${seed} ${current.id}: the hole bag stops before the drop`,
-            ).toBeGreaterThan(0.3);
+        for (let i = 1; i < glide.length; i++)
+          expect(
+            Math.hypot(
+              glide[i].x - glide[i - 1].x,
+              glide[i].y - glide[i - 1].y,
+            ),
+            `${seed} ${current.id}: the hole bag stops before the drop`,
+          ).toBeGreaterThan(0.3);
         // It never moves back from first impact until it is gone, and it
         // goes down inside the drawn opening, below the board bags.
         const visible = samples.filter(

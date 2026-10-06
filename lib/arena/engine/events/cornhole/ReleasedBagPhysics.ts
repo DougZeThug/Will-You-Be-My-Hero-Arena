@@ -25,19 +25,22 @@ const COURT_PX_PER_METRE_Y = 78;
 const quintic = (u: number) => u * u * u * (10 - 15 * u + 6 * u * u);
 /** Longest presented board slide, in screen px. */
 const MAX_SLIDE_PX = 90;
-/** Hole drop: the 0.28 s fall, the share of it before the bag starts to sink,
- * and the bounds of the glide from the target onto the drawn hole. */
+/** Hole drop: the 0.28 s fall (the bag sinks from the moment its centre is
+ * over the drawn opening until the end of it), and the bounds of the glide
+ * from the target onto the drawn hole. */
 const HOLE_FALL = 0.28;
-const HOLE_SINK_START = 0.1;
 const HOLE_GLIDE = { min: 0.05, max: 0.25 };
-/** A hole bag whose target is already over the opening carries this run-out
- * (screen px at depth scale 1) forward while it sinks, room permitting. */
-const HOLE_RUNOUT_PX = 4;
+/** Forward run-out of a hole bag past its target (screen px at depth scale
+ * 1): up to `max` (half the room ahead) over the opening, at least `min`, so
+ * it never stops at the target. */
+const HOLE_RUNOUT_PX = { min: 2, max: 4 };
 /** Share of the drawn opening's half-extents a hole bag's centre comes to
  * rest within, so it is clearly over the hole. */
 const HOLE_REST_SCALE = 0.8;
-/** Ride-over lift at depth scale 1, in screen px (owner choice). */
+/** Ride-over lift at depth scale 1, in screen px (owner choice), and the
+ * envelope's ramp time (6 px in 10 frames: at most 0.6 px/frame). */
 const RIDE_LIFT_PX = 6;
+const RIDE_RAMP_SECONDS = 1 / 6;
 /** Shove duration bounds for a pushed bag, in seconds. */
 const PUSH_SECONDS = { min: 0.12, max: 0.34 };
 
@@ -135,11 +138,16 @@ export type SlideClamp =
 
 /**
  * Where a hole bag's centre comes to rest over the drawn opening (screen px),
- * and its forward run-out `run` (x px past the target, never negative: a hole
- * bag never moves back). A target in front of the opening glides forward to
- * the nearest point of the opening (shrunk to `HOLE_REST_SCALE`) not behind
- * it; a target already over it sinks there, carrying a short forward run-out
- * (`HOLE_RUNOUT_PX`, at most half the room ahead along the board's slope).
+ * and its forward run-out `run` (x px past the target, always positive: a
+ * hole bag never stops at its target or moves back). Closed form, on the rest
+ * ellipse (the drawn opening shrunk to `HOLE_REST_SCALE`):
+ * - a target inside it runs on along the board's slope by half the room
+ *   ahead, between `HOLE_RUNOUT_PX.min` and `.max`;
+ * - a target outside it heads for its radial projection toward the hole
+ *   centre when that lies at least `min` ahead;
+ * - otherwise (beside or past the centre) it runs `min` ahead and moves
+ *   across into the rest ellipse at that x (the drawn opening when the rest
+ *   ellipse ends before it).
  */
 export function holeRest(a: Attempt): { rest: XYPoint; run: number } {
   const target = surfacePoint('cornhole', a.actor, a.target),
@@ -147,53 +155,39 @@ export function holeRest(a: Attempt): { rest: XYPoint; run: number } {
     s = boardDepthScale(a.actor),
     dx = target.x - anchor.x,
     dy = target.y - anchor.y,
-    // A target past most of the opening rests within a wider share of it.
-    k = Math.min(
-      0.98,
-      Math.max(HOLE_REST_SCALE, dx / (HOLE_HALF.x * s) + 0.05),
-    ),
-    hx = HOLE_HALF.x * s * k,
-    hy = HOLE_HALF.y * s * k;
-  if ((dx / hx) ** 2 + (dy / hy) ** 2 < 1) {
-    // Over the opening: run forward along the board, within half the room.
+    hx = HOLE_HALF.x * s * HOLE_REST_SCALE,
+    hy = HOLE_HALF.y * s * HOLE_REST_SCALE,
+    least = HOLE_RUNOUT_PX.min * s,
+    e = (dx / hx) ** 2 + (dy / hy) ** 2;
+  if (e < 1) {
+    // Over the opening: run on along the board, within half the room.
     const front = surfacePoint('cornhole', a.actor, onBoard(8, a.target.z)),
       knee = surfacePoint('cornhole', a.actor, onBoard(9.2, a.target.z)),
       m = (knee.y - front.y) / (knee.x - front.x),
       qa = 1 / hx ** 2 + (m / hy) ** 2,
       qb = 2 * (dx / hx ** 2 + (m * dy) / hy ** 2),
-      qc = (dx / hx) ** 2 + (dy / hy) ** 2 - 1,
-      room = (-qb + Math.sqrt(Math.max(0, qb * qb - 4 * qa * qc))) / (2 * qa),
-      run = Math.max(0, Math.min(HOLE_RUNOUT_PX * s, room / 2));
+      room = (-qb + Math.sqrt(qb * qb - 4 * qa * (e - 1))) / (2 * qa),
+      run = Math.max(least, Math.min(HOLE_RUNOUT_PX.max * s, room / 2));
     return { rest: { x: target.x + run, y: target.y + m * run }, run };
   }
-  // Nearest point of the (convex) rest ellipse with x >= target.x: on its
-  // boundary, or on the chord x = target.x.
-  let rest: XYPoint | undefined,
-    best = Infinity;
-  const consider = (p: XYPoint) => {
-    const d = Math.hypot(p.x - target.x, p.y - target.y);
-    if (p.x >= target.x - 1e-9 && d < best) {
-      best = d;
-      rest = p;
-    }
+  const radial = {
+    x: anchor.x + dx / Math.sqrt(e),
+    y: anchor.y + dy / Math.sqrt(e),
   };
-  if (Math.abs(dx) < hx) {
-    const reach = hy * Math.sqrt(1 - (dx / hx) ** 2);
-    consider({
-      x: target.x,
-      y: anchor.y + Math.max(-reach, Math.min(reach, dy)),
-    });
-  }
-  for (let i = 0; i < 720; i++) {
-    const t = (i / 720) * 2 * Math.PI;
-    consider({
-      x: anchor.x + hx * Math.cos(t),
-      y: anchor.y + hy * Math.sin(t),
-    });
-  }
-  // Past the whole opening (not met in the seeded sets): sink in place.
-  rest ??= { x: target.x, y: target.y };
-  return { rest, run: Math.max(0, rest.x - target.x) };
+  if (radial.x - target.x >= least)
+    return { rest: radial, run: radial.x - target.x };
+  // Beside or past the centre: `least` ahead, across into the opening.
+  const x = target.x + least,
+    across = (h: XYPoint) =>
+      h.y * Math.sqrt(Math.max(0, 1 - ((x - anchor.x) / h.x) ** 2)),
+    reach =
+      Math.abs(x - anchor.x) < hx
+        ? across({ x: hx, y: hy })
+        : across({ x: HOLE_HALF.x * s, y: HOLE_HALF.y * s });
+  return {
+    rest: { x, y: anchor.y + Math.max(-reach, Math.min(reach, dy)) },
+    run: least,
+  };
 }
 /** Hole bag still moving at contactAt: its exit/landing speed ratio r when it
  * decelerates uniformly from touchdown, passes the target at contactAt and
@@ -470,8 +464,6 @@ export function pushTravel(a: Attempt, time: number, timing?: PushTiming) {
   return 1 - (1 - u) ** 2;
 }
 
-/** How far (0..1) a presented sliding bag at `p` lies over a drawn bag:
- * full once their footprints overlap by half a bag in both directions. */
 /**
  * Where a bag the active attempt pushes is drawn at `time` (screen px) and
  * its opacity, or undefined while the board state draws it. A bag pushed off
@@ -704,12 +696,17 @@ export function releasedBag(
         ((presented ? touch.y : target.y) - (610 - a.actor * 133)) *
           clamp01(t / air);
   // Ride-over lift: a presented bag sliding over a drawn bag (resting, or a
-  // pushed one where it is now) rises up to 6 px (× depth) over it; 0 at first
-  // impact and at contactAt. The shadow stays on the board.
-  if (motion && elapsed >= air && elapsed < a.duration) {
-    const u = (elapsed - air) / slide,
-      envelope =
-        smooth(clamp01(u / 0.15)) * (1 - smooth(clamp01((u - 0.75) / 0.25)));
+  // pushed one where it is now) rises up to 6 px (× depth) over it while it
+  // moves: the envelope ramps at most 0.6 px/frame (× depth) in after first
+  // impact and out before the bag stops, so it is 0 at first impact, once
+  // the bag has stopped and at contactAt. The shadow stays on the board.
+  if (motion && elapsed >= air && elapsed < air + motion.moving) {
+    const since = elapsed - air,
+      envelope = Math.min(
+        1,
+        since / RIDE_RAMP_SECONDS,
+        (motion.moving - since) / RIDE_RAMP_SECONDS,
+      );
     if (envelope > 0)
       y -=
         RIDE_LIFT_PX *
@@ -719,13 +716,11 @@ export function releasedBag(
   }
   const after = Math.max(0, elapsed - a.duration),
     fall = clamp01(after / HOLE_FALL),
-    anchor = placement('cornhole', a.actor).anchor,
-    // Ballistic hole bags sink with an accelerating ease from fall 0.1 while
-    // they glide onto the drawn hole; the historical path drops at the target.
-    sink = ballistic
-      ? clamp01((fall - HOLE_SINK_START) / (1 - HOLE_SINK_START)) ** 2
-      : fall;
-  let opening = false;
+    anchor = placement('cornhole', a.actor).anchor;
+  // The historical path drops at the target; a ballistic hole bag's sink is
+  // set below, where it glides onto the drawn hole.
+  let opening = false,
+    sink = ballistic ? 0 : fall;
   if (elapsed >= a.duration) {
     x = target.x;
     y = target.y;
@@ -739,35 +734,35 @@ export function releasedBag(
       // its landing x speed, capped to stop within the run-out.
       const { rest, run } = holeRest(a),
         chord = target.x - touch.x,
-        exit =
-          run <= 1e-9
-            ? { x: 0, y: 0 }
-            : motion
-              ? {
-                  x: motion.v1,
-                  y:
-                    chord > 1e-9
-                      ? (motion.v1 * (target.y - touch.y)) / chord
-                      : 0,
-                }
-              : {
-                  x: Math.min(
-                    Math.max(0, ballistic.at(air).vx),
-                    (2 * run) / HOLE_GLIDE.min,
-                  ),
-                  y: 0,
-                },
+        exit = motion
+          ? {
+              x: motion.v1,
+              y: chord > 1e-9 ? (motion.v1 * (target.y - touch.y)) / chord : 0,
+            }
+          : {
+              x: Math.min(
+                Math.max(0, ballistic.at(air).vx),
+                (2 * run) / HOLE_GLIDE.min,
+              ),
+              y: 0,
+            },
         glide =
           exit.x > 1e-9
             ? Math.min(HOLE_GLIDE.max, (2 * run) / exit.x)
             : HOLE_GLIDE.max,
+        at = (t: number) => {
+          const g = clamp01(t / glide),
+            h00 = 2 * g ** 3 - 3 * g * g + 1,
+            h10 = g ** 3 - 2 * g * g + g,
+            h01 = 3 * g * g - 2 * g ** 3;
+          return {
+            x: h00 * target.x + h10 * glide * exit.x + h01 * rest.x,
+            y: h00 * target.y + h10 * glide * exit.y + h01 * rest.y,
+          };
+        },
         g = clamp01(after / glide),
-        h00 = 2 * g ** 3 - 3 * g * g + 1,
-        h10 = g ** 3 - 2 * g * g + g,
-        h01 = 3 * g * g - 2 * g ** 3,
         moving = after < glide;
-      x = h00 * target.x + h10 * glide * exit.x + h01 * rest.x;
-      y = h00 * target.y + h10 * glide * exit.y + h01 * rest.y;
+      ({ x, y } = at(after));
       vx = moving
         ? (6 * (g * g - g) * (target.x - rest.x)) / glide +
           (3 * g * g - 4 * g + 1) * exit.x
@@ -778,6 +773,21 @@ export function releasedBag(
         : 0;
       ground = y;
       opening = overOpening({ x, y }, a.actor);
+      // It sinks (accelerating) from the moment its centre is over the drawn
+      // opening (bisected along the glide) to the end of the fall.
+      let over = 0;
+      if (!overOpening(target, a.actor)) {
+        let lo = 0;
+        over = glide;
+        for (let i = 0; i < 40; i++) {
+          const mid = (lo + over) / 2;
+          if (overOpening(at(mid), a.actor)) over = mid;
+          else lo = mid;
+        }
+      }
+      sink = opening
+        ? clamp01((after - over) / Math.max(1e-6, HOLE_FALL - over)) ** 2
+        : 0;
       y += 42 * sink * boardDepthScale(a.actor);
       alpha = fall >= 1 ? 0 : 1;
       flatten *= 1 - 0.15 * sink;
