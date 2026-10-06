@@ -305,9 +305,12 @@ test('cornhole performance: board bags land short and slide to the target; pushe
                 Math.abs(samples[i].y - from.y) < 28 * half - 0.5,
               `a4 frame ${i}: thrown bag overlaps the bag before pushing it`,
             ).toBe(false);
-        // Whether the thrown bag reaches it at all; when it does not (it
-        // lands on its target short of the bag), the push keeps its recorded
-        // window (presentationPushStart returns undefined).
+        // The thrown bag reaches it (it lands on the bag's footprint and the
+        // push starts at touchdown). Known limitation elsewhere: the board
+        // solver pushes bags anywhere along the path from the front of the
+        // board; a pushed bag the presented slide never reaches keeps its
+        // recorded window and moves without visible contact
+        // (docs/ANIMATION-HANDOFF.md).
         const reached = samples.some(
           (p) =>
             p.time >= impact - 1e-6 &&
@@ -315,7 +318,10 @@ test('cornhole performance: board bags land short and slide to the target; pushe
             Math.abs(p.y - from.y) <= 28 * half + 1,
         );
         console.log(
-          `recorded:v1 a4 push: ${reached ? 'starts on contact' : 'recorded window (the thrown bag never reaches the pushed bag)'}`,
+          `recorded:v1 a4 push: ${reached ? 'starts on contact' : 'recorded window (known limitation: the thrown bag never reaches the pushed bag)'}`,
+        );
+        expect(reached, 'a4: the thrown bag reaches the bag it pushes').toBe(
+          true,
         );
         pushChecked = true;
       }

@@ -147,12 +147,18 @@ the front-view puppet and separate contracts.
   recorded touch; a non-direct board or hole bag touches down short of the
   immutable target by the velocity-matched slide distance (at most 90 px,
   never off the front of the board, never through a drawn resting bag it
-  does not push, never across the scoring disc or drawn hole for a board
-  bag; with no clear slide it lands on the target) and slides to rest on the
-  target at `contactAt`; direct shots land on the target
-  (`presentationSlide` reports the limit that applied). A pushed bag starts
-  moving when the thrown bag reaches it (`presentationPushStart`, passed to
-  `CornholeEvent.persistentObjects`), else in its recorded window. The
+  does not push, and for a board bag its centre never across the scoring
+  disc or the drawn hole opening, though its body may pass over the rim; a
+  target on a resting bag or over the opening lands without sliding) and
+  slides to rest on the target at `contactAt`; direct shots land on the
+  target (`presentationSlide` reports the limit that applied). A pushed bag
+  starts moving when the thrown bag reaches it (`presentationPushStart`,
+  passed to `CornholeEvent.persistentObjects`). Known limitation: the board
+  solver pushes bags lying anywhere along the path from the front of the
+  board, so a pushed bag the presented slide never reaches (the bag lands
+  beyond it, or a clamp keeps it short) keeps its recorded push window and
+  moves without visible contact (about 7 of 23 pushes in the seeded unit
+  set); fixing it needs a rules-side change, not presentation. The
   landing puff sits at `kinematics.touch` at first impact; the ring and hole
   star mark `contactAt` at the target. A hole bag then eases
   over the drawn hole and drops through it; the lip mask applies only once it

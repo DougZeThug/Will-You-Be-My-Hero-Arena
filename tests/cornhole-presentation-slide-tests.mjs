@@ -121,6 +121,7 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       unclampedLong: 0,
       clamp: { front: 0, disc: 0, max: 0, min: 0, target: 0, bag: 0, hole: 0 },
       noSlide: 0,
+      noSlideCause: { bag: 0, opening: 0, other: 0 },
       pushes: 0,
       pushesTimed: 0,
       ideal: [Infinity, -Infinity],
@@ -225,10 +226,10 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
         );
         check(() => assert.ok(touchV3.x <= a.target.x));
         // Drawn footprints (screen px): a resting bag's box (both bags'
-        // half-sizes) and the drawn hole grown by the bag's half-size.
+        // half-sizes) and the drawn hole opening (the bag's centre path).
         const depth = boardDepthScale(a.actor),
           bagBox = { x: 58 * depth, y: 28 * depth },
-          holeEllipse = { x: 49 * depth, y: 22.3 * depth },
+          holeEllipse = { x: 20 * depth, y: 8.3 * depth },
           resting = restingBags(a).map((p) =>
             surfacePoint('cornhole', a.actor, p),
           ),
@@ -288,6 +289,12 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
         const atTarget = slid < 1e-9;
         if (atTarget) {
           stats.noSlide++;
+          const cause = resting.some((c) => overlapsBag(target, c))
+            ? 'bag'
+            : a.contact === 'board' && overlapsHole(target)
+              ? 'opening'
+              : 'other';
+          stats.noSlideCause[cause]++;
           check(() =>
             assert.ok(
               ['bag', 'hole'].includes(clamp),
@@ -522,6 +529,9 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       }
     }
   check(() => assert.ok(stats.presented >= 100));
+  check(() =>
+    assert.equal(stats.noSlideCause.other, 0, 'every no-slide bag is covered'),
+  );
   check(() => assert.ok(stats.hole >= 10));
   check(() =>
     assert.ok(
@@ -566,6 +576,6 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
     );
   }
   console.log(
-    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide (target covered) ${stats.noSlide}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}; pushes timed ${stats.pushesTimed}/${stats.pushes}; ${stats.hole} hole drops; ${fixture.cases.length} legacy cases identical.`,
+    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide ${stats.noSlide} ${JSON.stringify(stats.noSlideCause)}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}; pushes timed ${stats.pushesTimed}/${stats.pushes}; ${stats.hole} hole drops; ${fixture.cases.length} legacy cases identical.`,
   );
 }

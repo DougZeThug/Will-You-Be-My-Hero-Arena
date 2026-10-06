@@ -49,9 +49,9 @@ const BAG_HALF = { x: 29, y: 14 };
 const HOLE_HALF = { x: 20, y: 8.3 };
 
 type XYPoint = { x: number; y: number };
-/** Screen obstacle a sliding bag's body must not overlap: a resting bag
- * (box of both bags' half-sizes) or the drawn hole (ellipse grown by the
- * bag's half-size). */
+/** Screen obstacle a sliding bag must not cross: a resting bag (its body;
+ * box of both bags' half-sizes) or the drawn hole opening (its centre path;
+ * the body may pass over the rim). */
 type Obstacle = { kind: 'bag' | 'hole'; center: XYPoint; half: XYPoint };
 
 /** Does the slide chord a→b (both bag centres) enter the obstacle? */
@@ -140,8 +140,9 @@ export type SlideClamp =
  * the flight arrives with and decelerates to rest exactly on the target at
  * `contactAt`. The slide never starts off the front of the board, never runs
  * backwards, never passes through a resting bag it does not push, and a board
- * bag never slides across the hole (the scoring disc or the drawn opening);
- * when no clear slide exists it lands on the target. Presentation only:
+ * bag's centre never slides across the hole (the scoring disc or the drawn
+ * opening; its body may pass over the rim). When the target itself is on a
+ * resting bag or over the opening it lands on the target without sliding. Presentation only:
  * target, timing and scoring are unchanged.
  */
 export function presentationSlide(
@@ -206,10 +207,7 @@ export function presentationSlide(
     obstacles.push({
       kind: 'hole',
       center: placement('cornhole', a.actor).anchor,
-      half: {
-        x: (HOLE_HALF.x + BAG_HALF.x) * s,
-        y: (HOLE_HALF.y + BAG_HALF.y) * s,
-      },
+      half: { x: HOLE_HALF.x * s, y: HOLE_HALF.y * s },
     });
   const blocking = (from: number) =>
     obstacles.find((o) => chordHits(screen(from), target, o));
