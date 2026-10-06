@@ -205,15 +205,28 @@ test('cornhole performance: board bags land short and slide to the target; pushe
     y: number;
     visible: boolean;
     alpha: number;
+    depth: number;
     touch?: { x: number; y: number };
-    others: { id: string; x: number; y: number }[];
+    others: {
+      id: string;
+      x: number;
+      y: number;
+      depth: number;
+      visible: boolean;
+      attached: boolean;
+    }[];
   };
   let presented = 0,
     sliding = 0,
     holes = 0,
     pushChecked = false;
   const contacts = new Map<string, number>();
-  for (const seed of ['arena-lab:cornhole-recorded:v1', 'velvet-paw-29']) {
+  for (const seed of [
+    'arena-lab:cornhole-recorded:v1',
+    'velvet-paw-29',
+    // Attempt 0 scores 3 with its target past the drawn hole's centre.
+    'qa-hole-12',
+  ]) {
     await page.evaluate(
       (value) =>
         window.__HERO_ARENA__.loadScenario('cornhole-performance', {
@@ -252,14 +265,27 @@ test('cornhole performance: board bags land short and slide to the target; pushe
             y: o.y,
             visible: o.visible,
             alpha: o.alpha,
+            depth: o.depth,
             touch: o.kinematics?.touch,
             others: s.event.projectile
               .filter((p: { id: string }) => p.id !== current.id)
-              .map((p: { id: string; x: number; y: number }) => ({
-                id: p.id,
-                x: p.x,
-                y: p.y,
-              })),
+              .map(
+                (p: {
+                  id: string;
+                  x: number;
+                  y: number;
+                  depth: number;
+                  visible: boolean;
+                  attached: boolean;
+                }) => ({
+                  id: p.id,
+                  x: p.x,
+                  y: p.y,
+                  depth: p.depth,
+                  visible: p.visible,
+                  attached: p.attached,
+                }),
+              ),
           });
         if (s.time > current.contactAt + 0.3) break;
         await step(page, 1);
@@ -365,31 +391,57 @@ test('cornhole performance: board bags land short and slide to the target; pushe
       }
       if (current.contact === 'hole') {
         holes++;
+        const half = current.actor ? 0.7 : 1,
+          target = samples.find((p) => p.time >= current.contactAt - 1e-6)!,
+          hole = holeAnchors.reduce((best, h) =>
+            Math.hypot(h.x - target.x, h.y - target.y) <
+            Math.hypot(best.x - target.x, best.y - target.y)
+              ? h
+              : best,
+          ),
+          inFront =
+            ((target.x - hole.x) / (20 * half)) ** 2 +
+              ((target.y - hole.y) / (8.3 * half)) ** 2 >=
+            1;
         // No stop between the slide and the drop (the sink starts at fall
-        // 0.1 of the 0.28 s drop).
+        // 0.1 of the 0.28 s drop) for a target in front of the opening.
         const glide = samples.filter(
           (p) =>
             p.time >= impact - 1e-6 &&
             p.time <= current.contactAt + 0.028 + 1e-6,
         );
-        for (let i = 1; i < glide.length; i++)
-          expect(
-            Math.hypot(
-              glide[i].x - glide[i - 1].x,
-              glide[i].y - glide[i - 1].y,
-            ),
-            `${seed} ${current.id}: the hole bag stops before the drop`,
-          ).toBeGreaterThan(0.3);
+        if (inFront)
+          for (let i = 1; i < glide.length; i++)
+            expect(
+              Math.hypot(
+                glide[i].x - glide[i - 1].x,
+                glide[i].y - glide[i - 1].y,
+              ),
+              `${seed} ${current.id}: the hole bag stops before the drop`,
+            ).toBeGreaterThan(0.3);
+        // It never moves back from first impact until it is gone, and it
+        // goes down inside the drawn opening, below the board bags.
         const visible = samples.filter(
-          (p) => p.time > current.contactAt && p.visible && p.alpha > 0.001,
+          (p) => p.time >= impact - 1e-6 && p.visible && p.alpha > 0.001,
         );
+        for (let i = 1; i < visible.length; i++)
+          expect(
+            visible[i].x - visible[i - 1].x,
+            `${seed} ${current.id}: the hole bag moves back`,
+          ).toBeGreaterThanOrEqual(-0.01);
         const last = visible.at(-1)!,
-          hole = holeAnchors.reduce((best, h) =>
-            Math.abs(h.x - last.x) < Math.abs(best.x - last.x) ? h : best,
-          );
-        expect(Math.abs(last.x - hole.x), `${seed} ${current.id}`).toBeLessThan(
-          6,
+          board = last.others.filter((o) => o.visible && !o.attached);
+        console.log(
+          `${seed} ${current.id}: target ${(target.x - hole.x).toFixed(1)} px from the drawn hole (${inFront ? 'in front' : 'over it'}), last visible ${(last.x - hole.x).toFixed(2)} px, depth ${last.depth}`,
         );
+        expect(Math.abs(last.x - hole.x), `${seed} ${current.id}`).toBeLessThan(
+          20 * half,
+        );
+        for (const o of board)
+          expect(
+            last.depth,
+            `${seed} ${current.id} below ${o.id}`,
+          ).toBeLessThan(o.depth);
       }
     }
   }

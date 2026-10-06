@@ -1,4 +1,4 @@
-import type { Attempt, V3 } from '../../../model';
+import type { Attempt, Recording, V3 } from '../../../model';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
 import {
@@ -30,10 +30,12 @@ const MAX_SLIDE_PX = 90;
 const HOLE_FALL = 0.28;
 const HOLE_SINK_START = 0.1;
 const HOLE_GLIDE = { min: 0.05, max: 0.25 };
-/** A hole bag carries at least this run-out (screen px at depth scale 1) past
- * the target, so it never stops there; with the hole behind the target it
- * meets the back of the hole and settles back over it while it sinks. */
+/** A hole bag whose target is already over the opening carries this run-out
+ * (screen px at depth scale 1) forward while it sinks, room permitting. */
 const HOLE_RUNOUT_PX = 4;
+/** Share of the drawn opening's half-extents a hole bag's centre comes to
+ * rest within, so it is clearly over the hole. */
+const HOLE_REST_SCALE = 0.8;
 /** Ride-over lift at depth scale 1, in screen px (owner choice). */
 const RIDE_LIFT_PX = 6;
 /** Shove duration bounds for a pushed bag, in seconds. */
@@ -131,18 +133,73 @@ export type SlideClamp =
   | 'target'
   | 'hole';
 
-/** Hole bag run-out past the target (screen x px): to the drawn hole, at
- * least `HOLE_RUNOUT_PX`. */
-const holeRunout = (a: Attempt, target: XYPoint) =>
-  Math.max(
-    placement('cornhole', a.actor).anchor.x - target.x,
-    HOLE_RUNOUT_PX * boardDepthScale(a.actor),
-  );
+/**
+ * Where a hole bag's centre comes to rest over the drawn opening (screen px),
+ * and its forward run-out `run` (x px past the target, never negative: a hole
+ * bag never moves back). A target in front of the opening glides forward to
+ * the nearest point of the opening (shrunk to `HOLE_REST_SCALE`) not behind
+ * it; a target already over it sinks there, carrying a short forward run-out
+ * (`HOLE_RUNOUT_PX`, at most half the room ahead along the board's slope).
+ */
+export function holeRest(a: Attempt): { rest: XYPoint; run: number } {
+  const target = surfacePoint('cornhole', a.actor, a.target),
+    anchor = placement('cornhole', a.actor).anchor,
+    s = boardDepthScale(a.actor),
+    dx = target.x - anchor.x,
+    dy = target.y - anchor.y,
+    // A target past most of the opening rests within a wider share of it.
+    k = Math.min(
+      0.98,
+      Math.max(HOLE_REST_SCALE, dx / (HOLE_HALF.x * s) + 0.05),
+    ),
+    hx = HOLE_HALF.x * s * k,
+    hy = HOLE_HALF.y * s * k;
+  if ((dx / hx) ** 2 + (dy / hy) ** 2 < 1) {
+    // Over the opening: run forward along the board, within half the room.
+    const front = surfacePoint('cornhole', a.actor, onBoard(8, a.target.z)),
+      knee = surfacePoint('cornhole', a.actor, onBoard(9.2, a.target.z)),
+      m = (knee.y - front.y) / (knee.x - front.x),
+      qa = 1 / hx ** 2 + (m / hy) ** 2,
+      qb = 2 * (dx / hx ** 2 + (m * dy) / hy ** 2),
+      qc = (dx / hx) ** 2 + (dy / hy) ** 2 - 1,
+      room = (-qb + Math.sqrt(Math.max(0, qb * qb - 4 * qa * qc))) / (2 * qa),
+      run = Math.max(0, Math.min(HOLE_RUNOUT_PX * s, room / 2));
+    return { rest: { x: target.x + run, y: target.y + m * run }, run };
+  }
+  // Nearest point of the (convex) rest ellipse with x >= target.x: on its
+  // boundary, or on the chord x = target.x.
+  let rest: XYPoint | undefined,
+    best = Infinity;
+  const consider = (p: XYPoint) => {
+    const d = Math.hypot(p.x - target.x, p.y - target.y);
+    if (p.x >= target.x - 1e-9 && d < best) {
+      best = d;
+      rest = p;
+    }
+  };
+  if (Math.abs(dx) < hx) {
+    const reach = hy * Math.sqrt(1 - (dx / hx) ** 2);
+    consider({
+      x: target.x,
+      y: anchor.y + Math.max(-reach, Math.min(reach, dy)),
+    });
+  }
+  for (let i = 0; i < 720; i++) {
+    const t = (i / 720) * 2 * Math.PI;
+    consider({
+      x: anchor.x + hx * Math.cos(t),
+      y: anchor.y + hy * Math.sin(t),
+    });
+  }
+  // Past the whole opening (not met in the seeded sets): sink in place.
+  rest ??= { x: target.x, y: target.y };
+  return { rest, run: Math.max(0, rest.x - target.x) };
+}
 /** Hole bag still moving at contactAt: its exit/landing speed ratio r when it
  * decelerates uniformly from touchdown, passes the target at contactAt and
  * would come to rest `runout` px further on. Slide d px. */
 const holeExitRatio = (d: number, runout: number) =>
-  Math.sqrt(runout / (d + runout));
+  runout > 0 ? Math.sqrt(runout / (d + runout)) : 0;
 
 /**
  * The single owner of a bag's first-impact touch point (simulation space),
@@ -178,7 +235,7 @@ export function presentationSlide(
     tau = blendSeconds(air),
     span = air - tau / 2,
     reach = target.x - release.x - (release.velocity.x * tau) / 2,
-    runout = holeRunout(a, target);
+    runout = a.contact === 'hole' ? holeRest(a).run : 0;
   let ideal = (slide * reach) / (2 * span + slide);
   if (a.contact === 'hole') {
     // Arrival speed falls and slide speed rises with d: bisect the crossing.
@@ -298,7 +355,7 @@ export function slideMotion(
     v1 = 0;
   if (d > 1e-9) {
     if (a.contact === 'hole') {
-      const r = holeExitRatio(d, holeRunout(a, target));
+      const r = holeExitRatio(d, holeRest(a).run);
       v0 = (2 * d) / ((1 + r) * slide);
       v1 = r * v0;
     } else {
@@ -415,7 +472,32 @@ export function pushTravel(a: Attempt, time: number, timing?: PushTiming) {
 
 /** How far (0..1) a presented sliding bag at `p` lies over a drawn bag:
  * full once their footprints overlap by half a bag in both directions. */
-function rideCover(
+/**
+ * Where a bag the active attempt pushes is drawn at `time` (screen px) and
+ * its opacity, or undefined while the board state draws it. A bag pushed off
+ * the board or into the hole fades as it moves (`CornholeEvent` draws this).
+ */
+export function pushedBag(
+  a: Attempt,
+  hit: BagInteraction,
+  time: number,
+  timing?: PushTiming,
+) {
+  const v = pushTravel(a, time, timing);
+  if (v === undefined) return undefined;
+  const from = surfacePoint('cornhole', a.actor, hit.from),
+    to = surfacePoint('cornhole', a.actor, hit.to);
+  return {
+    x: from.x + (to.x - from.x) * v,
+    y: from.y + (to.y - from.y) * v,
+    alpha: hit.after === 1 ? 1 : 1 - v,
+  };
+}
+
+/** How far (0..1) a presented sliding bag at `p` lies over a drawn bag,
+ * weighted by that bag's opacity: full once their footprints overlap by half
+ * a bag in both directions. */
+export function rideCover(
   a: Attempt,
   shot: ShotStyle,
   release: ReleaseFrame,
@@ -424,28 +506,59 @@ function rideCover(
 ) {
   const s = boardDepthScale(a.actor),
     half = { x: BAG_HALF.x * s, y: BAG_HALF.y * s },
-    under: XYPoint[] = restingBags(a).map((b) =>
-      surfacePoint('cornhole', a.actor, b),
-    );
+    under = restingBags(a).map((b) => ({
+      ...surfacePoint('cornhole', a.actor, b),
+      alpha: 1,
+    }));
   for (const hit of a.boardResolution?.interactions ?? []) {
-    const from = surfacePoint('cornhole', a.actor, hit.from),
-      to = surfacePoint('cornhole', a.actor, hit.to),
-      v =
-        pushTravel(a, time, presentationPush(a, shot, release, hit)) ??
-        (time < a.contactAt ? 0 : 1);
-    under.push({
-      x: from.x + (to.x - from.x) * v,
-      y: from.y + (to.y - from.y) * v,
-    });
+    // Outside its push the board state draws it: at its start (opaque)
+    // before contact, at its end after (gone unless it stays on the board).
+    const drawn =
+      pushedBag(a, hit, time, presentationPush(a, shot, release, hit)) ??
+      (time < a.contactAt
+        ? { ...surfacePoint('cornhole', a.actor, hit.from), alpha: 1 }
+        : {
+            ...surfacePoint('cornhole', a.actor, hit.to),
+            alpha: hit.after === 1 ? 1 : 0,
+          });
+    under.push(drawn);
   }
   let cover = 0;
   for (const c of under)
     cover = Math.max(
       cover,
-      Math.min(1, Math.max(0, 2 * half.x - Math.abs(p.x - c.x)) / half.x) *
+      c.alpha *
+        Math.min(1, Math.max(0, 2 * half.x - Math.abs(p.x - c.x)) / half.x) *
         Math.min(1, Math.max(0, 2 * half.y - Math.abs(p.y - c.y)) / half.y),
     );
   return cover;
+}
+
+/** Watch cornhole draw depth of a board bag: board bags stack in throw
+ * order, so a cold seek draws them as playback did. */
+export const boardBagDepth = (rec: Recording, id: string) =>
+  60 +
+  0.001 *
+    Math.max(
+      0,
+      rec.attempts.findIndex((a) => a.id === id),
+    );
+
+/** Watch cornhole draw depth of a released bag: above every board bag from
+ * release until contactAt; below them while it sinks into the hole (its lip
+ * mask is on), so a bag resting over the rim stays in front; otherwise with
+ * the board bags in throw order. */
+export function releasedBagDepth(
+  rec: Recording,
+  a: Attempt,
+  time: number,
+  frame: ProjectileFrame,
+) {
+  return time < a.contactAt
+    ? 60.5
+    : frame.occlusion
+      ? 59.9
+      : boardBagDepth(rec, a.id);
 }
 
 /**
@@ -619,39 +732,48 @@ export function releasedBag(
     vx = 0;
     vy = 0;
     if (a.contact === 'hole' && ballistic) {
-      // Glide from the target onto the drawn hole, leaving the target at the
-      // slide's exit velocity (C1 at contactAt) and coming to rest over the
-      // hole: a cubic Hermite, uniform deceleration along the slide when the
-      // hole lies ahead. A direct shot carries its landing x speed.
-      const chord = target.x - touch.x,
-        exit = motion
-          ? {
-              x: motion.v1,
-              y: chord > 1e-9 ? (motion.v1 * (target.y - touch.y)) / chord : 0,
-            }
-          : { x: Math.max(0, ballistic.at(air).vx), y: 0 },
-        glide = Math.max(
-          HOLE_GLIDE.min,
-          Math.min(
-            HOLE_GLIDE.max,
-            exit.x > 1e-9
-              ? (2 * holeRunout(a, target)) / exit.x
-              : HOLE_GLIDE.max,
-          ),
-        ),
+      // Glide from the target onto its rest over the drawn opening (never
+      // back), leaving the target at the slide's exit velocity (C1 at
+      // contactAt): a cubic Hermite whose x is a uniform deceleration over
+      // the run-out (or slower), so x never decreases. A direct shot carries
+      // its landing x speed, capped to stop within the run-out.
+      const { rest, run } = holeRest(a),
+        chord = target.x - touch.x,
+        exit =
+          run <= 1e-9
+            ? { x: 0, y: 0 }
+            : motion
+              ? {
+                  x: motion.v1,
+                  y:
+                    chord > 1e-9
+                      ? (motion.v1 * (target.y - touch.y)) / chord
+                      : 0,
+                }
+              : {
+                  x: Math.min(
+                    Math.max(0, ballistic.at(air).vx),
+                    (2 * run) / HOLE_GLIDE.min,
+                  ),
+                  y: 0,
+                },
+        glide =
+          exit.x > 1e-9
+            ? Math.min(HOLE_GLIDE.max, (2 * run) / exit.x)
+            : HOLE_GLIDE.max,
         g = clamp01(after / glide),
         h00 = 2 * g ** 3 - 3 * g * g + 1,
         h10 = g ** 3 - 2 * g * g + g,
         h01 = 3 * g * g - 2 * g ** 3,
         moving = after < glide;
-      x = h00 * target.x + h10 * glide * exit.x + h01 * anchor.x;
-      y = h00 * target.y + h10 * glide * exit.y + h01 * anchor.y;
+      x = h00 * target.x + h10 * glide * exit.x + h01 * rest.x;
+      y = h00 * target.y + h10 * glide * exit.y + h01 * rest.y;
       vx = moving
-        ? (6 * (g * g - g) * (target.x - anchor.x)) / glide +
+        ? (6 * (g * g - g) * (target.x - rest.x)) / glide +
           (3 * g * g - 4 * g + 1) * exit.x
         : 0;
       vy = moving
-        ? (6 * (g * g - g) * (target.y - anchor.y)) / glide +
+        ? (6 * (g * g - g) * (target.y - rest.y)) / glide +
           (3 * g * g - 4 * g + 1) * exit.y
         : 0;
       ground = y;

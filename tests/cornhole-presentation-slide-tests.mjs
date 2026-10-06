@@ -20,6 +20,8 @@ export async function testCornholePresentationSlide({ check }) {
       presentationSlide,
       presentationPush,
       slideMotion,
+      releasedBagDepth,
+      boardBagDepth,
       blendSeconds,
     } =
       await import('../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'),
@@ -131,6 +133,8 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       lift: 0,
       stopTail: 0,
       holeStep: Infinity,
+      holeBack: 0,
+      liftOverFaded: 0,
       ideal: [Infinity, -Infinity],
       slide: [Infinity, -Infinity],
       hole: 0,
@@ -163,9 +167,10 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       for (const releases of variants) {
         const release = releases[a.actor];
         // Ballistic hole drop (presented and direct): the bag passes the
-        // target at contactAt still moving, glides onto the drawn hole and
-        // drops through it; the lip mask is on only while its centre is over
-        // the drawn opening.
+        // target at contactAt, glides forward onto its rest over the drawn
+        // opening (never back) and drops through it; the lip mask is on only
+        // while its centre is over the drawn opening, and the sinking bag
+        // draws below the board bags.
         if (a.contact === 'hole') {
           stats.hole++;
           const atContact = releasedBag(a, shot, release, a.contactAt),
@@ -173,27 +178,32 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
             overOpening = (p) =>
               ((p.x - anchor.x) / (20 * depth)) ** 2 +
                 ((p.y - anchor.y) / (8.3 * depth)) ** 2 <
-              1;
+              1,
+            inFront = !overOpening(target);
           check(() =>
             assert.ok(
               Math.hypot(atContact.x - target.x, atContact.y - target.y) < 1e-9,
               'the frame at contactAt is the target',
             ),
           );
-          // No stop between the slide (or a direct landing) and the drop.
+          // No stop between the slide (or a direct landing) and the drop for
+          // a target in front of the opening (one over it may slow to rest
+          // as it sinks).
           const from = travel ? firstImpactTime(a, shot) : a.contactAt;
-          let before = releasedBag(a, shot, release, from);
-          for (let k = 1; from + k * dt <= a.contactAt + 0.1 * 0.28; k++) {
-            const f = releasedBag(a, shot, release, from + k * dt),
-              step = Math.hypot(f.x - before.x, f.y - before.y);
-            stats.holeStep = Math.min(stats.holeStep, step);
-            check(() =>
-              assert.ok(
-                step > 0.3,
-                `${a.id}: the hole bag stops before the drop`,
-              ),
-            );
-            before = f;
+          if (inFront) {
+            let before = releasedBag(a, shot, release, from);
+            for (let k = 1; from + k * dt <= a.contactAt + 0.1 * 0.28; k++) {
+              const f = releasedBag(a, shot, release, from + k * dt),
+                step = Math.hypot(f.x - before.x, f.y - before.y);
+              stats.holeStep = Math.min(stats.holeStep, step);
+              check(() =>
+                assert.ok(
+                  step > 0.3,
+                  `${a.id}: the hole bag stops before the drop`,
+                ),
+              );
+              before = f;
+            }
           }
           // A presented hole bag leaves the target at the slide's velocity.
           if (travel && !a.boardResolution?.touch) {
@@ -203,28 +213,57 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
                 .velocity;
             check(() =>
               assert.ok(
-                v0.x > 0 && Math.hypot(v1.x - v0.x, v1.y - v0.y) < 1e-3 * v0.x,
+                (!inFront || v0.x > 0) &&
+                  Math.hypot(v1.x - v0.x, v1.y - v0.y) <
+                    1e-3 * Math.max(1, v0.x),
                 `${a.id}: the glide onto the hole continues the slide`,
               ),
             );
           }
-          let lastVisible = null;
-          for (let k = 0; k <= 0.3 * 240; k++) {
-            const after = k / 240,
-              f = releasedBag(a, shot, release, a.contactAt + after);
-            if (f.occlusion)
+          // x never decreases from first impact until the bag is gone.
+          let lastVisible = null,
+            previousX = releasedBag(a, shot, release, from).x;
+          for (let k = 1; from + k / 240 <= a.contactAt + 0.3; k++) {
+            const time = from + k / 240,
+              f = releasedBag(a, shot, release, time);
+            if (f.alpha <= 0.001) break;
+            check(() =>
+              assert.ok(
+                f.x >= previousX - 1e-9,
+                `${a.id}: the hole bag moves back ${(previousX - f.x).toFixed(3)} px`,
+              ),
+            );
+            stats.holeBack = Math.max(stats.holeBack, previousX - f.x);
+            previousX = f.x;
+            if (time > a.contactAt) {
+              if (f.occlusion)
+                check(() =>
+                  assert.ok(
+                    overOpening(f.ground),
+                    `${a.id}: lip mask off the drawn opening`,
+                  ),
+                );
+              const order = releasedBagDepth(rec, a, time, f),
+                board = rec.attempts
+                  .filter((b) => b.contactAt <= time && b.id !== a.id)
+                  .map((b) => boardBagDepth(rec, b.id));
+              if (f.occlusion)
+                check(() =>
+                  assert.ok(
+                    board.every((d) => order < d),
+                    `${a.id}: the sinking bag draws above a board bag`,
+                  ),
+                );
+            } else
               check(() =>
-                assert.ok(
-                  overOpening(f.ground),
-                  `${a.id}: lip mask off the drawn opening`,
-                ),
+                assert.equal(releasedBagDepth(rec, a, time, f), 60.5),
               );
-            if (f.alpha > 0.001) lastVisible = f;
+            lastVisible = f;
           }
           check(() =>
             assert.ok(
-              Math.abs(lastVisible.x - anchor.x) <= 6,
-              'last visible frame over the drawn hole',
+              overOpening(lastVisible.ground),
+              `${a.id}: last visible centre off the drawn opening`,
             ),
           );
         }
@@ -422,17 +461,39 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
               stats.stopTail = Math.max(stats.stopTail, run);
             }
           } else
-            check(() => assert.ok(motion.v1 > 0 && steps.every((d) => d > 0)));
+            check(() => assert.ok(motion.v1 >= 0 && steps.every((d) => d > 0)));
         }
-        // Ride-over lift: never above 6 px × depth, 0 at first impact and at
-        // contactAt; the shadow stays on the board under the slide.
+        // Ride-over lift: never above 6 px × depth × the opacity of the
+        // drawn bags it overlaps, 0 at first impact and at contactAt; the
+        // shadow stays on the board under the slide.
         let lift = 0;
-        for (let k = 0; impact + k / 240 <= a.contactAt + 1e-9; k++) {
-          const f = releasedBag(a, shot, release, impact + k / 240),
-            l = f.ground.y - f.y;
-          check(() =>
-            assert.ok(l >= -1e-9 && l <= 6 * depth + 1e-9, `${a.id}: lift`),
+        const drawnBoard = new CornholeEvent(),
+          liftPushes = new Map(
+            (a.boardResolution?.interactions ?? []).flatMap((hit) => {
+              const push = presentationPush(a, shot, release, hit);
+              return push ? [[hit.id, push]] : [];
+            }),
           );
+        drawnBoard.initialize(rec);
+        for (let k = 0; impact + k / 240 <= a.contactAt + 1e-9; k++) {
+          const time = impact + k / 240,
+            f = releasedBag(a, shot, release, time),
+            l = f.ground.y - f.y,
+            opacity = Math.max(
+              0,
+              ...drawnBoard
+                .persistentObjects(time, liftPushes)
+                .filter((o) => o.actor === a.actor && o.id !== a.id)
+                .filter((o) => overlapsBag(f.ground, o.frame))
+                .map((o) => o.frame.alpha),
+            );
+          check(() =>
+            assert.ok(
+              l >= -1e-9 && l <= 6 * depth * opacity + 1e-9,
+              `${a.id}: lift ${l.toFixed(3)} over opacity ${opacity}`,
+            ),
+          );
+          if (opacity < 0.1 && l > 1e-6) stats.liftOverFaded++;
           lift = Math.max(lift, l);
         }
         if (lift > 1e-6) stats.lifted++;
@@ -718,6 +779,6 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
     );
   }
   console.log(
-    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide ${stats.noSlide} (${((100 * stats.noSlide) / stats.presented).toFixed(1)}%) ${JSON.stringify(stats.noSlideCause)}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}, stop tail below 2 px/frame <= ${stats.stopTail} frames, ride-over lift ${stats.lifted} (max ${stats.lift.toFixed(2)} px at depth 1); pushes timed ${stats.pushesTimed}/${stats.pushes} (${stats.pushesAtSpeed} at the thrown speed, the rest duration-clamped); ${stats.hole} hole drops (slowest step before the sink ${stats.holeStep.toFixed(2)} px/frame); ${fixture.cases.length} legacy cases identical.`,
+    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide ${stats.noSlide} (${((100 * stats.noSlide) / stats.presented).toFixed(1)}%) ${JSON.stringify(stats.noSlideCause)}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}, stop tail below 2 px/frame <= ${stats.stopTail} frames, ride-over lift ${stats.lifted} (max ${stats.lift.toFixed(2)} px at depth 1, ${stats.liftOverFaded} lifted frames over bags below 0.1 opacity); pushes timed ${stats.pushesTimed}/${stats.pushes} (${stats.pushesAtSpeed} at the thrown speed, the rest duration-clamped); ${stats.hole} hole drops (slowest step before the sink ${stats.holeStep.toFixed(2)} px/frame for targets in front of the opening, largest backward step ${stats.holeBack.toFixed(4)} px); ${fixture.cases.length} legacy cases identical.`,
   );
 }

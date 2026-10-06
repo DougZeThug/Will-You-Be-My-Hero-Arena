@@ -29,21 +29,15 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
-import { presentationPush } from '../events/cornhole/ReleasedBagPhysics';
+import {
+  presentationPush,
+  boardBagDepth,
+  releasedBagDepth,
+} from '../events/cornhole/ReleasedBagPhysics';
 import {
   firstImpactTime,
   presentationShot,
 } from '../events/cornhole/CornholePresentationTiming';
-/** Watch cornhole draw order: the thrown bag from release until contactAt
- * draws above the board bags, which stack in throw order. */
-const THROWN_BAG_DEPTH = 60.5;
-const cornholeBagDepth = (rec: Recording, id: string) =>
-  60 +
-  0.001 *
-    Math.max(
-      0,
-      rec.attempts.findIndex((a) => a.id === id),
-    );
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -329,7 +323,7 @@ export class ArenaScene extends Phaser.Scene {
         // Cornhole board bags stack in throw order, so a cold seek draws
         // them as playback did.
         if (p.sport === 'cornhole')
-          bag.sprite.setDepth(cornholeBagDepth(rec, object.id));
+          bag.sprite.setDepth(boardBagDepth(rec, object.id));
       }
       if (
         active &&
@@ -493,13 +487,9 @@ export class ArenaScene extends Phaser.Scene {
         c.rig.heldObjectLayer,
         controller.runtime.attachment('rightHand'),
       );
-      // The thrown bag draws above every board bag until it comes to rest at
-      // contactAt, then joins them in throw order.
-      bag.sprite.setDepth(
-        time < attempt.contactAt
-          ? THROWN_BAG_DEPTH
-          : cornholeBagDepth(rec, attempt.id),
-      );
+      // The thrown bag draws above every board bag until contactAt, below
+      // them while it sinks into the hole, else with them in throw order.
+      bag.sprite.setDepth(releasedBagDepth(rec, attempt, time, take.frame));
       // The ring and hole star mark the bag arriving at the target
       // (contactAt); the landing puff marks the first impact at its touch.
       this.effects.contact(

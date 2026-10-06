@@ -7,7 +7,7 @@ import type {
 import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
 import { sampleBag, bagOutcome } from './CornholePhysics';
-import { pushTravel, type PushTiming } from './ReleasedBagPhysics';
+import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
 import { surfacePoint, boardDepthScale } from '../../../equipment-layout';
 export class CornholeEvent implements ArenaEvent {
   readonly sport = 'cornhole' as const;
@@ -77,15 +77,9 @@ export class CornholeEvent implements ArenaEvent {
         // A presented push rests until the thrown bag arrives, leaves at its
         // speed and holds its end until the board state takes over at
         // contactAt; otherwise the recorded window.
-        const v = pushTravel(active, time, pushStarts?.get(hit.id));
-        if (v === undefined) continue;
-        const from = surfacePoint('cornhole', active.actor, hit.from),
-          to = surfacePoint('cornhole', active.actor, hit.to),
-          q = {
-            x: from.x + (to.x - from.x) * v,
-            y: from.y + (to.y - from.y) * v,
-          };
-        frame(hit.id, active.actor, q, hit.after === 1 ? 1 : 1 - v);
+        const drawn = pushedBag(active, hit, time, pushStarts?.get(hit.id));
+        if (drawn)
+          frame(hit.id, active.actor, { x: drawn.x, y: drawn.y }, drawn.alpha);
       }
     return [...objects.values()];
   }
