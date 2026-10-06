@@ -115,6 +115,25 @@ Detailed durable constraints live in
 and [`docs/LOONGBONES-COMPATIBILITY.md`](docs/LOONGBONES-COMPATIBILITY.md).
 Human Motion work follows its own linked review contracts.
 
+## Multi-agent workflow (Lead / Game Director)
+
+The primary Codex session acts as **Lead / Game Director**: it talks to the
+user, picks only the relevant specialists, and owns the single plan. Specialist
+agents live in `.codex/agents/` (`gameplay_architect`, `character_animation`,
+`engine_specialist`, `sports_physics`, `art_director`, `skeptic`, `implementer`,
+`qa_verifier`); the full workflow, plan format, file-ownership and escalation
+rules are in [`docs/MULTI-AGENT-WORKFLOW.md`](docs/MULTI-AGENT-WORKFLOW.md).
+
+- Investigators and the Skeptic are read-only. Only the `implementer` normally
+  edits the repository; `qa_verifier` writes evidence to `work/qa/` only.
+- Never let two agents edit overlapping files at once; the Lead's plan lists
+  the files the Implementer owns.
+- Resolve technical questions from evidence. Ask the user only on a creative
+  or gameplay fork (realistic vs exaggerated, major control feel, substantial
+  visual direction, fundamentally different mechanics).
+- When the user corrects or rejects a result and the lesson is reusable,
+  propose the exact rule and target file; add it only after approval.
+
 ## Working and validation policy
 
 Routine bounded local source edits, profile edits, isolated captures, and
