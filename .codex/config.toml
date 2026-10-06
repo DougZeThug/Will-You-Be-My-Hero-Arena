@@ -1,0 +1,11 @@
+# Project-scoped Codex configuration for Will You Be My Hero? Arena.
+# The primary session is the Lead / Game Director (see AGENTS.md and
+# docs/MULTI-AGENT-WORKFLOW.md). Specialist agents live in agents/*.toml.
+# Model and reasoning effort are deliberately not pinned: agents inherit the
+# user's session settings.
+
+[agents]
+enabled = true
+# Specialists run in parallel for investigation; the cap keeps cost and
+# coordination bounded. Raise only with a reason.
+max_concurrent_threads_per_session = 4
