@@ -5,15 +5,29 @@ import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 /** Watch cornhole presentation: a board or hole bag touches down at
- * `presentationTouch` and slides to the immutable target; a hole bag eases
- * over the drawn hole and drops through it. Misses, direct shots and the
- * constant-acceleration path stay frame-identical to the legacy fixture. */
+ * `presentationTouch` and slides to the immutable target without passing
+ * through resting bags or (board bags) the drawn hole; a pushed bag starts
+ * moving when the thrown bag reaches it; a hole bag eases over the drawn hole
+ * and drops through it; the ring marks contactAt and the puff first impact.
+ * Misses, direct shots and the constant-acceleration path stay
+ * frame-identical to the legacy fixture. */
 export async function testCornholePresentationSlide({ check }) {
-  const { releasedBag, presentationTouch, blendSeconds } =
+  const {
+      releasedBag,
+      presentationTouch,
+      presentationSlide,
+      presentationPushStart,
+      restingBags,
+      blendSeconds,
+    } =
       await import('../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'),
+    { CornholeEvent } =
+      await import('../.test-build/engine/events/cornhole/CornholeEvent.mjs'),
+    { ImpactEffects } =
+      await import('../.test-build/engine/effects/ImpactEffects.mjs'),
     { firstImpactTime, surfaceTravelSeconds, presentationShot } =
       await import('../.test-build/engine/events/cornhole/CornholePresentationTiming.mjs'),
-    { surfacePoint, placement } =
+    { surfacePoint, placement, boardDepthScale } =
       await import('../.test-build/equipment-layout.mjs'),
     { boardValue } =
       await import('../.test-build/engine/events/cornhole/CornholeBoard.mjs');
@@ -105,7 +119,10 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       presented: 0,
       unclamped: 0,
       unclampedLong: 0,
-      clamp: { front: 0, disc: 0, max: 0, min: 0, target: 0 },
+      clamp: { front: 0, disc: 0, max: 0, min: 0, target: 0, bag: 0, hole: 0 },
+      noSlide: 0,
+      pushes: 0,
+      pushesTimed: 0,
       ideal: [Infinity, -Infinity],
       slide: [Infinity, -Infinity],
       hole: 0,
@@ -207,6 +224,21 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
           ),
         );
         check(() => assert.ok(touchV3.x <= a.target.x));
+        // Drawn footprints (screen px): a resting bag's box (both bags'
+        // half-sizes) and the drawn hole grown by the bag's half-size.
+        const depth = boardDepthScale(a.actor),
+          bagBox = { x: 58 * depth, y: 28 * depth },
+          holeEllipse = { x: 49 * depth, y: 22.3 * depth },
+          resting = restingBags(a).map((p) =>
+            surfacePoint('cornhole', a.actor, p),
+          ),
+          overlapsBag = (f, c) =>
+            Math.abs(f.x - c.x) < bagBox.x - 1e-6 &&
+            Math.abs(f.y - c.y) < bagBox.y - 1e-6,
+          overlapsHole = (f) =>
+            ((f.x - anchor.x) / holeEllipse.x) ** 2 +
+              ((f.y - anchor.y) / holeEllipse.y) ** 2 <
+            1 - 1e-6;
         // Board bags never slide across the scoring hole.
         const dz = a.target.z - lane;
         if (a.contact === 'board' && Math.abs(dz) < 0.19) {
@@ -232,12 +264,14 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
               : -Infinity;
         widen(stats.ideal, ideal);
         widen(stats.slide, slid);
-        let clamp = null;
-        if (Math.abs(touchV3.x - front) < 1e-12) clamp = 'front';
-        else if (Math.abs(touchV3.x - disc) < 1e-12) clamp = 'disc';
-        else if (touchV3.x === a.target.x) clamp = 'target';
-        else if (ideal > 90) clamp = 'max';
-        else if (ideal < 0) clamp = 'min';
+        const solved = presentationSlide(a, shot, release),
+          clamp = solved.clamp === 'none' ? null : solved.clamp;
+        check(() => assert.deepEqual(solved.touch, touchV3));
+        check(() => assert.ok(Math.abs(solved.ideal - ideal) < 1e-9));
+        if (clamp === 'front')
+          check(() => assert.ok(Math.abs(touchV3.x - front) < 1e-12));
+        if (clamp === 'disc')
+          check(() => assert.ok(Math.abs(touchV3.x - disc) < 1e-12));
         if (clamp) stats.clamp[clamp]++;
         if (!clamp) {
           stats.unclamped++;
@@ -249,7 +283,25 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
             ),
           );
         }
-        check(() => assert.ok(slid > 0, `${a.id}: the bag slides`));
+        // Every presented bag slides, unless its resting spot is itself on a
+        // drawn obstacle (then it lands on the target).
+        const atTarget = slid < 1e-9;
+        if (atTarget) {
+          stats.noSlide++;
+          check(() =>
+            assert.ok(
+              ['bag', 'hole'].includes(clamp),
+              `${a.id}: the bag slides`,
+            ),
+          );
+          check(() =>
+            assert.ok(
+              resting.some((c) => overlapsBag(target, c)) ||
+                (a.contact === 'board' && overlapsHole(target)),
+              `${a.id}: no slide only when the target is covered`,
+            ),
+          );
+        } else check(() => assert.ok(slid > 0, `${a.id}: the bag slides`));
 
         const impact = firstImpactTime(a, shot);
         const first = releasedBag(a, shot, release, impact),
@@ -297,6 +349,174 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
           previous = x;
           step = d;
         }
+        // (a) The slide never passes through a resting bag it does not push;
+        // (b) a board bag's slide never overlaps the drawn hole.
+        if (!atTarget)
+          for (let k = 0; impact + k * dt < a.contactAt - 1e-9; k++) {
+            const f = releasedBag(a, shot, release, impact + k * dt);
+            for (const c of resting)
+              check(() =>
+                assert.ok(
+                  !overlapsBag(f, c),
+                  `${a.id}: slides through a resting bag`,
+                ),
+              );
+            if (a.contact === 'board')
+              check(() =>
+                assert.ok(
+                  !overlapsHole(f),
+                  `${a.id}: slides across the drawn hole`,
+                ),
+              );
+          }
+        // (c) A pushed bag rests until the thrown bag reaches it, and the two
+        // never overlap before then (the contact frame may touch).
+        const hits = a.boardResolution?.interactions ?? [];
+        if (hits.length) {
+          const starts = new Map(
+              hits.flatMap((hit) => {
+                const at = presentationPushStart(a, shot, release, hit);
+                return at === undefined ? [] : [[hit.id, at]];
+              }),
+            ),
+            event = new CornholeEvent();
+          event.initialize(rec);
+          for (const hit of hits) {
+            stats.pushes++;
+            const start = starts.get(hit.id);
+            if (start === undefined) continue;
+            stats.pushesTimed++;
+            const from = surfacePoint('cornhole', a.actor, hit.from),
+              to = surfacePoint('cornhole', a.actor, hit.to);
+            check(() =>
+              assert.ok(start >= impact - 1e-9 && start <= a.contactAt + 1e-9),
+            );
+            const times = [];
+            for (let k = -2; impact + k * dt <= start + 0.4; k++)
+              times.push(impact + k * dt);
+            times.push(start, start + 0.34);
+            for (const time of times) {
+              const pushed = event
+                  .persistentObjects(time, starts)
+                  .find((o) => o.id === hit.id),
+                thrown = releasedBag(a, shot, release, time);
+              if (time <= start)
+                check(() =>
+                  assert.ok(
+                    pushed &&
+                      Math.hypot(
+                        pushed.frame.x - from.x,
+                        pushed.frame.y - from.y,
+                      ) < 1e-9,
+                    `${a.id}: pushed bag rests until reached`,
+                  ),
+                );
+              if (time < start - 1e-9 && time >= impact)
+                check(() =>
+                  assert.ok(
+                    !overlapsBag(thrown, from),
+                    `${a.id}: thrown bag overlaps the bag before pushing it`,
+                  ),
+                );
+              if (time >= start + 0.34 && hit.after === 1)
+                check(() =>
+                  assert.ok(
+                    pushed &&
+                      Math.hypot(pushed.frame.x - to.x, pushed.frame.y - to.y) <
+                        1e-9,
+                  ),
+                );
+            }
+            // The contact frame: the pushed bag starts as the thrown bag
+            // arrives (their footprints just touch).
+            const arrival = releasedBag(a, shot, release, start);
+            if (start > impact + 1e-9)
+              check(() =>
+                assert.ok(
+                  Math.abs(Math.abs(arrival.x - from.x) - bagBox.x) < 1e-3 ||
+                    Math.abs(Math.abs(arrival.y - from.y) - bagBox.y) < 1e-3,
+                  `${a.id}: push starts at contact`,
+                ),
+              );
+          }
+          // Without presentation times the board keeps its recorded window.
+          for (const time of [
+            a.contactAt - 0.2,
+            a.contactAt,
+            a.contactAt + 0.1,
+          ])
+            check(() =>
+              assert.deepEqual(
+                event.persistentObjects(time),
+                event.persistentObjects(time, new Map()),
+              ),
+            );
+        }
+        // (d) The ring fires at the real contactAt at the target; the puff at
+        // first impact at the touch point.
+        const used = [],
+          fake = {
+            textures: { exists: () => true },
+            add: {
+              image: () => {
+                const sprite = {};
+                for (const name of [
+                  'setDepth',
+                  'setScale',
+                  'setFrame',
+                  'clearTint',
+                  'setVisible',
+                  'setTint',
+                ])
+                  sprite[name] = () => sprite;
+                sprite.setTexture = (key) => {
+                  sprite.key = key;
+                  return sprite;
+                };
+                sprite.setPosition = (x, y) => {
+                  used.push({ key: sprite.key, x, y });
+                  return sprite;
+                };
+                return sprite;
+              },
+            },
+          },
+          effects = new ImpactEffects(fake),
+          firstUse = (key) => {
+            for (let k = -3; impact + k * dt <= a.contactAt + 0.1; k++) {
+              const time = impact + k * dt;
+              used.length = 0;
+              effects.begin();
+              effects.contact(
+                a,
+                time,
+                false,
+                a.contactAt,
+                releasedBag(a, shot, release, time).kinematics.touch,
+                impact,
+              );
+              const hit = used.find((u) => u.key === key);
+              if (hit) return { time, ...hit };
+            }
+          };
+        const ring = firstUse('impact-frames'),
+          puff = firstUse('impact-puff');
+        check(() =>
+          assert.ok(
+            ring.time >= a.contactAt - 1e-9 && ring.time < a.contactAt + dt,
+            `${a.id}: ring at contactAt`,
+          ),
+        );
+        check(() =>
+          assert.ok(Math.hypot(ring.x - target.x, ring.y - target.y) < 1e-9),
+        );
+        check(() =>
+          assert.ok(
+            puff.time >= impact - 1e-9 && puff.time < impact + dt,
+            `${a.id}: puff at first impact`,
+          ),
+        );
+        check(() => assert.ok(Math.abs(puff.x - touch.x) < 1e-9));
         // The released bag never mutates its immutable attempt.
         check(() => assert.deepEqual(a, frozen));
       }
@@ -346,6 +566,6 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
     );
   }
   console.log(
-    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}; ${stats.hole} hole drops; ${fixture.cases.length} legacy cases identical.`,
+    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide (target covered) ${stats.noSlide}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}; pushes timed ${stats.pushesTimed}/${stats.pushes}; ${stats.hole} hole drops; ${fixture.cases.length} legacy cases identical.`,
   );
 }

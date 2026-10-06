@@ -85,7 +85,7 @@ The attempt commits, from the viewer's point of view, at the release: the bag or
 ### While in flight
 
 The object flies the arc stored in the recording:
-- **Cornhole:** a bag that lands on the board touches down about 0.28 s before it stops, kicks up a small puff of dust where it lands (unless effects are calmed), and slides forward to its resting spot. A board bag never slides across the hole. The status reads **BOARD TRAVEL** and the narration "{first name} watches the bag travel across the board." A bag that scores 3 settles over the hole and drops through it. An airmail or high arc drops straight in without sliding.
+- **Cornhole:** a bag that lands on the board touches down about 0.28 s before it stops, kicks up a small puff of dust where it lands (unless effects are calmed), and slides forward to its resting spot. A board bag never slides across the hole or through another bag; when its resting spot is on the hole's rim or on another bag, it lands there without sliding. A bag it pushes starts moving when the sliding bag reaches it. The status reads **BOARD TRAVEL** and the narration "{first name} watches the bag travel across the board." A bag that scores 3 settles over the hole and drops through it. An airmail or high arc drops straight in without sliding.
 - **Football:** the ball spirals into the wall.
 - **Beer pong:** the ball drops toward one of the thrower's remaining cups.
 - **Basketball:** the ball rises and descends on the hoop. Near contact, the front of the net is drawn over it.

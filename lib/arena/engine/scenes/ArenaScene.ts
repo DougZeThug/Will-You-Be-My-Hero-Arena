@@ -29,6 +29,7 @@ import { BASE_CONTEXT } from '../core/BattleDirector';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
+import { presentationPushStart } from '../events/cornhole/ReleasedBagPhysics';
 import {
   firstImpactTime,
   presentationShot,
@@ -294,7 +295,25 @@ export class ArenaScene extends Phaser.Scene {
       }
     }
     if (rec) {
-      for (const object of this.event.persistentObjects(time))
+      // A presented cornhole push starts when the thrown bag reaches it.
+      const take = [...this.performanceTakes.values()].find(
+          (t) => t.attempt.id === active?.id,
+        ),
+        pushStarts =
+          take?.release && active?.boardResolution
+            ? new Map(
+                active.boardResolution.interactions.flatMap((hit) => {
+                  const at = presentationPushStart(
+                    active,
+                    take.shot,
+                    take.release!,
+                    hit,
+                  );
+                  return at === undefined ? [] : [[hit.id, at] as const];
+                }),
+              )
+            : undefined;
+      for (const object of this.event.persistentObjects(time, pushStarts))
         this.projectile(object.id, object.actor).show(object.frame, false);
       if (
         active &&
@@ -457,15 +476,15 @@ export class ArenaScene extends Phaser.Scene {
         c.rig.heldObjectLayer,
         controller.runtime.attachment('rightHand'),
       );
+      // The ring and hole star mark the bag arriving at the target
+      // (contactAt); the landing puff marks the first impact at its touch.
       this.effects.contact(
-        {
-          ...attempt,
-          contactAt: firstImpactTime(attempt, take.shot),
-        },
+        attempt,
         time,
         this.bridge.current.reduced || this.bridge.current.low,
         attempt.contactAt,
         take.frame.kinematics?.touch,
+        firstImpactTime(attempt, take.shot),
       );
     }
   }

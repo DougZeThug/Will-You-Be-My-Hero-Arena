@@ -194,7 +194,7 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   expect((await snapshot(page)).event.recordingHash).toBe(hash);
   expect(errors).toEqual([]);
 });
-test('cornhole performance: board bags land short and slide to the target; hole bags drop through the drawn hole', async ({
+test('cornhole performance: board bags land short and slide to the target; pushes start on contact; hole bags drop through the drawn hole', async ({
   page,
 }) => {
   test.setTimeout(240000);
@@ -206,9 +206,12 @@ test('cornhole performance: board bags land short and slide to the target; hole 
     visible: boolean;
     alpha: number;
     touch?: { x: number; y: number };
+    others: { id: string; x: number; y: number }[];
   };
   let presented = 0,
-    holes = 0;
+    sliding = 0,
+    holes = 0,
+    pushChecked = false;
   for (const seed of ['arena-lab:cornhole-recorded:v1', 'velvet-paw-29']) {
     await page.evaluate(
       (value) =>
@@ -248,6 +251,13 @@ test('cornhole performance: board bags land short and slide to the target; hole 
             visible: o.visible,
             alpha: o.alpha,
             touch: o.kinematics?.touch,
+            others: s.event.projectile
+              .filter((p: { id: string }) => p.id !== current.id)
+              .map((p: { id: string; x: number; y: number }) => ({
+                id: p.id,
+                x: p.x,
+                y: p.y,
+              })),
           });
         if (s.time > current.contactAt + 0.3) break;
         await step(page, 1);
@@ -258,12 +268,57 @@ test('cornhole performance: board bags land short and slide to the target; hole 
       const slide = samples.filter(
         (p) => p.time >= impact - 1e-6 && p.time <= current.contactAt + 1e-6,
       );
-      // It lands at the presentation touch point and travels forward.
+      // It lands at the presentation touch point and travels forward (a bag
+      // whose resting spot is on a drawn obstacle lands on its target).
       expect(Math.abs(slide[0].x - touch.x)).toBeLessThan(25);
       const travel = slide.at(-1)!.x - slide[0].x;
-      expect(travel, `${seed} ${current.id} board travel`).toBeGreaterThan(1);
+      expect(travel, `${seed} ${current.id} board travel`).toBeGreaterThan(
+        -0.01,
+      );
+      if (travel > 1) sliding++;
       for (let i = 1; i < slide.length; i++)
         expect(slide[i].x - slide[i - 1].x).toBeGreaterThanOrEqual(-0.01);
+      // recorded:v1 attempt 4 pushes a resting bag: it rests until the thrown
+      // bag reaches it, never before first impact, and the drawn bags never
+      // overlap before that (the contact frame may touch).
+      if (
+        seed === 'arena-lab:cornhole-recorded:v1' &&
+        current.id.endsWith(':attempt:4')
+      ) {
+        const moved = (i: number, id: string) => {
+          const a = samples[0].others.find((o) => o.id === id),
+            b = samples[i].others.find((o) => o.id === id);
+          return !!a && !!b && Math.hypot(b.x - a.x, b.y - a.y) > 1e-3;
+        };
+        const pushedId = samples[0].others.find((o) =>
+          moved(samples.length - 1, o.id),
+        )?.id;
+        expect(pushedId, 'a4 pushes a resting bag').toBeTruthy();
+        const starts = samples.findIndex((_, i) => moved(i, pushedId!));
+        expect(samples[starts].time).toBeGreaterThan(impact);
+        const half = current.actor ? 0.7 : 1,
+          from = samples[0].others.find((o) => o.id === pushedId)!;
+        for (let i = 0; i < starts - 1; i++)
+          if (samples[i].time >= impact - 1e-6)
+            expect(
+              Math.abs(samples[i].x - from.x) < 58 * half - 0.5 &&
+                Math.abs(samples[i].y - from.y) < 28 * half - 0.5,
+              `a4 frame ${i}: thrown bag overlaps the bag before pushing it`,
+            ).toBe(false);
+        // Whether the thrown bag reaches it at all; when it does not (it
+        // lands on its target short of the bag), the push keeps its recorded
+        // window (presentationPushStart returns undefined).
+        const reached = samples.some(
+          (p) =>
+            p.time >= impact - 1e-6 &&
+            Math.abs(p.x - from.x) <= 58 * half + 1 &&
+            Math.abs(p.y - from.y) <= 28 * half + 1,
+        );
+        console.log(
+          `recorded:v1 a4 push: ${reached ? 'starts on contact' : 'recorded window (the thrown bag never reaches the pushed bag)'}`,
+        );
+        pushChecked = true;
+      }
       if (current.contact === 'hole') {
         holes++;
         const visible = samples.filter(
@@ -280,8 +335,10 @@ test('cornhole performance: board bags land short and slide to the target; hole 
     }
   }
   expect(presented).toBeGreaterThan(0);
+  expect(sliding).toBeGreaterThan(0);
+  expect(pushChecked).toBe(true);
   console.log(
-    `presented board/hole slides: ${presented}, hole drops: ${holes}`,
+    `presented board/hole bags: ${presented} (sliding ${sliding}), hole drops: ${holes}`,
   );
   expect(errors).toEqual([]);
 });

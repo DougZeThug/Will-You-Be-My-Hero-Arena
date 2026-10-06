@@ -146,9 +146,15 @@ the front-view puppet and separate contracts.
   one owner, `presentationTouch` (`ReleasedBagPhysics.ts`): a miss uses its
   recorded touch; a non-direct board or hole bag touches down short of the
   immutable target by the velocity-matched slide distance (at most 90 px,
-  never off the front of the board, never across the hole for a board bag)
-  and slides to rest on the target at `contactAt`; direct shots land on the
-  target. The landing puff sits at `kinematics.touch`. A hole bag then eases
+  never off the front of the board, never through a drawn resting bag it
+  does not push, never across the scoring disc or drawn hole for a board
+  bag; with no clear slide it lands on the target) and slides to rest on the
+  target at `contactAt`; direct shots land on the target
+  (`presentationSlide` reports the limit that applied). A pushed bag starts
+  moving when the thrown bag reaches it (`presentationPushStart`, passed to
+  `CornholeEvent.persistentObjects`), else in its recorded window. The
+  landing puff sits at `kinematics.touch` at first impact; the ring and hole
+  star mark `contactAt` at the target. A hole bag then eases
   over the drawn hole and drops through it; the lip mask applies only once it
   is over the hole. Presentation only: recordings, timing and scoring are
   unchanged, and the constant-acceleration and `sampleBag` paths keep their
