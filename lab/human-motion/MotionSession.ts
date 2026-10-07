@@ -185,8 +185,19 @@ export class MotionSession {
   }
   private tick() {
     // The clock and step counter only advance for a tick that simulates; a
-    // disconnected pad aborts below, before the world moves.
+    // disconnected pad aborts before any controller acts or the world moves.
     const t = this.time + 1 / 120;
+    // Peek first: a disconnected device must stop the tick before any
+    // controller acts. poll() consumes one-shot input, so only the down
+    // devices are polled (a gamepad or missing slot has nothing to consume) to
+    // record why we paused.
+    const down = this.controllers.filter((c) => !this.input.connected(c.id));
+    if (down.length) {
+      for (const c of down)
+        this.frames.set(c.id, structuredClone(this.input.poll(c.id, t)));
+      this.pause(true);
+      return;
+    }
     for (const c of this.controllers) {
       const frame = this.input.poll(c.id, t);
       if (this.awaitingNeutral.has(c.id)) {
@@ -197,6 +208,7 @@ export class MotionSession {
         else this.awaitingNeutral.delete(c.id);
       }
       this.frames.set(c.id, structuredClone(frame));
+      // Safety net for a pad that drops between the peek above and this poll.
       if (!frame.connected) {
         this.pause(true);
         return;

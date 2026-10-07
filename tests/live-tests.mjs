@@ -9,8 +9,10 @@ export async function testLive({ check }) {
     await import('../.test-build/engine/input/InputManager.mjs');
   const { IntentTracker } =
     await import('../.test-build/engine/input/IntentTracker.mjs');
-  const { mapGamepad } =
+  const { mapGamepad, GamepadDevice } =
     await import('../.test-build/engine/input/GamepadDevice.mjs');
+  const { AIController } =
+    await import('../.test-build/engine/controllers/AIController.mjs');
   const { bindingsFor } =
     await import('../.test-build/engine/input/InputBindings.mjs');
   const { ActionTimeline } =
@@ -110,6 +112,59 @@ export async function testLive({ check }) {
   check(() => assert.equal(mapped.values.specialAction, 1));
   check(() => assert.ok(mapped.values.aim.x > 0.5));
   check(() => assert.equal(mapGamepad(null, bindingsFor(0)).connected, false));
+  // connected() is the side-effect-free peek the Human Motion session uses.
+  const peekManager = new InputManager();
+  peekManager.assign('virtual', new VirtualDevice('peek-virtual'));
+  peekManager.assign('ai', new AIController('peek-ai', () => frame({})));
+  check(() => assert.equal(peekManager.connected('missing'), false));
+  check(() => assert.equal(peekManager.connected('virtual'), true));
+  check(() => assert.equal(peekManager.connected('ai'), true));
+  const peekTap = peekManager.device('virtual');
+  peekTap.set('primaryAction', 1);
+  peekTap.set('primaryAction', 0);
+  check(() => assert.equal(peekManager.connected('virtual'), true));
+  check(() =>
+    assert.equal(peekManager.poll('virtual', 0).values.primaryAction, 1),
+  );
+  peekManager.destroy();
+  const navigatorDescriptor = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'navigator',
+  );
+  const stubNavigator = (value) =>
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value,
+    });
+  try {
+    const gamepad = new GamepadDevice(0, bindingsFor(0)),
+      gamepadManager = new InputManager();
+    gamepadManager.assign('p0', gamepad);
+    stubNavigator({ getGamepads: () => [{ ...pad }] });
+    check(() => assert.equal(gamepad.connected(), true));
+    check(() => assert.equal(gamepadManager.connected('p0'), true));
+    const unpeeked = gamepad.poll();
+    gamepad.connected();
+    gamepadManager.connected('p0');
+    check(() => assert.deepEqual(gamepad.poll(), unpeeked));
+    stubNavigator({ getGamepads: () => [{ ...pad, connected: false }] });
+    check(() => assert.equal(gamepad.connected(), false));
+    check(() => assert.equal(gamepadManager.connected('p0'), false));
+    stubNavigator({ getGamepads: () => [null] });
+    check(() => assert.equal(gamepad.connected(), false));
+    stubNavigator({ getGamepads: () => [] });
+    check(() => assert.equal(gamepad.connected(), false));
+    stubNavigator({
+      getGamepads: () => {
+        throw Error('blocked');
+      },
+    });
+    check(() => assert.equal(gamepad.connected(), false));
+  } finally {
+    if (navigatorDescriptor)
+      Object.defineProperty(globalThis, 'navigator', navigatorDescriptor);
+    else delete globalThis.navigator;
+  }
   const tl = new ActionTimeline(),
     markers = [];
   tl.start('attack', 0.6, [

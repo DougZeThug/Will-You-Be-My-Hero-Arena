@@ -270,6 +270,85 @@ test('Human Motion V2: a disconnected pad does not advance the session clock', a
   expect(after.time).toBe(before.time);
   expect(after.steps).toBe(before.steps);
 });
+test("Human Motion V2: a disconnect stops the tick before another pad's action starts", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const pads = [0, 1].map((index) => ({
+      id: index ? 'Sony DualSense' : 'Xbox',
+      mapping: 'standard',
+      connected: true,
+      index,
+      axes: [0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({ value: 0, pressed: false })),
+    }));
+    Object.defineProperty(navigator, 'getGamepads', { value: () => pads });
+    (window as unknown as { testPads: typeof pads }).testPads = pads;
+  });
+  await page.goto('/human-motion/?event=fighting');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  await page.selectOption('#device', 'gamepad');
+  type Pad = {
+    connected: boolean;
+    buttons: { value: number; pressed: boolean }[];
+  };
+  const snap = () =>
+    page.evaluate(() => {
+      const s = window.__HERO_MOTION__.getState();
+      return {
+        time: s.time,
+        steps: s.steps,
+        paused: s.paused,
+        stamina: (s.actors[0] as unknown as { stamina: number }).stamina,
+        actor: s.actors[0].graph.map((g) => g.id + ':' + g.time),
+        commands: s.controllers[0].commands,
+        lastCommand: s.controllers[0].lastCommand,
+        pending: s.controllers[0].pending,
+        pad1Connected: s.input[1].frame?.connected,
+      };
+    });
+  // Freeze the real-time loop, then let the AI's opening exchange settle under
+  // neutral pads so the jab is available and the stuck-input guard is clear.
+  await page.evaluate(() => {
+    window.__HERO_MOTION__.pause();
+    window.__HERO_MOTION__.step(5);
+  });
+  const before = await snap();
+  expect(before.stamina).toBeGreaterThan(90);
+  // Pad 0 presses the jab on the very tick pad 1 is found disconnected.
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: Pad[] }).testPads;
+    pads[1].connected = false;
+    pads[0].buttons[0] = { value: 1, pressed: true };
+    window.__HERO_MOTION__.step(1 / 120);
+  });
+  const aborted = await snap();
+  expect(aborted.pad1Connected).toBe(false);
+  expect(aborted.paused).toBe(true);
+  expect(aborted.time).toBe(before.time);
+  expect(aborted.steps).toBe(before.steps);
+  expect(aborted.stamina).toBe(before.stamina);
+  expect(aborted.actor).toEqual(before.actor);
+  expect(aborted.commands).toBe(before.commands);
+  expect(aborted.lastCommand).toBe(before.lastCommand);
+  expect(aborted.pending).toEqual([]);
+  // Positive control: with every pad connected the same press does spend it.
+  await page.evaluate(() => {
+    const pads = (window as unknown as { testPads: Pad[] }).testPads;
+    pads[1].connected = true;
+    pads[0].buttons[0] = { value: 0, pressed: false };
+    window.__HERO_MOTION__.step(1 / 120);
+    pads[0].buttons[0] = { value: 1, pressed: true };
+    window.__HERO_MOTION__.step(1 / 120);
+  });
+  const jabbed = await snap();
+  expect(jabbed.pad1Connected).toBe(true);
+  expect(jabbed.commands).toBeGreaterThan(before.commands);
+  expect(jabbed.stamina).toBeLessThan(before.stamina - 5);
+  expect(before.actor.some((g) => g.startsWith('jab:'))).toBe(false);
+  expect(jabbed.actor.some((g) => g.startsWith('jab:'))).toBe(true);
+  expect(jabbed.steps).toBeGreaterThan(before.steps);
+});
 test('Human Motion V2: AI runners keep running after a blur and resume', async ({
   page,
 }) => {

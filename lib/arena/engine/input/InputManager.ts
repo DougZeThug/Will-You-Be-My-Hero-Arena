@@ -23,6 +23,12 @@ export class InputManager {
       }
     );
   }
+  /** Side-effect-free presence check; a missing slot reads as disconnected,
+   * like poll's fallback. */
+  connected(player: string) {
+    const device = this.slots.get(player);
+    return device ? (device.connected?.() ?? true) : false;
+  }
   haptic(player: string, cue: HapticCue) {
     this.slots.get(player)?.haptic?.(cue);
   }

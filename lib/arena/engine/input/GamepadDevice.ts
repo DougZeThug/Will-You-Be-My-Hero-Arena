@@ -72,6 +72,13 @@ export class GamepadDevice implements InputDevice {
     this.family = frame.family;
     return frame;
   }
+  connected() {
+    try {
+      return !!navigator.getGamepads?.()[this.index]?.connected;
+    } catch {
+      return false;
+    }
+  }
   clear() {}
   destroy() {}
   haptic(cue: HapticCue) {

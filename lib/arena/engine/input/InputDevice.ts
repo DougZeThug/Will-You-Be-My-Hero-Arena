@@ -19,6 +19,9 @@ export interface InputDevice {
   clear(): void;
   destroy(): void;
   haptic?(cue: HapticCue): void;
+  /** Whether the device is present. Must be side-effect free (unlike poll,
+   * which consumes one-shot input). An absent method means connected. */
+  connected?(): boolean;
 }
 /** Virtual controls are also used by touch and AI. Retain taps shorter than one
  * game tick, so a quick click cannot disappear between two polls. */
