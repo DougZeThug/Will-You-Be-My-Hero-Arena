@@ -1388,18 +1388,28 @@ export async function testLive({ check }) {
   );
   key('keyup', 'KeyD');
   keyboard.destroy();
-  const outside = new KeyboardDevice('kb-outside', bindingsFor(0), 0, {
-    contains: () => false,
+  // Press while in scope so the device really holds the key, then leave scope.
+  let inside = true;
+  const scoped = new KeyboardDevice('kb-scoped', bindingsFor(0), 0, {
+    contains: () => inside,
   });
   key('keydown', 'KeyD');
   check(() =>
     assert.equal(
       repeat('keydown', 'KeyD'),
-      0,
-      'A repeat outside the arena scope is not prevented',
+      1,
+      'A held key repeating inside the arena scope is prevented',
     ),
   );
-  outside.destroy();
+  inside = false;
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      0,
+      'A held key repeating outside the arena scope is not prevented',
+    ),
+  );
+  scoped.destroy();
   Object.assign(globalThis, saved);
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
