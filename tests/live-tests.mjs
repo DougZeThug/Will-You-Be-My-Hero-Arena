@@ -693,7 +693,7 @@ export async function testLive({ check }) {
   const maxFrames = 6000;
   const bounded = (frames, transition) =>
     assert.ok(frames < maxFrames, `${transition} never happened`);
-  const throwBag = (s, player, held, shot, precision) => {
+  const throwBag = (s, player, held, shot, precision, land) => {
     const e = s.event;
     let frames = 0;
     while (!(e.state === 'aiming' && e.active().id === player)) {
@@ -713,9 +713,13 @@ export async function testLive({ check }) {
       bounded(frames++, `${player}'s bag landing`);
       step(s);
       if (perfect === undefined && e.state === 'throwing') perfect = e.perfect;
-      if (!flight && e.flight) flight = { ...e.flight.target };
+      if (!flight && e.flight) {
+        land?.(e.flight);
+        flight = { ...e.flight.target };
+      }
     }
     return {
+      contact: s.characters.find((c) => c.id === player).lastThrow?.contact,
       perfect,
       points: e.bags.at(-1).points,
       error: e.releasePower - e.ideal(),
@@ -826,6 +830,119 @@ export async function testLive({ check }) {
       ),
     );
   }
+  // The live performance rig is told the real result of the thrower's own
+  // throw: ArenaCharacter.lastThrow is written when the bag lands, from the
+  // landed bag's final points (hole 3, board 1, otherwise a miss).
+  const contactOf = (points) =>
+    points === 3 ? 'hole' : points === 1 ? 'board' : 'miss';
+  // Aim a throw at an exact spot; the landing rules still decide the result.
+  const landAt = (p) => (f) => {
+    f.target = { ...p };
+  };
+  let board;
+  for (let dy = -30; dy <= 30 && !board; dy += 2)
+    for (let dx = -60; dx <= 60 && !board; dx += 2) {
+      const p = { x: hole.x + dx, y: hole.y + dy };
+      if (Math.hypot(dx, dy) > 45 && bagPoints(p) === 1) board = p;
+    }
+  const faraway = { x: hole.x + 400, y: hole.y };
+  check(() => assert.equal(bagPoints(hole), 3));
+  check(() => assert.equal(bagPoints(board), 1));
+  check(() => assert.equal(bagPoints(faraway), 0));
+  const last = new ArenaSession(config('cornhole', false, 2, 'last-throw'));
+  check(() =>
+    assert.ok(
+      last.characters.every((c) => c.lastThrow === undefined),
+      'No throw yet, no recorded contact',
+    ),
+  );
+  const [first, second] = last.characters;
+  const aimed = (player, spot) =>
+    throwBag(last, player, 0.3, 'primaryAction', false, landAt(spot));
+  const inHole = aimed('p0', hole);
+  check(() => assert.equal(inHole.points, 3));
+  check(() => assert.equal(inHole.contact, contactOf(inHole.points)));
+  check(() => assert.equal(inHole.contact, 'hole'));
+  check(() => assert.equal(first.lastThrow.contact, 'hole'));
+  check(() =>
+    assert.equal(
+      second.lastThrow,
+      undefined,
+      'A non-thrower has no recorded contact before their own throw',
+    ),
+  );
+  const onBoard = aimed('p1', board);
+  check(() => assert.equal(onBoard.points, 1));
+  check(() => assert.equal(onBoard.contact, contactOf(onBoard.points)));
+  check(() => assert.equal(onBoard.contact, 'board'));
+  check(() => assert.equal(second.lastThrow.contact, 'board'));
+  check(() =>
+    assert.equal(
+      first.lastThrow.contact,
+      'hole',
+      "Another player's throw leaves the contact alone",
+    ),
+  );
+  const offBoard = aimed('p0', faraway);
+  check(() => assert.equal(offBoard.points, 0));
+  check(() => assert.equal(offBoard.contact, contactOf(offBoard.points)));
+  check(() => assert.equal(offBoard.contact, 'miss'));
+  check(() =>
+    assert.equal(first.lastThrow.contact, 'miss', 'The next throw overwrites'),
+  );
+  check(() => assert.equal(second.lastThrow.contact, 'board'));
+  last.destroy();
+  // A roll that curls around a bag can end on 0 points while the thrower's
+  // score still rises (the pushed old bag drops into the hole): still a miss.
+  let curl;
+  for (let dy = -40; dy <= 40 && !curl; dy += 1)
+    for (let dx = -80; dx <= 80 && !curl; dx += 1) {
+      const old = { x: hole.x + dx, y: hole.y + dy },
+        d = Math.hypot(dx, dy),
+        pushed = {
+          x: old.x - (dx / d) * 12,
+          y: old.y - (dy / d) * 12,
+        },
+        landed = { x: old.x + 4, y: old.y };
+      if (
+        d > 13 &&
+        bagPoints(old) === 1 &&
+        bagPoints(pushed) === 3 &&
+        bagPoints(landed) === 1 &&
+        bagPoints({ ...landed, y: landed.y + 16 }) === 0
+      )
+        curl = { old, landed };
+    }
+  if (curl) {
+    const s = new ArenaSession(config('cornhole', false, 2, 'curl'));
+    s.event.bags.push({
+      id: 'old',
+      owner: 'p0',
+      ...curl.old,
+      angle: 0,
+      points: 1,
+    });
+    s.characters[0].score = 1;
+    const shot = throwBag(
+      s,
+      'p0',
+      0.3,
+      'tertiaryAction',
+      false,
+      landAt(curl.landed),
+    );
+    check(() => assert.equal(s.event.shot, 'roll'));
+    check(() =>
+      assert.equal(shot.points, 0, 'The curled bag is off the board'),
+    );
+    check(() =>
+      assert.equal(s.characters[0].score, 3, 'The pushed bag still scores'),
+    );
+    check(() => assert.equal(shot.contact, contactOf(shot.points)));
+    check(() => assert.equal(shot.contact, 'miss'));
+    s.destroy();
+  }
+  check(() => assert.ok(curl, 'a spot where a roll curls off the board'));
   // The AI's timing error is drawn once per throw from the session's seed: the
   // same seed plays the same match, and it is not always perfect.
   const aiMatch = (seed) => {

@@ -12,6 +12,8 @@ import { PersonalityComponent } from './components/PersonalityComponent';
 import { CharacterStats } from './components/CharacterStats';
 import { AbilityComponent } from './components/AbilityComponent';
 import type { ClipMarker } from '../animation/AnimationEvents';
+/** Contact of a precision (cornhole) throw: hole, board or miss. */
+export type ThrowContact = 'hole' | 'board' | 'miss';
 export interface CharacterComponent {
   can(action: string): boolean;
   perform(action: string, payload: ActionPayload): boolean;
@@ -44,6 +46,9 @@ export class ArenaCharacter implements ControllableEntity {
   /** Session times of the latest physical beats. Rules record them; only
    * presentation reads them (squash, dust), so they never affect results. */
   beats: Partial<Record<'takeoff' | 'land' | 'hit', number>> = {};
+  /** Result of this character's latest precision throw. Rules record it; only
+   * presentation reads it, so it never affects results. */
+  lastThrow?: { contact: ThrowContact };
   constructor(
     readonly id: string,
     readonly profile: CharacterProfile,
