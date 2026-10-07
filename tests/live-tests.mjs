@@ -921,6 +921,76 @@ export async function testLive({ check }) {
       Math.abs(front.body.scale - lanes.characters[1].body.scale) > 0.03,
     ),
   );
+  // Free steering: adjacent lanes' obstacle hit bands tile with no seam.
+  {
+    const { obstacleCollision } =
+      await import('../.test-build/engine/events/running/RunningPhysics.mjs');
+    const at = (y, z = 0) => ({ body: { x: 500, y, z } });
+    const motion = (slide = 0, ids = []) => ({ hits: new Set(ids), slide });
+    for (const kind of ['hurdle', 'bar']) {
+      const lane = (n) => ({
+        id: kind + n,
+        x: 500,
+        y: 520 + n * 62,
+        width: 36,
+        height: 42,
+        kind,
+      });
+      const [l0, l1, l2] = [lane(0), lane(1), lane(2)];
+      const hit = (y, o) => obstacleCollision(at(y), o, motion());
+      // [runner y, lane that must be hit, the other lane it sits between]
+      for (const [y, want, other] of [
+        [549.5, 0, 1],
+        [550.5, 0, 1],
+        [551.5, 1, 0],
+        [612.5, 1, 2],
+        [613.5, 2, 1],
+      ])
+        check(() => {
+          const lanes = [l0, l1, l2];
+          assert.deepEqual(
+            [hit(y, lanes[want]), hit(y, lanes[other])],
+            [true, false],
+            kind + ' at y ' + y + ' hits exactly one lane',
+          );
+        });
+      check(() => assert.equal(hit(551.5, l0), false));
+      for (const y of [489, 675])
+        check(() =>
+          assert.deepEqual(
+            [hit(y, l0), hit(y, l1), hit(y, l2)].includes(true),
+            false,
+          ),
+        );
+    }
+    const hurdle = {
+      id: 'h',
+      x: 500,
+      y: 520,
+      width: 36,
+      height: 42,
+      kind: 'hurdle',
+    };
+    const bar = { ...hurdle, id: 'b', kind: 'bar' };
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 0), hurdle, motion()), true),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 42), hurdle, motion()), false),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 60), bar, motion(0)), true),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 0), bar, motion(0.4)), false),
+    );
+    check(() =>
+      assert.equal(
+        obstacleCollision(at(520, 0), hurdle, motion(0, ['h'])),
+        false,
+      ),
+    );
+  }
   pulse(lanes, 'p0', 'tertiaryAction');
   advance(lanes, 0.8);
   check(() =>
