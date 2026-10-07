@@ -8,7 +8,7 @@ let runtime: LiveArenaGame,
   charging = false,
   exporting = false,
   readyResolve: (error?: string) => void = () => {};
-function start() {
+function boot() {
   runtime?.destroy();
   runtime = new LiveArenaGame(host, {
     config: {
@@ -36,6 +36,17 @@ function start() {
       if (!exporting) status.textContent = JSON.stringify(s, null, 2);
     },
   });
+}
+// A synchronous throw from boot (e.g. no WebGL) must not leave the export's
+// ready gate unsettled, so report it where the async onError path does.
+function start() {
+  try {
+    boot();
+  } catch (e) {
+    const message = String(e);
+    status.textContent = message;
+    readyResolve(message);
+  }
 }
 // An export has stopped the runtime's loop, so a restart then could never
 // finish destroying it.
