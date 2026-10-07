@@ -160,7 +160,7 @@ The figures are the same for keyboard 2, controllers and the on-screen buttons. 
 |---|---|---|---|
 | **Block** | left Shift, held | 4 needed to raise it; 8 per blocked hit | Every blow except a grapple does 2 damage. The fighter walks at 38% speed, and energy returns at 3 per second instead of 11. |
 | **Dodge** | L, or A or D tapped twice within 0.26 s | 15 | A hop of about 33 px, in the direction being held or tapped, or backward if none. Untouchable for 0.42 s, able to act again at 0.47 s, and done at 0.55 s. |
-| **Counter stance** | left Ctrl | 12 | For 0.7 s, blows that land do 65% of their damage. The figure does not change, but a blow it softens is announced "{defender} counters {attacker}, taking less damage". It is not a counterattack. Pressed to set up a grapple, it is cancelled and refunded when the grapple starts. |
+| **Counter stance** | left Ctrl | 12 | For 0.7 s, blows that land do 65% of their damage. The figure does not change, but a blow it softens is announced "{defender} counters {attacker}, taking less damage". It is not a counterattack. Pressed to set up a grapple, it is cancelled and refunded when the grapple starts. While Block is up, Counter stance only matters against blows the guard cannot stop, in practice a grapple; every other front blow is already cut to 2 chip damage. |
 | **Taunt** | C | 0 | Plays one of the character's celebrations, which lasts 0.65–1.5 s, and the caption reads "{name} taunts". It never holds the fighter: any attack, guard or dodge cuts it short, and walking and counter stance work during it. |
 
 Energy returns at 11 per second, capped at 100, whether the fighter is walking, attacking or reeling. It returns at 3 per second while blocking. Walking speed is 166 px/s for Dan and 192 px/s for Doug.

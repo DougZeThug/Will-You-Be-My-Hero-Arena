@@ -1267,6 +1267,69 @@ export async function testLive({ check }) {
   check(() => assert.equal(stance.characters[0].stamina, 0));
   check(() => assert.equal(guard.counterUntil, 0));
   stance.destroy();
+  // Counter stance held under a raised Block costs its 12 and leaves the guard
+  // up, but it only softens what the guard cannot stop: a grapple. Pinned as
+  // current behaviour, not a design claim.
+  const guarded = (counter, attack) => {
+    const g = new ArenaSession(config('fighting', false));
+    advance(g, 1.7);
+    g.characters[0].body.x = 500;
+    g.characters[1].body.x = attack === 'grapple' ? 580 : 610;
+    g.inject('p1', 'modifierLeft', 1);
+    advance(g, 0.2);
+    const held = g.event.components.get('p1'),
+      before = g.characters[1].stamina;
+    if (counter) pulse(g, 'p1', 'modifierRight');
+    const spent = before - g.characters[1].stamina,
+      armed = held.counterUntil > g.time,
+      stillBlocking = held.blocking && g.characters[1].substate === 'blocking';
+    if (attack === 'grapple') {
+      g.inject('p0', 'modifierRight', 1);
+      g.inject('p0', 'primaryAction', 1);
+      g.inject('p0', 'primaryAction', 0);
+      g.inject('p0', 'modifierRight', 0);
+      g.advance(1 / 60);
+    } else pulse(g, 'p0', 'primaryAction');
+    for (let i = 0; i < 90 && g.characters[1].health === 100; i++)
+      g.advance(1 / 60);
+    // The press and the blow land within one counter window.
+    const windowOpen = held.counterUntil > g.time;
+    const out = {
+      spent,
+      armed,
+      stillBlocking,
+      windowOpen,
+      loss: 100 - g.characters[1].health,
+    };
+    g.destroy();
+    return out;
+  };
+  const chipBase = guarded(false, 'light'),
+    chipCounter = guarded(true, 'light'),
+    grabBase = guarded(false, 'grapple'),
+    grabCounter = guarded(true, 'grapple');
+  check(() =>
+    assert.ok(
+      chipCounter.spent >= 11.8 && chipCounter.spent <= 12.2,
+      'Counter under Block costs 12',
+    ),
+  );
+  check(() => assert.equal(chipCounter.armed, true, 'The stance is armed'));
+  check(() =>
+    assert.equal(chipCounter.stillBlocking, true, 'Counter keeps the guard'),
+  );
+  check(() => assert.deepEqual([chipBase.loss, chipCounter.loss], [2, 2]));
+  check(() => assert.ok(grabBase.loss > 2, 'A guard cannot stop a grapple'));
+  check(() =>
+    assert.ok(grabCounter.windowOpen, 'The grapple lands in the window'),
+  );
+  check(() =>
+    assert.ok(
+      grabCounter.loss < grabBase.loss &&
+        Math.abs(grabCounter.loss - 0.65 * grabBase.loss) <= 1,
+      'Counter under Block cuts a grapple to 65%',
+    ),
+  );
   // Two keyboard layouts may not share a key, whichever way it got there.
   const { bindingsConflict } =
     await import('../.test-build/engine/input/InputBindings.mjs');
