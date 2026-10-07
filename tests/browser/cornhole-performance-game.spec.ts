@@ -194,3 +194,348 @@ test('cornhole performance: real ArenaScene repeats, seeks and preserves authori
   expect((await snapshot(page)).event.recordingHash).toBe(hash);
   expect(errors).toEqual([]);
 });
+test('cornhole performance: board bags land short and slide to the target; pushes shove on contact; hole bags glide into the drawn hole', async ({
+  page,
+}) => {
+  test.setTimeout(240000);
+  const errors = await openScenario(page, 'cornhole-performance');
+  type Sample = {
+    time: number;
+    x: number;
+    y: number;
+    visible: boolean;
+    alpha: number;
+    depth: number;
+    touch?: { x: number; y: number };
+    others: {
+      id: string;
+      x: number;
+      y: number;
+      depth: number;
+      visible: boolean;
+      attached: boolean;
+    }[];
+  };
+  let presented = 0,
+    sliding = 0,
+    holes = 0,
+    pushChecked = false;
+  const contacts = new Map<string, number>();
+  for (const seed of [
+    'arena-lab:cornhole-recorded:v1',
+    'velvet-paw-29',
+    // Attempt 0 scores 3 with its target past the drawn hole's centre.
+    'qa-hole-12',
+  ]) {
+    await page.evaluate(
+      (value) =>
+        window.__HERO_ARENA__.loadScenario('cornhole-performance', {
+          seed: value,
+        }),
+      seed,
+    );
+    const holeAnchors = (
+      await snapshot(page)
+    ).rendering!.equipmentRegistration.map((r) => r.hole);
+    const duration = (await snapshot(page)).event.duration;
+    let at = 0;
+    while (at < duration) {
+      await seekTime(page, at);
+      const current = (await snapshot(page)).event.current;
+      if (!current) {
+        at += 0.5; // intro or between turns
+        continue;
+      }
+      at = current.end + 0.02;
+      contacts.set(seed + ' ' + current.id, current.contactAt);
+      if (current.contact !== 'board' && current.contact !== 'hole') continue;
+      // Board travel is 0.28 s for every non-direct board/hole bag.
+      const impact = current.contactAt - 0.28;
+      await seekTime(page, Math.max(current.releaseAt, impact - 2 / 60));
+      const samples: Sample[] = [];
+      for (let k = 0; k < 40; k++) {
+        const s = await snapshot(page),
+          o = s.event.projectile.find(
+            (p: { id: string }) => p.id === current.id,
+          );
+        if (o)
+          samples.push({
+            time: s.time,
+            x: o.x,
+            y: o.y,
+            visible: o.visible,
+            alpha: o.alpha,
+            depth: o.depth,
+            touch: o.kinematics?.touch,
+            others: s.event.projectile
+              .filter((p: { id: string }) => p.id !== current.id)
+              .map(
+                (p: {
+                  id: string;
+                  x: number;
+                  y: number;
+                  depth: number;
+                  visible: boolean;
+                  attached: boolean;
+                }) => ({
+                  id: p.id,
+                  x: p.x,
+                  y: p.y,
+                  depth: p.depth,
+                  visible: p.visible,
+                  attached: p.attached,
+                }),
+              ),
+          });
+        if (s.time > current.contactAt + 0.3) break;
+        await step(page, 1);
+      }
+      const touch = samples.find((p) => p.touch)?.touch;
+      if (!touch) continue; // direct shot: drops in without a board slide
+      presented++;
+      const slide = samples.filter(
+        (p) => p.time >= impact - 1e-6 && p.time <= current.contactAt + 1e-6,
+      );
+      // It lands at the presentation touch point and travels forward (a board
+      // bag resting over the drawn opening lands on its target).
+      expect(Math.abs(slide[0].x - touch.x)).toBeLessThan(25);
+      const travel = slide.at(-1)!.x - slide[0].x;
+      expect(travel, `${seed} ${current.id} board travel`).toBeGreaterThan(
+        -0.01,
+      );
+      if (travel > 1) sliding++;
+      // A board bag reaches its resting spot by contactAt: the frame at
+      // contactAt is where it still rests 0.1 s later, and a bag with a
+      // positive slide (rest beyond its touch point) visibly travels.
+      if (current.contact === 'board') {
+        const near = (t: number) =>
+            samples.reduce((a, b) =>
+              Math.abs(b.time - t) < Math.abs(a.time - t) ? b : a,
+            ),
+          rest = near(current.contactAt + 0.1);
+        // Seek to contactAt itself: the last stepped sample before it can
+        // still carry the end of the slide and the ride-over lift.
+        await seekTime(page, current.contactAt);
+        const exact = await snapshot(page),
+          atContact = exact.event.projectile.find(
+            (p: { id: string }) => p.id === current.id,
+          )!;
+        expect(Math.abs(exact.time - current.contactAt)).toBeLessThan(1e-6);
+        expect(Math.abs(rest.time - (current.contactAt + 0.1))).toBeLessThan(
+          1 / 60 + 1e-6,
+        );
+        expect(
+          Math.hypot(atContact.x - rest.x, atContact.y - rest.y),
+          `${seed} ${current.id} rests at contactAt`,
+        ).toBeLessThan(0.5);
+        if (rest.x - touch.x > 1)
+          expect(
+            travel,
+            `${seed} ${current.id} slides to its rest`,
+          ).toBeGreaterThan(1);
+      }
+      for (let i = 1; i < slide.length; i++)
+        expect(slide[i].x - slide[i - 1].x).toBeGreaterThanOrEqual(-0.01);
+      // recorded:v1 attempt 4 pushes a resting bag: it rests until the thrown
+      // bag reaches it, never before first impact, and the drawn bags never
+      // overlap before that (the contact frame may touch).
+      if (
+        seed === 'arena-lab:cornhole-recorded:v1' &&
+        current.id.endsWith(':attempt:4')
+      ) {
+        const moved = (i: number, id: string) => {
+          const a = samples[0].others.find((o) => o.id === id),
+            b = samples[i].others.find((o) => o.id === id);
+          return !!a && !!b && Math.hypot(b.x - a.x, b.y - a.y) > 1e-3;
+        };
+        const pushedId = samples[0].others.find((o) =>
+          moved(samples.length - 1, o.id),
+        )?.id;
+        expect(pushedId, 'a4 pushes a resting bag').toBeTruthy();
+        const starts = samples.findIndex((_, i) => moved(i, pushedId!));
+        expect(samples[starts].time).toBeGreaterThan(impact);
+        const half = current.actor ? 0.7 : 1,
+          from = samples[0].others.find((o) => o.id === pushedId)!;
+        for (let i = 0; i < starts - 1; i++)
+          if (samples[i].time >= impact - 1e-6)
+            expect(
+              Math.abs(samples[i].x - from.x) < 58 * half - 0.5 &&
+                Math.abs(samples[i].y - from.y) < 28 * half - 0.5,
+              `a4 frame ${i}: thrown bag overlaps the bag before pushing it`,
+            ).toBe(false);
+        // The shove: the pushed bag leaves at the thrown bag's speed (at
+        // least 8 px/frame here), only slows down and never returns to its
+        // start (it holds its end into the board state at contactAt).
+        const pushed = samples.map((p) =>
+            p.others.find((o) => o.id === pushedId)!,
+          ),
+          steps = pushed
+            .slice(starts)
+            .map((p, i) =>
+              Math.hypot(
+                p.x - pushed[starts + i - 1].x,
+                p.y - pushed[starts + i - 1].y,
+              ),
+            ),
+          thrownStep = Math.hypot(
+            samples[starts + 1].x - samples[starts].x,
+            samples[starts + 1].y - samples[starts].y,
+          );
+        console.log(
+          `recorded:v1 a4 shove: pushed steps ${steps
+            .slice(0, 4)
+            .map((v) => v.toFixed(2))
+            .join(', ')} px/frame; thrown ${thrownStep.toFixed(2)} px/frame`,
+        );
+        expect(Math.max(steps[0], steps[1])).toBeGreaterThanOrEqual(8);
+        for (let i = 2; i < steps.length; i++)
+          expect(steps[i]).toBeLessThanOrEqual(steps[i - 1] + 0.01);
+        let away = 0;
+        for (const p of pushed.slice(starts)) {
+          const gone = Math.hypot(p.x - from.x, p.y - from.y);
+          expect(
+            gone,
+            'a4: the pushed bag never returns',
+          ).toBeGreaterThanOrEqual(away - 0.01);
+          away = gone;
+        }
+        // The thrown bag reaches it (it lands on the bag's footprint and the
+        // push starts at touchdown). Known limitation elsewhere: the board
+        // solver pushes bags anywhere along the path from the front of the
+        // board; a pushed bag the presented slide never reaches keeps its
+        // recorded window and moves without visible contact
+        // (docs/ANIMATION-HANDOFF.md).
+        const reached = samples.some(
+          (p) =>
+            p.time >= impact - 1e-6 &&
+            Math.abs(p.x - from.x) <= 58 * half + 1 &&
+            Math.abs(p.y - from.y) <= 28 * half + 1,
+        );
+        console.log(
+          `recorded:v1 a4 push: ${reached ? 'starts on contact' : 'recorded window (known limitation: the thrown bag never reaches the pushed bag)'}`,
+        );
+        expect(reached, 'a4: the thrown bag reaches the bag it pushes').toBe(
+          true,
+        );
+        pushChecked = true;
+      }
+      if (current.contact === 'hole') {
+        holes++;
+        const half = current.actor ? 0.7 : 1,
+          target = samples.find((p) => p.time >= current.contactAt - 1e-6)!,
+          hole = holeAnchors.reduce((best, h) =>
+            Math.hypot(h.x - target.x, h.y - target.y) <
+            Math.hypot(best.x - target.x, best.y - target.y)
+              ? h
+              : best,
+          ),
+          inFront =
+            ((target.x - hole.x) / (20 * half)) ** 2 +
+              ((target.y - hole.y) / (8.3 * half)) ** 2 >=
+            1;
+        // No stop between the slide and the drop: every hole bag passes its
+        // target still moving (one in front of the opening glides on to it;
+        // one over it sinks as it runs on).
+        const glide = samples.filter(
+          (p) =>
+            p.time >= impact - 1e-6 &&
+            p.time <= current.contactAt + (inFront ? 0.028 : 1 / 60) + 1e-6,
+        );
+        for (let i = 1; i < glide.length; i++)
+          expect(
+            Math.hypot(
+              glide[i].x - glide[i - 1].x,
+              glide[i].y - glide[i - 1].y,
+            ),
+            `${seed} ${current.id}: the hole bag stops before the drop`,
+          ).toBeGreaterThan(0.3);
+        // It never moves back from first impact until it is gone, and it
+        // goes down inside the drawn opening, below the board bags.
+        const visible = samples.filter(
+          (p) => p.time >= impact - 1e-6 && p.visible && p.alpha > 0.001,
+        );
+        for (let i = 1; i < visible.length; i++)
+          expect(
+            visible[i].x - visible[i - 1].x,
+            `${seed} ${current.id}: the hole bag moves back`,
+          ).toBeGreaterThanOrEqual(-0.01);
+        const last = visible.at(-1)!,
+          board = last.others.filter((o) => o.visible && !o.attached);
+        console.log(
+          `${seed} ${current.id}: target ${(target.x - hole.x).toFixed(1)} px from the drawn hole (${inFront ? 'in front' : 'over it'}), last visible ${(last.x - hole.x).toFixed(2)} px, depth ${last.depth}`,
+        );
+        expect(Math.abs(last.x - hole.x), `${seed} ${current.id}`).toBeLessThan(
+          20 * half,
+        );
+        for (const o of board)
+          expect(
+            last.depth,
+            `${seed} ${current.id} below ${o.id}`,
+          ).toBeLessThan(o.depth);
+      }
+    }
+  }
+  expect(presented).toBeGreaterThan(0);
+  expect(sliding).toBeGreaterThan(0);
+  expect(pushChecked).toBe(true);
+  console.log(
+    `presented board/hole bags: ${presented} (sliding ${sliding}), hole drops: ${holes}`,
+  );
+  // Draw order on a cold seek: the thrown bag draws above every bag it
+  // overlaps until contactAt; board bags stack in throw order.
+  for (const [seed, attempt] of [
+    ['arena-lab:cornhole-recorded:v1', 4],
+    ['velvet-paw-29', 7],
+  ] as const) {
+    await page.evaluate(
+      (value) =>
+        window.__HERO_ARENA__.loadScenario('cornhole-performance', {
+          seed: value,
+        }),
+      seed,
+    );
+    const key = [...contacts.keys()].find(
+        (k) => k.startsWith(seed + ' ') && k.endsWith(':attempt:' + attempt),
+      )!,
+      id = key.slice(seed.length + 1);
+    await seekTime(page, contacts.get(key)! - 0.1);
+    type Drawn = {
+      id: string;
+      x: number;
+      y: number;
+      depth: number;
+      visible: boolean;
+      layer: string;
+      actor: number;
+      attached: boolean;
+    };
+    const drawn: Drawn[] = (await snapshot(page)).event.projectile.filter(
+        (p: Drawn) => p.visible,
+      ),
+      thrown = drawn.find((p) => p.id === id)!,
+      half = thrown.actor ? 0.7 : 1,
+      under = drawn.filter(
+        (p) =>
+          p.id !== id &&
+          p.actor === thrown.actor &&
+          Math.abs(p.x - thrown.x) < 58 * half &&
+          Math.abs(p.y - thrown.y) < 28 * half,
+      );
+    expect(thrown.layer).toBe('court');
+    console.log(
+      `${seed} a${attempt} cold seek to contactAt - 0.1 s: thrown depth ${thrown.depth}, overlapped ${under.map((p) => p.id.split(':').at(-1) + '@' + p.depth).join(', ') || 'none'}`,
+    );
+    for (const p of under) {
+      expect(p.layer).toBe('court');
+      expect(thrown.depth, `${seed} a${attempt} over ${p.id}`).toBeGreaterThan(
+        p.depth,
+      );
+    }
+    const board = drawn
+      .filter((p) => p.id !== id && !p.attached)
+      .sort((a, b) => a.depth - b.depth)
+      .map((p) => Number(p.id.split(':').at(-1)));
+    expect(board).toEqual([...board].sort((a, b) => a - b));
+  }
+  expect(errors).toEqual([]);
+});

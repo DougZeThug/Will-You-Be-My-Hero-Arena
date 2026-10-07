@@ -31,6 +31,9 @@ export interface ProjectileFrame extends XY {
     impliedGravity?: number;
     blendSeconds?: number;
     airTime: number;
+    /** Cornhole: screen point where a presented bag first lands (then slides
+     * to the target); absent when the touch is recorded or is the target. */
+    touch?: XY;
     phase: string;
   };
 }
@@ -50,7 +53,13 @@ export interface ArenaEvent {
     time: number,
   ): ProjectileFrame;
   resolveResult(attempt: Attempt): { points: number; outcome: string };
-  persistentObjects(time: number): PersistentObject[];
+  /** `pushStarts`: optional presentation timing (by moved object id): when
+   * the active attempt's thrown object reaches what it pushes, and how long
+   * the push lasts (seconds). */
+  persistentObjects(
+    time: number,
+    pushStarts?: ReadonlyMap<string, { start: number; duration: number }>,
+  ): PersistentObject[];
   playReaction(direction: DirectedAction): string;
   finish(): void;
 }

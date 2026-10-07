@@ -685,6 +685,196 @@ export async function testLive({ check }) {
   advance(danFirst, 1.6);
   check(() => assert.match(danFirst.snapshot().message, /Shot: Roll/));
   danFirst.destroy();
+  // A "Perfect release" can reach the hole: across the green window, at 1/60 s
+  // hold steps and several seeds, perfect grades score three and never miss.
+  const step = (s) => s.advance(1 / 60);
+  // Every wait is bounded so a regression fails naming the missing transition
+  // instead of hanging the suite.
+  const maxFrames = 6000;
+  const bounded = (frames, transition) =>
+    assert.ok(frames < maxFrames, `${transition} never happened`);
+  const throwBag = (s, player, held, shot, precision) => {
+    const e = s.event;
+    let frames = 0;
+    while (!(e.state === 'aiming' && e.active().id === player)) {
+      bounded(frames++, `${player} aiming`);
+      step(s);
+    }
+    pulse(s, player, shot);
+    if (precision) pulse(s, player, 'modifierRight');
+    const before = e.bags.length;
+    s.inject(player, 'charge', 1);
+    step(s);
+    advance(s, held);
+    s.inject(player, 'charge', 0);
+    let perfect, flight;
+    frames = 0;
+    while (e.bags.length === before) {
+      bounded(frames++, `${player}'s bag landing`);
+      step(s);
+      if (perfect === undefined && e.state === 'throwing') perfect = e.perfect;
+      if (!flight && e.flight) flight = { ...e.flight.target };
+    }
+    return {
+      perfect,
+      points: e.bags.at(-1).points,
+      error: e.releasePower - e.ideal(),
+      window: e.releaseWindow,
+      flight,
+    };
+  };
+  // A Hole runner is a slide shot: its window comes from the card's Slide skill.
+  for (const [cardId, skill] of [
+    ['card-doug', 0.9],
+    ['card-dan', 0.72],
+  ]) {
+    const s = new ArenaSession({
+      ...config('cornhole', false),
+      players: config('cornhole', false).players.map((p, i) => ({
+        ...p,
+        cardId: i ? 'card-doug' : cardId,
+      })),
+    });
+    const e = s.event;
+    let frames = 0;
+    while (e.state !== 'aiming') {
+      bounded(frames++, `${cardId} first aiming`);
+      step(s);
+    }
+    pulse(s, 'p0', 'primaryAction');
+    const holeRunner = e.window();
+    pulse(s, 'p0', 'secondaryAction');
+    check(() => assert.equal(holeRunner, e.window(), cardId));
+    check(() => assert.ok(Math.abs(holeRunner - (0.02 + skill / 30)) < 1e-12));
+    s.destroy();
+  }
+  // Beyond two windows a miss lands exactly where it always has: 490 px per
+  // unit of error along the board and 60 px toward its front, scatter aside.
+  for (const held of [0.05, 0.18, 0.4, 1.4, 2]) {
+    const s = new ArenaSession(config('cornhole', false, 2, 'old-miss')),
+      shot = throwBag(s, 'p0', held, 'primaryAction', false),
+      scatter = ((1 - 0.68) * 22) / 2;
+    check(() => assert.ok(Math.abs(shot.error) > 2 * shot.window));
+    check(() =>
+      assert.ok(
+        Math.abs(shot.flight.x - (hole.x + shot.error * 490)) <= scatter &&
+          Math.abs(shot.flight.y - (hole.y + Math.abs(shot.error) * 60)) <=
+            scatter,
+        'A miss beyond two windows keeps the old landing: ' + held,
+      ),
+    );
+    s.destroy();
+  }
+  for (const sweep of [
+    {
+      name: 'Doug Hole runner, bag 1',
+      first: 'card-doug',
+      shot: 'primaryAction',
+      precision: false,
+      bag: 1,
+    },
+    {
+      name: 'Dan Roll + precision + clutch, bag 4',
+      first: 'card-dan',
+      shot: 'tertiaryAction',
+      precision: true,
+      bag: 4,
+    },
+  ]) {
+    const perfect = [];
+    for (let k = 0; k < 28; k++)
+      for (let seed = 0; seed < 4; seed++) {
+        const s = new ArenaSession({
+          ...config('cornhole', false, 2, `perfect-sweep:${seed}`),
+          players: config('cornhole', false).players.map((p, i) => ({
+            ...p,
+            cardId: i
+              ? sweep.first === 'card-dan'
+                ? 'card-doug'
+                : 'card-dan'
+              : sweep.first,
+          })),
+        });
+        // Earlier bags are deliberate short taps that stay clear of the hole.
+        for (let b = 1; b < sweep.bag; b++) {
+          throwBag(s, 'p0', 0.05, sweep.shot, false);
+          throwBag(s, 'p1', 0.05, 'primaryAction', false);
+        }
+        const shot = throwBag(
+          s,
+          'p0',
+          0.85 + k / 60,
+          sweep.shot,
+          sweep.precision,
+        );
+        if (shot.perfect) perfect.push(shot.points);
+        s.destroy();
+      }
+    check(() =>
+      assert.ok(perfect.length >= 20, sweep.name + ' reaches the window'),
+    );
+    check(() =>
+      assert.ok(
+        perfect.every((n) => n === 3),
+        sweep.name + ': perfect releases land in the hole',
+      ),
+    );
+    check(() =>
+      assert.ok(
+        !perfect.includes(0),
+        sweep.name + ': a perfect release never misses the board',
+      ),
+    );
+  }
+  // The AI's timing error is drawn once per throw from the session's seed: the
+  // same seed plays the same match, and it is not always perfect.
+  const aiMatch = (seed) => {
+    const s = new ArenaSession(config('cornhole', true, 2, seed)),
+      e = s.event,
+      grades = [];
+    let last = '';
+    // A full AI match takes about 1,900 frames.
+    for (let frames = 0; !s.snapshot().finished; frames++) {
+      bounded(frames, `AI match ${seed} finishing`);
+      step(s);
+      if (e.state === 'throwing' && last !== 'throwing') grades.push(e.perfect);
+      last = e.state;
+    }
+    const result = {
+      grades,
+      points: e.bags.map((b) => b.points),
+      scores: s.characters.map((c) => c.score),
+    };
+    s.destroy();
+    return result;
+  };
+  const aiMatches = ['ai-medium:0', 'ai-medium:1', 'ai-medium:2'].map(aiMatch);
+  check(() =>
+    assert.deepEqual(
+      aiMatch('ai-medium:0'),
+      aiMatches[0],
+      'Same seed, same AI match',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      aiMatches.flatMap((m) => m.grades).includes(false),
+      'The AI is not always perfect',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      aiMatches.flatMap((m) => m.grades).includes(true),
+      'The AI still hits the window',
+    ),
+  );
+  check(() =>
+    assert.notDeepEqual(
+      aiMatches[0].grades,
+      aiMatches[1].grades,
+      'Different seeds, different releases',
+    ),
+  );
   // B-15: a celebration never blocks the next move.
   const cheer = new ArenaSession(config('running', false));
   advance(cheer, 1.7);

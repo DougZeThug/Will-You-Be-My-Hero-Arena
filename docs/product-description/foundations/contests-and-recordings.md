@@ -142,14 +142,16 @@ If **Start showdown** is refused, the dialog stays open with the reason under th
 - "This ranked entry is unavailable."
 - "Scoring policy changed. Review the setup again."
 - "A competitor has used their ranked allowance. Exhibition is still available."
+- "This browser’s storage for the Arena is full. Use Export local save to keep a copy; counted contests and points are safe." This one is not prevented by the dialog. It appears only when the new contest does not fit even after the oldest exhibitions have been removed to make room ([saved data](saved-data.md)).
 
-In normal use the dialog disables **Start showdown** before any of these can happen. They only surface when this browser's save changed underneath, for example in another tab.
+In normal use the dialog disables **Start showdown** before the first four can happen. They only surface when this browser's save changed underneath, for example in another tab. The storage-full message is the exception: it can appear even when the save has not changed.
 
 ### Committing
 
 The contest commits when it is *locked*: the recording has been simulated, checked and written.
 - **Exhibition:** only the recording is written.
 - **Counted entry:** both users' awards are written too. The win, draw and loss values come from the policy captured at Starting.
+- **Room:** if the save with the new recording does not fit in this browser's storage, the oldest exhibitions are removed first, never a counted contest or the contest waiting to resume. A notice under the header says how many ([saved data](saved-data.md)).
 - **Resume position:** the contest is marked as waiting to resume from second 0, so a reload even before playback starts offers the resume banner. It takes the save's single waiting slot. Any contest that was waiting before is revealed at this instant without being watched. When that older contest is a counted entry, the setup dialog has already warned about this; see [the setup dialog](../watch/setup-dialog.md).
 
 The dialog then closes. The new recording loads, playing from the start once the stage is ready and the dialog has finished closing. If the player closed the dialog during **Locking the contest…**, the new contest still plays by itself once the stage is ready.
@@ -191,7 +193,7 @@ A finished recording can be replayed any number of times, from the result panel,
 | Focus leaves the game | No effect on the dialog. | Hiding the tab stops the clock without showing **PAUSED**; it resumes when the tab is visible again. Window blur alone has no effect. |
 | Reload, close, or back/forward cache | Before **Start showdown**, nothing is kept. If the page goes away *during* **Locking the contest…**, the contest is locked only if the write had already finished. | The recording and any awards are already written. During a first viewing, the position is written on the way out, and on return the resume banner offers the contest. A replay leaves nothing to resume. |
 | Settings or saved data change underneath | Arena settings cannot be reached while the setup dialog is open. A policy change or reset in another tab can make **Start showdown** refuse with a reason. | A reset in this tab removes the recording and awards, and returns to an empty stage. A reset that fails shows its reason in the reset dialog and leaves playback running. Another tab's write reloads the save; the loaded recording keeps playing, and the stage is not rebuilt unless the write changed the shown cards' mappings. |
-| Graphics or storage failure | If this browser's save refuses the write, **Start showdown** shows the error and nothing is locked. | WebGL loss pauses playback with **Graphics were interrupted. Reload to continue; nothing about the contest has changed.** and a **Reload the arena** button. A failed position save shows **Playback could not be saved. Keep this tab open and export your recording.** with **Dismiss**. Neither changes the outcome. |
+| Graphics or storage failure | If this browser's save refuses the write, **Start showdown** shows the error and nothing is locked. | WebGL loss pauses playback with **Graphics were interrupted. Reload to continue; nothing about the contest has changed.** and a **Reload the arena** button. A position partway through a first viewing that does not fit is skipped silently, keeping the last saved position. If the write that marks the first viewing complete is refused, **Playback could not be saved. Keep this tab open and export your recording.** appears with **Dismiss**, and the contest stays waiting to resume. Neither changes the outcome. |
 | Input device changes | No effect. | No effect. |
 
 ## Interactions with other systems

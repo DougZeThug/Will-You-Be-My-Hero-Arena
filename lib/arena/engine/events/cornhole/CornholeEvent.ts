@@ -7,8 +7,8 @@ import type {
 import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
 import { sampleBag, bagOutcome } from './CornholePhysics';
+import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
 import { surfacePoint, boardDepthScale } from '../../../equipment-layout';
-import { clamp01 } from '../../../match-timeline';
 export class CornholeEvent implements ArenaEvent {
   readonly sport = 'cornhole' as const;
   private recording?: Recording;
@@ -34,7 +34,13 @@ export class CornholeEvent implements ArenaEvent {
       outcome: a.boardResolution?.outcome ?? a.contact,
     };
   }
-  persistentObjects(time: number) {
+  /** `pushStarts` (by pushed bag id): when the presented thrown bag reaches
+   * each bag it pushes and how long the shove lasts. Without it a push keeps
+   * its recorded window. */
+  persistentObjects(
+    time: number,
+    pushStarts?: ReadonlyMap<string, PushTiming>,
+  ) {
     const objects = new Map<string, PersistentObject>(),
       rec = this.recording;
     if (!rec) return [];
@@ -66,21 +72,14 @@ export class CornholeEvent implements ArenaEvent {
           frame(bag.id, actor, surfacePoint('cornhole', actor, bag.position));
     }
     const active = rec.attempts.find((a) => time >= a.start && time < a.end);
-    if (
-      active?.boardResolution &&
-      time >= active.contactAt - 0.18 &&
-      time <= active.contactAt + 0.16
-    )
+    if (active?.boardResolution)
       for (const hit of active.boardResolution.interactions) {
-        const u = clamp01((time - active.contactAt + 0.18) / 0.34),
-          v = u * u * (3 - 2 * u),
-          from = surfacePoint('cornhole', active.actor, hit.from),
-          to = surfacePoint('cornhole', active.actor, hit.to),
-          q = {
-            x: from.x + (to.x - from.x) * v,
-            y: from.y + (to.y - from.y) * v,
-          };
-        frame(hit.id, active.actor, q, hit.after === 1 ? 1 : 1 - v);
+        // A presented push rests until the thrown bag arrives, leaves at its
+        // speed and holds its end until the board state takes over at
+        // contactAt; otherwise the recorded window.
+        const drawn = pushedBag(active, hit, time, pushStarts?.get(hit.id));
+        if (drawn)
+          frame(hit.id, active.actor, { x: drawn.x, y: drawn.y }, drawn.alpha);
       }
     return [...objects.values()];
   }

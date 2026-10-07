@@ -30,6 +30,11 @@ import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
 import {
+  presentationPush,
+  boardBagDepth,
+  releasedBagDepth,
+} from '../events/cornhole/ReleasedBagPhysics';
+import {
   firstImpactTime,
   presentationShot,
 } from '../events/cornhole/CornholePresentationTiming';
@@ -294,8 +299,32 @@ export class ArenaScene extends Phaser.Scene {
       }
     }
     if (rec) {
-      for (const object of this.event.persistentObjects(time))
-        this.projectile(object.id, object.actor).show(object.frame, false);
+      // A presented cornhole push starts when the thrown bag reaches it.
+      const take = [...this.performanceTakes.values()].find(
+          (t) => t.attempt.id === active?.id,
+        ),
+        pushStarts =
+          take?.release && active?.boardResolution
+            ? new Map(
+                active.boardResolution.interactions.flatMap((hit) => {
+                  const push = presentationPush(
+                    active,
+                    take.shot,
+                    take.release!,
+                    hit,
+                  );
+                  return push ? [[hit.id, push] as const] : [];
+                }),
+              )
+            : undefined;
+      for (const object of this.event.persistentObjects(time, pushStarts)) {
+        const bag = this.projectile(object.id, object.actor);
+        bag.show(object.frame, false);
+        // Cornhole board bags stack in throw order, so a cold seek draws
+        // them as playback did.
+        if (p.sport === 'cornhole')
+          bag.sprite.setDepth(boardBagDepth(rec, object.id));
+      }
       if (
         active &&
         time >= active.releaseAt &&
@@ -307,17 +336,23 @@ export class ArenaScene extends Phaser.Scene {
           this.characters[active.actor].releaseWorld(active, direction!),
           time,
         );
-        this.projectile(active.id, active.actor).release(frame);
+        const bag = this.projectile(active.id, active.actor);
+        bag.release(frame);
+        // Same cornhole depth policy as the performance path: above the board
+        // bags until contactAt, below them while sinking, else in throw order.
+        if (p.sport === 'cornhole')
+          bag.sprite.setDepth(releasedBagDepth(rec, active, time, frame));
+        // The ring and hole star mark contactAt; the puff keeps the first
+        // impact (release + air time) when the frame reports it.
         this.effects.contact(
-          frame.kinematics
-            ? {
-                ...active,
-                contactAt: active.releaseAt + frame.kinematics.airTime,
-              }
-            : active,
+          active,
           time,
           p.reduced || p.low,
           active.contactAt,
+          undefined,
+          frame.kinematics
+            ? active.releaseAt + frame.kinematics.airTime
+            : undefined,
         );
       }
       this.director!.advance(
@@ -452,19 +487,24 @@ export class ArenaScene extends Phaser.Scene {
         hand.flatten,
       );
     else if (take.frame) {
-      this.projectile(attempt.id, c.actor).release(
+      const bag = this.projectile(attempt.id, c.actor);
+      bag.release(
         take.frame,
         c.rig.heldObjectLayer,
         controller.runtime.attachment('rightHand'),
       );
+      // The thrown bag draws above every board bag until contactAt, below
+      // them while it sinks into the hole, else with them in throw order.
+      bag.sprite.setDepth(releasedBagDepth(rec, attempt, time, take.frame));
+      // The ring and hole star mark the bag arriving at the target
+      // (contactAt); the landing puff marks the first impact at its touch.
       this.effects.contact(
-        {
-          ...attempt,
-          contactAt: firstImpactTime(attempt, take.shot),
-        },
+        attempt,
         time,
         this.bridge.current.reduced || this.bridge.current.low,
         attempt.contactAt,
+        take.frame.kinematics?.touch,
+        firstImpactTime(attempt, take.shot),
       );
     }
   }
@@ -578,6 +618,7 @@ export class ArenaScene extends Phaser.Scene {
         attached: o.attached,
         kinematics: o.kinematics,
         visible: o.sprite.visible,
+        depth: o.sprite.depth,
         ...o.worldFrame(),
         alpha: o.sprite.alpha,
       })),

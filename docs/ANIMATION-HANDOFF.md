@@ -142,7 +142,62 @@ the front-view puppet and separate contracts.
 - Bag flight: performance releases use `ballisticFlight`
   (`release-ballistic-blend-v1`): the bag leaves at the evaluated hand
   velocity, blends to a ballistic cruise with bounded gravity and lands
-  exactly on the recorded touch point and time.
+  exactly on the touch point at the first-impact time. The touch point has
+  one owner, `presentationTouch` (`ReleasedBagPhysics.ts`): a miss uses its
+  recorded touch; a non-direct board or hole bag touches down short of the
+  immutable target by the velocity-matched slide distance (at most 90 px,
+  never off the front of the board, and for a board bag its centre never
+  across the scoring disc or the drawn hole opening, though its body may pass
+  over the rim; a board target over the opening lands without sliding);
+  direct shots land on the target (`presentationSlide` reports the limit that
+  applied). The touch point depends on the Phaser performance release
+  (position and velocity), so a future contract exporter must evaluate it
+  from a normal-motion (not reduced-motion) release and export the point
+  itself rather than re-derive it. `slideMotion` owns the slide: the bag lands at the flight's speed
+  when its touch point is unclamped (a max, front, disc or hole clamp can
+  make the touchdown speed differ, never faster than the flight) and
+  decelerates uniformly; a board bag stops after `min(0.28 s, 2d/vIn)`
+  and holds on the target until `contactAt` (a shortened slide stops early
+  instead of creeping), a hole bag passes the target at `contactAt` still
+  moving and glides forward (never back) on a C1 Hermite to its rest over
+  the drawn opening (`holeRest`, closed form on a shrunk copy of the
+  opening: the radial projection toward the hole centre, or a short forward
+  run-out for a target already over it or beside the centre); it sinks
+  (accelerating) from the moment its centre is over the drawn opening, when
+  the lip mask turns on, to the end of the 0.28 s fall. Resting bags do not
+  block a slide: the bag rides over drawn bags (resting, or a pushed bag
+  where it is now) with a lift of up to 6 px × depth scale, zero at first
+  impact and once the bag stops, and never for a bag with zero slide
+  distance (the envelope runs over its moving time and
+  ramps at most 0.6 px/frame × depth scale), weighted by each bag's drawn
+  opacity
+  (`pushedBag` is shared with `CornholeEvent`); its shadow stays on the
+  board. A pushed bag
+  rests until the thrown bag's footprint reaches it, then is shoved
+  (`presentationPush`: start and `clamp(2·|to − from| / speed, 0.12,
+  0.34)` s, ease-out from the thrown bag's speed, passed to
+  `CornholeEvent.persistentObjects`) and holds its end until the board state
+  takes over at `max(contactAt, start + duration)`: a shove (for example one
+  clamped to 0.34 s) can still be moving at `contactAt`, and the board state
+  then draws its end once it stops. A shove whose duration is clamped leaves at a
+  different speed than the thrown bag: slower at the 0.12 s floor (short
+  shoves), faster at the 0.34 s ceiling. Known limitations: the board solver pushes bags
+  lying anywhere along the path from the front of the board, so a pushed bag
+  the presented slide never reaches keeps its recorded push window and moves
+  without visible contact (about 5 of 23 pushes in the seeded unit set);
+  fixing it needs a rules-side change, not presentation. A pushed bag that
+  ends in the hole fades on the board, and the hole star covers the glide.
+  Draw order (`releasedBagDepth`/`boardBagDepth`, set by `ArenaScene` for
+  cornhole only): the thrown bag draws at depth 60.5 from release until
+  `contactAt` and at 59.9 (below the board bags) while it sinks with the lip
+  mask on; board bags draw at `60 + 0.001 · throw index`, so a cold seek
+  matches playback. The landing puff sits at
+  `kinematics.touch` at first impact; the ring and hole star mark
+  `contactAt` at the target (a miss's ring fires when the bag reaches its
+  spot). The lip mask applies only while a hole bag's
+  centre is over the drawn opening. Presentation only: recordings, timing
+  and scoring are unchanged, and the constant-acceleration and `sampleBag`
+  paths keep their frames (`tests/cornhole-presentation-slide-tests.mjs`).
 - Play clock: the charge plays the take into a held top of the backswing;
   the release input drives it so the release marker lands on the live
   release step (no speed snap).

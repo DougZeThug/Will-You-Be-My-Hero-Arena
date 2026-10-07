@@ -342,6 +342,285 @@ check(() => assert.equal(damaged.load().active, null));
 damagedStorage.setItem(p.STORAGE_KEY, 'not json');
 await damaged.reset();
 check(() => assert.equal(damaged.load().recordings.length, 2));
+// A full browser store never locks the player out: a refused write leaves the
+// previous revision and no journal, the oldest exhibitions make room for a new
+// contest, and counted contests, awards and the waiting contest are kept.
+class CappedStorage extends MemoryStorage {
+  constructor(cap = Infinity) {
+    super();
+    this.cap = cap;
+    this.refuse = () => false;
+  }
+  used() {
+    let n = 0;
+    for (const [k, v] of this.map) n += k.length + v.length;
+    return n;
+  }
+  setItem(k, v) {
+    v = String(v);
+    const after =
+      this.used() -
+      (this.map.has(k) ? k.length + this.map.get(k).length : 0) +
+      k.length +
+      v.length;
+    // refuse(k) may name another error, such as a SecurityError.
+    const refusal = this.refuse(k);
+    if (after > this.cap || refusal)
+      throw new DOMException(
+        'The write was refused.',
+        typeof refusal === 'string' ? refusal : 'QuotaExceededError',
+      );
+    this.map.set(k, v);
+  }
+}
+const QUOTA = 5_242_880,
+  JOURNAL = p.STORAGE_KEY + ':journal',
+  storedRevision = (st) =>
+    JSON.parse(JSON.parse(st.getItem(p.STORAGE_KEY)).payload).revision,
+  putSave = (st, key, state) => {
+    const text = JSON.stringify(state);
+    st.setItem(key, JSON.stringify({ payload: text, checksum: s.hash(text) }));
+  };
+{
+  // (a) 70 exhibitions under a 5,242,880-character store (it fills after about 60).
+  const st = new CappedStorage(QUOTA),
+    repo = new p.LocalArenaRepository(st),
+    committed = [];
+  let removed = 0;
+  for (let i = 0; i < 70; i++) {
+    const result = await repo.commit(setup('cornhole', 'full-' + i));
+    committed.push(result.recording.id);
+    removed += result.removedExhibitions ?? 0;
+    const loaded = repo.load();
+    check(() => assert.equal(loaded.active.id, result.recording.id));
+    check(() =>
+      assert.ok(loaded.recordings.some((r) => r.id === result.recording.id)),
+    );
+    check(() => assert.equal(st.getItem(JOURNAL), null));
+  }
+  check(() =>
+    assert.ok(removed > 0, 'A full store made room by removing exhibitions'),
+  );
+  const kept = repo
+    .load()
+    .recordings.filter((r) => r.setup.mode !== 'ranked')
+    .map((r) => r.id);
+  check(() => assert.equal(kept.length + removed, 70));
+  check(() =>
+    assert.deepEqual(
+      kept,
+      committed.slice(70 - kept.length),
+      'The oldest exhibitions go first',
+    ),
+  );
+  // (e) With no room even to replace the save in place, a mid-viewing position
+  // is best effort and never prunes, but the write that completes the viewing
+  // is reported.
+  st.cap = st.used() - 1;
+  const before = st.getItem(p.STORAGE_KEY),
+    last = repo.load().recordings.find((r) => r.id === committed.at(-1));
+  repo.savePlayback(last.id, 5);
+  checks++;
+  check(() => assert.equal(st.getItem(p.STORAGE_KEY), before));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  // Completing shrinks the save, so refuse every write to reach the refusal.
+  st.refuse = () => true;
+  assert.throws(
+    () => repo.savePlayback(last.id, last.duration),
+    (e) => e instanceof p.StorageFullError,
+  );
+  checks++;
+  check(() => assert.equal(repo.load().active.id, last.id));
+  check(() => assert.equal(st.getItem(p.STORAGE_KEY), before));
+}
+{
+  // (b) Counted contests, their awards and the waiting contest are never removed.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st),
+    entry = m.SCHEDULE[0];
+  await repo.commit({
+    ...setup('cornhole', entry.seed),
+    id: 'counted-full',
+    mode: 'ranked',
+    entryId: entry.id,
+    policy: { ...repo.load().policy },
+  });
+  const exhibitions = [];
+  for (let i = 0; i < 6; i++)
+    exhibitions.push(
+      (await repo.commit(setup('pong', 'kept-' + i))).recording.id,
+    );
+  // The first exhibition is still waiting to be watched.
+  const waiting = repo.load();
+  waiting.active = { id: exhibitions[0], time: 3 };
+  waiting.revision++;
+  putSave(st, p.STORAGE_KEY, waiting);
+  const rankedIds = waiting.recordings
+      .filter((r) => r.setup.mode === 'ranked')
+      .map((r) => r.id),
+    ledger = JSON.stringify(waiting.ledger),
+    table = JSON.stringify(p.standings(waiting));
+  // The new contest only fits once an older exhibition is gone.
+  st.cap = st.used() + 20_000;
+  const result = await repo.commit(setup('pong', 'kept-new'));
+  const after = repo.load(),
+    ids = after.recordings.map((r) => r.id);
+  check(() => assert.ok(result.removedExhibitions > 0));
+  check(() =>
+    assert.ok(
+      rankedIds.every((id) => ids.includes(id)),
+      'Counted recordings stay',
+    ),
+  );
+  check(() =>
+    assert.ok(ids.includes(exhibitions[0]), 'The waiting contest stays'),
+  );
+  check(() => assert.ok(ids.includes(result.recording.id)));
+  check(() =>
+    assert.ok(
+      !ids.includes(exhibitions[1]),
+      'The oldest other exhibition goes first',
+    ),
+  );
+  check(() => assert.equal(JSON.stringify(after.ledger), ledger));
+  check(() => assert.equal(JSON.stringify(p.standings(after)), table));
+  // A policy save that no longer fits removes exhibitions the same way, keeping the waiting one.
+  const waitingAgain = repo.load();
+  waitingAgain.active = { id: exhibitions[0], time: 3 };
+  waitingAgain.revision++;
+  putSave(st, p.STORAGE_KEY, waitingAgain);
+  st.cap = st.used() - 1000;
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 9 });
+  const policyAfter = repo.load(),
+    policyIds = policyAfter.recordings.map((r) => r.id);
+  check(() => assert.equal(policyAfter.policy.win, 9));
+  check(() => assert.ok(policyIds.includes(exhibitions[0])));
+  check(() => assert.ok(rankedIds.every((id) => policyIds.includes(id))));
+  check(() => assert.ok(policyIds.length < ids.length));
+  check(() => assert.equal(JSON.stringify(policyAfter.ledger), ledger));
+}
+{
+  // (c) A save stranded by the old protocol (journal one revision ahead, no room
+  // to copy it) loads, keeps the newer revision, and ends with no journal.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st);
+  await repo.commit(setup('cornhole', 'stranded-0'));
+  const old = repo.load(),
+    next = structuredClone(old);
+  next.revision++;
+  next.recordings.push(s.simulate(setup('cornhole', 'stranded-1')));
+  putSave(st, JOURNAL, next);
+  st.cap = st.used();
+  const loaded = new p.LocalArenaRepository(st).load();
+  checks++;
+  check(() => assert.equal(loaded.revision, old.revision + 1));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  check(() =>
+    assert.equal(
+      new p.LocalArenaRepository(st).load().revision,
+      old.revision + 1,
+    ),
+  );
+}
+{
+  // (d) The journal is a best-effort copy: a refused journal write still saves.
+  // A refused save write leaves the previous revision readable and no journal;
+  // a single refused save write is retried.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st);
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 3 });
+  st.refuse = (k) => k === JOURNAL;
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 4 });
+  const revision = storedRevision(st);
+  check(() => assert.equal(repo.load().policy.win, 4));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  st.refuse = (k) => k === p.STORAGE_KEY;
+  await assert.rejects(
+    repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 5 }),
+    (e) => e instanceof p.StorageFullError,
+  );
+  checks++;
+  check(() => assert.equal(repo.load().revision, revision));
+  check(() => assert.equal(repo.load().policy.win, 4));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  let refusals = 1;
+  st.refuse = (k) => k === p.STORAGE_KEY && refusals-- > 0;
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 5 });
+  check(() => assert.equal(repo.load().revision, revision + 1));
+  check(() => assert.equal(repo.load().policy.win, 5));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+}
+{
+  // (g) Above half the store, where the journal copy never fits beside the save,
+  // same-size writes still save directly: a finished counted contest leaves the
+  // resume slot and shows its awards, and an unchanged policy prunes nothing.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st),
+    entry = m.SCHEDULE[0];
+  for (let i = 0; i < 6; i++) await repo.commit(setup('cornhole', 'half-' + i));
+  st.cap = Math.floor(1.5 * st.used());
+  const counted = await repo.commit({
+    ...setup('cornhole', entry.seed),
+    id: 'counted-half',
+    mode: 'ranked',
+    entryId: entry.id,
+    policy: { ...repo.load().policy },
+  });
+  check(() => assert.equal(counted.removedExhibitions, 0));
+  check(() =>
+    assert.ok(st.used() > st.cap / 2, 'The save is above half the store'),
+  );
+  repo.savePlayback(counted.recording.id, counted.recording.duration);
+  const watched = repo.load();
+  check(() => assert.equal(watched.active, null));
+  check(() =>
+    assert.ok(watched.ledger.some((a) => a.contestId === counted.recording.id)),
+  );
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  await repo.updatePolicy(watched.policy);
+  check(() =>
+    assert.equal(repo.load().recordings.length, watched.recordings.length),
+  );
+  check(() => assert.equal(repo.load().revision, watched.revision + 1));
+  // Only a quota refusal is "full": any other storage error is passed on and
+  // never removes an exhibition.
+  st.refuse = () => 'SecurityError';
+  for (const write of [
+    () => repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 6 }),
+    () => repo.commit(setup('cornhole', 'blocked')),
+  ])
+    await assert.rejects(
+      write(),
+      (e) => e.name === 'SecurityError' && !(e instanceof p.StorageFullError),
+    );
+  checks += 2;
+  check(() =>
+    assert.equal(repo.load().recordings.length, watched.recordings.length),
+  );
+  check(() => assert.equal(repo.load().revision, watched.revision + 1));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+}
+{
+  // (f) With nothing that can be removed, the contest is refused in plain words
+  // and the stored save is unchanged.
+  const st = new CappedStorage(),
+    repo = new p.LocalArenaRepository(st);
+  await repo.updatePolicy({ ...m.DEFAULT_POLICY });
+  st.cap = st.used() + 1000;
+  const before = st.getItem(p.STORAGE_KEY);
+  await assert.rejects(
+    repo.commit(setup('cornhole', 'no-room')),
+    (e) =>
+      e instanceof p.StorageFullError &&
+      /storage for the Arena is full/.test(e.message),
+  );
+  checks++;
+  check(() => assert.equal(st.getItem(p.STORAGE_KEY), before));
+  check(() => assert.equal(st.getItem(JOURNAL), null));
+  check(() =>
+    assert.ok(!repo.load().recordings.some((r) => r.id === 'test-no-room')),
+  );
+}
 check(() =>
   assert.deepEqual(
     a.validateAsset(a.manifest('card-dan', 'dan', 'human')).errors,
@@ -814,6 +1093,9 @@ await (
 await (
   await import('./cornhole-presentation-timing-tests.mjs')
 ).testCornholePresentationTiming({ check, setup, s });
+await (
+  await import('./cornhole-presentation-slide-tests.mjs')
+).testCornholePresentationSlide({ check });
 await (await import('./motion-v3-tests.mjs')).testMotionV3({ check });
 await (await import('./motion-v31-tests.mjs')).testMotionV31({ check });
 await (
@@ -839,7 +1121,7 @@ const report = {
   showcaseScores: showcase.scores,
   showcaseContacts: showcase.attempts.map((a) => a.contact),
   storage:
-    'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections verified',
+    'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections; full-store recovery and exhibition pruning verified',
 };
 fs.writeFileSync('docs/test-results.json', JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

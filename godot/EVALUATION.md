@@ -65,14 +65,29 @@ pose battery, for both characters:
   see-through area, joint overlap, hand-over-sleeve, hem/thigh follow, far-arm reach,
   planted-foot drift, hand-to-bag distance before release).
 - At most **2 manual paint-over repairs** per character part sheet.
-- Owner signs off likeness on 3 stills per character.
+- Owner signs off likeness **and the printed-sunset style** on 3 stills per character,
+  each rendered at play size on the current court beside the legacy side-v3 rig at the
+  same camera and scale, plus the continuous frames from 10 before to 20 after the
+  release marker at normal speed.
+- **Hand swap at release**, checked on every frame from 10 before to 20 after the release
+  marker: the palm socket moves at most **1 px** relative to the evaluated hand bone
+  across the grip-to-open drawing swap, no frame shows both hand drawings, and no frame
+  shows the hand detached from the forearm.
 - At most **4 skin influences per vertex** (Godot's hard limit, see PROBES.md).
 - 8-bit alpha, colour bled into transparent texels.
 
 ### Slice parity and invariants (Steps 4 and 5)
 - Release happens on the contract's release marker; the bag is attached to the
   evaluated hand socket until then. Event order identical to the recording.
-- Event times within **1/60 s** of the recording's `releaseAt`, `contactAt`, `scoreAt`.
+- Event times within **1/60 s** of the recording's `releaseAt`, `contactAt`, `scoreAt`,
+  and, for each cornhole attempt with board travel, of its **first board impact**
+  (`firstImpactTime`: `contactAt` minus 0.28 s or 0.22 s of surface travel; see
+  `lib/arena/engine/events/cornhole/CornholePresentationTiming.ts`). An attempt with
+  zero travel (a direct shot, or a miss with no recorded touch more than 2 px from its
+  target) has no separate board touch: `firstImpactTime` equals `contactAt` and is not
+  checked as an impact. For attempts with board travel the contract exports the
+  first-impact time and touch point; the bag first touches the board at that point
+  within **1e-6** on script-side float64.
 - Bag landing within **1e-6** of the recorded target, computed on script-side float64.
 - **20 random seeks per attempt** (including backward) equal forward play within 1e-6.
 - Displayed contact, score and running tally equal the recording. No randomness, no
@@ -123,6 +138,7 @@ desktop, Steam integration, export builds, real-GPU performance. Gate 2 covers t
 | 2026-09-29 | 0 | Baseline recorded; toolchain probes pass; see PROBES.md. |
 | 2026-09-29 | 1 | Art spec, 18-pose battery and rig-QA gate written. Clean test puppet passes all 18 poses; six injected defects each fail on the intended metric (`tools/rig_qa_selftest.sh`). |
 | 2026-09-29 | prototype | Exploratory animation and camera prototype, not a gate: Skeleton2D skinned mesh vs Scalable Vector Shapes vs SpriteFrames hybrid on one Doug (scripted placeholder art), plus a Phantom Camera spike. Skinned joints were smoother than SVS at the elbow, shoulder and knee; SVS cost about 28× more script time per pose; Phantom's camera is history-dependent. No adoption decision. See [`PROTOTYPES.md`](PROTOTYPES.md). |
+| 2026-10-06 | charter | Pre-approval amendments, before any Godot art or slice result exists: first board impact and touch point added to slice parity (the visible impact is up to 0.28 s before `contactAt`); a per-frame hand-swap check at release and play-size, in-court, side-by-side likeness and style sign-off added to art acceptance. Found by a multi-agent audit. |
 
 ### Harness calibration during Step 1 (disclosed)
 
