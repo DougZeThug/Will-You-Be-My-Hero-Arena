@@ -15,10 +15,14 @@ export async function testLive({ check }) {
     await import('../.test-build/engine/input/InputBindings.mjs');
   const { ActionTimeline } =
     await import('../.test-build/engine/animation/AnimationEvents.mjs');
-  const { ComboRecognizer } =
+  const { ComboRecognizer, visibleAction } =
     await import('../.test-build/engine/controllers/EventActionMap.mjs');
   const { FightingActionMap } =
     await import('../.test-build/engine/events/fighting/FightingActionMap.mjs');
+  const { PrecisionActionMap } =
+    await import('../.test-build/engine/events/precision/PrecisionActionMap.mjs');
+  const { RunningActionMap } =
+    await import('../.test-build/engine/events/running/RunningActionMap.mjs');
   const { timingGrade, rhythmTiming } =
     await import('../.test-build/engine/input/TimingWindow.mjs');
   const config = (
@@ -1409,6 +1413,42 @@ export async function testLive({ check }) {
       'A held key repeating outside the arena scope is not prevented',
     ),
   );
+  // Remap and Start refusals name the visible action for an intent (the first
+  // non-hidden entry, as the remap grid does), never a hidden variant such as
+  // Brawl's modifier-gated Grapple that precedes Light attack on primaryAction.
+  const fightLabel = (intent) =>
+    visibleAction(FightingActionMap.actions, intent)?.label;
+  check(() => {
+    const first = FightingActionMap.actions.find(
+      (a) => a.intent === 'primaryAction',
+    );
+    assert.equal(first.hidden, true, 'the first primaryAction entry is hidden');
+    assert.notEqual(fightLabel('primaryAction'), first.label);
+    assert.equal(fightLabel('primaryAction'), 'Light attack');
+    assert.equal(fightLabel('modifierRight'), 'Counter stance');
+    assert.equal(fightLabel('modifierLeft'), 'Block');
+  });
+  check(() => {
+    assert.equal(fightLabel('charge'), undefined, 'no entry: fallback applies');
+    assert.equal(
+      fightLabel('left'),
+      undefined,
+      'an intent with only hidden entries has no visible action',
+    );
+  });
+  check(() => {
+    for (const [map, intents] of [
+      [PrecisionActionMap, ['primaryAction', 'charge']],
+      [RunningActionMap, ['charge', 'modifierLeft']],
+    ])
+      for (const intent of intents) {
+        const expected = map.actions.find(
+          (a) => a.intent === intent && !a.hidden,
+        );
+        assert.ok(expected, map.id + ' ' + intent + ' has a visible action');
+        assert.equal(visibleAction(map.actions, intent), expected);
+      }
+  });
   scoped.destroy();
   Object.assign(globalThis, saved);
   fs.mkdirSync('docs/review', { recursive: true });
