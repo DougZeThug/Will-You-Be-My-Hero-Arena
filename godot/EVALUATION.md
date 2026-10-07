@@ -80,12 +80,14 @@ pose battery, for both characters:
 - Release happens on the contract's release marker; the bag is attached to the
   evaluated hand socket until then. Event order identical to the recording.
 - Event times within **1/60 s** of the recording's `releaseAt`, `contactAt`, `scoreAt`,
-  and of each cornhole attempt's **first board impact** (`firstImpactTime`, which is
-  `contactAt` minus 0.28 s, 0.22 s or 0 s of surface travel; 0 when a direct or missed
-  bag has no recorded touch more than 2 px from its target; see
-  `lib/arena/engine/events/cornhole/CornholePresentationTiming.ts`). The contract exports
-  the first-impact time and touch point per attempt; the bag first touches the board at
-  that point within **1e-6** on script-side float64.
+  and, for each cornhole attempt with board travel, of its **first board impact**
+  (`firstImpactTime`: `contactAt` minus 0.28 s or 0.22 s of surface travel; see
+  `lib/arena/engine/events/cornhole/CornholePresentationTiming.ts`). An attempt with
+  zero travel (a direct shot, or a miss with no recorded touch more than 2 px from its
+  target) has no separate board touch: `firstImpactTime` equals `contactAt` and is not
+  checked as an impact. For attempts with board travel the contract exports the
+  first-impact time and touch point; the bag first touches the board at that point
+  within **1e-6** on script-side float64.
 - Bag landing within **1e-6** of the recorded target, computed on script-side float64.
 - **20 random seeks per attempt** (including backward) equal forward play within 1e-6.
 - Displayed contact, score and running tally equal the recording. No randomness, no

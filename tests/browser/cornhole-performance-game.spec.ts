@@ -312,9 +312,15 @@ test('cornhole performance: board bags land short and slide to the target; pushe
             samples.reduce((a, b) =>
               Math.abs(b.time - t) < Math.abs(a.time - t) ? b : a,
             ),
-          atContact = slide.at(-1)!,
           rest = near(current.contactAt + 0.1);
-        expect(current.contactAt - atContact.time).toBeLessThan(1 / 60 + 1e-6);
+        // Seek to contactAt itself: the last stepped sample before it can
+        // still carry the end of the slide and the ride-over lift.
+        await seekTime(page, current.contactAt);
+        const exact = await snapshot(page),
+          atContact = exact.event.projectile.find(
+            (p: { id: string }) => p.id === current.id,
+          )!;
+        expect(Math.abs(exact.time - current.contactAt)).toBeLessThan(1e-6);
         expect(Math.abs(rest.time - (current.contactAt + 0.1))).toBeLessThan(
           1 / 60 + 1e-6,
         );
