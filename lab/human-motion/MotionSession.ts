@@ -184,10 +184,11 @@ export class MotionSession {
     }
   }
   private tick() {
-    this.time += 1 / 120;
-    this.steps++;
+    // The clock and step counter only advance for a tick that simulates; a
+    // disconnected pad aborts below, before the world moves.
+    const t = this.time + 1 / 120;
     for (const c of this.controllers) {
-      const frame = this.input.poll(c.id, this.time);
+      const frame = this.input.poll(c.id, t);
       if (this.awaitingNeutral.has(c.id)) {
         const held = Object.values(frame.values).some((v) =>
           typeof v === 'number' ? v > 0.1 : !!v && Math.hypot(v.x, v.y) > 0.15,
@@ -200,8 +201,10 @@ export class MotionSession {
         this.pause(true);
         return;
       }
-      c.update(frame, this.time);
+      c.update(frame, t);
     }
+    this.time = t;
+    this.steps++;
     let remaining = 1 / 120;
     while (remaining > 1e-9) {
       const dt = this.actors.reduce(

@@ -223,6 +223,53 @@ test('Human Motion V2: gamepad adapters control both actors and blur requires ne
       .motor.desired.x,
   ).toBeGreaterThan(0);
 });
+test('Human Motion V2: a disconnected pad does not advance the session clock', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const pads = [0, 1].map((index) => ({
+      id: index ? 'Sony DualSense' : 'Xbox',
+      mapping: 'standard',
+      connected: true,
+      index,
+      axes: [0, 0, 0, 0],
+      buttons: Array.from({ length: 17 }, () => ({ value: 0, pressed: false })),
+    }));
+    Object.defineProperty(navigator, 'getGamepads', { value: () => pads });
+    (window as unknown as { testPads: typeof pads }).testPads = pads;
+  });
+  await page.goto('/human-motion/?event=running');
+  await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);
+  await page.selectOption('#device', 'gamepad');
+  // One connected step first, so the comparison is against a running clock.
+  const before = await page.evaluate(() => {
+    window.__HERO_MOTION__.step(0.1);
+    const s = window.__HERO_MOTION__.getState();
+    return {
+      time: s.time,
+      steps: s.steps,
+      connected: s.input[0].frame?.connected,
+    };
+  });
+  expect(before.connected).toBe(true);
+  expect(before.steps).toBeGreaterThan(0);
+  const after = await page.evaluate(() => {
+    (
+      window as unknown as { testPads: { connected: boolean }[] }
+    ).testPads[0].connected = false;
+    window.__HERO_MOTION__.step(0.1);
+    const s = window.__HERO_MOTION__.getState();
+    return {
+      time: s.time,
+      steps: s.steps,
+      connected: s.input[0].frame?.connected,
+    };
+  });
+  // The aborted tick shows why it paused, but must not move the clock.
+  expect(after.connected).toBe(false);
+  expect(after.time).toBe(before.time);
+  expect(after.steps).toBe(before.steps);
+});
 test('Human Motion V2: AI runners keep running after a blur and resume', async ({
   page,
 }) => {
