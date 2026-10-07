@@ -144,7 +144,7 @@ If **Start showdown** is refused, the dialog stays open with the reason under th
 - "A competitor has used their ranked allowance. Exhibition is still available."
 - "This browser’s storage for the Arena is full. Use Export local save to keep a copy; counted contests and points are safe." This one is not prevented by the dialog. It appears only when the new contest does not fit even after the oldest exhibitions have been removed to make room ([saved data](saved-data.md)).
 
-In normal use the dialog disables **Start showdown** before any of these can happen. They only surface when this browser's save changed underneath, for example in another tab.
+In normal use the dialog disables **Start showdown** before the first four can happen. They only surface when this browser's save changed underneath, for example in another tab. The storage-full message is the exception: it can appear even when the save has not changed.
 
 ### Committing
 

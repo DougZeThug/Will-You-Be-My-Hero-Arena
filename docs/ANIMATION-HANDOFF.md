@@ -154,7 +154,9 @@ the front-view puppet and separate contracts.
   (position and velocity), so a future contract exporter must evaluate it
   from a normal-motion (not reduced-motion) release and export the point
   itself rather than re-derive it. `slideMotion` owns the slide: the bag lands at the flight's speed
-  and decelerates uniformly; a board bag stops after `min(0.28 s, 2d/vIn)`
+  when its touch point is unclamped (a max, front, disc or hole clamp can
+  make the touchdown speed differ, never faster than the flight) and
+  decelerates uniformly; a board bag stops after `min(0.28 s, 2d/vIn)`
   and holds on the target until `contactAt` (a shortened slide stops early
   instead of creeping), a hole bag passes the target at `contactAt` still
   moving and glides forward (never back) on a C1 Hermite to its rest over
@@ -165,7 +167,8 @@ the front-view puppet and separate contracts.
   the lip mask turns on, to the end of the 0.28 s fall. Resting bags do not
   block a slide: the bag rides over drawn bags (resting, or a pushed bag
   where it is now) with a lift of up to 6 px × depth scale, zero at first
-  impact and once the bag stops (the envelope runs over its moving time and
+  impact and once the bag stops, and never for a bag with zero slide
+  distance (the envelope runs over its moving time and
   ramps at most 0.6 px/frame × depth scale), weighted by each bag's drawn
   opacity
   (`pushedBag` is shared with `CornholeEvent`); its shadow stays on the
@@ -174,7 +177,9 @@ the front-view puppet and separate contracts.
   (`presentationPush`: start and `clamp(2·|to − from| / speed, 0.12,
   0.34)` s, ease-out from the thrown bag's speed, passed to
   `CornholeEvent.persistentObjects`) and holds its end until the board state
-  takes over at `contactAt`. A shove whose duration is clamped leaves at a
+  takes over at `max(contactAt, start + duration)`: a shove (for example one
+  clamped to 0.34 s) can still be moving at `contactAt`, and the board state
+  then draws its end once it stops. A shove whose duration is clamped leaves at a
   different speed than the thrown bag: slower at the 0.12 s floor (short
   shoves), faster at the 0.34 s ceiling. Known limitations: the board solver pushes bags
   lying anywhere along the path from the front of the board, so a pushed bag

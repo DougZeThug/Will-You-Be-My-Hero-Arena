@@ -336,17 +336,23 @@ export class ArenaScene extends Phaser.Scene {
           this.characters[active.actor].releaseWorld(active, direction!),
           time,
         );
-        this.projectile(active.id, active.actor).release(frame);
+        const bag = this.projectile(active.id, active.actor);
+        bag.release(frame);
+        // Same cornhole depth policy as the performance path: above the board
+        // bags until contactAt, below them while sinking, else in throw order.
+        if (p.sport === 'cornhole')
+          bag.sprite.setDepth(releasedBagDepth(rec, active, time, frame));
+        // The ring and hole star mark contactAt; the puff keeps the first
+        // impact (release + air time) when the frame reports it.
         this.effects.contact(
-          frame.kinematics
-            ? {
-                ...active,
-                contactAt: active.releaseAt + frame.kinematics.airTime,
-              }
-            : active,
+          active,
           time,
           p.reduced || p.low,
           active.contactAt,
+          undefined,
+          frame.kinematics
+            ? active.releaseAt + frame.kinematics.airTime
+            : undefined,
         );
       }
       this.director!.advance(

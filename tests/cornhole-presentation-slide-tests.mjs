@@ -140,6 +140,7 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       liftRise: 0,
       liftAfterStop: 0,
       liftOverFaded: 0,
+      noSlideLiftFrames: 0,
       ideal: [Infinity, -Infinity],
       slide: [Infinity, -Infinity],
       hole: 0,
@@ -148,6 +149,38 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
       range[0] = Math.min(range[0], v);
       range[1] = Math.max(range[1], v);
     };
+
+  // Effects on a fake scene: records each sprite placement (key, x, y).
+  const recordEffects = () => {
+    const used = [],
+      fake = {
+        textures: { exists: () => true },
+        add: {
+          image: () => {
+            const sprite = {};
+            for (const name of [
+              'setDepth',
+              'setScale',
+              'setFrame',
+              'clearTint',
+              'setVisible',
+              'setTint',
+            ])
+              sprite[name] = () => sprite;
+            sprite.setTexture = (key) => {
+              sprite.key = key;
+              return sprite;
+            };
+            sprite.setPosition = (x, y) => {
+              used.push({ key: sprite.key, x, y });
+              return sprite;
+            };
+            return sprite;
+          },
+        },
+      };
+    return { used, effects: new ImpactEffects(fake) };
+  };
 
   for (const rec of [...seeded, showcase])
     for (const a of rec.attempts) {
@@ -527,6 +560,13 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
             ),
           );
           if (opacity < 0.1 && l > 1e-6) stats.liftOverFaded++;
+          // A bag with zero slide never moves, so it never lifts.
+          if (atTarget) {
+            stats.noSlideLiftFrames++;
+            check(() =>
+              assert.ok(Math.abs(l) < 1e-9, `${a.id}: lift with zero slide`),
+            );
+          }
           // Nothing once the bag has stopped.
           if (time >= impact + motion.moving - 1e-9) {
             stats.liftAfterStop = Math.max(stats.liftAfterStop, l);
@@ -731,34 +771,7 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
         }
         // (d) The ring fires at the real contactAt at the target; the puff at
         // first impact at the touch point.
-        const used = [],
-          fake = {
-            textures: { exists: () => true },
-            add: {
-              image: () => {
-                const sprite = {};
-                for (const name of [
-                  'setDepth',
-                  'setScale',
-                  'setFrame',
-                  'clearTint',
-                  'setVisible',
-                  'setTint',
-                ])
-                  sprite[name] = () => sprite;
-                sprite.setTexture = (key) => {
-                  sprite.key = key;
-                  return sprite;
-                };
-                sprite.setPosition = (x, y) => {
-                  used.push({ key: sprite.key, x, y });
-                  return sprite;
-                };
-                return sprite;
-              },
-            },
-          },
-          effects = new ImpactEffects(fake),
+        const { used, effects } = recordEffects(),
           firstUse = (key) => {
             for (let k = -3; impact + k * dt <= a.contactAt + 0.1; k++) {
               const time = impact + k * dt;
@@ -850,8 +863,63 @@ process.stdout.write(JSON.stringify(Array.from({ length: 32 }, (_, i) =>
         `${c.kind} ${a.id}: legacy frames changed`,
       ),
     );
+    // The non-performance Watch release (ArenaScene) draws these frames with
+    // the cornhole depth policy and fires the ring at contactAt and the puff
+    // at release + air time.
+    if (c.release.flatten === undefined) {
+      const at = (time) => releasedBag(a, shot, c.release, time),
+        landAt = a.releaseAt + at(a.releaseAt).kinematics.airTime,
+        { used, effects } = recordEffects(),
+        firstUse = (key) => {
+          for (let k = 0; a.releaseAt + k * dt <= a.contactAt + 0.5; k++) {
+            const time = a.releaseAt + k * dt;
+            used.length = 0;
+            effects.begin();
+            effects.contact(a, time, false, a.contactAt, undefined, landAt);
+            const hit = used.find((u) => u.key === key);
+            if (hit) return { time, ...hit };
+          }
+        },
+        ring = firstUse('impact-frames'),
+        puff = firstUse('impact-puff');
+      check(() =>
+        assert.ok(
+          ring.time >= a.contactAt - 1e-9 && ring.time < a.contactAt + dt,
+          `${c.kind} ${a.id}: ring at contactAt`,
+        ),
+      );
+      if (a.contact !== 'miss')
+        check(() =>
+          assert.ok(
+            puff.time >= landAt - 1e-9 && puff.time < landAt + dt,
+            `${c.kind} ${a.id}: puff at first impact`,
+          ),
+        );
+      const board = rec.attempts
+        .filter((b) => b.id !== a.id)
+        .map((b) => boardBagDepth(rec, b.id));
+      for (let k = 0; k < c.samples.count; k++) {
+        const time = a.releaseAt + k / c.samples.rate,
+          depth = releasedBagDepth(rec, a, time, at(time));
+        if (time < a.contactAt)
+          check(() =>
+            assert.ok(
+              board.every((d) => depth > d),
+              `${c.kind} ${a.id}: flying bag below a board bag`,
+            ),
+          );
+        else if (at(time).occlusion)
+          check(() =>
+            assert.ok(
+              board.every((d) => depth < d),
+              `${c.kind} ${a.id}: sinking bag above a board bag`,
+            ),
+          );
+        else check(() => assert.equal(depth, boardBagDepth(rec, a.id)));
+      }
+    }
   }
   console.log(
-    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide ${stats.noSlide} (${((100 * stats.noSlide) / stats.presented).toFixed(1)}%) ${JSON.stringify(stats.noSlideCause)}, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}, stop tail below 2 px/frame <= ${stats.stopTail} frames, ride-over lift ${stats.lifted} (max ${stats.lift.toFixed(2)} px at depth 1, ${stats.liftOverFaded} lifted frames over bags below 0.1 opacity); pushes timed ${stats.pushesTimed}/${stats.pushes} (${stats.pushesAtSpeed} at the thrown speed, the rest duration-clamped); ${stats.hole} hole drops (slowest step before the sink ${stats.holeStep.toFixed(2)} px/frame, largest backward step ${stats.holeBack.toFixed(4)} px, stops at contactAt ${stats.holeStops}, largest unmasked sink ${stats.unmaskedSink.toFixed(4)} px); lift largest per-frame rise ${stats.liftRise.toFixed(2)} px at depth 1, after stop ${stats.liftAfterStop.toFixed(4)} px; ${fixture.cases.length} legacy cases identical.`,
+    `Cornhole presentation slide: ${stats.presented} presented slides (ideal ${stats.ideal.map((v) => v.toFixed(1)).join('..')} px, slid ${stats.slide.map((v) => v.toFixed(1)).join('..')} px), clamps ${JSON.stringify(stats.clamp)}, no slide ${stats.noSlide} (${((100 * stats.noSlide) / stats.presented).toFixed(1)}%) ${JSON.stringify(stats.noSlideCause)}, never lifted over ${stats.noSlideLiftFrames} frames, unclamped >= 30 px ${stats.unclampedLong}/${stats.unclamped}, stop tail below 2 px/frame <= ${stats.stopTail} frames, ride-over lift ${stats.lifted} (max ${stats.lift.toFixed(2)} px at depth 1, ${stats.liftOverFaded} lifted frames over bags below 0.1 opacity); pushes timed ${stats.pushesTimed}/${stats.pushes} (${stats.pushesAtSpeed} at the thrown speed, the rest duration-clamped); ${stats.hole} hole drops (slowest step before the sink ${stats.holeStep.toFixed(2)} px/frame, largest backward step ${stats.holeBack.toFixed(4)} px, stops at contactAt ${stats.holeStops}, largest unmasked sink ${stats.unmaskedSink.toFixed(4)} px); lift largest per-frame rise ${stats.liftRise.toFixed(2)} px at depth 1, after stop ${stats.liftAfterStop.toFixed(4)} px; ${fixture.cases.length} legacy cases identical.`,
   );
 }

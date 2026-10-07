@@ -81,7 +81,8 @@ pose battery, for both characters:
   evaluated hand socket until then. Event order identical to the recording.
 - Event times within **1/60 s** of the recording's `releaseAt`, `contactAt`, `scoreAt`,
   and of each cornhole attempt's **first board impact** (`firstImpactTime`, which is
-  `contactAt` minus 0.28 s or 0.22 s of surface travel; see
+  `contactAt` minus 0.28 s, 0.22 s or 0 s of surface travel; 0 when a direct or missed
+  bag has no recorded touch more than 2 px from its target; see
   `lib/arena/engine/events/cornhole/CornholePresentationTiming.ts`). The contract exports
   the first-impact time and touch point per attempt; the bag first touches the board at
   that point within **1e-6** on script-side float64.

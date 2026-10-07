@@ -688,9 +688,18 @@ export async function testLive({ check }) {
   // A "Perfect release" can reach the hole: across the green window, at 1/60 s
   // hold steps and several seeds, perfect grades score three and never miss.
   const step = (s) => s.advance(1 / 60);
+  // Every wait is bounded so a regression fails naming the missing transition
+  // instead of hanging the suite.
+  const maxFrames = 6000;
+  const bounded = (frames, transition) =>
+    assert.ok(frames < maxFrames, `${transition} never happened`);
   const throwBag = (s, player, held, shot, precision) => {
     const e = s.event;
-    while (!(e.state === 'aiming' && e.active().id === player)) step(s);
+    let frames = 0;
+    while (!(e.state === 'aiming' && e.active().id === player)) {
+      bounded(frames++, `${player} aiming`);
+      step(s);
+    }
     pulse(s, player, shot);
     if (precision) pulse(s, player, 'modifierRight');
     const before = e.bags.length;
@@ -699,7 +708,9 @@ export async function testLive({ check }) {
     advance(s, held);
     s.inject(player, 'charge', 0);
     let perfect, flight;
+    frames = 0;
     while (e.bags.length === before) {
+      bounded(frames++, `${player}'s bag landing`);
       step(s);
       if (perfect === undefined && e.state === 'throwing') perfect = e.perfect;
       if (!flight && e.flight) flight = { ...e.flight.target };
@@ -725,7 +736,11 @@ export async function testLive({ check }) {
       })),
     });
     const e = s.event;
-    while (e.state !== 'aiming') step(s);
+    let frames = 0;
+    while (e.state !== 'aiming') {
+      bounded(frames++, `${cardId} first aiming`);
+      step(s);
+    }
     pulse(s, 'p0', 'primaryAction');
     const holeRunner = e.window();
     pulse(s, 'p0', 'secondaryAction');
@@ -818,7 +833,9 @@ export async function testLive({ check }) {
       e = s.event,
       grades = [];
     let last = '';
-    while (!s.snapshot().finished) {
+    // A full AI match takes about 1,900 frames.
+    for (let frames = 0; !s.snapshot().finished; frames++) {
+      bounded(frames, `AI match ${seed} finishing`);
       step(s);
       if (e.state === 'throwing' && last !== 'throwing') grades.push(e.perfect);
       last = e.state;

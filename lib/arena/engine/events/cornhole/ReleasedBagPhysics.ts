@@ -699,8 +699,15 @@ export function releasedBag(
   // pushed one where it is now) rises up to 6 px (× depth) over it while it
   // moves: the envelope ramps at most 0.6 px/frame (× depth) in after first
   // impact and out before the bag stops, so it is 0 at first impact, once
-  // the bag has stopped and at contactAt. The shadow stays on the board.
-  if (motion && elapsed >= air && elapsed < air + motion.moving) {
+  // the bag has stopped and at contactAt. The shadow stays on the board. A
+  // bag with no slide distance (touch clamped onto its target) never moves,
+  // so it never lifts.
+  if (
+    motion &&
+    motion.target.x - motion.touch.x > 1e-9 &&
+    elapsed >= air &&
+    elapsed < air + motion.moving
+  ) {
     const since = elapsed - air,
       envelope = Math.min(
         1,

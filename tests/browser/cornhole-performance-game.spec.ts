@@ -304,6 +304,30 @@ test('cornhole performance: board bags land short and slide to the target; pushe
         -0.01,
       );
       if (travel > 1) sliding++;
+      // A board bag reaches its resting spot by contactAt: the frame at
+      // contactAt is where it still rests 0.1 s later, and a bag with a
+      // positive slide (rest beyond its touch point) visibly travels.
+      if (current.contact === 'board') {
+        const near = (t: number) =>
+            samples.reduce((a, b) =>
+              Math.abs(b.time - t) < Math.abs(a.time - t) ? b : a,
+            ),
+          atContact = slide.at(-1)!,
+          rest = near(current.contactAt + 0.1);
+        expect(current.contactAt - atContact.time).toBeLessThan(1 / 60 + 1e-6);
+        expect(Math.abs(rest.time - (current.contactAt + 0.1))).toBeLessThan(
+          1 / 60 + 1e-6,
+        );
+        expect(
+          Math.hypot(atContact.x - rest.x, atContact.y - rest.y),
+          `${seed} ${current.id} rests at contactAt`,
+        ).toBeLessThan(0.5);
+        if (rest.x - touch.x > 1)
+          expect(
+            travel,
+            `${seed} ${current.id} slides to its rest`,
+          ).toBeGreaterThan(1);
+      }
       for (let i = 1; i < slide.length; i++)
         expect(slide[i].x - slide[i - 1].x).toBeGreaterThanOrEqual(-0.01);
       // recorded:v1 attempt 4 pushes a resting bag: it rests until the thrown
