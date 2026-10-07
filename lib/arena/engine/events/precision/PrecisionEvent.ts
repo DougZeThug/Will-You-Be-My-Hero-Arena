@@ -3,7 +3,10 @@ import type {
   EventContext,
   LiveView,
 } from '../../core/LiveTypes';
-import type { ArenaCharacter } from '../../characters/ArenaCharacter';
+import type {
+  ArenaCharacter,
+  ThrowContact,
+} from '../../characters/ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
 import { clamp, type InputFrame } from '../../input/InputActions';
@@ -260,6 +263,9 @@ export class PrecisionEvent implements PlayableArenaEvent {
             .filter((b) => b.owner === p.id)
             .reduce((n, b) => n + b.points, 0);
         this.flight = undefined;
+        const contact: ThrowContact =
+          bag.points === 3 ? 'hole' : bag.points === 1 ? 'board' : 'miss';
+        c.lastThrow = { contact };
         this.state = c.substate = 'result';
         this.phaseAt = time;
         this.throws++;

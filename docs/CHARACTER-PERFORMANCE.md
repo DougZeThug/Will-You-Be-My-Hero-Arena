@@ -356,6 +356,11 @@ controller starts its result-aware reaction. `PerformanceFeedback` subscribes
 separately for restrained camera, particles and optional sound. Seeking rebuilds
 and replays the local scenario silently; no old sound/effect backlog is emitted.
 
+The live Play cornhole path reports the contact of the character's own throw
+(`ArenaCharacter.lastThrow`, written by `PrecisionEvent` when the bag lands) and
+passes success for hole or board and celebrate for hole only, the same contract
+as the recorded playback.
+
 ## LoongBones and anatomy
 
 `lab/performance/LoongBonesAdapter.ts` implements `CharacterAnimationRuntime`.

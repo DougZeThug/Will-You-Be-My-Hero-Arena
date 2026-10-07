@@ -121,6 +121,11 @@ export function runPhysics(
   if (!c.animation.timeline.active) c.state = 'moving';
   return landed;
 }
+/**
+ * Half of the 62px lane pitch: adjacent lanes' hit bands tile with no seam
+ * (the strict `<` leaves only the exact midline unhit).
+ */
+const LANE_HALF_PITCH = 31;
 export function obstacleCollision(
   c: ArenaCharacter,
   o: Obstacle,
@@ -129,7 +134,7 @@ export function obstacleCollision(
   return (
     !m.hits.has(o.id) &&
     Math.abs(c.body.x - o.x) < o.width / 2 + 15 &&
-    Math.abs(c.body.y - o.y) < 30 &&
+    Math.abs(c.body.y - o.y) < LANE_HALF_PITCH &&
     (o.kind === 'bar' ? m.slide <= 0 : c.body.z < o.height)
   );
 }

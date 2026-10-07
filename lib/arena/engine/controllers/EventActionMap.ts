@@ -40,6 +40,12 @@ export function resolveAction(
       (!a.modifiers || a.modifiers.every((m) => context.held.has(m))),
   );
 }
+// The first non-hidden action for an intent: the rule the remap grid and
+// touch controls use to name what a key does. Hidden entries (modifier
+// variants, release phases, double taps) never name an intent.
+export function visibleAction(actions: ActionDefinition[], intent: string) {
+  return actions.find((a) => a.intent === intent && !a.hidden);
+}
 export class ComboRecognizer {
   private history: { intent: Intent; time: number }[] = [];
   push(signal: InputSignal, combos: ComboDefinition[] = []) {

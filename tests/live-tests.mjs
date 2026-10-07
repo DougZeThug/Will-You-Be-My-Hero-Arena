@@ -9,16 +9,22 @@ export async function testLive({ check }) {
     await import('../.test-build/engine/input/InputManager.mjs');
   const { IntentTracker } =
     await import('../.test-build/engine/input/IntentTracker.mjs');
-  const { mapGamepad } =
+  const { mapGamepad, GamepadDevice } =
     await import('../.test-build/engine/input/GamepadDevice.mjs');
+  const { AIController } =
+    await import('../.test-build/engine/controllers/AIController.mjs');
   const { bindingsFor } =
     await import('../.test-build/engine/input/InputBindings.mjs');
   const { ActionTimeline } =
     await import('../.test-build/engine/animation/AnimationEvents.mjs');
-  const { ComboRecognizer } =
+  const { ComboRecognizer, visibleAction } =
     await import('../.test-build/engine/controllers/EventActionMap.mjs');
   const { FightingActionMap } =
     await import('../.test-build/engine/events/fighting/FightingActionMap.mjs');
+  const { PrecisionActionMap } =
+    await import('../.test-build/engine/events/precision/PrecisionActionMap.mjs');
+  const { RunningActionMap } =
+    await import('../.test-build/engine/events/running/RunningActionMap.mjs');
   const { timingGrade, rhythmTiming } =
     await import('../.test-build/engine/input/TimingWindow.mjs');
   const config = (
@@ -106,6 +112,59 @@ export async function testLive({ check }) {
   check(() => assert.equal(mapped.values.specialAction, 1));
   check(() => assert.ok(mapped.values.aim.x > 0.5));
   check(() => assert.equal(mapGamepad(null, bindingsFor(0)).connected, false));
+  // connected() is the side-effect-free peek the Human Motion session uses.
+  const peekManager = new InputManager();
+  peekManager.assign('virtual', new VirtualDevice('peek-virtual'));
+  peekManager.assign('ai', new AIController('peek-ai', () => frame({})));
+  check(() => assert.equal(peekManager.connected('missing'), false));
+  check(() => assert.equal(peekManager.connected('virtual'), true));
+  check(() => assert.equal(peekManager.connected('ai'), true));
+  const peekTap = peekManager.device('virtual');
+  peekTap.set('primaryAction', 1);
+  peekTap.set('primaryAction', 0);
+  check(() => assert.equal(peekManager.connected('virtual'), true));
+  check(() =>
+    assert.equal(peekManager.poll('virtual', 0).values.primaryAction, 1),
+  );
+  peekManager.destroy();
+  const navigatorDescriptor = Object.getOwnPropertyDescriptor(
+    globalThis,
+    'navigator',
+  );
+  const stubNavigator = (value) =>
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value,
+    });
+  try {
+    const gamepad = new GamepadDevice(0, bindingsFor(0)),
+      gamepadManager = new InputManager();
+    gamepadManager.assign('p0', gamepad);
+    stubNavigator({ getGamepads: () => [{ ...pad }] });
+    check(() => assert.equal(gamepad.connected(), true));
+    check(() => assert.equal(gamepadManager.connected('p0'), true));
+    const unpeeked = gamepad.poll();
+    gamepad.connected();
+    gamepadManager.connected('p0');
+    check(() => assert.deepEqual(gamepad.poll(), unpeeked));
+    stubNavigator({ getGamepads: () => [{ ...pad, connected: false }] });
+    check(() => assert.equal(gamepad.connected(), false));
+    check(() => assert.equal(gamepadManager.connected('p0'), false));
+    stubNavigator({ getGamepads: () => [null] });
+    check(() => assert.equal(gamepad.connected(), false));
+    stubNavigator({ getGamepads: () => [] });
+    check(() => assert.equal(gamepad.connected(), false));
+    stubNavigator({
+      getGamepads: () => {
+        throw Error('blocked');
+      },
+    });
+    check(() => assert.equal(gamepad.connected(), false));
+  } finally {
+    if (navigatorDescriptor)
+      Object.defineProperty(globalThis, 'navigator', navigatorDescriptor);
+    else delete globalThis.navigator;
+  }
   const tl = new ActionTimeline(),
     markers = [];
   tl.start('attack', 0.6, [
@@ -693,7 +752,7 @@ export async function testLive({ check }) {
   const maxFrames = 6000;
   const bounded = (frames, transition) =>
     assert.ok(frames < maxFrames, `${transition} never happened`);
-  const throwBag = (s, player, held, shot, precision) => {
+  const throwBag = (s, player, held, shot, precision, land) => {
     const e = s.event;
     let frames = 0;
     while (!(e.state === 'aiming' && e.active().id === player)) {
@@ -713,9 +772,13 @@ export async function testLive({ check }) {
       bounded(frames++, `${player}'s bag landing`);
       step(s);
       if (perfect === undefined && e.state === 'throwing') perfect = e.perfect;
-      if (!flight && e.flight) flight = { ...e.flight.target };
+      if (!flight && e.flight) {
+        land?.(e.flight);
+        flight = { ...e.flight.target };
+      }
     }
     return {
+      contact: s.characters.find((c) => c.id === player).lastThrow?.contact,
       perfect,
       points: e.bags.at(-1).points,
       error: e.releasePower - e.ideal(),
@@ -826,6 +889,119 @@ export async function testLive({ check }) {
       ),
     );
   }
+  // The live performance rig is told the real result of the thrower's own
+  // throw: ArenaCharacter.lastThrow is written when the bag lands, from the
+  // landed bag's final points (hole 3, board 1, otherwise a miss).
+  const contactOf = (points) =>
+    points === 3 ? 'hole' : points === 1 ? 'board' : 'miss';
+  // Aim a throw at an exact spot; the landing rules still decide the result.
+  const landAt = (p) => (f) => {
+    f.target = { ...p };
+  };
+  let board;
+  for (let dy = -30; dy <= 30 && !board; dy += 2)
+    for (let dx = -60; dx <= 60 && !board; dx += 2) {
+      const p = { x: hole.x + dx, y: hole.y + dy };
+      if (Math.hypot(dx, dy) > 45 && bagPoints(p) === 1) board = p;
+    }
+  const faraway = { x: hole.x + 400, y: hole.y };
+  check(() => assert.equal(bagPoints(hole), 3));
+  check(() => assert.equal(bagPoints(board), 1));
+  check(() => assert.equal(bagPoints(faraway), 0));
+  const last = new ArenaSession(config('cornhole', false, 2, 'last-throw'));
+  check(() =>
+    assert.ok(
+      last.characters.every((c) => c.lastThrow === undefined),
+      'No throw yet, no recorded contact',
+    ),
+  );
+  const [first, second] = last.characters;
+  const aimed = (player, spot) =>
+    throwBag(last, player, 0.3, 'primaryAction', false, landAt(spot));
+  const inHole = aimed('p0', hole);
+  check(() => assert.equal(inHole.points, 3));
+  check(() => assert.equal(inHole.contact, contactOf(inHole.points)));
+  check(() => assert.equal(inHole.contact, 'hole'));
+  check(() => assert.equal(first.lastThrow.contact, 'hole'));
+  check(() =>
+    assert.equal(
+      second.lastThrow,
+      undefined,
+      'A non-thrower has no recorded contact before their own throw',
+    ),
+  );
+  const onBoard = aimed('p1', board);
+  check(() => assert.equal(onBoard.points, 1));
+  check(() => assert.equal(onBoard.contact, contactOf(onBoard.points)));
+  check(() => assert.equal(onBoard.contact, 'board'));
+  check(() => assert.equal(second.lastThrow.contact, 'board'));
+  check(() =>
+    assert.equal(
+      first.lastThrow.contact,
+      'hole',
+      "Another player's throw leaves the contact alone",
+    ),
+  );
+  const offBoard = aimed('p0', faraway);
+  check(() => assert.equal(offBoard.points, 0));
+  check(() => assert.equal(offBoard.contact, contactOf(offBoard.points)));
+  check(() => assert.equal(offBoard.contact, 'miss'));
+  check(() =>
+    assert.equal(first.lastThrow.contact, 'miss', 'The next throw overwrites'),
+  );
+  check(() => assert.equal(second.lastThrow.contact, 'board'));
+  last.destroy();
+  // A roll that curls around a bag can end on 0 points while the thrower's
+  // score still rises (the pushed old bag drops into the hole): still a miss.
+  let curl;
+  for (let dy = -40; dy <= 40 && !curl; dy += 1)
+    for (let dx = -80; dx <= 80 && !curl; dx += 1) {
+      const old = { x: hole.x + dx, y: hole.y + dy },
+        d = Math.hypot(dx, dy),
+        pushed = {
+          x: old.x - (dx / d) * 12,
+          y: old.y - (dy / d) * 12,
+        },
+        landed = { x: old.x + 4, y: old.y };
+      if (
+        d > 13 &&
+        bagPoints(old) === 1 &&
+        bagPoints(pushed) === 3 &&
+        bagPoints(landed) === 1 &&
+        bagPoints({ ...landed, y: landed.y + 16 }) === 0
+      )
+        curl = { old, landed };
+    }
+  if (curl) {
+    const s = new ArenaSession(config('cornhole', false, 2, 'curl'));
+    s.event.bags.push({
+      id: 'old',
+      owner: 'p0',
+      ...curl.old,
+      angle: 0,
+      points: 1,
+    });
+    s.characters[0].score = 1;
+    const shot = throwBag(
+      s,
+      'p0',
+      0.3,
+      'tertiaryAction',
+      false,
+      landAt(curl.landed),
+    );
+    check(() => assert.equal(s.event.shot, 'roll'));
+    check(() =>
+      assert.equal(shot.points, 0, 'The curled bag is off the board'),
+    );
+    check(() =>
+      assert.equal(s.characters[0].score, 3, 'The pushed bag still scores'),
+    );
+    check(() => assert.equal(shot.contact, contactOf(shot.points)));
+    check(() => assert.equal(shot.contact, 'miss'));
+    s.destroy();
+  }
+  check(() => assert.ok(curl, 'a spot where a roll curls off the board'));
   // The AI's timing error is drawn once per throw from the session's seed: the
   // same seed plays the same match, and it is not always perfect.
   const aiMatch = (seed) => {
@@ -921,6 +1097,76 @@ export async function testLive({ check }) {
       Math.abs(front.body.scale - lanes.characters[1].body.scale) > 0.03,
     ),
   );
+  // Free steering: adjacent lanes' obstacle hit bands tile with no seam.
+  {
+    const { obstacleCollision } =
+      await import('../.test-build/engine/events/running/RunningPhysics.mjs');
+    const at = (y, z = 0) => ({ body: { x: 500, y, z } });
+    const motion = (slide = 0, ids = []) => ({ hits: new Set(ids), slide });
+    for (const kind of ['hurdle', 'bar']) {
+      const lane = (n) => ({
+        id: kind + n,
+        x: 500,
+        y: 520 + n * 62,
+        width: 36,
+        height: 42,
+        kind,
+      });
+      const [l0, l1, l2] = [lane(0), lane(1), lane(2)];
+      const hit = (y, o) => obstacleCollision(at(y), o, motion());
+      // [runner y, lane that must be hit, the other lane it sits between]
+      for (const [y, want, other] of [
+        [549.5, 0, 1],
+        [550.5, 0, 1],
+        [551.5, 1, 0],
+        [612.5, 1, 2],
+        [613.5, 2, 1],
+      ])
+        check(() => {
+          const lanes = [l0, l1, l2];
+          assert.deepEqual(
+            [hit(y, lanes[want]), hit(y, lanes[other])],
+            [true, false],
+            kind + ' at y ' + y + ' hits exactly one lane',
+          );
+        });
+      check(() => assert.equal(hit(551.5, l0), false));
+      for (const y of [489, 675])
+        check(() =>
+          assert.deepEqual(
+            [hit(y, l0), hit(y, l1), hit(y, l2)].includes(true),
+            false,
+          ),
+        );
+    }
+    const hurdle = {
+      id: 'h',
+      x: 500,
+      y: 520,
+      width: 36,
+      height: 42,
+      kind: 'hurdle',
+    };
+    const bar = { ...hurdle, id: 'b', kind: 'bar' };
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 0), hurdle, motion()), true),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 42), hurdle, motion()), false),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 60), bar, motion(0)), true),
+    );
+    check(() =>
+      assert.equal(obstacleCollision(at(520, 0), bar, motion(0.4)), false),
+    );
+    check(() =>
+      assert.equal(
+        obstacleCollision(at(520, 0), hurdle, motion(0, ['h'])),
+        false,
+      ),
+    );
+  }
   pulse(lanes, 'p0', 'tertiaryAction');
   advance(lanes, 0.8);
   check(() =>
@@ -1076,6 +1322,69 @@ export async function testLive({ check }) {
   check(() => assert.equal(stance.characters[0].stamina, 0));
   check(() => assert.equal(guard.counterUntil, 0));
   stance.destroy();
+  // Counter stance held under a raised Block costs its 12 and leaves the guard
+  // up, but it only softens what the guard cannot stop: a grapple. Pinned as
+  // current behaviour, not a design claim.
+  const guarded = (counter, attack) => {
+    const g = new ArenaSession(config('fighting', false));
+    advance(g, 1.7);
+    g.characters[0].body.x = 500;
+    g.characters[1].body.x = attack === 'grapple' ? 580 : 610;
+    g.inject('p1', 'modifierLeft', 1);
+    advance(g, 0.2);
+    const held = g.event.components.get('p1'),
+      before = g.characters[1].stamina;
+    if (counter) pulse(g, 'p1', 'modifierRight');
+    const spent = before - g.characters[1].stamina,
+      armed = held.counterUntil > g.time,
+      stillBlocking = held.blocking && g.characters[1].substate === 'blocking';
+    if (attack === 'grapple') {
+      g.inject('p0', 'modifierRight', 1);
+      g.inject('p0', 'primaryAction', 1);
+      g.inject('p0', 'primaryAction', 0);
+      g.inject('p0', 'modifierRight', 0);
+      g.advance(1 / 60);
+    } else pulse(g, 'p0', 'primaryAction');
+    for (let i = 0; i < 90 && g.characters[1].health === 100; i++)
+      g.advance(1 / 60);
+    // The press and the blow land within one counter window.
+    const windowOpen = held.counterUntil > g.time;
+    const out = {
+      spent,
+      armed,
+      stillBlocking,
+      windowOpen,
+      loss: 100 - g.characters[1].health,
+    };
+    g.destroy();
+    return out;
+  };
+  const chipBase = guarded(false, 'light'),
+    chipCounter = guarded(true, 'light'),
+    grabBase = guarded(false, 'grapple'),
+    grabCounter = guarded(true, 'grapple');
+  check(() =>
+    assert.ok(
+      chipCounter.spent >= 11.8 && chipCounter.spent <= 12.2,
+      'Counter under Block costs 12',
+    ),
+  );
+  check(() => assert.equal(chipCounter.armed, true, 'The stance is armed'));
+  check(() =>
+    assert.equal(chipCounter.stillBlocking, true, 'Counter keeps the guard'),
+  );
+  check(() => assert.deepEqual([chipBase.loss, chipCounter.loss], [2, 2]));
+  check(() => assert.ok(grabBase.loss > 2, 'A guard cannot stop a grapple'));
+  check(() =>
+    assert.ok(grabCounter.windowOpen, 'The grapple lands in the window'),
+  );
+  check(() =>
+    assert.ok(
+      grabCounter.loss < grabBase.loss &&
+        Math.abs(grabCounter.loss - 0.65 * grabBase.loss) <= 1,
+      'Counter under Block cuts a grapple to 65%',
+    ),
+  );
   // Two keyboard layouts may not share a key, whichever way it got there.
   const { bindingsConflict } =
     await import('../.test-build/engine/input/InputBindings.mjs');
@@ -1133,7 +1442,132 @@ export async function testLive({ check }) {
       'A tap inside one step still registers',
     ),
   );
+  // Auto-repeat of a held key is kept from scrolling the page without being
+  // recorded again as a fresh tap.
+  const repeat = (type, code, extra = {}) => {
+    let prevented = 0;
+    listeners[type]({
+      code,
+      repeat: true,
+      target: {},
+      preventDefault: () => prevented++,
+      ...extra,
+    });
+    return prevented;
+  };
+  key('keydown', 'ArrowDown');
+  check(() =>
+    assert.deepEqual(keyboard.poll(3 / 60).values.aim, { x: 0, y: 1 }),
+  );
+  check(() =>
+    assert.equal(repeat('keydown', 'ArrowDown'), 1, 'Held key is prevented'),
+  );
+  check(() =>
+    assert.deepEqual(
+      keyboard.poll(4 / 60).values.aim,
+      { x: 0, y: 1 },
+      'Repeat leaves the held aim unchanged',
+    ),
+  );
+  key('keyup', 'ArrowDown');
+  check(() =>
+    assert.ok(
+      !keyboard.poll(5 / 60).values.aim?.y,
+      'Repeat is not replayed as a tap after release',
+    ),
+  );
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'ArrowUp'),
+      0,
+      'A key never pressed through the device is not prevented',
+    ),
+  );
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD', { target: { tagName: 'INPUT' } }),
+      0,
+      'A held key repeating inside a text field is not prevented',
+    ),
+  );
+  check(() => assert.equal(repeat('keydown', 'KeyD'), 1));
+  listeners.blur();
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      0,
+      'A repeat after blur is not prevented',
+    ),
+  );
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyZ'),
+      0,
+      'A key outside the bindings is not prevented',
+    ),
+  );
+  key('keyup', 'KeyD');
   keyboard.destroy();
+  // Press while in scope so the device really holds the key, then leave scope.
+  let inside = true;
+  const scoped = new KeyboardDevice('kb-scoped', bindingsFor(0), 0, {
+    contains: () => inside,
+  });
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      1,
+      'A held key repeating inside the arena scope is prevented',
+    ),
+  );
+  inside = false;
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      0,
+      'A held key repeating outside the arena scope is not prevented',
+    ),
+  );
+  // Remap and Start refusals name the visible action for an intent (the first
+  // non-hidden entry, as the remap grid does), never a hidden variant such as
+  // Brawl's modifier-gated Grapple that precedes Light attack on primaryAction.
+  const fightLabel = (intent) =>
+    visibleAction(FightingActionMap.actions, intent)?.label;
+  check(() => {
+    const first = FightingActionMap.actions.find(
+      (a) => a.intent === 'primaryAction',
+    );
+    assert.equal(first.hidden, true, 'the first primaryAction entry is hidden');
+    assert.notEqual(fightLabel('primaryAction'), first.label);
+    assert.equal(fightLabel('primaryAction'), 'Light attack');
+    assert.equal(fightLabel('modifierRight'), 'Counter stance');
+    assert.equal(fightLabel('modifierLeft'), 'Block');
+  });
+  check(() => {
+    assert.equal(fightLabel('charge'), undefined, 'no entry: fallback applies');
+    assert.equal(
+      fightLabel('left'),
+      undefined,
+      'an intent with only hidden entries has no visible action',
+    );
+  });
+  check(() => {
+    for (const [map, intents] of [
+      [PrecisionActionMap, ['primaryAction', 'charge']],
+      [RunningActionMap, ['charge', 'modifierLeft']],
+    ])
+      for (const intent of intents) {
+        const expected = map.actions.find(
+          (a) => a.intent === intent && !a.hidden,
+        );
+        assert.ok(expected, map.id + ' ' + intent + ' has a visible action');
+        assert.equal(visibleAction(map.actions, intent), expected);
+      }
+  });
+  scoped.destroy();
   Object.assign(globalThis, saved);
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(

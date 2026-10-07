@@ -15,6 +15,7 @@ import {
   validateBindings,
   type Bindings,
 } from '@/lib/arena/engine/input/InputBindings';
+import { visibleAction } from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
@@ -125,10 +126,10 @@ export default function PlayableArena({
         ? 'aiming'
         : intent === 'moveAxes' || intent === 'aimAxes'
           ? `the ${intent === 'moveAxes' ? 'move' : 'aim'} stick axis`
-          : (playableEvent(event)
-              .create()
-              .registerControls()
-              .actions.find((a) => a.intent === intent)?.label ??
+          : (visibleAction(
+              playableEvent(event).create().registerControls().actions,
+              intent,
+            )?.label ??
             INPUT_NAMES[intent] ??
             intent);
   const bindKey = (i: number, intent: Intent, code: string) => {

@@ -40,7 +40,6 @@ export class CharacterPresentation {
   private resultReported = false;
   private liveRelease: number | null = null;
   private rate = 1;
-  private scoreAtThrow = 0;
   private facing?: number;
   private flipFrom = 1;
   private flipAt = -Infinity;
@@ -308,7 +307,6 @@ export class CharacterPresentation {
         queue: false,
       });
       this.resultReported = false;
-      this.scoreAtThrow = c.score;
       this.liveRelease = null;
       this.rate = 1;
     };
@@ -375,11 +373,12 @@ export class CharacterPresentation {
       c.substate === 'result'
     ) {
       this.resultReported = true;
+      const contact = c.lastThrow?.contact;
       performance.confirmContact(this.performanceAction);
       performance.confirmResult(
         this.performanceAction,
-        c.score > this.scoreAtThrow,
-        c.score > this.scoreAtThrow,
+        contact === 'hole' || contact === 'board',
+        contact === 'hole',
       );
     }
     if (this.performanceAction && performance.segmentClip === null) {

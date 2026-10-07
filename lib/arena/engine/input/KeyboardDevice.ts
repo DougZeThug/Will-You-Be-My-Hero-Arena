@@ -26,6 +26,13 @@ export class KeyboardDevice extends VirtualDevice {
       )
         return;
       if (!allowed.has(e.code)) return;
+      // Auto-repeat of a key this device already took: keep it from scrolling the
+      // page, but leave state alone so a held direction is not re-recorded as a
+      // tap.
+      if (pressed && e.repeat) {
+        if (this.down.has(e.code)) e.preventDefault();
+        return;
+      }
       // Only a release of a key this device took is kept from the page, so a
       // focused page button still receives the Space or Enter it was pressed
       // with.
@@ -48,9 +55,7 @@ export class KeyboardDevice extends VirtualDevice {
             y: Number(this.down.has(keys[1])) - Number(this.down.has(keys[0])),
           });
     };
-    const down = (e: KeyboardEvent) => {
-        if (!e.repeat) key(e, true);
-      },
+    const down = (e: KeyboardEvent) => key(e, true),
       up = (e: KeyboardEvent) => key(e, false),
       blur = () => this.clear();
     window.addEventListener('keydown', down);
