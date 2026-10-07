@@ -1133,7 +1133,86 @@ export async function testLive({ check }) {
       'A tap inside one step still registers',
     ),
   );
+  // Auto-repeat of a held key is kept from scrolling the page without being
+  // recorded again as a fresh tap.
+  const repeat = (type, code, extra = {}) => {
+    let prevented = 0;
+    listeners[type]({
+      code,
+      repeat: true,
+      target: {},
+      preventDefault: () => prevented++,
+      ...extra,
+    });
+    return prevented;
+  };
+  key('keydown', 'ArrowDown');
+  check(() =>
+    assert.deepEqual(keyboard.poll(3 / 60).values.aim, { x: 0, y: 1 }),
+  );
+  check(() =>
+    assert.equal(repeat('keydown', 'ArrowDown'), 1, 'Held key is prevented'),
+  );
+  check(() =>
+    assert.deepEqual(
+      keyboard.poll(4 / 60).values.aim,
+      { x: 0, y: 1 },
+      'Repeat leaves the held aim unchanged',
+    ),
+  );
+  key('keyup', 'ArrowDown');
+  check(() =>
+    assert.ok(
+      !keyboard.poll(5 / 60).values.aim?.y,
+      'Repeat is not replayed as a tap after release',
+    ),
+  );
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'ArrowUp'),
+      0,
+      'A key never pressed through the device is not prevented',
+    ),
+  );
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD', { target: { tagName: 'INPUT' } }),
+      0,
+      'A held key repeating inside a text field is not prevented',
+    ),
+  );
+  check(() => assert.equal(repeat('keydown', 'KeyD'), 1));
+  listeners.blur();
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      0,
+      'A repeat after blur is not prevented',
+    ),
+  );
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyZ'),
+      0,
+      'A key outside the bindings is not prevented',
+    ),
+  );
+  key('keyup', 'KeyD');
   keyboard.destroy();
+  const outside = new KeyboardDevice('kb-outside', bindingsFor(0), 0, {
+    contains: () => false,
+  });
+  key('keydown', 'KeyD');
+  check(() =>
+    assert.equal(
+      repeat('keydown', 'KeyD'),
+      0,
+      'A repeat outside the arena scope is not prevented',
+    ),
+  );
+  outside.destroy();
   Object.assign(globalThis, saved);
   fs.mkdirSync('docs/review', { recursive: true });
   fs.writeFileSync(
