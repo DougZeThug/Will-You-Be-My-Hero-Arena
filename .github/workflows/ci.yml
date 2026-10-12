@@ -3,7 +3,9 @@ name: CI
 # Cheap, path-independent checks. The Cornhole visual review workflow only runs
 # for changes under its path filter, so simulation, scoring, persistence, input
 # and event-rule changes would otherwise merge with no automated check at all.
-# Browser, visual and production checks stay in cornhole-visual-review.yml.
+# The production build and isolation smoke also run here for every change, so
+# Play runtime, scene and app edits are covered. The full browser suite and
+# visual review stay in cornhole-visual-review.yml.
 on:
   pull_request:
   push:
@@ -38,6 +40,47 @@ jobs:
         run: pnpm typecheck
       - name: Simulation, animation and observability tests
         run: pnpm test
+
+  production-build:
+    name: Production build and isolation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Locate preinstalled Chrome
+        shell: bash
+        run: |
+          browser="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$browser"
+          echo "ARENA_BROWSER_EXECUTABLE=$browser" >> "$GITHUB_ENV"
+          "$browser" --version
+      - name: Verify Playwright can launch the system browser
+        run: pnpm browser:preflight
+      - name: Fresh production build
+        run: pnpm build
+      # Play, Watch and save isolation, plus the Lab-global leak scan. Path
+      # independent so Play runtime, scene and app changes are covered too.
+      - name: Production isolation (Play, Watch, save isolation)
+        run: pnpm test:production
+      - name: Upload production evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-${{ github.run_id }}-production
+          if-no-files-found: warn
+          retention-days: 14
+          path: work/qa/production/
 
   lint:
     name: Lint (report only)
