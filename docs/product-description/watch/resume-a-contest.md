@@ -105,7 +105,7 @@ The chip's **entries left** already counts it ([written and revealed](../foundat
 | Focus leaves the game | No effect. | Hiding the tab stops the clock. |
 | Reload, close, or back/forward cache | The banner is shown again on return. | The position is written as the page goes away, and the banner returns. |
 | Settings or saved data change underneath | Another tab can replace or clear the waiting contest, by locking another contest, finishing or skipping this one, or resetting. Replays in another tab do not affect it. This tab's banner then follows the save it re-reads. | Another tab playing the same contest writes the same position, and the last write wins. If that tab finishes it first, the slot is cleared, and this tab stops writing and reveals the points when it re-reads the save. |
-| Graphics or storage failure | If the saved recording is no longer in the save, no banner is shown. If the save cannot be read, there is no banner either; the box under the header explains why. | If a position write fails, the error box reads **Playback could not be saved. Keep this tab open and export your recording.**, with **Dismiss**. |
+| Graphics or storage failure | If the saved recording is no longer in the save, no banner is shown. If the save cannot be read, there is no banner either; the box under the header explains why. | A position partway through a resumed viewing that does not fit is skipped silently, keeping the last saved position. Only a refused completion write at the end shows **Playback could not be saved. Keep this tab open and export your recording.**, with **Dismiss**, and the contest stays waiting to resume. |
 | Input device changes | Not applicable. | Not applicable. |
 
 ## Interactions with other systems
