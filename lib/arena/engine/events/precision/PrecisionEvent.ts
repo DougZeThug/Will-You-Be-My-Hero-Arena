@@ -10,7 +10,7 @@ import type {
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
 import { clamp, type InputFrame } from '../../input/InputActions';
-import { placement } from '../../../equipment-layout';
+import { placement, boardDepthScale } from '../../../equipment-layout';
 import { timingGrade } from '../../input/TimingWindow';
 import { PrecisionActionMap } from './PrecisionActionMap';
 /** The four shots a player can select, with the names the controls use. */
@@ -26,8 +26,6 @@ const START_X = [215, 345, 280, 190];
 /** Landing drift per unit of power error outside the release window's blend (stage px). */
 const MISS_X = 490,
   MISS_Y = 60,
-  /** The hole's radius in stage px (PrecisionPhysics bagPoints). */
-  HOLE_RADIUS = 13,
   /**
    * The AI's timing error per throw, in units of AI_SCALE (the release window
    * of a 0.6 shot skill): uniform from AI_EARLY early to AI_LATE late. A fixed
@@ -38,6 +36,7 @@ const MISS_X = 490,
   AI_EARLY = 4,
   AI_LATE = 1.6;
 import {
+  HOLE_HALF,
   precisionTarget,
   flightPosition,
   resolvePrecisionLanding,
@@ -197,14 +196,20 @@ export class PrecisionEvent implements PlayableArenaEvent {
         (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.4 : 1),
       // Inside the window the miss grows linearly to an edge offset that still
       // lands in the hole after the widest scatter, with a pixel to spare.
-      // Between one and two windows it blends back to the full drift, and
-      // beyond two windows a miss lands exactly where it always has.
+      // The hole is the drawn ellipse, so drift and scatter are measured in
+      // its units (half-axes less the pixel): by the triangle inequality the
+      // landing stays inside when the drift's normalised length plus the
+      // scatter's worst normalised length (a half-spread on each axis) is
+      // under 1. Between one and two windows it blends back to the full drift,
+      // and beyond two windows a miss lands exactly where it always has.
       w = this.releaseWindow,
       miss = Math.abs(error),
+      hx = (HOLE_HALF.x - 1) * boardDepthScale(0),
+      hy = (HOLE_HALF.y - 1) * boardDepthScale(0),
       edge = Math.max(
         0,
-        (HOLE_RADIUS - 1 - (spread / 2) * Math.SQRT2) /
-          Math.hypot(1, MISS_Y / MISS_X),
+        (1 - (spread / 2) * Math.hypot(1 / hx, 1 / hy)) /
+          Math.hypot(1 / hx, MISS_Y / MISS_X / hy),
       ),
       blend = Math.min(1, Math.max(0, (miss - w) / w)),
       drift =

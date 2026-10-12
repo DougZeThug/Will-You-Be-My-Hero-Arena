@@ -1,4 +1,9 @@
-import { placement, artPoint, BAG_FLIGHT_FLATTEN } from '../../../equipment-layout';
+import {
+  placement,
+  artPoint,
+  boardDepthScale,
+  BAG_FLIGHT_FLATTEN,
+} from '../../../equipment-layout';
 import { EQUIPMENT_ART } from '../../../equipment-art';
 import type { Vector } from '../../input/InputActions';
 export interface PrecisionBag {
@@ -48,8 +53,24 @@ function onBoard(p: Vector) {
   }
   return inside;
 }
+/**
+ * The drawn hole opening's half-extents in stage px at depth scale 1. This is
+ * the same ellipse as HOLE_HALF in cornhole/ReleasedBagPhysics.ts (not
+ * exported there): keep the two in step so Play scores the drawn hole.
+ */
+export const HOLE_HALF = { x: 20, y: 8.3 };
+/** Is the point over the drawn hole opening (an ellipse around the target)? */
+function overHole(p: Vector) {
+  const t = precisionTarget(),
+    s = boardDepthScale(0);
+  return (
+    ((p.x - t.x) / (HOLE_HALF.x * s)) ** 2 +
+      ((p.y - t.y) / (HOLE_HALF.y * s)) ** 2 <
+    1
+  );
+}
 export function bagPoints(p: Vector) {
-  return Math.hypot(p.x - precisionTarget().x, p.y - precisionTarget().y) < 13
+  return overHole(p)
     ? 3
     : onBoard(p)
       ? 1
