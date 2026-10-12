@@ -1039,6 +1039,28 @@ export async function testLive({ check }) {
     s.destroy();
   }
   check(() => assert.ok(curl, 'a spot where a roll curls off the board'));
+  // Cosmetic choices use their own random stream: pressing celebrate before a
+  // throw must not move where the same seed's identical throw lands.
+  {
+    const probe = (celebrate) => {
+      const s = new ArenaSession(config('cornhole', false, 2, 'rng-probe'));
+      if (celebrate) {
+        while (!(s.event.state === 'aiming' && s.event.active().id === 'p0'))
+          step(s);
+        pulse(s, 'p0', 'celebrate');
+      }
+      const shot = throwBag(s, 'p0', 0.9, 'tertiaryAction', false);
+      s.destroy();
+      return shot.flight;
+    };
+    check(() =>
+      assert.deepEqual(
+        probe(true),
+        probe(false),
+        'Celebrating first does not change where the same throw lands',
+      ),
+    );
+  }
   // The AI's timing error is drawn once per throw from the session's seed: the
   // same seed plays the same match, and it is not always perfect.
   const aiMatch = (seed) => {
