@@ -36,14 +36,16 @@ for(const sport of ['cornhole','basketball','football','beer-pong']) {
 // Watch lane depth: the back-lane figure shares its equipment's depth scale
 // (0.78) in the non-cornhole sports. Cornhole keeps its provider depth: root
 // scale stays 1 and the performance rig itself is drawn at the 0.70 board depth.
-// recordingHash pins the recording the change must not touch.
-const laneDepth:Record<string,{scenario:string;depth:number;ratio:number;hash?:string}>={
-  basketball:{scenario:'basketball-recorded',depth:.78,ratio:.78,hash:'91cd474d'},
-  football:{scenario:'football-recorded',depth:.78,ratio:.78,hash:'cd9ac447'},
-  'beer-pong':{scenario:'beer-pong-recorded',depth:.78,ratio:.78,hash:'a04ad94d'},
+// The recording itself is untouched; its hash is checked for stability in
+// scenarios.spec.ts and tests/watch-lane-depth-tests.mjs (an absolute browser
+// hash differs between machines, so it is not pinned here).
+const laneDepth:Record<string,{scenario:string;depth:number;ratio:number}>={
+  basketball:{scenario:'basketball-recorded',depth:.78,ratio:.78},
+  football:{scenario:'football-recorded',depth:.78,ratio:.78},
+  'beer-pong':{scenario:'beer-pong-recorded',depth:.78,ratio:.78},
   cornhole:{scenario:'cornhole-performance',depth:1,ratio:.7},
 };
-for(const [sport,{scenario,depth,ratio,hash}] of Object.entries(laneDepth)) {
+for(const [sport,{scenario,depth,ratio}] of Object.entries(laneDepth)) {
   test(`${sport}: back-lane character is drawn at lane depth ${ratio}`,async({page})=>{
     const errors=await openScenario(page,scenario);
     await checkpoint(page,'recovery');
@@ -55,7 +57,6 @@ for(const [sport,{scenario,depth,ratio,hash}] of Object.entries(laneDepth)) {
     expect(back.root.scaleY).toBeCloseTo(depth,6);
     expect(height(back)/height(front)).toBeGreaterThan(ratio-.05);
     expect(height(back)/height(front)).toBeLessThan(ratio+.05);
-    if(hash)expect(state.event.recordingHash).toBe(hash);
     expect(errors).toEqual([]);
   });
 }
