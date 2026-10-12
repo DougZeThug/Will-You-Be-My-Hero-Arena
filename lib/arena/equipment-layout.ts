@@ -1,4 +1,4 @@
-import {type V3,type Attempt} from './model';
+import {type V3,type Attempt,type Sport} from './model';
 import {project,pathAt} from './simulation';
 import type {XY} from './equipment-art';
 import {clamp,equipmentDepthScale,surfacePoint} from './equipment-geometry';
@@ -6,7 +6,10 @@ export * from './equipment-geometry';
 // The saved path and score stay immutable. Only presentation interpolates from
 // the exact authored palm to the registered playing surface of the new artwork.
 function landingBlend(a:Attempt,elapsed:number){const air=a.duration-(['board','hole'].includes(a.contact)?.28:0),t=clamp(elapsed/air);return t*t*(3-2*t);}
-export function projectilePerspectiveScale(a:Attempt,elapsed:number){return 1+(equipmentDepthScale(a.sport,a.actor)-1)*landingBlend(a,elapsed);}
+// Watch draws a back-lane character at the same lane depth as its equipment;
+// cornhole installs its own depth through lab/performance/provider.ts.
+export const characterDepthScale=(sport:Sport,actor:number)=>sport==='cornhole'?1:equipmentDepthScale(sport,actor);
+export function projectilePerspectiveScale(a:Attempt,elapsed:number){const from=characterDepthScale(a.sport,a.actor);return from+(equipmentDepthScale(a.sport,a.actor)-from)*landingBlend(a,elapsed);}
 export function projectileRotation(a:Attempt,elapsed:number){
  if(a.sport==='football')return Math.sin(elapsed*18)*.12;
  const air=a.duration-.28;

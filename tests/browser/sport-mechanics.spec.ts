@@ -1,5 +1,5 @@
 import { test, expect } from 'playwright/test';
-import { openScenario, snapshot, checkpoint, step, artifact } from './helpers';
+import { openScenario, snapshot, checkpoint, step, seekTime, artifact } from './helpers';
 
 for(const sport of ['cornhole','basketball','football','beer-pong']) {
   test(`${sport}: wrist socket, visible equipment and release continuity`,async({page},info)=>{
@@ -29,6 +29,65 @@ for(const sport of ['cornhole','basketball','football','beer-pong']) {
     expect(flight.event.recordingHash).toBe(held.event.recordingHash);
     await step(page,18);
     await artifact(page,info,sport+'-mechanics-follow-through');
+    expect(errors).toEqual([]);
+  });
+}
+
+// Watch lane depth: the back-lane figure shares its equipment's depth scale
+// (0.78) in the non-cornhole sports. Cornhole keeps its provider depth: root
+// scale stays 1 and the performance rig itself is drawn at the 0.70 board depth.
+// recordingHash pins the recording the change must not touch.
+const laneDepth:Record<string,{scenario:string;depth:number;ratio:number;hash?:string}>={
+  basketball:{scenario:'basketball-recorded',depth:.78,ratio:.78,hash:'91cd474d'},
+  football:{scenario:'football-recorded',depth:.78,ratio:.78,hash:'cd9ac447'},
+  'beer-pong':{scenario:'beer-pong-recorded',depth:.78,ratio:.78,hash:'a04ad94d'},
+  cornhole:{scenario:'cornhole-performance',depth:1,ratio:.7},
+};
+for(const [sport,{scenario,depth,ratio,hash}] of Object.entries(laneDepth)) {
+  test(`${sport}: back-lane character is drawn at lane depth ${ratio}`,async({page})=>{
+    const errors=await openScenario(page,scenario);
+    await checkpoint(page,'recovery');
+    const state=await snapshot(page),[front,back]=state.characters;
+    // Head-to-feet height in render-world pixels, from the rig's own sockets.
+    const height=(c:any)=>(c.sockets.footL.y+c.sockets.footR.y)/2-c.sockets.head.y;
+    expect(front.root.scaleX).toBe(1);
+    expect(back.root.scaleX).toBeCloseTo(depth,6);
+    expect(back.root.scaleY).toBeCloseTo(depth,6);
+    expect(height(back)/height(front)).toBeGreaterThan(ratio-.05);
+    expect(height(back)/height(front)).toBeLessThan(ratio+.05);
+    if(hash)expect(state.event.recordingHash).toBe(hash);
+    expect(errors).toEqual([]);
+  });
+}
+
+// The riskiest part of the lane depth: the back-lane thrower's ball must sit on
+// its scaled palm while held and at the release frame, then leave the hand
+// without a jump (actor 1's own first throw, not just actor 0's).
+for(const sport of ['basketball','football','beer-pong']) {
+  test(`${sport}: back-lane thrower holds and releases the ball at the scaled palm`,async({page})=>{
+    const errors=await openScenario(page,sport+'-recorded');
+    // The first attempt by actor 1, found by sweeping the recording.
+    const attempt=await page.evaluate(async()=>{
+      const lab=window.__HERO_ARENA__;
+      for(let t=0;t<45;t+=.2){await lab.seekTime(t);const c=lab.getState().event.current;if(c&&c.actor===1)return{releaseAt:c.releaseAt as number};}
+      return null;
+    });
+    expect(attempt).toBeTruthy();
+    const palm=(state:any)=>state.characters.find((c:any)=>c.actor===1)!.sockets.throwingHand;
+    await seekTime(page,attempt!.releaseAt-8/60);
+    const held=await snapshot(page),attached=held.event.projectile.find((p:any)=>p.visible&&p.attached&&p.actor===1);
+    expect(attached).toBeTruthy();
+    expect(Math.hypot(attached.x-palm(held).x,attached.y-palm(held).y)).toBeLessThan(.001);
+    expect(held.characters.find((c:any)=>c.actor===1)!.root.scaleX).toBeCloseTo(.78,6);
+    await seekTime(page,attempt!.releaseAt);
+    const release=await snapshot(page),bag=release.event.projectile.find((p:any)=>p.visible&&!p.attached&&p.actor===1);
+    expect(bag).toBeTruthy();
+    expect(Math.hypot(bag.x-palm(release).x,bag.y-palm(release).y)).toBeLessThan(.001);
+    // Same ball size held and released, so the hand-off does not change scale.
+    expect(bag.scaleX).toBeCloseTo(attached.scaleX,6);
+    await step(page,1);
+    const flight=await snapshot(page),moving=flight.event.projectile.find((p:any)=>p.id===bag.id);
+    expect(Math.hypot(moving.x-bag.x,moving.y-bag.y)).toBeLessThan(22);
     expect(errors).toEqual([]);
   });
 }

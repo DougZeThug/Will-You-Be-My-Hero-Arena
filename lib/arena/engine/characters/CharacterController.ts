@@ -36,6 +36,9 @@ export class CharacterController {
   readonly base: { x: number; y: number };
   readonly personality: MotionPersonality;
   profile: CharacterProfile;
+  /** Lane depth scale of the whole figure (feet, shadow, sockets). Watch sets
+   * it per sport/lane; the release and hand offsets below follow it. */
+  depth = 1;
   private renderedAnimation: {
     clip: string;
     progress: number;
@@ -216,7 +219,15 @@ export class CharacterController {
   }
   releaseWorld(a: Attempt, d: DirectedAction): ReleaseFrame {
     const desired = this.releaseLocal(a, d);
-    if (this.rig instanceof FrameCharacterRig) return project(a.release);
+    // Local hand offsets grow from the foot base, so scale them with the root.
+    const at = (x: number, y: number) => ({
+      x: this.base.x + x * this.depth,
+      y: this.base.y + y * this.depth,
+    });
+    if (this.rig instanceof FrameCharacterRig) {
+      const r = project(a.release);
+      return this.depth === 1 ? r : at(r.x - this.base.x, r.y - this.base.y);
+    }
     if (isAuthoredRig(this.rig)) {
       const clip = 'throw_' + d.shot,
         hand =
@@ -226,7 +237,7 @@ export class CharacterController {
             clip,
             this.rig.marker(clip, 'release') / this.rig.duration(clip),
           );
-      return { ...hand, x: this.base.x + hand.x, y: this.base.y + hand.y };
+      return { ...hand, ...at(hand.x, hand.y) };
     }
     if (this.loaded.puppet) {
       const pose = actionPose(
@@ -241,9 +252,9 @@ export class CharacterController {
           puppetJoints(pose, this.loaded.puppet).rightArm,
           pose.wristR,
         ).palm;
-      return { x: this.base.x + hand.x, y: this.base.y + hand.y };
+      return at(hand.x, hand.y);
     }
-    return { x: this.base.x + desired.x, y: this.base.y + desired.y };
+    return at(desired.x, desired.y);
   }
   hand() {
     const p = this.rig.socketTransform?.('throwingHand') ?? {
@@ -324,7 +335,7 @@ export class CharacterController {
     const s = squashScale(squash);
     this.rig.root
       .setPosition(x, y)
-      .setScale(scale * s.x, scale * s.y)
+      .setScale(scale * this.depth * s.x, scale * this.depth * s.y)
       .setAlpha(alpha);
   }
   destroy() {

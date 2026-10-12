@@ -9,7 +9,7 @@ import {
   attemptLength,
   shownAttempts,
 } from '../../match-timeline';
-import { placement } from '../../equipment-layout';
+import { placement, characterDepthScale } from '../../equipment-layout';
 import { previewAttempt } from '../../pose-motion';
 import type { ArenaBridge } from '../core/ArenaOptions';
 import { BattleDirector } from '../core/BattleDirector';
@@ -189,6 +189,8 @@ export class ArenaScene extends Phaser.Scene {
     this.effects.begin();
     this.projectiles.forEach((v) => v.hide());
     for (const [i, c] of this.characters.entries()) {
+      // Back-lane figures share the equipment's lane depth (not cornhole).
+      c.depth = characterDepthScale(p.sport, i);
       c.place();
       const plan = this.director?.plan;
       if (!rec && c.rig.performance) {
@@ -277,8 +279,9 @@ export class ArenaScene extends Phaser.Scene {
                   : 0;
             this.projectile(active.id, i).hold(
               hand.x,
-              hand.y - Math.sin(flip * Math.PI) * 34,
+              hand.y - Math.sin(flip * Math.PI) * 34 * c.depth,
               hand.angle + flip * Math.PI * 2,
+              c.depth,
             );
           }
         } else if (!rec && p.previewClip && p.previewClip !== 'idle')
@@ -535,8 +538,9 @@ export class ArenaScene extends Phaser.Scene {
           id === 'bag_flip' && u >= 0.35 && u <= 0.72 ? (u - 0.35) / 0.37 : 0;
       this.projectile('library:' + c.actor, c.actor).hold(
         hand.x,
-        hand.y - Math.sin(flip * Math.PI) * 34,
+        hand.y - Math.sin(flip * Math.PI) * 34 * c.depth,
         hand.angle + flip * Math.PI * 2,
+        c.depth,
       );
     }
   }
@@ -576,6 +580,7 @@ export class ArenaScene extends Phaser.Scene {
           hand.x,
           hand.y,
           hand.angle,
+          c.depth,
         );
       } else
         this.projectile('preview:' + c.actor, c.actor).release(
