@@ -111,14 +111,14 @@ On release, the power is fixed and graded against the ideal:
 The character plays the throw for the selected shot. The bag leaves the hand at the throw's release point, not at the moment the button was let go. The landing spot is decided then:
 
 - **Starting point.** It starts from the hole, moved by the reticle's offset.
-- **Timing.** It is pushed past the hole by a late release or short of it by an early one. Inside the release window the push grows in step with the error, up to an edge offset small enough that, after the widest scatter, the bag still lands at least a pixel inside the hole: (12 − √2 × the scatter limit) ÷ 1.0075, about 7 pixels for Doug and 8 for Dan (10 in precision mode), and it drifts toward the front edge by 60/490 of that. So every **Perfect release** aimed at the hole scores three. Between one and two windows from the ideal, the push blends linearly from that edge offset to 490 stage pixels per unit of power error, with a drift toward the front edge of 60 pixels per unit. Beyond two windows it is exactly 490 and 60 pixels per unit, as it always was, so a miss there lands where it always did.
+- **Timing.** It is pushed past the hole by a late release or short of it by an early one. Inside the release window the push grows in step with the error, up to an edge offset small enough that, after the widest scatter, the bag still lands at least a pixel inside the drawn hole ellipse (half-axes 19 and 7.3 pixels once the pixel is reserved). The offset is the room left after the scatter's worst corner, measured in those half-axes, divided by the drift's length in the same units: about 8.8 pixels for Doug and 7.6 for Dan, more in precision mode, and it drifts toward the front edge by 60/490 of that. So every **Perfect release** aimed at the hole scores three. Between one and two windows from the ideal, the push blends linearly from that edge offset to 490 stage pixels per unit of power error, with a drift toward the front edge of 60 pixels per unit. Beyond two windows it is exactly 490 and 60 pixels per unit, as it always was, so a miss there lands where it always did.
 - **Scatter.** It is scattered randomly by up to ±11 × (1 − accuracy) pixels, or 40% of that while precision mode is still active.
 
 The bag flies for 0.88 seconds, or 1.25 for an **Airmail**. The arc is flattest for a **Hole runner**, highest for an **Airmail**, and the bag tumbles during a **Roll**.
 
 When it lands:
 
-- **Scoring.** Within 13 stage pixels of the hole's centre is **in the hole — three points**, and the bag disappears. On the board surface is **on the board — one point**, and the bag stays drawn on the board. Anywhere else is **off the board**.
+- **Scoring.** Over the drawn hole opening, an ellipse 40 stage pixels wide and 16.6 tall around the hole's centre (the same ellipse Watch draws), is **in the hole — three points**, and the bag disappears. On the board surface is **on the board — one point**, and the bag stays drawn on the board. Anywhere else is **off the board**.
 - **Pushing earlier bags.** A board landing within 26 pixels of an earlier board bag pushes that bag toward the hole:
   - 12 pixels, or 24 for a **Slide**
   - 18 for an **Airmail**

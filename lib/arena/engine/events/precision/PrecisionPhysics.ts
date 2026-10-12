@@ -55,8 +55,8 @@ function onBoard(p: Vector) {
 }
 /**
  * The drawn hole opening's half-extents in stage px at depth scale 1. This is
- * the same ellipse as HOLE_HALF in cornhole/ReleasedBagPhysics.ts (not
- * exported there): keep the two in step so Play scores the drawn hole.
+ * the same ellipse as HOLE_HALF in cornhole/ReleasedBagPhysics.ts, kept as a
+ * copy so Play does not import the Watch physics; a test asserts they match.
  */
 export const HOLE_HALF = { x: 20, y: 8.3 };
 /** Is the point over the drawn hole opening (an ellipse around the target)? */
