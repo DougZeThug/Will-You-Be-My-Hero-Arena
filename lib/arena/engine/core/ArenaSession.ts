@@ -69,6 +69,9 @@ export class ArenaSession {
     if (new Set(hardware).size !== hardware.length)
       throw Error('Assign a distinct device to each player.');
     const random = seeded(config.seed);
+    // Cosmetic choices (idles, rituals, celebrations) draw from their own
+    // stream so animation changes never shift landing scatter or AI timing.
+    const presentation = seeded(config.seed + ':presentation');
     this.characters = config.players.map((p) => {
       const card = cardById(p.cardId),
         asset = p.asset ?? manifest(p.cardId, card.asset, card.family),
@@ -83,7 +86,7 @@ export class ArenaSession {
       return new ArenaCharacter(
         p.id,
         characterProfile(p.cardId, asset),
-        random,
+        presentation,
         geometry,
       );
     });

@@ -16,6 +16,12 @@ runtime routing lives in [`ANIMATION-HANDOFF.md`](ANIMATION-HANDOFF.md).
 | Watch basketball, football, beer pong | front-view cut-out puppet | front |
 | Any character without side art | front-view cut-out puppet | front |
 
+The front-view puppet takes its back-lane depth (0.78 in basketball, football
+and beer pong, applied by `CharacterController`) as an interim measure. When
+those sports move to the side rig, the rig takes its depth the way the cornhole
+provider does (`lab/performance/provider.ts`, `boardDepthScale`), and the
+interim scaling goes away.
+
 Shared polish: fixed-step interpolation, continuous curves and crossfades,
 overlap springs, squash and stretch, cartoon impact effects, camera punch and
 shake, Play hit-stop, paper-flip turns, foreshortened front-view knees and

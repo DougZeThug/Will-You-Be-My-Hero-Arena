@@ -671,8 +671,17 @@ export async function testLive({ check }) {
   check(() => assert.equal(validateBindings({ keys: 'x' }), false));
   check(() => assert.equal(validateBindings(null), false));
   check(() => assert.equal(validateBindings(bindingsFor(0)), true));
-  const { resolvePrecisionLanding, bagPoints, precisionTarget } =
-    await import('../.test-build/engine/events/precision/PrecisionPhysics.mjs');
+  const {
+    resolvePrecisionLanding,
+    bagPoints,
+    precisionTarget,
+    HOLE_HALF: playHoleHalf,
+  } = await import(
+    '../.test-build/engine/events/precision/PrecisionPhysics.mjs'
+  );
+  const { HOLE_HALF: drawnHoleHalf } = await import(
+    '../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'
+  );
   const { laneScale } =
     await import('../.test-build/engine/events/running/RunningPhysics.mjs');
   const { ATTACKS } =
@@ -908,6 +917,33 @@ export async function testLive({ check }) {
   check(() => assert.equal(bagPoints(hole), 3));
   check(() => assert.equal(bagPoints(board), 1));
   check(() => assert.equal(bagPoints(faraway), 0));
+  // Play scores the drawn hole: a 40 x 16.6 px ellipse (half-axes 20 and 8.3),
+  // wide and flat, not a circle. Offsets are from the hole's centre.
+  check(() =>
+    assert.deepEqual(
+      playHoleHalf,
+      drawnHoleHalf,
+      "Play's scoring ellipse matches the drawn hole opening",
+    ),
+  );
+  for (const [dx, dy, points] of [
+    [0, 0, 3],
+    [0, 8, 3],
+    [0, 9, 1],
+    [0, 12, 1],
+    [0, -12, 1],
+    [13, 0, 3],
+    [17, 0, 3],
+    [19, 0, 3],
+    [21, 0, 1],
+  ])
+    check(() =>
+      assert.equal(
+        bagPoints({ x: hole.x + dx, y: hole.y + dy }),
+        points,
+        `bagPoints at (${dx}, ${dy}) from the hole`,
+      ),
+    );
   const last = new ArenaSession(config('cornhole', false, 2, 'last-throw'));
   check(() =>
     assert.ok(
@@ -964,7 +1000,7 @@ export async function testLive({ check }) {
         },
         landed = { x: old.x + 4, y: old.y };
       if (
-        d > 13 &&
+        d > 0 &&
         bagPoints(old) === 1 &&
         bagPoints(pushed) === 3 &&
         bagPoints(landed) === 1 &&
@@ -972,6 +1008,7 @@ export async function testLive({ check }) {
       )
         curl = { old, landed };
     }
+  check(() => assert.ok(curl, 'A curl set-up exists for the ellipse hole'));
   if (curl) {
     const s = new ArenaSession(config('cornhole', false, 2, 'curl'));
     s.event.bags.push({
@@ -1002,6 +1039,28 @@ export async function testLive({ check }) {
     s.destroy();
   }
   check(() => assert.ok(curl, 'a spot where a roll curls off the board'));
+  // Cosmetic choices use their own random stream: pressing celebrate before a
+  // throw must not move where the same seed's identical throw lands.
+  {
+    const probe = (celebrate) => {
+      const s = new ArenaSession(config('cornhole', false, 2, 'rng-probe'));
+      if (celebrate) {
+        while (!(s.event.state === 'aiming' && s.event.active().id === 'p0'))
+          step(s);
+        pulse(s, 'p0', 'celebrate');
+      }
+      const shot = throwBag(s, 'p0', 0.9, 'tertiaryAction', false);
+      s.destroy();
+      return shot.flight;
+    };
+    check(() =>
+      assert.deepEqual(
+        probe(true),
+        probe(false),
+        'Celebrating first does not change where the same throw lands',
+      ),
+    );
+  }
   // The AI's timing error is drawn once per throw from the session's seed: the
   // same seed plays the same match, and it is not always perfect.
   const aiMatch = (seed) => {

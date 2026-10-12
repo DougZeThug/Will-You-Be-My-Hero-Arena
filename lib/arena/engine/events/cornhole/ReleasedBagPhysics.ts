@@ -59,7 +59,7 @@ const onBoard = (x: number, z: number): V3 => ({
 const BAG_HALF = { x: 29, y: 14 };
 /** Drawn hole opening half-extents in screen px at depth scale 1: the dark
  * interior of board-finish-v2 (240 × 104 source px) at the board's scale. */
-const HOLE_HALF = { x: 20, y: 8.3 };
+export const HOLE_HALF = { x: 20, y: 8.3 };
 
 type XYPoint = { x: number; y: number };
 

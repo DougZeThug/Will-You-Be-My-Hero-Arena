@@ -1080,6 +1080,9 @@ await (
 await (
   await import('./sport-mechanics-tests.mjs')
 ).testSportMechanics({ check, setup, m, s, a });
+await (
+  await import('./watch-lane-depth-tests.mjs')
+).testWatchLaneDepth({ check, m, s, a });
 await (await import('./observability-tests.mjs')).testObservability({ check });
 await (await import('./anatomy-tests.mjs')).testAnatomy({ check });
 await (await import('./human-motion-tests.mjs')).testHumanMotion({ check });
