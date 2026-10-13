@@ -301,13 +301,18 @@ export class CharacterPresentation {
     const releaseAt = marker('equipmentRelease') ?? 0,
       peakAt = marker('windupPeak') ?? releaseAt;
     const start = () => {
-      if (performance.state === 'recover') performance.cancel();
-      // Priority 11 lets the next live throw cut the previous throw's
-      // reaction or celebration (a one-player game starts it within 1.2 s).
+      // The previous throw's recovery, reaction or celebration is
+      // interruptible; a one-player game starts the next throw within 1.2 s
+      // of a hole-in, so cut it rather than lose the new throw's performance.
+      if (
+        ['recover', 'reactPositive', 'reactNegative', 'celebrate'].includes(
+          performance.state,
+        )
+      )
+        performance.cancel();
       const id = performance.perform('liveCornholeThrow', {
         objectId: 'held',
         queue: false,
-        priority: 11,
       });
       // A refused throw must not drop the reference to the running action.
       if (id === null) return;
