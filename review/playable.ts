@@ -53,12 +53,16 @@ function start() {
 document.querySelector('#start')!.addEventListener('click', () => {
   if (!exporting) start();
 });
-document
-  .querySelector('#pause')!
-  .addEventListener('click', () =>
-    runtime.session.pause(!runtime.session.paused),
-  );
+// The gameplay controls stay live across the export's awaited toBlob/fetch
+// yields, so they must be guarded the same way #start and #export already are:
+// a click mid-capture mutates session state and silently corrupts the
+// deterministic seeded sequence.
+document.querySelector('#pause')!.addEventListener('click', () => {
+  if (exporting) return;
+  runtime.session.pause(!runtime.session.paused);
+});
 document.querySelector('#charge')!.addEventListener('click', () => {
+  if (exporting) return;
   charging = !charging;
   runtime.session.inject('p0', 'charge', charging ? 1 : 0);
 });
@@ -67,6 +71,7 @@ for (const [id, intent] of [
   ['secondary', 'secondaryAction'],
 ] as const)
   document.querySelector('#' + id)!.addEventListener('click', () => {
+    if (exporting) return;
     runtime.session.inject('p0', intent, 1);
     runtime.session.inject('p0', intent, 0);
   });
