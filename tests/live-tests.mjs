@@ -1235,6 +1235,136 @@ export async function testLive({ check }) {
     ),
   );
   lanes.destroy();
+  // B-30: a dodge consumes the lane-change throttle, so a direction held on
+  // the dodge step cannot fire a second lane change. Controllers run before
+  // event.update; without consuming the throttle the dodge's m.lane change
+  // was either doubled (held direction aligns) or reverted (opposes) in 5 of
+  // 6 (startLane, held) combinations — a committed 8-stamina action whose
+  // documented effect is exactly one lane.
+  {
+    const expectedDodge = { 0: 1, 1: 2, 2: 1 };
+    const setupDodge = (startLane, heldY) => {
+      const s = new ArenaSession(config('running', false));
+      advance(s, 1.7); // past the 1.5s countdown
+      const ch = s.characters[0];
+      const m = s.event.motions.get(ch.id);
+      while (m.lane !== startLane) {
+        const dir = startLane > m.lane ? 1 : -1;
+        s.inject('p0', 'move', { x: 0, y: dir });
+        s.advance(1 / 60);
+        s.inject('p0', 'move', { x: 0, y: 0 });
+        s.advance(0.4); // let laneClock decay back to 0
+      }
+      s.advance(0.3); // ensure laneClock === 0 before the dodge
+      const staminaBefore = ch.stamina;
+      if (heldY) s.inject('p0', 'move', { x: 0, y: heldY });
+      pulse(s, 'p0', 'tertiaryAction'); // dodge on the held-direction step
+      const laneAfterStep = m.lane;
+      const staminaAfterDodge = ch.stamina;
+      s.inject('p0', 'move', { x: 0, y: 0 });
+      advance(s, 0.5);
+      const settled = m.lane;
+      const spent = staminaBefore - staminaAfterDodge;
+      s.destroy();
+      return { laneAfterStep, settled, spent };
+    };
+    // The 6 (startLane, held) matrix: a dodge moves exactly one lane even
+    // when a direction is held on the same step.
+    for (const startLane of [0, 1, 2])
+      for (const held of [1, -1]) {
+        const r = setupDodge(startLane, held);
+        check(() =>
+          assert.equal(
+            r.laneAfterStep,
+            expectedDodge[startLane],
+            'Dodge moves one lane on a step holding ' +
+              (held > 0 ? 'S' : 'W') +
+              ' from lane ' +
+              startLane,
+          ),
+        );
+        check(() =>
+          assert.equal(
+            r.settled,
+            expectedDodge[startLane],
+            'Dodge settles one lane from lane ' + startLane,
+          ),
+        );
+        check(() =>
+          assert.ok(
+            r.spent >= 7,
+            'Dodge is a committed 8-stamina action even while steering',
+          ),
+        );
+      }
+    // Baseline: a dodge with no direction held still moves one lane.
+    for (const startLane of [0, 1, 2]) {
+      const r = setupDodge(startLane, 0);
+      check(() =>
+        assert.equal(
+          r.settled,
+          expectedDodge[startLane],
+          'Dodge with no direction held moves one lane from lane ' + startLane,
+        ),
+      );
+    }
+    // The throttle is shared with manual lane changes: after a dodge, a
+    // manual change within 0.24 s is lost, but after 0.25 s it fires —
+    // identical to manual-then-manual spacing ("lane changes work mid-slide"
+    // still holds; they are just spaced >= 0.24 s apart).
+    {
+      const s = new ArenaSession(config('running', false));
+      advance(s, 1.7);
+      const m = s.event.motions.get(s.characters[0].id);
+      check(() => assert.equal(m.lane, 0, 'Runner starts on lane 0'));
+      pulse(s, 'p0', 'tertiaryAction'); // dodge 0 -> 1
+      check(() => assert.equal(m.lane, 1, 'Dodge moves lane 0 -> 1'));
+      // Manual change on the next step is throttled by the dodge's clock.
+      s.inject('p0', 'move', { x: 0, y: 1 });
+      s.advance(1 / 60);
+      check(() =>
+        assert.equal(m.lane, 1, 'Manual change within dodge throttle is lost'),
+      );
+      s.inject('p0', 'move', { x: 0, y: 0 });
+      advance(s, 0.3);
+      // After the throttle expires the manual change fires.
+      s.inject('p0', 'move', { x: 0, y: 1 });
+      s.advance(0.25);
+      s.inject('p0', 'move', { x: 0, y: 0 });
+      advance(s, 0.3);
+      check(() =>
+        assert.equal(
+          m.lane,
+          2,
+          'Manual change after the dodge throttle fires (works mid-slide)',
+        ),
+      );
+      s.destroy();
+    }
+    // No regression: manual lane changes still throttle among themselves.
+    {
+      const s = new ArenaSession(config('running', false));
+      advance(s, 1.7);
+      const m = s.event.motions.get(s.characters[0].id);
+      s.inject('p0', 'move', { x: 0, y: 1 });
+      s.advance(1 / 60);
+      check(() => assert.equal(m.lane, 1, 'First manual lane change fires'));
+      s.inject('p0', 'move', { x: 0, y: 1 });
+      s.advance(1 / 60);
+      check(() =>
+        assert.equal(m.lane, 1, 'Second manual change within throttle is lost'),
+      );
+      s.inject('p0', 'move', { x: 0, y: 0 });
+      advance(s, 0.3);
+      s.inject('p0', 'move', { x: 0, y: 1 });
+      s.advance(1 / 60);
+      s.inject('p0', 'move', { x: 0, y: 0 });
+      check(() =>
+        assert.equal(m.lane, 2, 'Manual change after throttle fires'),
+      );
+      s.destroy();
+    }
+  }
   // B-29: braking stops sprint drain; a sprint leaves enough for a jump;
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));

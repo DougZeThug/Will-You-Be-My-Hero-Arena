@@ -62,8 +62,13 @@ export class RunningComponent implements CharacterComponent {
       m.slide = 0.6;
       c.startAction('running.slide');
       // A dodge moves to the next lane toward the camera, or back from the
-      // front lane; it never wraps across the track.
-      if (action === 'dodge') m.lane = m.lane < 2 ? m.lane + 1 : m.lane - 1;
+      // front lane; it never wraps across the track. Consume the lane-change
+      // throttle so the manual branch in runPhysics can't fire a second lane
+      // change on the same step (controllers run before event.update).
+      if (action === 'dodge') {
+        m.lane = m.lane < 2 ? m.lane + 1 : m.lane - 1;
+        m.laneClock = 0.24;
+      }
       return true;
     }
     return false;
