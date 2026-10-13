@@ -42,7 +42,7 @@ Resizing the window rescales the court smoothly. Nothing restarts, and nothing c
 
 ## Scaling
 
-The scene is always 1280×720 *stage pixels*, fitted inside the stage box and centred. Any spare space is letterboxed in the court's background colour. All game rules measure in stage pixels, so the window size never changes an outcome. Examples are the cornhole hole's 13-pixel radius and the Brawl's hit ranges.
+The scene is always 1280×720 *stage pixels*, fitted inside the stage box and centred. Any spare space is letterboxed in the court's background colour. All game rules measure in stage pixels, so the window size never changes an outcome. Examples are the cornhole hole's drawn ellipse and the Brawl's hit ranges.
 
 The Watch stage box keeps the court's 16:9 shape at every width the verification pass measured:
 
