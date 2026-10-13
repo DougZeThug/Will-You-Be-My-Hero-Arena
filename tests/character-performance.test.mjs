@@ -434,6 +434,29 @@ export async function performanceTests() {
   check(() =>
     assert.deepEqual(states(liveEvents), states(large.events).slice(2)),
   );
+  // A one-player game starts each live throw while the last hole-in is still
+  // celebrating. A bare perform() waits out the celebration, but the
+  // celebration is interruptible, so cancelling it lets every successive live
+  // throw start (not only the first).
+  const cheering = make();
+  cheering.onEvent((e) => {
+    if (e.name === 'OBJECT_RELEASED')
+      cheering.confirmResult(e.actionId, true, true);
+  });
+  const throwLive = () =>
+    cheering.perform('liveCornholeThrow', { objectId: 'held', queue: false });
+  check(() => assert.notEqual(throwLive(), null));
+  for (let n = 0; n < 3; n++) {
+    for (let i = 0; i < 1200 && cheering.state !== 'celebrate'; i++)
+      cheering.advance(1 / 60);
+    check(() => assert.equal(cheering.state, 'celebrate'));
+    check(() => assert.equal(throwLive(), null, 'Celebration blocks a bare throw'));
+    check(() => assert.equal(cheering.cancel(), true));
+    const next = throwLive();
+    check(() => assert.notEqual(next, null, 'Throw ' + (n + 2) + ' starts'));
+    check(() => assert.equal(cheering.state, 'anticipate'));
+    check(() => assert.equal(cheering.snapshot().actionId, next));
+  }
   const bare = (name, extra, segments) =>
     new CharacterPerformanceController(
       new Runtime(),

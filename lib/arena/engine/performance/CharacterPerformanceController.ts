@@ -435,10 +435,15 @@ export class CharacterPerformanceController {
           {
             state: a.result.success ? 'reactPositive' : 'reactNegative',
             clip: a.result.success ? 'positive' : 'negative',
+            interruptible: true,
           },
         ];
         if (a.result.success && a.result.celebrate)
-          response.push({ state: 'celebrate', clip: this.profile.celebration });
+          response.push({
+            state: 'celebrate',
+            clip: this.profile.celebration,
+            interruptible: true,
+          });
         a.segments.splice(a.index + 1, 0, ...response);
       } else if (a.segmentTime < 8) return;
       else

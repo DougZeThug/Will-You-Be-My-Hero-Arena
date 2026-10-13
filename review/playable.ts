@@ -53,12 +53,14 @@ function start() {
 document.querySelector('#start')!.addEventListener('click', () => {
   if (!exporting) start();
 });
-document
-  .querySelector('#pause')!
-  .addEventListener('click', () =>
-    runtime.session.pause(!runtime.session.paused),
-  );
+// The manual controls would mutate the seeded session mid-capture, so they
+// are ignored while an export runs, like #start.
+document.querySelector('#pause')!.addEventListener('click', () => {
+  if (exporting) return;
+  runtime.session.pause(!runtime.session.paused);
+});
 document.querySelector('#charge')!.addEventListener('click', () => {
+  if (exporting) return;
   charging = !charging;
   runtime.session.inject('p0', 'charge', charging ? 1 : 0);
 });
@@ -67,6 +69,7 @@ for (const [id, intent] of [
   ['secondary', 'secondaryAction'],
 ] as const)
   document.querySelector('#' + id)!.addEventListener('click', () => {
+    if (exporting) return;
     runtime.session.inject('p0', intent, 1);
     runtime.session.inject('p0', intent, 0);
   });

@@ -1235,6 +1235,23 @@ export async function testLive({ check }) {
     ),
   );
   lanes.destroy();
+  // A dodge spends the lane-change throttle: a direction held on the same
+  // step neither doubles nor undoes its one-lane move (p0 starts in lane 0).
+  for (const held of [1, -1]) {
+    const dodging = new ArenaSession(config('running', false));
+    advance(dodging, 1.7);
+    dodging.inject('p0', 'move', { x: 0, y: held });
+    pulse(dodging, 'p0', 'tertiaryAction');
+    dodging.inject('p0', 'move', { x: 0, y: 0 });
+    advance(dodging, 0.8);
+    check(() =>
+      assert.ok(
+        Math.abs(dodging.characters[0].body.y - 582) < 3,
+        'A dodge with direction ' + held + ' held moves exactly one lane',
+      ),
+    );
+    dodging.destroy();
+  }
   // B-29: braking stops sprint drain; a sprint leaves enough for a jump;
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
