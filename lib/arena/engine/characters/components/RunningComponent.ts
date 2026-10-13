@@ -1,6 +1,7 @@
 import type { ArenaCharacter, CharacterComponent } from '../ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import {
+  LANE_CHANGE_COOLDOWN,
   RUN_GRAVITY,
   type RunnerMotion,
 } from '../../events/running/RunningPhysics';
@@ -63,7 +64,12 @@ export class RunningComponent implements CharacterComponent {
       c.startAction('running.slide');
       // A dodge moves to the next lane toward the camera, or back from the
       // front lane; it never wraps across the track.
-      if (action === 'dodge') m.lane = m.lane < 2 ? m.lane + 1 : m.lane - 1;
+      // It also spends the lane-change throttle so a held direction cannot
+      // move the lane again on the same step.
+      if (action === 'dodge') {
+        m.lane = m.lane < 2 ? m.lane + 1 : m.lane - 1;
+        m.laneClock = LANE_CHANGE_COOLDOWN;
+      }
       return true;
     }
     return false;

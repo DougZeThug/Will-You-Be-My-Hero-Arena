@@ -22,6 +22,8 @@ export interface Obstacle {
 }
 export const RUNNING_LENGTH = 2400;
 export const RUN_GRAVITY = 590;
+/** Seconds between lane changes, whether from a held direction or a dodge. */
+export const LANE_CHANGE_COOLDOWN = 0.24;
 /** Lane depth: runners nearer the camera (larger y) are drawn larger. */
 export function laneScale(y: number) {
   return 0.65 + ((y - 520) / 62) * 0.035;
@@ -59,7 +61,7 @@ export function runPhysics(
   if (mode === 'lanes') {
     if (Math.abs(c.moveIntent.y) > 0.5 && m.laneClock === 0) {
       m.lane = clamp(m.lane + Math.sign(c.moveIntent.y), 0, 2);
-      m.laneClock = 0.24;
+      m.laneClock = LANE_CHANGE_COOLDOWN;
     }
     b.y += (520 + m.lane * 62 - b.y) * Math.min(1, dt * 12);
   } else b.y = clamp(b.y + c.moveIntent.y * 160 * dt, 515, 650);

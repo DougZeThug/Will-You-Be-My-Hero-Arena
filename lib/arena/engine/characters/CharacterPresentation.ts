@@ -302,10 +302,16 @@ export class CharacterPresentation {
       peakAt = marker('windupPeak') ?? releaseAt;
     const start = () => {
       if (performance.state === 'recover') performance.cancel();
-      this.performanceAction = performance.perform('liveCornholeThrow', {
+      // Priority 11 lets the next live throw cut the previous throw's
+      // reaction or celebration (a one-player game starts it within 1.2 s).
+      const id = performance.perform('liveCornholeThrow', {
         objectId: 'held',
         queue: false,
+        priority: 11,
       });
+      // A refused throw must not drop the reference to the running action.
+      if (id === null) return;
+      this.performanceAction = id;
       this.resultReported = false;
       this.liveRelease = null;
       this.rate = 1;
