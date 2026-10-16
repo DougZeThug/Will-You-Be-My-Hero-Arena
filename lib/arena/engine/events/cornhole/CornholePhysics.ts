@@ -158,10 +158,12 @@ export function sampleBag(
       alpha = 1 - clamp01((elapsed - a.duration - 0.45) / 0.3);
     }
   }
-  const scale =
-    (1 + (boardDepthScale(a.actor) - 1) * t) *
-    (a.contact === 'hole' && elapsed > a.duration
-      ? 1 - clamp01((elapsed - a.duration) / 0.28) * 0.65
-      : 1);
+  // Starts at the thrower's own depth (the held bag's), not at full size.
+  const startScale = release.scale ?? 1,
+    scale =
+      (startScale + (boardDepthScale(a.actor) - startScale) * t) *
+      (a.contact === 'hole' && elapsed > a.duration
+        ? 1 - clamp01((elapsed - a.duration) / 0.28) * 0.65
+        : 1);
   return { x, y, angle, scale, flatten, alpha, ground };
 }
