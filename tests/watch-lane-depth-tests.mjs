@@ -78,10 +78,22 @@ export async function testWatchLaneDepth({ check, m, s, a }) {
           ),
         );
   }
-  // Cornhole keeps its provider depth: the figure stays at 1 and the bag still
-  // shrinks toward the 0.70 board.
-  check(() => assert.equal(characterDepthScale('cornhole', 1), 1));
+  // A cornhole rig that scales itself (the performance provider) stays at 1 so
+  // it is not scaled twice; every other cornhole rig is drawn at the 0.70 board.
+  check(() => assert.equal(characterDepthScale('cornhole', 1, true), 1));
+  check(() => assert.equal(characterDepthScale('cornhole', 1), 0.7));
+  check(() =>
+    assert.equal(
+      characterDepthScale('cornhole', 1),
+      equipmentDepthScale('cornhole', 1),
+    ),
+  );
+  for (const selfScaled of [false, true])
+    check(() =>
+      assert.equal(characterDepthScale('cornhole', 0, selfScaled), 1),
+    );
   const bag = { sport: 'cornhole', actor: 1, duration: 1, contact: 'miss' };
-  check(() => assert.equal(projectilePerspectiveScale(bag, 0), 1));
+  // Fallback rig: held, released and landing bag share the 0.70 lane scale.
+  check(() => assert.equal(projectilePerspectiveScale(bag, 0), 0.7));
   check(() => assert.equal(projectilePerspectiveScale(bag, 1), 0.7));
 }

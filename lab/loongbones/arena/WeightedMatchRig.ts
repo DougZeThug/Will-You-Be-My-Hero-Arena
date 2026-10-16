@@ -33,6 +33,8 @@ const SOCKETS: Record<SocketName, string> = {
 export class WeightedMatchRig implements AuthoredCharacterRig {
   readonly continuousThrow = true;
   readonly backend = 'loongbones-weighted';
+  /** weightedMatchProvider bakes the lane depth into scale, shadow and sockets. */
+  readonly laneDepthApplied = true;
   readonly root: Phaser.GameObjects.Container;
   private factory: NativeFactory;
   private actor: NativeArmature;

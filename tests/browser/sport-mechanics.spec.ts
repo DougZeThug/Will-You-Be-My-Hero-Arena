@@ -34,8 +34,10 @@ for(const sport of ['cornhole','basketball','football','beer-pong']) {
 }
 
 // Watch lane depth: the back-lane figure shares its equipment's depth scale
-// (0.78) in the non-cornhole sports. Cornhole keeps its provider depth: root
-// scale stays 1 and the performance rig itself is drawn at the 0.70 board depth.
+// (0.78) in the non-cornhole sports. The cornhole performance rig scales itself:
+// its root scale stays 1 and the rig is drawn at the 0.70 board depth. Any other
+// cornhole rig (the paper reference stands in for a non-Dan/Doug pack) is scaled
+// by the controller, root scale 0.70, so it is not left full-size beside the board.
 // The recording itself is untouched; its hash is checked for stability in
 // scenarios.spec.ts and tests/watch-lane-depth-tests.mjs (an absolute browser
 // hash differs between machines, so it is not pinned here).
@@ -44,6 +46,7 @@ const laneDepth:Record<string,{scenario:string;depth:number;ratio:number}>={
   football:{scenario:'football-recorded',depth:.78,ratio:.78},
   'beer-pong':{scenario:'beer-pong-recorded',depth:.78,ratio:.78},
   cornhole:{scenario:'cornhole-performance',depth:1,ratio:.7},
+  'cornhole (fallback rig)':{scenario:'cornhole-paper-reference',depth:.7,ratio:.7},
 };
 for(const [sport,{scenario,depth,ratio}] of Object.entries(laneDepth)) {
   test(`${sport}: back-lane character is drawn at lane depth ${ratio}`,async({page})=>{
@@ -64,9 +67,9 @@ for(const [sport,{scenario,depth,ratio}] of Object.entries(laneDepth)) {
 // The riskiest part of the lane depth: the back-lane thrower's ball must sit on
 // its scaled palm while held and at the release frame, then leave the hand
 // without a jump (actor 1's own first throw, not just actor 0's).
-for(const sport of ['basketball','football','beer-pong']) {
+for(const [sport,scenario,depth] of [['basketball','basketball-recorded',.78],['football','football-recorded',.78],['beer-pong','beer-pong-recorded',.78],['cornhole (fallback rig)','cornhole-paper-reference',.7]] as const) {
   test(`${sport}: back-lane thrower holds and releases the ball at the scaled palm`,async({page})=>{
-    const errors=await openScenario(page,sport+'-recorded');
+    const errors=await openScenario(page,scenario);
     // The first attempt by actor 1, found by sweeping the recording.
     const attempt=await page.evaluate(async()=>{
       const lab=window.__HERO_ARENA__;
@@ -79,7 +82,7 @@ for(const sport of ['basketball','football','beer-pong']) {
     const held=await snapshot(page),attached=held.event.projectile.find((p:any)=>p.visible&&p.attached&&p.actor===1);
     expect(attached).toBeTruthy();
     expect(Math.hypot(attached.x-palm(held).x,attached.y-palm(held).y)).toBeLessThan(.001);
-    expect(held.characters.find((c:any)=>c.actor===1)!.root.scaleX).toBeCloseTo(.78,6);
+    expect(held.characters.find((c:any)=>c.actor===1)!.root.scaleX).toBeCloseTo(depth,6);
     await seekTime(page,attempt!.releaseAt);
     const release=await snapshot(page),bag=release.event.projectile.find((p:any)=>p.visible&&!p.attached&&p.actor===1);
     expect(bag).toBeTruthy();

@@ -189,8 +189,9 @@ export class ArenaScene extends Phaser.Scene {
     this.effects.begin();
     this.projectiles.forEach((v) => v.hide());
     for (const [i, c] of this.characters.entries()) {
-      // Back-lane figures share the equipment's lane depth (not cornhole).
-      c.depth = characterDepthScale(p.sport, i);
+      // Back-lane figures share the equipment's lane depth, except rigs that
+      // already apply it themselves (cornhole performance and weighted rigs).
+      c.depth = characterDepthScale(p.sport, i, !!c.rig.laneDepthApplied);
       c.place();
       const plan = this.director?.plan;
       if (!rec && c.rig.performance) {

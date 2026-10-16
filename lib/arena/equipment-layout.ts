@@ -6,9 +6,11 @@ export * from './equipment-geometry';
 // The saved path and score stay immutable. Only presentation interpolates from
 // the exact authored palm to the registered playing surface of the new artwork.
 function landingBlend(a:Attempt,elapsed:number){const air=a.duration-(['board','hole'].includes(a.contact)?.28:0),t=clamp(elapsed/air);return t*t*(3-2*t);}
-// Watch draws a back-lane character at the same lane depth as its equipment;
-// cornhole installs its own depth through lab/performance/provider.ts.
-export const characterDepthScale=(sport:Sport,actor:number)=>sport==='cornhole'?1:equipmentDepthScale(sport,actor);
+// Watch draws a back-lane character at the same lane depth as its equipment.
+// The one exception is a rig that already scales itself by the board depth
+// (the cornhole performance rig from lab/performance/provider.ts): it keeps 1
+// so the controller does not scale it twice. Every other rig is scaled here.
+export const characterDepthScale=(sport:Sport,actor:number,selfScaled=false)=>sport==='cornhole'&&selfScaled?1:equipmentDepthScale(sport,actor);
 export function projectilePerspectiveScale(a:Attempt,elapsed:number){const from=characterDepthScale(a.sport,a.actor);return from+(equipmentDepthScale(a.sport,a.actor)-from)*landingBlend(a,elapsed);}
 export function projectileRotation(a:Attempt,elapsed:number){
  if(a.sport==='football')return Math.sin(elapsed*18)*.12;

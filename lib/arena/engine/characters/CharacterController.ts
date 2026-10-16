@@ -224,9 +224,13 @@ export class CharacterController {
       x: this.base.x + x * this.depth,
       y: this.base.y + y * this.depth,
     });
+    // The released object starts at the figure's own depth, matching hold().
+    const scale = this.depth;
     if (this.rig instanceof FrameCharacterRig) {
       const r = project(a.release);
-      return this.depth === 1 ? r : at(r.x - this.base.x, r.y - this.base.y);
+      return this.depth === 1
+        ? { ...r, scale }
+        : { ...at(r.x - this.base.x, r.y - this.base.y), scale };
     }
     if (isAuthoredRig(this.rig)) {
       const clip = 'throw_' + d.shot,
@@ -237,7 +241,7 @@ export class CharacterController {
             clip,
             this.rig.marker(clip, 'release') / this.rig.duration(clip),
           );
-      return { ...hand, ...at(hand.x, hand.y) };
+      return { ...hand, ...at(hand.x, hand.y), scale };
     }
     if (this.loaded.puppet) {
       const pose = actionPose(
@@ -252,9 +256,9 @@ export class CharacterController {
           puppetJoints(pose, this.loaded.puppet).rightArm,
           pose.wristR,
         ).palm;
-      return at(hand.x, hand.y);
+      return { ...at(hand.x, hand.y), scale };
     }
-    return at(desired.x, desired.y);
+    return { ...at(desired.x, desired.y), scale };
   }
   hand() {
     const p = this.rig.socketTransform?.('throwingHand') ?? {
