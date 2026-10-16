@@ -46,6 +46,9 @@ export interface CharacterRig {
   /** Horizontal draw width during a view turn (1 = open, 0 = edge-on). */
   setViewWidth?(width: number): void;
   readonly backend?: string;
+  /** The rig already draws itself at the court lane depth (feet, shadow,
+   * sockets), so the controller must not scale its root by it again. */
+  readonly laneDepthApplied?: boolean;
   readonly performance?: CharacterPerformanceController;
   readonly heldObjectLayer?: Phaser.GameObjects.Container;
   debugInfo?(): Record<string, unknown>;

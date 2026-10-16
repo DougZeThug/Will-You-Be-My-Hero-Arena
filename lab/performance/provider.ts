@@ -83,6 +83,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
       return {
         root: runtime.root,
         backend: 'loongbones-performance',
+        laneDepthApplied: true,
         performance,
         heldObjectLayer: runtime.heldObjectLayer,
         apply() {
