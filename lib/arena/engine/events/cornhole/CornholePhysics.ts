@@ -53,36 +53,6 @@ export const SHOT_PHYSICS: Record<
   casual: { arc: 88, slide: 0.25, spin: 0.2, curve: 0 },
   highArc: { arc: 155, slide: 0.17, spin: 0.6, curve: 0 },
 };
-export function bagOutcome(a: Attempt, shot: ShotStyle): BagOutcome {
-  if (a.contact === 'hole')
-    return shot === 'airmail'
-      ? 'airmailHole'
-      : shot === 'collect' || shot === 'drag'
-        ? 'collect'
-        : 'cleanHole';
-  if (a.contact === 'board')
-    return shot === 'blocker'
-      ? 'blocker'
-      : shot === 'roll'
-        ? 'rollAround'
-        : shot === 'push'
-          ? 'push'
-          : shot === 'drag'
-            ? 'drag'
-            : shot === 'cut'
-              ? 'sideSlide'
-              : 'frontSlide';
-  const lane = a.actor * 3.5;
-  if (a.target.x < 8) return 'short';
-  if (a.target.x > 9.9) return 'long';
-  return shot === 'roll'
-    ? 'rollOff'
-    : shot === 'slide'
-      ? 'slideOff'
-      : a.target.z < lane
-        ? 'missLeft'
-        : 'missRight';
-}
 /** Visual physics is kinematic and outcome constrained. It never rolls dice or
  * changes scoring in the render loop. Board depth and the printed hole are the
  * same registered surface used by the rules and equipment. */

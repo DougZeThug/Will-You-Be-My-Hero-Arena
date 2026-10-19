@@ -6,7 +6,7 @@ import type {
 } from '../ArenaEvent';
 import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
-import { sampleBag, bagOutcome } from './CornholePhysics';
+import { sampleBag } from './CornholePhysics';
 import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
 import { surfacePoint, boardDepthScale } from '../../../equipment-layout';
 export class CornholeEvent implements ArenaEvent {
@@ -82,9 +82,6 @@ export class CornholeEvent implements ArenaEvent {
           frame(hit.id, active.actor, { x: drawn.x, y: drawn.y }, drawn.alpha);
       }
     return [...objects.values()];
-  }
-  describe(a: Attempt, d: DirectedAction) {
-    return bagOutcome(a, d.shot);
   }
   playReaction(d: DirectedAction) {
     return d.reaction;
