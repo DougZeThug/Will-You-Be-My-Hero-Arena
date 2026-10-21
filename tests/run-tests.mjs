@@ -1113,6 +1113,9 @@ await (
 await (
   await import('./animation-smoothness-tests.mjs')
 ).testAnimationSmoothness({ check });
+await (
+  await import('./presentation-reduced-motion-tests.mjs')
+).testPresentationReducedMotion({ check });
 checks += await (
   await import('./character-performance.test.mjs')
 ).performanceTests();
