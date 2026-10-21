@@ -25,7 +25,7 @@ export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{con
  if(sport==='pong'){const c=cupPosition(targetId??0,lane);const d=Math.hypot(p.x-c.x,p.z-c.z);return d<=.09?{contact:'cup',score:1}:d<=.16?{contact:'rim-out',score:0}:{contact:'miss',score:0};}
  const d=Math.hypot(p.x-8.8,dz);return d<=.20?{contact:'make',score:1}:d<=.44?{contact:'rim-out',score:0}:p.x>9.08?{contact:'backboard',score:0}:{contact:'airball',score:0};
 }
-function trajectory(start:V3,target:V3,duration:number,contact:Attempt['contact']):{path:Point[];velocity:V3}{
+export function trajectory(start:V3,target:V3,duration:number,contact:Attempt['contact']):{path:Point[];velocity:V3}{
  const slide=contact==='board'||contact==='hole',airDuration=duration-(slide?.28:0),touch={...target};
  if(slide){const lane=start.z;if(contact==='hole')touch.x=8.65;else{const dx=target.x-9.2,dz=target.z-lane,d=Math.max(.001,Math.hypot(dx,dz));touch.x=Math.max(8.001,Math.min(9.899,target.x+dx/d*.25));touch.z=Math.max(lane-.519,Math.min(lane+.519,target.z+dz/d*.25));}touch.y=.16+(touch.x-8)/1.9*.34;}
  const g=9.8, velocity={x:(touch.x-start.x)/airDuration,y:(touch.y-start.y+.5*g*airDuration*airDuration)/airDuration,z:(touch.z-start.z)/airDuration};
