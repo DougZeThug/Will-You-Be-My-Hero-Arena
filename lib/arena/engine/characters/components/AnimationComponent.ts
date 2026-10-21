@@ -5,7 +5,7 @@ import {
   ActionTimeline,
   type ClipMarker,
 } from '../../animation/AnimationEvents';
-import { semanticClip } from '../../animation/LiveClips';
+import { semanticClip, REQUIRED_CLIP_MARKERS } from '../../animation/LiveClips';
 import { splineMotion } from '../../animation/SplineMotion';
 import { blendLayer } from '../../animation/LayerMixer';
 import type { CharacterProfile } from '../CharacterProfile';
@@ -37,7 +37,20 @@ export class AnimationComponent {
   resolve(id: string) {
     const alias = this.profile.gameplay?.animations?.[id] ?? id;
     try {
-      return semanticClip(alias);
+      const clip = semanticClip(alias);
+      // Defense in depth: a `gameplay.animations` alias that replaces a
+      // clip requiring a specific marker (cornhole's throw clips wait for
+      // `release`) with a markerless clip would wedge the event relying on
+      // it. Fall back to the canonical clip so the engine keeps
+      // progressing; `validateProfile` reports the bad alias at install.
+      const required = REQUIRED_CLIP_MARKERS[id];
+      if (
+        required &&
+        alias !== id &&
+        !required.every((name) => clip.markers.some((m) => m.name === name))
+      )
+        return semanticClip(id);
+      return clip;
     } catch {
       return semanticClip(id);
     }

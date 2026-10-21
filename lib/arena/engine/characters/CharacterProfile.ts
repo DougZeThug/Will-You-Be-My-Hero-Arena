@@ -1,7 +1,12 @@
 import '../animation/LiveClips';
+import { REQUIRED_CLIP_MARKERS } from '../animation/LiveClips';
 import type { AnimationCategory, ShotStyle } from '../animation/AnimationTypes';
 import type { Choreography } from '../../puppet-motion';
-import { animations, SHOT_STYLES } from '../animation/AnimationRegistry';
+import {
+  animations,
+  animation,
+  SHOT_STYLES,
+} from '../animation/AnimationRegistry';
 export interface SpineRigDefinition {
   format: 'spine';
   version: string;
@@ -202,6 +207,35 @@ export function validateProfile(input: unknown) {
       Object.values(g.animations).some((v) => typeof v !== 'string')
     )
       errors.push('Gameplay animation overrides must be named clips.');
+    if (g.animations) {
+      // Aliases that drop a marker the engine depends on would wedge the
+      // event relying on it (cornhole's `throwing` state waits for `release`;
+      // see `REQUIRED_CLIP_MARKERS`). Reject them at install time so a
+      // bad character pack fails fast with a clear error instead of
+      // soft-locking a match. `AnimationComponent.resolve` also falls back
+      // to the canonical clip at runtime as defense in depth.
+      const bad: string[] = [];
+      for (const [id, target] of Object.entries(g.animations)) {
+        const required = REQUIRED_CLIP_MARKERS[id];
+        if (!required) continue;
+        let clip;
+        try {
+          clip = animation(target);
+        } catch {
+          // Unknown targets are caught at runtime by `AnimationComponent.resolve`
+          // (which falls back to the canonical clip), so they do not need a
+          // hard error here; only marker-lacking registered clips do.
+          continue;
+        }
+        if (!required.every((n) => clip.markers.some((m) => m.name === n)))
+          bad.push(`${id} -> ${target}`);
+      }
+      if (bad.length)
+        errors.push(
+          'Gameplay animation overrides must keep required markers: ' +
+            bad.join(', '),
+        );
+    }
   }
   return errors;
 }

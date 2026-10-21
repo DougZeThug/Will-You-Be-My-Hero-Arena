@@ -417,6 +417,85 @@ export async function testLive({ check }) {
         'Profiles need a display name: ' + JSON.stringify(profile.name),
       ),
     );
+  // Animation aliases that drop a clip's required markers would wedge the
+  // event relying on them (cornhole's `throwing` state waits for `release`),
+  // so a user character pack that aliases a throw clip to a markerless clip
+  // would soft-lock the match. `validateProfile` rejects those at install
+  // time; `AnimationComponent.resolve` falls back to the canonical clip at
+  // runtime as defense in depth. Both layers are guard-tested below.
+  check(() =>
+    assert.ok(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'throw.precision': 'fist_pump',
+          },
+        },
+      }).some((e) => e.includes('required markers')),
+      'A throw clip aliased to a markerless clip is rejected by name',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'throw.precision': 'fist_pump',
+            'throw.airmail.live': 'idle_breathe',
+            'throw.roll.live': 'victory_dance',
+          },
+        },
+      }).some(
+        (e) =>
+          e.includes('throw.precision') &&
+          e.includes('throw.airmail.live') &&
+          e.includes('throw.roll.live'),
+      ),
+      'Every bad throw alias is named in the validation error',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            // throw_standard / throw_flat are registered clips that carry
+            // their own `release` marker; aliasing a throw clip to them is fine.
+            'throw.precision': 'throw_standard',
+            'throw.airmail.live': 'throw_flat',
+          },
+        },
+      }),
+      [],
+      'Throw aliases that keep the `release` marker are accepted',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'throw.precision': 'not_a_real_clip',
+          },
+        },
+      }),
+      [],
+      'Unknown throw alias targets pass: AnimationComponent.resolve falls back silently at runtime',
+    ),
+  );
+  check(() => assert.deepEqual(validateProfile(doug), []));
 
   const outcomes = [];
   for (const event of ['cornhole', 'running', 'fighting']) {
@@ -1110,6 +1189,178 @@ export async function testLive({ check }) {
       'Different seeds, different releases',
     ),
   );
+  // Cornhole soft-lock recovery: a `gameplay.animations` alias that replaces
+  // a throw clip with a markerless one (a documented extension point for
+  // user character packs) used to wedge `PrecisionEvent.throwing` forever —
+  // no input, no `release` marker, no winner, `finished` never true. Verify
+  // both fix layers: alias resolution falls back to the canonical clip so
+  // the marker still fires, and the `throwing` watchdog recovery path.
+  {
+    const wedge = new ArenaSession(
+      config('cornhole', true, 2, 'alias-softlock'),
+    );
+    // The repro from the bug report: alias all three throw clips to
+    // `fist_pump`, a registered markerless clip. Without the fix,
+    // `onCharacterEvent` never sees `release`, the state stays `throwing`,
+    // and the match never finishes.
+    for (const c of wedge.characters) {
+      c.profile.gameplay.animations = {
+        ...c.profile.gameplay.animations,
+        'throw.precision': 'fist_pump',
+        'throw.airmail.live': 'fist_pump',
+        'throw.roll.live': 'fist_pump',
+      };
+    }
+    let frames = 0;
+    while (!wedge.snapshot().finished && frames < 6000) {
+      bounded(frames++, 'alias-softlock cornhole finishing');
+      step(wedge);
+    }
+    check(() =>
+      assert.equal(
+        wedge.snapshot().finished,
+        true,
+        'A markerless throw alias cannot soft-lock the cornhole match',
+      ),
+    );
+    check(() =>
+      assert.ok(
+        wedge.event.bags.length > 0,
+        'A markerless throw alias still produces landed bags',
+      ),
+    );
+    check(() =>
+      assert.equal(
+        wedge.event.throws,
+        wedge.characters.length * 4,
+        'A markerless throw alias still runs every attempt',
+      ),
+    );
+    check(() =>
+      assert.ok(
+        wedge.characters.some((c) => c.score > 0),
+        'A markerless throw alias still produces scores',
+      ),
+    );
+    wedge.destroy();
+  }
+  // `AnimationComponent.resolve` falls back to the canonical clip when an
+  // alias for a clip requiring a `release` marker points at a markerless
+  // clip, so the marker still fires. Assertions use `timeline.clip` after a
+  // direct `startAction` because the silent fallback is the wedge's other
+  // fix layer and the one any future pack alias would actually hit.
+  {
+    const session = new ArenaSession(
+      config('cornhole', false, 2, 'alias-fallback-resolve'),
+    );
+    const c = session.characters[0];
+    c.profile.gameplay.animations = {
+      ...c.profile.gameplay.animations,
+      'throw.precision': 'fist_pump',
+      'throw.airmail.live': 'fist_pump',
+      'throw.roll.live': 'fist_pump',
+    };
+    for (const id of [
+      'throw.precision',
+      'throw.airmail.live',
+      'throw.roll.live',
+    ]) {
+      c.startAction(id);
+      check(() =>
+        assert.equal(
+          c.animation.timeline.clip,
+          id,
+          'Markerless throw alias ' + id + ' falls back to the canonical clip',
+        ),
+      );
+    }
+    // A throw alias that keeps the `release` marker (`throw_flat` is a
+    // registered clip authored with `release` at 0.62) is honored — the
+    // resolve layer does not second-guess pack authoring.
+    c.profile.gameplay.animations = {
+      ...c.profile.gameplay.animations,
+      'throw.precision': 'throw_flat',
+    };
+    c.startAction('throw.precision');
+    check(() =>
+      assert.equal(
+        c.animation.timeline.clip,
+        'throw_flat',
+        'Throw alias that keeps `release` is honored',
+      ),
+    );
+    // A non-throw alias (e.g. `reaction.success`) can still target a
+    // markerless clip — the engine does not depend on its markers.
+    c.profile.gameplay.animations = {
+      ...c.profile.gameplay.animations,
+      'reaction.success': 'fist_pump',
+    };
+    c.startAction('reaction.success');
+    check(() =>
+      assert.equal(
+        c.animation.timeline.clip,
+        'fist_pump',
+        'Non-throw markerless alias is still honored',
+      ),
+    );
+    session.destroy();
+  }
+  // Defense in depth: the `throwing` watchdog. Even if a throw clip ever
+  // reached the timeline without its `release` marker (a future authoring
+  // regression), `update()` synthesizes the release after `THROW_TIMEOUT`,
+  // mirroring the hard caps every sibling transient state already has
+  // (entrance 1.45 s, charging 2.2 s, result 1.2 s; FightingEvent 60 s;
+  // RunningEvent 40 s). Verify the recovery path directly so it never
+  // silently rots.
+  {
+    const session = new ArenaSession(
+      config('cornhole', true, 2, 'throw-watchdog'),
+    );
+    const e = session.event;
+    // Force the event into a "stuck throwing" state as if the clip's
+    // `release` marker was lost. Reuse the public state the real release
+    // path sets so `releaseBag` lands a valid bag and the match keeps going.
+    e.shot = 'flat';
+    e.releasePower = e.ideal();
+    e.releaseWindow = e.window();
+    e.perfect = false;
+    e.state = session.characters[0].substate = 'throwing';
+    e.throwAt = e.ctx.time() - 1.5; // past the 1.0 s watchdog budget
+    let frames = 0;
+    while (e.state === 'throwing' && frames < 60) {
+      bounded(frames++, 'throw watchdog recovering');
+      step(session);
+    }
+    check(() =>
+      assert.notEqual(e.state, 'throwing', 'Watchdog recovers a wedged throwing'),
+    );
+    check(() =>
+      assert.ok(
+        ['flight', 'result', 'aiming', 'finished'].includes(e.state),
+        'Watchdog transitions throwing into the normal flight progression',
+      ),
+    );
+    // After recovery the match must still end with every attempt thrown.
+    while (!session.snapshot().finished && frames < 6000) {
+      bounded(frames++, 'watchdog match finishing');
+      step(session);
+    }
+    check(() =>
+      assert.equal(
+        session.snapshot().finished,
+        true,
+        'Match completes after a watchdog recovery',
+      ),
+    );
+    check(() =>
+      assert.equal(
+        e.throws,
+        e.ctx.characters.length * 4,
+        'Watchdog recovery still walks every attempt',
+      ),
+    );
+    session.destroy();
+  }
   // B-15: a celebration never blocks the next move.
   const cheer = new ArenaSession(config('running', false));
   advance(cheer, 1.7);
