@@ -351,13 +351,32 @@ for (const [id, shot] of [
     id,
     'throw',
     0.78,
-    motion.keys.map(k => [k.at <= THROW_RELEASE ? k.at / THROW_RELEASE * .44 : .44 + (k.at - THROW_RELEASE) / (1 - THROW_RELEASE) * .56, k.pose]),
+    motion.keys.map((k) => [
+      k.at <= THROW_RELEASE
+        ? (k.at / THROW_RELEASE) * 0.44
+        : 0.44 + ((k.at - THROW_RELEASE) / (1 - THROW_RELEASE)) * 0.56,
+      k.pose,
+    ]),
     [
       { name: 'release', at: 0.44 },
       { name: 'cancelWindow', at: 0.92 },
     ],
   );
 }
+/**
+ * Marker contracts for semantic clip ids. A `gameplay.animations` alias that
+ * replaces one of these ids with a clip missing a required marker would wedge
+ * the event relying on it (cornhole's `throwing` state waits for `release`,
+ * which is the only exit from that state): `AnimationComponent.resolve`
+ * falls back to the canonical clip when an alias lacks a required marker, and
+ * `validateProfile` rejects the alias at pack install time, so a user
+ * character pack can never soft-lock a match through a bad alias.
+ */
+export const REQUIRED_CLIP_MARKERS: Partial<Record<string, string[]>> = {
+  'throw.precision': ['release'],
+  'throw.airmail.live': ['release'],
+  'throw.roll.live': ['release'],
+};
 export function semanticClip(id: string): AnimationClip {
   const aliases: Record<string, string> = {
     'locomotion.walk': 'walk',
