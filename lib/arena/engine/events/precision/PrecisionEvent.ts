@@ -34,7 +34,18 @@ const MISS_X = 490,
    */
   AI_SCALE = 0.04,
   AI_EARLY = 4,
-  AI_LATE = 1.6;
+  AI_LATE = 1.6,
+  /**
+   * A watchdog for `throwing`: the throw clip's `release` marker fires at
+   * 0.44 s of a 0.78 s clip (0.702 s with the `quickRelease` ability). If a
+   * `gameplay.animations` alias replaces the clip with a markerless one, the
+   * marker never fires and the event would wedge forever. Sibling transient
+   * states already have hard caps (`entrance` 1.45 s, `charging` 2.2 s,
+   * `result` 1.2 s; FightingEvent 60 s; RunningEvent 40 s); this synthesizes
+   * the release once the clip has had time to play, so any alias still
+   * progresses the match instead of soft-locking the session.
+   */
+  THROW_TIMEOUT = 1.0;
 import {
   HOLE_HALF,
   precisionTarget,
@@ -51,6 +62,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private state = 'entrance';
   private phaseAt = 0;
   private chargeAt = 0;
+  private throwAt = 0;
   private shot = 'flat';
   private aim = { x: 0, y: 0 };
   private flight?: PrecisionFlight;
@@ -130,6 +142,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
         timingGrade(this.releasePower, this.ideal(), this.releaseWindow)
           .grade === 'perfect';
       this.state = c.substate = 'throwing';
+      this.throwAt = this.ctx.time();
       c.startAction(
         this.shot === 'airmail'
           ? 'throw.airmail.live'
@@ -176,13 +189,13 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private power() {
     return clamp((this.ctx.time() - this.chargeAt) / 1.5, 0, 1.2);
   }
-  onCharacterEvent(c: ArenaCharacter, m: ClipMarker) {
-    if (
-      m.name !== 'release' ||
-      c !== this.active() ||
-      this.state !== 'throwing'
-    )
-      return;
+  /** Fire the throw: compute the bag's flight and transition out of
+   * `throwing` into `flight`. Called either from `onCharacterEvent` when the
+   * character's throw clip emits its `release` ClipMarker, or from the
+   * `throwing` watchdog in `update()` when the marker is absent (e.g. a
+   * markerless `gameplay.animations` alias from a user pack), so a bad
+   * alias can never soft-lock the match. */
+  private releaseBag(c: ArenaCharacter) {
     const target = precisionTarget(),
       error = this.releasePower - this.ideal(),
       accuracy = c.stats.event(
@@ -247,11 +260,28 @@ export class PrecisionEvent implements PlayableArenaEvent {
     this.state = c.substate = 'flight';
     this.ctx.emit({ kind: 'audio', name: 'release', player: c.id });
   }
+  onCharacterEvent(c: ArenaCharacter, m: ClipMarker) {
+    if (
+      m.name !== 'release' ||
+      c !== this.active() ||
+      this.state !== 'throwing'
+    )
+      return;
+    this.releaseBag(c);
+  }
   update(dt: number) {
     const c = this.active(),
       time = this.ctx.time();
     if (this.state === 'entrance' && time - this.phaseAt > 1.45)
       this.nextPlayer();
+    // Defense in depth: the throw clip's `release` marker never fires if a
+    // `gameplay.animations` alias replaced it with a markerless clip (a
+    // documented extension point for user character packs). Once the clip
+    // has had time to play, synthesize the release so the bag flies and the
+    // turn resolves — mirroring the hard caps every sibling transient state
+    // already has, so a wedged throw can never soft-lock the match.
+    if (this.state === 'throwing' && time - this.throwAt > THROW_TIMEOUT)
+      this.releaseBag(c);
     if (['aiming', 'charging'].includes(this.state)) {
       c.body.x = clamp(c.body.x + c.moveIntent.x * dt * 35, 165, 350);
       this.aim.x = clamp(this.aim.x + c.aimIntent.x * dt * 0.65, -1, 1);

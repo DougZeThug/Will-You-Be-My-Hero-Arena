@@ -574,6 +574,7 @@ export class ArenaScene extends Phaser.Scene {
         };
       a.actor = c.actor;
       a.target.z = c.actor * 3.5;
+      a.release.z = c.actor * 3.5;
       c.throw(a, d, t, p.reduced, p.previewPersonality ?? c.personality);
       if (t < a.releaseAt) {
         const hand = c.hand();

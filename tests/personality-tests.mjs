@@ -29,8 +29,42 @@ export async function testPersonalities({check,setup,m,s,a}){
   const profile={...base,energy,tempo,moves:{throw:throwStyle,celebration}},timing=timeline.personalityTiming(sport,profile),attempt=motion.previewAttempt(sport,profile);
   check(()=>assert.ok(timing.length>=2&&timing.length<=3.7&&timing.result>=.8,'Mixed styles retain time for a complete gesture'));
   const releaseMotion=motion.throwMotion(attempt,attempt.releaseAt),releaseFrame=sport==='basketball'?'basketball-shot':'underarm-release';check(()=>assert.ok((releaseMotion.from===releaseFrame&&releaseMotion.mix===0||releaseMotion.to===releaseFrame&&releaseMotion.mix===1)&&releaseMotion.x===0&&releaseMotion.y===0&&releaseMotion.rotation===0&&releaseMotion.scale===1,'All mixed throw styles meet the registered hand at release'));
- }
- for(const invalid of [{...base,moves:null},{...base,moves:[]},{...base,moves:{entrance:'unknown'}},{...base,moves:{power:'drive'}},{...base,preset:'toString'},{...base,name:''},{...base,name:'x'.repeat(81)}])check(()=>assert.ok(p.personalityErrors(invalid).length));
+  }
+  // previewAttempt must satisfy the full Attempt contract so ArenaScene.preview
+  // can drive the character rig and event physics every frame without a crash
+  // or all-NaN projectile frames (the Motion preview froze on sport clips).
+  const cornholeEvent=await import('../.test-build/engine/events/cornhole/CornholeEvent.mjs');
+  const targetEvent=await import('../.test-build/engine/events/TargetEvent.mjs');
+  const cornholePhysics=await import('../.test-build/engine/events/cornhole/CornholePhysics.mjs');
+  const requiredAttemptFields=['id','index','round','actor','sport','start','releaseAt','contactAt','end','release','velocity','duration','target','trajectory','contact','score','scoreAfter','removedCups','boardState','modifiers','commentary','special'];
+  const finiteV3=v=>v&&Number.isFinite(v.x)&&Number.isFinite(v.y)&&Number.isFinite(v.z);
+  for(const sport of m.SPORTS){
+   const attempt=motion.previewAttempt(sport,base);
+   check(()=>assert.deepEqual(requiredAttemptFields.filter(k=>!(k in attempt)),[],'previewAttempt returns every required Attempt field: '+sport));
+   check(()=>assert.equal(typeof attempt.id,'string','previewAttempt.id is a string'));
+   check(()=>assert.ok(finiteV3(attempt.target)&&finiteV3(attempt.release)&&finiteV3(attempt.velocity),'previewAttempt target/release/velocity are finite V3: '+sport));
+   check(()=>assert.ok(Number.isFinite(attempt.duration)&&attempt.duration>0,'previewAttempt.duration is a positive number: '+sport));
+   check(()=>assert.ok(Array.isArray(attempt.trajectory)&&attempt.trajectory.length>0&&attempt.trajectory.every(pt=>Number.isFinite(pt.x)&&Number.isFinite(pt.y)&&Number.isFinite(pt.z)&&Number.isFinite(pt.t)),'previewAttempt.trajectory is a finite point path: '+sport));
+   check(()=>assert.ok(['hole','board','miss','zone1','zone2','zone3','cup','rim-out','make','airball','backboard'].includes(attempt.contact),'previewAttempt.contact is a valid contact: '+sport));
+   // Mirror ArenaScene.preview exactly: it sets a.actor and offsets both lane
+   // fields, then drives the event's performAction and cornhole's sampleBag.
+   for(const actor of [0,1]){
+    const a={...attempt};
+    a.actor=actor;a.target.z=actor*3.5;a.release.z=actor*3.5;
+    const d={attemptId:a.id,actor,shot:'standard',ritual:null,reaction:'celebrate_nod',idle:'idle_breathe',context:{sport},tempo:1,reactionDelay:.05};
+    const event=sport==='cornhole'?new cornholeEvent.CornholeEvent():new targetEvent.TargetEvent(sport);
+    const release={x:350,y:400,scale:1};
+    for(const t of [0,a.releaseAt*0.5,a.releaseAt+0.05,a.contactAt,a.contactAt+0.05,a.end-0.01]){
+     const frame=event.performAction(a,d,release,t);
+     check(()=>assert.ok([frame.x,frame.y,frame.angle,frame.scale,frame.flatten,frame.alpha,frame.ground.x,frame.ground.y].every(Number.isFinite),'ArenaScene.preview performAction yields finite frames for '+sport+' actor '+actor+' at t='+t));
+     if(sport==='cornhole'){
+      const bag=cornholePhysics.sampleBag(a,'standard',release,t);
+      check(()=>assert.ok([bag.x,bag.y,bag.angle,bag.scale,bag.flatten,bag.alpha,bag.ground.x,bag.ground.y].every(Number.isFinite),'sampleBag yields finite frames for actor '+actor+' at t='+t));
+     }
+    }
+   }
+  }
+  for(const invalid of [{...base,moves:null},{...base,moves:[]},{...base,moves:{entrance:'unknown'}},{...base,moves:{power:'drive'}},{...base,preset:'toString'},{...base,name:''},{...base,name:'x'.repeat(81)}])check(()=>assert.ok(p.personalityErrors(invalid).length));
  const custom={...base,name:'Quiet until the bag drops',moves:{entrance:'glide',idle:'scan',throw:'whip',celebration:'pop',frustration:'freeze'}};
  check(()=>assert.deepEqual(p.personalityErrors(custom),[]));
  check(()=>assert.equal(p.personalityLabel(custom),custom.name));
