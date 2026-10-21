@@ -101,8 +101,7 @@ export class CharacterPresentation {
     const runtime = this.rig.performance?.runtime as
       | { reducedMotion?: boolean }
       | undefined;
-    if (runtime && 'reducedMotion' in runtime)
-      runtime.reducedMotion = reduced;
+    if (runtime && 'reducedMotion' in runtime) runtime.reducedMotion = reduced;
   }
   /** Cartoon beats from the simulation: stretch on takeoff, squash on
    * landing, recoil on a hit. Evaluated from the beat times, so it is
@@ -111,7 +110,12 @@ export class CharacterPresentation {
     const beats = this.character.beats,
       pulses = [];
     if (beats.takeoff !== undefined)
-      pulses.push({ at: beats.takeoff, amount: 0.12, settle: 0.22, frequency: 2.4 });
+      pulses.push({
+        at: beats.takeoff,
+        amount: 0.12,
+        settle: 0.22,
+        frequency: 2.4,
+      });
     if (beats.land !== undefined)
       pulses.push({ at: beats.land, amount: -0.16, settle: 0.3, frequency: 4 });
     if (beats.hit !== undefined)
@@ -132,7 +136,9 @@ export class CharacterPresentation {
     const facing = this.facing ?? 1,
       u = clamp((time - this.flipAt) / 0.1),
       f = this.flipFrom + (facing - this.flipFrom) * u * u * (3 - 2 * u);
-    return u >= 1 ? facing : Math.sign(f || facing) * Math.max(0.04, Math.abs(f));
+    return u >= 1
+      ? facing
+      : Math.sign(f || facing) * Math.max(0.04, Math.abs(f));
   }
   /** `alpha` is the session's fraction into the next fixed step: body and
    * pose are drawn between the previous and current step. `hold` is the
@@ -181,7 +187,10 @@ export class CharacterPresentation {
       ease = u * u * (3 - 2 * u),
       offset = (1 - ease) * -55,
       lift = Math.sin(ease * Math.PI) * 26,
-      q = this.rig.performance ? { x: 1, y: 1 } : this.squash(shown),
+      q =
+        this.rig.performance || this.reduced
+          ? { x: 1, y: 1 }
+          : this.squash(shown),
       facing = this.rig.performance ? b.facing : this.turn(b.facing, shown),
       shiver = hold > 0 && c.beats.hit === time ? (hold % 2 ? 3 : -3) : 0;
     rig.root
@@ -403,8 +412,10 @@ export class CharacterPresentation {
       });
   }
   get backend() {
-    return this.rig.backend ??
-      (this.rig instanceof PaperCharacterRig ? 'paper' : 'frames');
+    return (
+      this.rig.backend ??
+      (this.rig instanceof PaperCharacterRig ? 'paper' : 'frames')
+    );
   }
   debugInfo() {
     return this.rig.debugInfo?.();
