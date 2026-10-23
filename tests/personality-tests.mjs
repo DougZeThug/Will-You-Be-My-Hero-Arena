@@ -36,6 +36,7 @@ export async function testPersonalities({check,setup,m,s,a}){
   const cornholeEvent=await import('../.test-build/engine/events/cornhole/CornholeEvent.mjs');
   const targetEvent=await import('../.test-build/engine/events/TargetEvent.mjs');
   const cornholePhysics=await import('../.test-build/engine/events/cornhole/CornholePhysics.mjs');
+  const sim=await import('../.test-build/simulation.mjs');
   const requiredAttemptFields=['id','index','round','actor','sport','start','releaseAt','contactAt','end','release','velocity','duration','target','trajectory','contact','score','scoreAfter','removedCups','boardState','modifiers','commentary','special'];
   const finiteV3=v=>v&&Number.isFinite(v.x)&&Number.isFinite(v.y)&&Number.isFinite(v.z);
   for(const sport of m.SPORTS){
@@ -49,8 +50,10 @@ export async function testPersonalities({check,setup,m,s,a}){
    // Mirror ArenaScene.preview exactly: it sets a.actor and offsets both lane
    // fields, then drives the event's performAction and cornhole's sampleBag.
    for(const actor of [0,1]){
-    const a={...attempt};
+    const a={...attempt,target:{...attempt.target},release:{...attempt.release}};
     a.actor=actor;a.target.z=actor*3.5;a.release.z=actor*3.5;
+    const path=sim.trajectory(a.release,a.target,a.duration,a.contact);a.trajectory=path.path;a.velocity=path.velocity;
+    check(()=>assert.ok(Math.abs(sim.pathAt(a,0).z-a.release.z)<1e-9&&Math.abs(a.trajectory[a.trajectory.length-1].z-a.target.z)<1.5,'preview flight starts at the lane release and ends near the lane target: '+sport+' actor '+actor));
     const d={attemptId:a.id,actor,shot:'standard',ritual:null,reaction:'celebrate_nod',idle:'idle_breathe',context:{sport},tempo:1,reactionDelay:.05};
     const event=sport==='cornhole'?new cornholeEvent.CornholeEvent():new targetEvent.TargetEvent(sport);
     const release={x:350,y:400,scale:1};

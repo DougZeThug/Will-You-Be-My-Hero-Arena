@@ -495,6 +495,27 @@ export async function testLive({ check }) {
       'Unknown throw alias targets pass: AnimationComponent.resolve falls back silently at runtime',
     ),
   );
+  for (const id of [
+    'combat.jab',
+    'combat.cross',
+    'combat.uppercut',
+    'combat.finisher',
+    'combat.special',
+    'combat.grapple',
+    'combat.heavy',
+  ])
+    check(() =>
+      assert.ok(
+        validateProfile({
+          ...doug,
+          gameplay: {
+            ...doug.gameplay,
+            animations: { ...doug.gameplay?.animations, [id]: 'fist_pump' },
+          },
+        }).some((e) => e.includes('required markers') && e.includes(id)),
+        'A combat clip aliased to a markerless clip is rejected: ' + id,
+      ),
+    );
   check(() => assert.deepEqual(validateProfile(doug), []));
 
   const outcomes = [];
