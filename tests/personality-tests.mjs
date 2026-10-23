@@ -47,8 +47,11 @@ export async function testPersonalities({check,setup,m,s,a}){
    check(()=>assert.ok(Number.isFinite(attempt.duration)&&attempt.duration>0,'previewAttempt.duration is a positive number: '+sport));
    check(()=>assert.ok(Array.isArray(attempt.trajectory)&&attempt.trajectory.length>0&&attempt.trajectory.every(pt=>Number.isFinite(pt.x)&&Number.isFinite(pt.y)&&Number.isFinite(pt.z)&&Number.isFinite(pt.t)),'previewAttempt.trajectory is a finite point path: '+sport));
    check(()=>assert.ok(['hole','board','miss','zone1','zone2','zone3','cup','rim-out','make','airball','backboard'].includes(attempt.contact),'previewAttempt.contact is a valid contact: '+sport));
-   // Mirror ArenaScene.preview exactly: it sets a.actor and offsets both lane
-   // fields, then drives the event's performAction and cornhole's sampleBag.
+   // Mirror ArenaScene.preview exactly: it sets a.actor, offsets both lane
+   // fields, rebuilds the lane-consistent flight, then drives the event's
+   // performAction and cornhole's sampleBag, asserting registration (ball on
+   // the hand at release, on the registered surface at contact) not just
+   // frame finiteness — the back-lane actor must fly its own lane.
    for(const actor of [0,1]){
     const a={...attempt,target:{...attempt.target},release:{...attempt.release}};
     a.actor=actor;a.target.z=actor*3.5;a.release.z=actor*3.5;
@@ -57,17 +60,20 @@ export async function testPersonalities({check,setup,m,s,a}){
     const d={attemptId:a.id,actor,shot:'standard',ritual:null,reaction:'celebrate_nod',idle:'idle_breathe',context:{sport},tempo:1,reactionDelay:.05};
     const event=sport==='cornhole'?new cornholeEvent.CornholeEvent():new targetEvent.TargetEvent(sport);
     const release={x:350,y:400,scale:1};
+    const handFrame=event.performAction(a,d,release,a.releaseAt),surface=equipment.surfacePoint(sport,actor,a.target),contactFrame=event.performAction(a,d,release,a.contactAt);
+    check(()=>assert.ok(Math.abs(handFrame.x-release.x)<1e-6&&Math.abs(handFrame.y-release.y)<1e-6,'preview released projectile starts at the throwing hand for '+sport+' actor '+actor));
+    check(()=>assert.ok(Math.abs(contactFrame.x-surface.x)<1e-6&&Math.abs(contactFrame.y-surface.y)<1e-6,'preview contact frame meets the registered equipment surface for '+sport+' actor '+actor));
     for(const t of [0,a.releaseAt*0.5,a.releaseAt+0.05,a.contactAt,a.contactAt+0.05,a.end-0.01]){
      const frame=event.performAction(a,d,release,t);
      check(()=>assert.ok([frame.x,frame.y,frame.angle,frame.scale,frame.flatten,frame.alpha,frame.ground.x,frame.ground.y].every(Number.isFinite),'ArenaScene.preview performAction yields finite frames for '+sport+' actor '+actor+' at t='+t));
      if(sport==='cornhole'){
       const bag=cornholePhysics.sampleBag(a,'standard',release,t);
       check(()=>assert.ok([bag.x,bag.y,bag.angle,bag.scale,bag.flatten,bag.alpha,bag.ground.x,bag.ground.y].every(Number.isFinite),'sampleBag yields finite frames for actor '+actor+' at t='+t));
+      }
      }
     }
    }
-  }
-  for(const invalid of [{...base,moves:null},{...base,moves:[]},{...base,moves:{entrance:'unknown'}},{...base,moves:{power:'drive'}},{...base,preset:'toString'},{...base,name:''},{...base,name:'x'.repeat(81)}])check(()=>assert.ok(p.personalityErrors(invalid).length));
+   for(const invalid of [{...base,moves:null},{...base,moves:[]},{...base,moves:{entrance:'unknown'}},{...base,moves:{power:'drive'}},{...base,preset:'toString'},{...base,name:''},{...base,name:'x'.repeat(81)}])check(()=>assert.ok(p.personalityErrors(invalid).length));
  const custom={...base,name:'Quiet until the bag drops',moves:{entrance:'glide',idle:'scan',throw:'whip',celebration:'pop',frustration:'freeze'}};
  check(()=>assert.deepEqual(p.personalityErrors(custom),[]));
  check(()=>assert.equal(p.personalityLabel(custom),custom.name));
