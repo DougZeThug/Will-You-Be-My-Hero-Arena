@@ -495,27 +495,97 @@ export async function testLive({ check }) {
       'Unknown throw alias targets pass: AnimationComponent.resolve falls back silently at runtime',
     ),
   );
-  for (const id of [
-    'combat.jab',
-    'combat.cross',
-    'combat.uppercut',
-    'combat.finisher',
-    'combat.special',
-    'combat.grapple',
-    'combat.heavy',
-  ])
-    check(() =>
-      assert.ok(
-        validateProfile({
-          ...doug,
-          gameplay: {
-            ...doug.gameplay,
-            animations: { ...doug.gameplay?.animations, [id]: 'fist_pump' },
+  // Combat attack clips depend on `hitboxOn` exactly as throw clips depend on
+  // `release`: `CombatComponent` only arms the hitbox on `hitboxOn`, and
+  // `CombatPhysics` ignores an unarmed hitbox, so an alias that drops it
+  // silently disables all damage for the whole match. The same two guard
+  // layers (install-time rejection + runtime fallback) must cover combat.
+  check(() =>
+    assert.ok(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'combat.jab': 'fist_pump',
           },
-        }).some((e) => e.includes('required markers') && e.includes(id)),
-        'A combat clip aliased to a markerless clip is rejected: ' + id,
+        },
+      }).some(
+        (e) => e.includes('required markers') && e.includes('combat.jab'),
       ),
-    );
+      'A combat clip aliased to a markerless clip is rejected by name',
+    ),
+  );
+  check(() =>
+    assert.ok(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'combat.jab': 'fist_pump',
+            'combat.cross': 'fist_pump',
+            'combat.uppercut': 'fist_pump',
+            'combat.finisher': 'fist_pump',
+            'combat.special': 'fist_pump',
+            'combat.grapple': 'fist_pump',
+            'combat.heavy': 'fist_pump',
+          },
+        },
+      }).some(
+        (e) =>
+          e.includes('required markers') &&
+          [
+            'combat.jab',
+            'combat.cross',
+            'combat.uppercut',
+            'combat.finisher',
+            'combat.special',
+            'combat.grapple',
+            'combat.heavy',
+          ].every((id) => e.includes(id)),
+      ),
+      'Every bad combat alias is named in the validation error',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            // combat.cross / combat.uppercut are registered attack clips that
+            // carry their own `hitboxOn` marker; aliasing a combat clip to them
+            // is fine. (Dan ships `combat.heavy -> combat.uppercut`.)
+            'combat.jab': 'combat.cross',
+            'combat.heavy': 'combat.uppercut',
+          },
+        },
+      }),
+      [],
+      'Combat aliases that keep the `hitboxOn` marker are accepted',
+    ),
+  );
+  check(() =>
+    assert.deepEqual(
+      validateProfile({
+        ...doug,
+        gameplay: {
+          ...doug.gameplay,
+          animations: {
+            ...doug.gameplay?.animations,
+            'combat.jab': 'not_a_real_clip',
+          },
+        },
+      }),
+      [],
+      'Unknown combat alias targets pass: AnimationComponent.resolve falls back silently at runtime',
+    ),
+  );
   check(() => assert.deepEqual(validateProfile(doug), []));
 
   const outcomes = [];
@@ -702,7 +772,9 @@ export async function testLive({ check }) {
   const struck = stop.time,
     frozen = JSON.stringify(stop.characters.map((c) => c.body)),
     held = stop.hitStopSteps;
-  check(() => assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'));
+  check(() =>
+    assert.ok(stop.characters[1].health < 100, 'Unguarded hit lands'),
+  );
   check(() => assert.equal(stop.characters[1].beats.hit, struck));
   check(() => assert.ok(held >= 3 && held <= 5, 'Hit-stop holds 3-5 steps'));
   const inputs = () =>
@@ -776,12 +848,9 @@ export async function testLive({ check }) {
     bagPoints,
     precisionTarget,
     HOLE_HALF: playHoleHalf,
-  } = await import(
-    '../.test-build/engine/events/precision/PrecisionPhysics.mjs'
-  );
-  const { HOLE_HALF: drawnHoleHalf } = await import(
-    '../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'
-  );
+  } = await import('../.test-build/engine/events/precision/PrecisionPhysics.mjs');
+  const { HOLE_HALF: drawnHoleHalf } =
+    await import('../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs');
   const { laneScale } =
     await import('../.test-build/engine/events/running/RunningPhysics.mjs');
   const { ATTACKS } =
@@ -810,7 +879,16 @@ export async function testLive({ check }) {
     points: 1,
   }));
   const rolled = resolvePrecisionLanding(
-    { id: 'r', owner: 'p0', origin: spot, target: { ...spot }, age: 1, duration: 1, arc: 0, spin: 0 },
+    {
+      id: 'r',
+      owner: 'p0',
+      origin: spot,
+      target: { ...spot },
+      age: 1,
+      duration: 1,
+      arc: 0,
+      spin: 0,
+    },
     around,
     'roll',
   );
@@ -1326,6 +1404,116 @@ export async function testLive({ check }) {
     );
     session.destroy();
   }
+  // Combat damage session: a `gameplay.animations` alias that replaces every
+  // combat attack clip (plus the semantic `combat.heavy`) with a markerless
+  // clip used to silently disable all damage — `CombatComponent` only arms
+  // the hitbox on `hitboxOn`, and `CombatPhysics` ignores unarmed hitboxes,
+  // so both fighters finished at 100/100 after the 60 s cap with no error
+  // anywhere. The fix extends `REQUIRED_CLIP_MARKERS` to combat, so `resolve`
+  // falls back to the canonical clip and the hitbox still arms. Verify
+  // end-to-end (mirroring the cornhole soft-lock session) that a markerless
+  // combat alias cannot disable a fight.
+  {
+    const wedge = new ArenaSession(
+      config('fighting', true, 2, 'combat-alias-softlock'),
+    );
+    const badCombat = {
+      'combat.jab': 'fist_pump',
+      'combat.cross': 'fist_pump',
+      'combat.uppercut': 'fist_pump',
+      'combat.finisher': 'fist_pump',
+      'combat.special': 'fist_pump',
+      'combat.grapple': 'fist_pump',
+      'combat.heavy': 'fist_pump',
+    };
+    for (const c of wedge.characters) {
+      c.profile.gameplay.animations = {
+        ...c.profile.gameplay.animations,
+        ...badCombat,
+      };
+    }
+    let frames = 0;
+    while (!wedge.snapshot().finished && frames < 6000) {
+      bounded(frames++, 'combat-alias fight finishing');
+      step(wedge);
+    }
+    check(() =>
+      assert.equal(
+        wedge.snapshot().finished,
+        true,
+        'A markerless combat alias cannot disable the fight',
+      ),
+    );
+    check(() =>
+      assert.ok(
+        wedge.characters.some((c) => c.health < 100),
+        'A markerless combat alias still deals damage',
+      ),
+    );
+    check(() =>
+      assert.ok(
+        wedge.characters.some((c) => c.health < 50),
+        'A markerless combat alias still lands a decisive hit',
+      ),
+    );
+    wedge.destroy();
+  }
+  // `AnimationComponent.resolve` falls back to the canonical clip when a
+  // combat alias for a clip requiring `hitboxOn` points at a markerless clip,
+  // so the hitbox still arms. `combat.heavy` is the semantic id
+  // `ATTACKS.heavy.clip` resolves through, so its canonical fallback is
+  // `combat.cross` (see `semanticClip`); the other ids fall back to themselves.
+  {
+    const session = new ArenaSession(
+      config('fighting', false, 2, 'combat-alias-resolve'),
+    );
+    const c = session.characters[0];
+    c.profile.gameplay.animations = {
+      ...c.profile.gameplay.animations,
+      'combat.jab': 'fist_pump',
+      'combat.cross': 'fist_pump',
+      'combat.uppercut': 'fist_pump',
+      'combat.finisher': 'fist_pump',
+      'combat.special': 'fist_pump',
+      'combat.grapple': 'fist_pump',
+      'combat.heavy': 'fist_pump',
+    };
+    const canonical = {
+      'combat.jab': 'combat.jab',
+      'combat.cross': 'combat.cross',
+      'combat.uppercut': 'combat.uppercut',
+      'combat.finisher': 'combat.finisher',
+      'combat.special': 'combat.special',
+      'combat.grapple': 'combat.grapple',
+      'combat.heavy': 'combat.cross',
+    };
+    for (const [id, expected] of Object.entries(canonical)) {
+      c.startAction(id);
+      check(() =>
+        assert.equal(
+          c.animation.timeline.clip,
+          expected,
+          'Markerless combat alias ' + id + ' falls back to the canonical clip',
+        ),
+      );
+    }
+    // A combat alias that keeps `hitboxOn` (`combat.cross` is an attack clip
+    // authored with `hitboxOn`) is honored — the resolve layer does not
+    // second-guess pack authoring.
+    c.profile.gameplay.animations = {
+      ...c.profile.gameplay.animations,
+      'combat.jab': 'combat.cross',
+    };
+    c.startAction('combat.jab');
+    check(() =>
+      assert.equal(
+        c.animation.timeline.clip,
+        'combat.cross',
+        'Combat alias that keeps `hitboxOn` is honored',
+      ),
+    );
+    session.destroy();
+  }
   // Defense in depth: the `throwing` watchdog. Even if a throw clip ever
   // reached the timeline without its `release` marker (a future authoring
   // regression), `update()` synthesizes the release after `THROW_TIMEOUT`,
@@ -1353,7 +1541,11 @@ export async function testLive({ check }) {
       step(session);
     }
     check(() =>
-      assert.notEqual(e.state, 'throwing', 'Watchdog recovers a wedged throwing'),
+      assert.notEqual(
+        e.state,
+        'throwing',
+        'Watchdog recovers a wedged throwing',
+      ),
     );
     check(() =>
       assert.ok(
@@ -1528,7 +1720,10 @@ export async function testLive({ check }) {
   // progress is never negative.
   const brake = new ArenaSession(config('running', false, 4));
   check(() =>
-    assert.ok(brake.characters.every((c) => c.score >= 0), 'No negative progress'),
+    assert.ok(
+      brake.characters.every((c) => c.score >= 0),
+      'No negative progress',
+    ),
   );
   advance(brake, 1.7);
   brake.characters[0].stamina = 60;
@@ -1541,7 +1736,9 @@ export async function testLive({ check }) {
   brake.inject('p0', 'modifierLeft', 0);
   brake.characters[0].stamina = 12;
   advance(brake, 0.5);
-  check(() => assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'));
+  check(() =>
+    assert.ok(brake.characters[0].body.x < 450, 'before the hurdles'),
+  );
   check(() =>
     assert.ok(brake.characters[0].stamina >= 8, 'A sprint leaves a jump'),
   );
@@ -1590,7 +1787,11 @@ export async function testLive({ check }) {
   const limit = new ArenaSession(config('fighting', false));
   advance(limit, 60.5);
   check(() =>
-    assert.equal(limit.snapshot().finished, false, 'The entrance is not fight time'),
+    assert.equal(
+      limit.snapshot().finished,
+      false,
+      'The entrance is not fight time',
+    ),
   );
   advance(limit, 1.3);
   check(() => assert.equal(limit.snapshot().finished, true));
@@ -1609,7 +1810,9 @@ export async function testLive({ check }) {
       'chargedSpecial',
     ),
   );
-  check(() => assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage));
+  check(() =>
+    assert.ok(ATTACKS.chargedSpecial.damage > ATTACKS.special.damage),
+  );
   // A pause pressed mid-step cancels that step, so the clock stays with the
   // steps that actually ran.
   const clock = new ArenaSession(config('running', false));
@@ -1663,7 +1866,10 @@ export async function testLive({ check }) {
   check(() => assert.equal(guard.perform('grapple'), false));
   check(() => assert.equal(stance.characters[0].stamina, 2));
   check(() =>
-    assert.ok(guard.counterUntil > stance.time, 'A failed grapple keeps the stance'),
+    assert.ok(
+      guard.counterUntil > stance.time,
+      'A failed grapple keeps the stance',
+    ),
   );
   stance.characters[0].stamina = 4;
   check(() => assert.equal(guard.perform('grapple'), true));
@@ -1744,7 +1950,10 @@ export async function testLive({ check }) {
   check(() =>
     assert.deepEqual(
       bindingsConflict([
-        { layout: 0, keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' } },
+        {
+          layout: 0,
+          keys: { ...bindingsFor(0).keys, primaryAction: 'Numpad5' },
+        },
         layouts[1],
       ]),
       {
