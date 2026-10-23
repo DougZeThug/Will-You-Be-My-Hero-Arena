@@ -367,7 +367,9 @@ for (const [id, shot] of [
  * Marker contracts for semantic clip ids. A `gameplay.animations` alias that
  * replaces one of these ids with a clip missing a required marker would wedge
  * the event relying on it (cornhole's `throwing` state waits for `release`,
- * which is the only exit from that state): `AnimationComponent.resolve`
+ * which is the only exit from that state; combat attacks only arm their hitbox
+ * on `hitboxOn`, so a markerless alias would deal no damage all match):
+ * `AnimationComponent.resolve`
  * falls back to the canonical clip when an alias lacks a required marker, and
  * `validateProfile` rejects the alias at pack install time, so a user
  * character pack can never soft-lock a match through a bad alias.
@@ -376,6 +378,13 @@ export const REQUIRED_CLIP_MARKERS: Partial<Record<string, string[]>> = {
   'throw.precision': ['release'],
   'throw.airmail.live': ['release'],
   'throw.roll.live': ['release'],
+  'combat.jab': ['hitboxOn'],
+  'combat.cross': ['hitboxOn'],
+  'combat.uppercut': ['hitboxOn'],
+  'combat.finisher': ['hitboxOn'],
+  'combat.special': ['hitboxOn'],
+  'combat.grapple': ['hitboxOn'],
+  'combat.heavy': ['hitboxOn'],
 };
 export function semanticClip(id: string): AnimationClip {
   const aliases: Record<string, string> = {

@@ -2,7 +2,7 @@ import { RenderMetrics } from '../core/RenderMetrics';
 import { personalityMoves } from '../../personality';
 import * as Phaser from 'phaser';
 import { cardById, type Recording } from '../../model';
-import { revealed, project } from '../../simulation';
+import { revealed, project, trajectory } from '../../simulation';
 import {
   completionTime,
   TIMING,
@@ -575,6 +575,10 @@ export class ArenaScene extends Phaser.Scene {
       a.actor = c.actor;
       a.target.z = c.actor * 3.5;
       a.release.z = c.actor * 3.5;
+      // previewAttempt flew lane 0; re-derive the flight for this actor's lane.
+      const path = trajectory(a.release, a.target, a.duration, a.contact);
+      a.trajectory = path.path;
+      a.velocity = path.velocity;
       c.throw(a, d, t, p.reduced, p.previewPersonality ?? c.personality);
       if (t < a.releaseAt) {
         const hand = c.hand();
