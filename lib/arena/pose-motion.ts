@@ -2,7 +2,7 @@ import {type AssetManifest,type Attempt,type Sport,type MotionPersonality,type V
 import {FRAME_SCALE,releasePose,type PaperPose} from './paper';
 import {attemptBeats,smooth,clamp01,releaseLead,flightDuration,attemptLength,personalityTiming,TIMING} from './match-timeline';
 import {personalityMoves,motionStyle,DEFAULT_PERSONALITY} from './personality';
-import {contactScore,cupPosition,trajectory} from './simulation';
+import {contactScore,cupPosition,trajectory,releasePosition} from './simulation';
 
 export interface PaperMotion {from:PaperPose;to:PaperPose;mix:number;x:number;y:number;rotation:number;scale:number}
 export const stillPose=(frame:PaperPose='ready'):PaperMotion=>({from:frame,to:frame,mix:1,x:0,y:0,rotation:0,scale:1});
@@ -88,10 +88,10 @@ export function motionSocket(asset:AssetManifest,pose:PaperMotion){
  return {x:x*Math.cos(pose.rotation)-y*Math.sin(pose.rotation)+pose.x,y:x*Math.sin(pose.rotation)+y*Math.cos(pose.rotation)+pose.y};
 }
 
-export function previewAttempt(sport:Sport,personality:MotionPersonality):Attempt {
+export function previewAttempt(sport:Sport,personality:MotionPersonality,asset:string='dan',prepared?:AssetManifest):Attempt {
  const timing=personalityTiming(sport,personality),contact=timing.lead+flightDuration(sport),duration=flightDuration(sport);
  const targetId=sport==='pong'?0:undefined,target:V3=sport==='cornhole'?{x:9.0,y:0.16+(9.0-8)/1.9*0.34,z:0}:sport==='football'?{x:8.8,y:2.7,z:0}:sport==='pong'?cupPosition(0,0):{x:8.8,y:2.9,z:0};
- const release:V3={x:1,y:3.5,z:0},outcome=contactScore(sport,target,0,targetId),path=trajectory(release,target,duration,outcome.contact);
+ const release:V3=releasePosition(asset,sport,0,prepared),outcome=contactScore(sport,target,0,targetId),path=trajectory(release,target,duration,outcome.contact);
  return {id:'preview',index:0,round:0,actor:0,sport,personality,start:0,releaseAt:timing.lead,contactAt:contact,scoreAt:contact+TIMING.landing,end:timing.length,release,velocity:path.velocity,duration,target,trajectory:path.path,contact:outcome.contact,score:1,scoreAfter:[1,0],targetId,removedCups:[],boardState:[],modifiers:[],commentary:'',special:false};
 }
 export function previewThrow(sport:Sport,seconds:number,reduced=false,personality:MotionPersonality=DEFAULT_PERSONALITY){return throwMotion(previewAttempt(sport,personality),seconds,reduced);}

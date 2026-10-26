@@ -557,7 +557,7 @@ export class ArenaScene extends Phaser.Scene {
       clip === 'follow' ||
       clip === 'await'
     ) {
-      const a = previewAttempt(p.sport, p.previewPersonality ?? c.personality),
+      const a = previewAttempt(p.sport, p.previewPersonality ?? c.personality, cardById(c.loaded.asset.cardId).asset, c.loaded.asset),
         d: DirectedAction = {
           attemptId: a.id,
           actor: c.actor,

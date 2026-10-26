@@ -47,6 +47,12 @@ export async function testPersonalities({check,setup,m,s,a}){
    check(()=>assert.ok(Number.isFinite(attempt.duration)&&attempt.duration>0,'previewAttempt.duration is a positive number: '+sport));
    check(()=>assert.ok(Array.isArray(attempt.trajectory)&&attempt.trajectory.length>0&&attempt.trajectory.every(pt=>Number.isFinite(pt.x)&&Number.isFinite(pt.y)&&Number.isFinite(pt.z)&&Number.isFinite(pt.t)),'previewAttempt.trajectory is a finite point path: '+sport));
    check(()=>assert.ok(['hole','board','miss','zone1','zone2','zone3','cup','rim-out','make','airball','backboard'].includes(attempt.contact),'previewAttempt.contact is a valid contact: '+sport));
+   check(()=>assert.deepEqual(attempt.release,s.releasePosition('dan',sport,0),'previewAttempt.release is anchored at the dan release-pose hand socket like live playback: '+sport));
+   const dougManifest=a.manifest('card-doug','doug','human');
+   check(()=>assert.deepEqual(motion.previewAttempt(sport,base,'doug',dougManifest).release,s.releasePosition('doug',sport,0,dougManifest),'previewAttempt honors the passed asset and prepared manifest release-pose socket (installed pack path): '+sport));
+   const customManifest=structuredClone(a.manifest('card-dan','dan','human')),releaseFrame=sport==='basketball'?'basketball-shot':'underarm-release';
+   customManifest.frameScale=.5;customManifest.frames={...customManifest.frames,[releaseFrame]:{...customManifest.frames[releaseFrame],hand:[100,200],origin:[0,0]}};
+   check(()=>assert.deepEqual(motion.previewAttempt(sport,base,'dan',customManifest).release,{x:1+(100*.5)/85,y:-(200*.5)/78,z:0},'previewAttempt uses the prepared manifest frames and frameScale, not built-in geometry or a hardcoded point: '+sport));
    // Mirror ArenaScene.preview exactly: it sets a.actor and offsets both lane
    // fields, then drives the event's performAction and cornhole's sampleBag.
    for(const actor of [0,1]){
