@@ -156,6 +156,7 @@ export class PlayMotionRig implements CharacterRig {
   }
   drive(frame: RigDriveFrame) {
     if (!this.animator) this.build(frame);
+    this.animator!.organicEnabled = !frame.reduced;
     this.squash = frame.squash;
     const animator = this.animator!,
       planner = this.planner!,
