@@ -87,7 +87,7 @@ export function dirtyFiles(root) {
 
 // Fingerprint of the working-tree CONTENT (not HEAD), so "gate passed" cannot outlive an edit
 // yet survives committing the same content. Built from a throwaway index: tracked + untracked
-// files, minus the ledger (it records gate results, so it must not be part of what they certify).
+// files, minus declared gate outputs (mayModify, which stay at their HEAD content) and the ledger (it records gate results, so it must not be part of what they certify).
 export function treeFingerprint(root) {
   // Files a gate is declared to regenerate (mayModify) are outputs, not inputs: exclude them too.
   let regenerated = [];
@@ -95,13 +95,18 @@ export function treeFingerprint(root) {
   const excl = [":(exclude).factory/tasks", ...regenerated.map((g) => `:(exclude,glob)${g}`)];
   const idx = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "factory-idx-")), "index");
   const env = { ...process.env, GIT_INDEX_FILE: idx };
-  const run = (...a) => spawnSync("git", a, { cwd: root, env, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+  const run = (...a) => {
+    const r = spawnSync("git", a, { cwd: root, env, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+    if (r.error || r.status !== 0) throw new Error(`treeFingerprint: git ${a[0]} failed: ${r.error?.message || r.stderr}`);
+    return r;
+  };
   try {
     run("read-tree", "HEAD");
     run("rm", "-r", "--cached", "-q", "--ignore-unmatch", "--", ".factory/tasks");
     run("add", "-A", "--", ".", ...excl);
-    for (const g of regenerated) run("rm", "-r", "--cached", "-q", "--ignore-unmatch", "--", g.replace(/\/?\*\*.*$/, "") || ".");
-    return run("write-tree").stdout.trim();
+    const tree = run("write-tree").stdout.trim();
+    if (!/^[0-9a-f]{40,64}$/.test(tree)) throw new Error("treeFingerprint: bad tree hash");
+    return tree;
   } finally {
     fs.rmSync(path.dirname(idx), { recursive: true, force: true });
   }

@@ -7,7 +7,7 @@
   "branch": "claude/awesome-ptolemy-g9hyyt",
   "baseSha": "cf4656df6c5482c1f10f81910159b8d641a65df1",
   "createdAt": "2026-10-30T19:37:03.580Z",
-  "updatedAt": "2026-10-30T19:44:58.067Z",
+  "updatedAt": "2026-10-30T19:47:22.967Z",
   "plan": ".factory/tasks/T-20261030-01.plan.md",
   "planChallenged": true,
   "criteria": [
@@ -21,21 +21,21 @@
       "status": "pass",
       "exit": 0,
       "signal": null,
-      "secs": 5.8,
+      "secs": 5.5,
       "required": true,
-      "sha": "d3c76b10d7d75f138efffe1634926de843bfc846",
-      "tree": "3860e755c459d1e21c6f6cc127a19b50f941f0d8",
-      "at": "2026-10-30T19:44:03.531Z"
+      "sha": "f7818c3e36edd1b05a056166c4b8c2ab9f7273bd",
+      "tree": "be922cd2c508f8d49f72d2f59c57ef33b20d4ad3",
+      "at": "2026-10-30T19:46:30.149Z"
     },
     "unit": {
       "status": "pass",
       "exit": 0,
       "signal": null,
-      "secs": 53.5,
+      "secs": 51.8,
       "required": true,
-      "sha": "d3c76b10d7d75f138efffe1634926de843bfc846",
-      "tree": "3860e755c459d1e21c6f6cc127a19b50f941f0d8",
-      "at": "2026-10-30T19:44:58.067Z"
+      "sha": "f7818c3e36edd1b05a056166c4b8c2ab9f7273bd",
+      "tree": "be922cd2c508f8d49f72d2f59c57ef33b20d4ad3",
+      "at": "2026-10-30T19:47:22.966Z"
     },
     "lint": {
       "status": "fail",
@@ -55,6 +55,12 @@
       "attempts": 1,
       "notes": [
         "Found by the demo: gate results went stale whenever the tracked ledger was saved. Excluded .factory/tasks from the tree fingerprint + regression test."
+      ]
+    },
+    "review:fingerprint-docs-evade": {
+      "attempts": 1,
+      "notes": [
+        "reviewer major: rm --cached docs hid hand edits; now pathspec-only + mayModify narrowed to docs/test-results.json; git errors throw"
       ]
     }
   },
@@ -130,6 +136,20 @@
     },
     {
       "at": "2026-10-30T19:44:58.067Z",
+      "event": "gate",
+      "ids": [
+        "typecheck:pass",
+        "unit:pass"
+      ]
+    },
+    {
+      "at": "2026-10-30T19:46:23.361Z",
+      "event": "repair",
+      "key": "review:fingerprint-docs-evade",
+      "attempt": 1
+    },
+    {
+      "at": "2026-10-30T19:47:22.967Z",
       "event": "gate",
       "ids": [
         "typecheck:pass",

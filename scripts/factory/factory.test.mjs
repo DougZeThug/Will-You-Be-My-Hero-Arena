@@ -80,6 +80,19 @@ test("committing the verified content does not make gates stale; a content edit 
   assert.equal(F(d, `ready ${id}`).status, 1);
 });
 
+test("fingerprint: docs edits count, declared gate outputs do not", () => {
+  const d = sandbox({ gates: [{ id: "ok", cmd: "node -e 0", required: true, mayModify: ["out/gen.json"] }] });
+  fs.mkdirSync(path.join(d, "out")); fs.mkdirSync(path.join(d, "docs"));
+  fs.writeFileSync(path.join(d, "out/gen.json"), "1"); fs.writeFileSync(path.join(d, "docs/a.md"), "1");
+  sh(d, "git add -A && git commit -qm x");
+  const id = json(F(d, 'new "t"')).id;
+  F(d, `set ${id} --criterion c`); F(d, `plan-ok ${id}`); F(d, `gate ${id}`); F(d, `review ${id} --verdict approve`);
+  fs.writeFileSync(path.join(d, "out/gen.json"), "2"); // regenerated output
+  assert.equal(F(d, `ready ${id}`).status, 0);
+  fs.writeFileSync(path.join(d, "docs/a.md"), "edited"); // hand-written doc
+  assert.equal(F(d, `ready ${id}`).status, 1);
+});
+
 test("a failing required gate blocks ready and stores the log", () => {
   const d = sandbox({ gates: [{ id: "bad", cmd: "echo boom >&2; exit 3", required: true }] });
   const id = json(F(d, 'new "t"')).id;

@@ -9,8 +9,8 @@
   "guidance": ["AGENTS.md", "CLAUDE.md"],
   "gates": [
     { "id": "typecheck", "cmd": "pnpm typecheck", "required": true, "timeoutSec": 300 },
-    { "id": "unit", "cmd": "pnpm test", "required": true, "timeoutSec": 900, "mayModify": ["docs/**"],
-      "note": "regenerates tracked reports under docs/; the factory reports them, humans decide whether to keep" },
+    { "id": "unit", "cmd": "pnpm test", "required": true, "timeoutSec": 900, "mayModify": ["docs/test-results.json"],
+      "note": "regenerates docs/test-results.json (a run counter); any OTHER tracked file a gate changes is flagged at ready" },
     { "id": "build", "cmd": "pnpm build", "required": false, "timeoutSec": 900 },
     { "id": "production", "cmd": "pnpm test:production", "required": false, "timeoutSec": 900, "when": "runtime/UI changes" },
     { "id": "browser", "cmd": "pnpm test:browser", "required": false, "timeoutSec": 1800, "when": "UI/animation changes" },
