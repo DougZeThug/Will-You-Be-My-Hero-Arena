@@ -3,11 +3,11 @@
   "title": "Stop lint from scanning vendored third-party code",
   "kind": "fix",
   "source": "chat",
-  "state": "verifying",
+  "state": "review",
   "branch": "claude/awesome-ptolemy-g9hyyt",
   "baseSha": "cf4656df6c5482c1f10f81910159b8d641a65df1",
   "createdAt": "2026-10-30T19:37:03.580Z",
-  "updatedAt": "2026-10-30T19:47:22.967Z",
+  "updatedAt": "2026-10-30T19:48:30.085Z",
   "plan": ".factory/tasks/T-20261030-01.plan.md",
   "planChallenged": true,
   "criteria": [
@@ -49,7 +49,13 @@
       "tail": "lab/main.ts:84:29: error typescript(no-base-to-string): 'value ?? '—'' will use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nlab/loongbones/ProofScene.ts:238:19: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\nlab/loongbones/ProofScene.ts:253:19: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\nlab/loongbones/dan/inspection.ts:70:17: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\ntests/browser/api.spec.ts:41:32: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ncomponents/ui/chart.tsx:155:20: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\ncomponents/ui/chart.tsx:203:28: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\ncomponents/ui/chart.tsx:302:26: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/check-performance-provider-dependencies.mjs:14:57: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ntests/observability-tests.mjs:127:55: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ntests/sport-mechanics-tests.mjs:47:36: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\ntests/sport-mechanics-tests.mjs:62:57: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\ntests/sport-mechanics-tests.mjs:62:113: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nscripts/capture-animation-upgrade.mjs:32:22: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:32:31: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:35:32: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:35:41: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:37:54: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:37:68: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/regression.mjs:14:38: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/compare-dan-roundtrip.mjs:71:47: error typescript(no-base-to-string): 'name' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nscripts/compare-dan-roundtrip.mjs:71:47: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\n[ELIFECYCLE] Command failed with exit code 1.\n$ oxlint\n"
     }
   },
-  "review": null,
+  "review": {
+    "verdict": "approve",
+    "tree": "be922cd2c508f8d49f72d2f59c57ef33b20d4ad3",
+    "sha": "1433f52a588b4b74d27d85e0acabc1ea868b848b",
+    "findings": [],
+    "at": "2026-10-30T19:48:30.085Z"
+  },
   "repairs": {
     "ledger:tracked-ledger-staleness": {
       "attempts": 1,
@@ -155,6 +161,11 @@
         "typecheck:pass",
         "unit:pass"
       ]
+    },
+    {
+      "at": "2026-10-30T19:48:30.085Z",
+      "event": "review",
+      "verdict": "approve"
     }
   ]
 }

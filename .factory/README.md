@@ -97,3 +97,19 @@ Nothing Strange Here -> scene/navigation tests + a performance gate.
 ## Tests of the factory itself
 
 `pnpm factory:test` (ledger, gates, guard, installer; throwaway repos, no network).
+
+## Verified status (first end-to-end run, T-20261030-01)
+
+| Capability | Status |
+|---|---|
+| Ledger, gates, repair budget, concurrency ceiling, stale-evidence detection, `ready` refusal | **Verified** (18 unit tests + live run; `ready` correctly refused a protected-config change) |
+| Guard hook + deny rules (merge/deploy/force-push/secrets/protected paths) | **Verified** by tests and by blocking its own author twice; MCP deny rules configured, not exercised |
+| `factory-architect/-builder/-qa/-reviewer` agents | **Verified** in a real run (QA and reviewers ran with their tool restrictions; the architect and builder ran as general-purpose with the role file as brief, because agent files created mid-session register at the next session start) |
+| `factory-ui`, `factory-repair` agents; `/factory-build|fix|review|polish|maintain|adopt` skills | **Configured, not yet run** (`/factory-status` listed; others are user-invoked only) |
+| Installer into another repo | **Verified** on a throwaway repo (doctor passes) |
+| GitHub issue queue workflow, scheduled maintenance, PR creation | **Not tested** (needs secrets/app; GitHub tool was disconnected in the build session) |
+| Agent teams | Not used (experimental, higher cost) |
+
+Demo findings that improved the factory: tracked ledger invalidated its own evidence; HEAD-based fingerprint went stale on commit;
+`rm --cached docs` hid doc edits (reviewer major); `finish` did not re-verify; guard false positives on heredocs/scratch paths.
+Run metrics: 0 human interventions before delivery, 2 repair attempts, 11 min, typecheck + unit green (3 gate runs, ~64 s of gates), 18/18 factory tests.
