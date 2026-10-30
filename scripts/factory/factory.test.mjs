@@ -59,6 +59,15 @@ test("ready needs plan, gates and review; edits after approval make it stale; fi
   assert.equal(F(d, `set ${id} --state ready`).status, 1, "ready/delivered cannot be set by hand");
 });
 
+test("recording results in a TRACKED ledger does not make gates stale", () => {
+  const d = sandbox();
+  const id = json(F(d, 'new "t"')).id;
+  sh(d, "git add -A && git commit -qm ledger");
+  F(d, `set ${id} --criterion c`); F(d, `plan-ok ${id}`);
+  F(d, `gate ${id} --only ok`); F(d, `review ${id} --verdict approve`);
+  assert.equal(F(d, `ready ${id}`).status, 0, "ledger writes must not invalidate the evidence they record");
+});
+
 test("a failing required gate blocks ready and stores the log", () => {
   const d = sandbox({ gates: [{ id: "bad", cmd: "echo boom >&2; exit 3", required: true }] });
   const id = json(F(d, 'new "t"')).id;

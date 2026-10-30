@@ -3,11 +3,11 @@
   "title": "Stop lint from scanning vendored third-party code",
   "kind": "fix",
   "source": "chat",
-  "state": "building",
+  "state": "verifying",
   "branch": "claude/awesome-ptolemy-g9hyyt",
-  "baseSha": "ba310834cbf6219f047f0ca056fc9b0ffff6d088",
+  "baseSha": "cf4656df6c5482c1f10f81910159b8d641a65df1",
   "createdAt": "2026-10-30T19:37:03.580Z",
-  "updatedAt": "2026-10-30T19:38:16.777Z",
+  "updatedAt": "2026-10-30T19:42:38.120Z",
   "plan": ".factory/tasks/T-20261030-01.plan.md",
   "planChallenged": true,
   "criteria": [
@@ -16,9 +16,48 @@
     "vendor files byte-identical",
     "only .oxlintrc.json changed (ci.yml untouched)"
   ],
-  "gates": {},
+  "gates": {
+    "typecheck": {
+      "status": "pass",
+      "exit": 0,
+      "signal": null,
+      "secs": 5.7,
+      "required": true,
+      "sha": "69c9bad35fd0ed1d453a1f326756333c86ba46b8",
+      "tree": "c70d2d0537df76cdb2e1a28b919a311d0fcc47fc",
+      "at": "2026-10-30T19:41:40.408Z"
+    },
+    "unit": {
+      "status": "pass",
+      "exit": 0,
+      "signal": null,
+      "secs": 57.7,
+      "required": true,
+      "sha": "69c9bad35fd0ed1d453a1f326756333c86ba46b8",
+      "tree": "c70d2d0537df76cdb2e1a28b919a311d0fcc47fc",
+      "at": "2026-10-30T19:42:38.119Z"
+    },
+    "lint": {
+      "status": "fail",
+      "exit": 1,
+      "signal": null,
+      "secs": 6.5,
+      "required": false,
+      "sha": "69c9bad35fd0ed1d453a1f326756333c86ba46b8",
+      "tree": "a6a0bf4b69e14b8139169d972f583b8561a07b27",
+      "at": "2026-10-30T19:40:39.757Z",
+      "tail": "lab/main.ts:84:29: error typescript(no-base-to-string): 'value ?? '—'' will use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nlab/loongbones/ProofScene.ts:238:19: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\nlab/loongbones/ProofScene.ts:253:19: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\nlab/loongbones/dan/inspection.ts:70:17: error typescript(no-misused-spread): Using the spread operator on class instances will lose their class prototype.\ntests/browser/api.spec.ts:41:32: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ncomponents/ui/chart.tsx:155:20: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\ncomponents/ui/chart.tsx:203:28: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\ncomponents/ui/chart.tsx:302:26: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/check-performance-provider-dependencies.mjs:14:57: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ntests/observability-tests.mjs:127:55: error typescript(unbound-method): Avoid referencing unbound methods which may cause unintentional scoping of `this`. help: If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead.\ntests/sport-mechanics-tests.mjs:47:36: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\ntests/sport-mechanics-tests.mjs:62:57: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\ntests/sport-mechanics-tests.mjs:62:113: error typescript(no-base-to-string): 'side' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nscripts/capture-animation-upgrade.mjs:32:22: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:32:31: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:35:32: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:35:41: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:37:54: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/capture-animation-upgrade.mjs:37:68: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/regression.mjs:14:38: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\nscripts/compare-dan-roundtrip.mjs:71:47: error typescript(no-base-to-string): 'name' may use Object's default stringification format ('[object Object]') when stringified. help: Consider picking a property (e.g. `user.name`), using a formatter (or `JSON.stringify`), or implementing a custom `toString()`/`toLocaleString()` on the type.\nscripts/compare-dan-roundtrip.mjs:71:47: error typescript(restrict-template-expressions): Invalid type used in template literal expression.\n[ELIFECYCLE] Command failed with exit code 1.\n$ oxlint\n"
+    }
+  },
   "review": null,
-  "repairs": {},
+  "repairs": {
+    "ledger:tracked-ledger-staleness": {
+      "attempts": 1,
+      "notes": [
+        "Found by the demo: gate results went stale whenever the tracked ledger was saved. Excluded .factory/tasks from the tree fingerprint + regression test."
+      ]
+    }
+  },
   "interventions": 0,
   "blocked": null,
   "pr": null,
@@ -41,6 +80,47 @@
     {
       "at": "2026-10-30T19:38:16.777Z",
       "event": "plan-ok"
+    },
+    {
+      "at": "2026-10-30T19:40:39.758Z",
+      "event": "gate",
+      "ids": [
+        "typecheck:pass",
+        "unit:pass",
+        "lint:fail"
+      ]
+    },
+    {
+      "at": "2026-10-30T19:40:47.874Z",
+      "event": "gate",
+      "ids": [
+        "typecheck:pass"
+      ]
+    },
+    {
+      "at": "2026-10-30T19:41:34.560Z",
+      "event": "note",
+      "text": "baseSha corrected to cf4656d (infra lint-cleanup commit); scope flag from QA"
+    },
+    {
+      "at": "2026-10-30T19:41:34.601Z",
+      "event": "repair",
+      "key": "ledger:tracked-ledger-staleness",
+      "attempt": 1
+    },
+    {
+      "at": "2026-10-30T19:41:34.652Z",
+      "event": "state",
+      "from": "repairing",
+      "to": "building"
+    },
+    {
+      "at": "2026-10-30T19:42:38.120Z",
+      "event": "gate",
+      "ids": [
+        "typecheck:pass",
+        "unit:pass"
+      ]
     }
   ]
 }

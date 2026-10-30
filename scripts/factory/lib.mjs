@@ -87,8 +87,10 @@ export function dirtyFiles(root) {
 // Fingerprint of working-tree content so "gate passed" cannot outlive an edit.
 export function treeFingerprint(root) {
   const head = headSha(root);
-  const diff = spawnSync("git", ["diff", "HEAD", "--no-ext-diff"], { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }).stdout || "";
-  const untracked = git(root, "ls-files", "--others", "--exclude-standard");
+  // The ledger records gate results, so it must not be part of what those results certify.
+  const exclude = [":(exclude).factory/tasks"];
+  const diff = spawnSync("git", ["diff", "HEAD", "--no-ext-diff", "--", ".", ...exclude], { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }).stdout || "";
+  const untracked = git(root, "ls-files", "--others", "--exclude-standard", "--", ".", ...exclude);
   const h = spawnSync("git", ["hash-object", "--stdin"], { cwd: root, input: head + "\n" + diff + "\n" + untracked, encoding: "utf8" });
   return h.stdout.trim();
 }
