@@ -1,0 +1,26 @@
+{
+  "id": "T-20261030-01",
+  "title": "Stop lint from scanning vendored third-party code",
+  "kind": "fix",
+  "source": "chat",
+  "state": "intake",
+  "branch": "claude/awesome-ptolemy-g9hyyt",
+  "baseSha": "ba310834cbf6219f047f0ca056fc9b0ffff6d088",
+  "createdAt": "2026-10-30T19:37:03.580Z",
+  "updatedAt": "2026-10-30T19:37:03.580Z",
+  "plan": null,
+  "planChallenged": false,
+  "criteria": [],
+  "gates": {},
+  "review": null,
+  "repairs": {},
+  "interventions": 0,
+  "blocked": null,
+  "pr": null,
+  "log": [
+    {
+      "at": "2026-10-30T19:37:03.580Z",
+      "event": "created"
+    }
+  ]
+}

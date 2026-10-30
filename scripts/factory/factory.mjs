@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   dirtyFiles, evidenceDir, git, headSha, isActive, listTasks, loadProject, loadTask,
-  matchesAny, repoRoot, saveTask, tasksDir, treeFingerprint,
+  matchesAny, repoRoot, saveTask, treeFingerprint,
 } from "./lib.mjs";
 
 const root = repoRoot();

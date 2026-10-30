@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-floating-promises -- node:test registers tests synchronously */
 // node --test scripts/factory/factory.test.mjs   (pnpm factory:test)
 // Exercises the ledger, gates, repair budget, ready-checks and the guard hook
 // against throwaway git repos. No network, no project dependencies.
