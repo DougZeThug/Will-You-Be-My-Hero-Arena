@@ -1,6 +1,7 @@
 // Shared helpers for the AI software factory. Zero dependencies, Node >= 20.
 import { execFileSync, spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 export function repoRoot(cwd = process.cwd()) {
@@ -84,13 +85,24 @@ export function dirtyFiles(root) {
   return out ? out.split("\n").sort() : [];
 }
 
-// Fingerprint of working-tree content so "gate passed" cannot outlive an edit.
+// Fingerprint of the working-tree CONTENT (not HEAD), so "gate passed" cannot outlive an edit
+// yet survives committing the same content. Built from a throwaway index: tracked + untracked
+// files, minus the ledger (it records gate results, so it must not be part of what they certify).
 export function treeFingerprint(root) {
-  const head = headSha(root);
-  // The ledger records gate results, so it must not be part of what those results certify.
-  const exclude = [":(exclude).factory/tasks"];
-  const diff = spawnSync("git", ["diff", "HEAD", "--no-ext-diff", "--", ".", ...exclude], { cwd: root, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }).stdout || "";
-  const untracked = git(root, "ls-files", "--others", "--exclude-standard", "--", ".", ...exclude);
-  const h = spawnSync("git", ["hash-object", "--stdin"], { cwd: root, input: head + "\n" + diff + "\n" + untracked, encoding: "utf8" });
-  return h.stdout.trim();
+  // Files a gate is declared to regenerate (mayModify) are outputs, not inputs: exclude them too.
+  let regenerated = [];
+  try { regenerated = loadProject(root).gates.flatMap((g) => g.mayModify ?? []); } catch {}
+  const excl = [":(exclude).factory/tasks", ...regenerated.map((g) => `:(exclude,glob)${g}`)];
+  const idx = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "factory-idx-")), "index");
+  const env = { ...process.env, GIT_INDEX_FILE: idx };
+  const run = (...a) => spawnSync("git", a, { cwd: root, env, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+  try {
+    run("read-tree", "HEAD");
+    run("rm", "-r", "--cached", "-q", "--ignore-unmatch", "--", ".factory/tasks");
+    run("add", "-A", "--", ".", ...excl);
+    for (const g of regenerated) run("rm", "-r", "--cached", "-q", "--ignore-unmatch", "--", g.replace(/\/?\*\*.*$/, "") || ".");
+    return run("write-tree").stdout.trim();
+  } finally {
+    fs.rmSync(path.dirname(idx), { recursive: true, force: true });
+  }
 }

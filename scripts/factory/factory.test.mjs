@@ -68,6 +68,18 @@ test("recording results in a TRACKED ledger does not make gates stale", () => {
   assert.equal(F(d, `ready ${id}`).status, 0, "ledger writes must not invalidate the evidence they record");
 });
 
+test("committing the verified content does not make gates stale; a content edit does", () => {
+  const d = sandbox();
+  const id = json(F(d, 'new "t"')).id;
+  F(d, `set ${id} --criterion c`); F(d, `plan-ok ${id}`);
+  fs.writeFileSync(path.join(d, "b.txt"), "feature");
+  F(d, `gate ${id} --only ok`); F(d, `review ${id} --verdict approve`);
+  sh(d, "git add -A && git commit -qm feature");
+  assert.equal(F(d, `ready ${id}`).status, 0);
+  fs.writeFileSync(path.join(d, "b.txt"), "changed");
+  assert.equal(F(d, `ready ${id}`).status, 1);
+});
+
 test("a failing required gate blocks ready and stores the log", () => {
   const d = sandbox({ gates: [{ id: "bad", cmd: "echo boom >&2; exit 3", required: true }] });
   const id = json(F(d, 'new "t"')).id;
