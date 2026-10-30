@@ -1,0 +1,29 @@
+{
+  "$comment": "Generic, project-independent factory files. install.mjs copies exactly these. Everything project-specific lives in .factory/project.json (generated) and the target repo's own agents.",
+  "files": [
+    ".factory/PROTOCOL.md",
+    ".factory/README.md",
+    ".factory/kit.json",
+    ".claude/hooks/factory-guard.mjs",
+    ".claude/agents/factory-architect.md",
+    ".claude/agents/factory-builder.md",
+    ".claude/agents/factory-ui.md",
+    ".claude/agents/factory-qa.md",
+    ".claude/agents/factory-repair.md",
+    ".claude/agents/factory-reviewer.md",
+    ".claude/skills/factory-build/SKILL.md",
+    ".claude/skills/factory-fix/SKILL.md",
+    ".claude/skills/factory-review/SKILL.md",
+    ".claude/skills/factory-polish/SKILL.md",
+    ".claude/skills/factory-status/SKILL.md",
+    ".claude/skills/factory-maintain/SKILL.md",
+    ".claude/skills/factory-adopt/SKILL.md",
+    "scripts/factory/lib.mjs",
+    "scripts/factory/factory.mjs",
+    "scripts/factory/session-start.mjs",
+    "scripts/factory/install.mjs",
+    ".github/workflows/factory-queue.yml"
+  ],
+  "merge": [".claude/settings.json"],
+  "gitignore": ["/work/"]
+}

@@ -1,0 +1,41 @@
+{
+  "$comment": "Project profile: the ONLY place project-specific rules live. Global factory files (agents, skills, scripts/factory) read this. See .factory/README.md.",
+  "name": "Will You Be My Hero? Arena",
+  "defaultBranch": "main",
+  "branchPrefix": "factory/",
+  "maxActiveTasks": 1,
+  "repairBudget": 3,
+  "requireReview": true,
+  "guidance": ["AGENTS.md", "CLAUDE.md"],
+  "gates": [
+    { "id": "typecheck", "cmd": "pnpm typecheck", "required": true, "timeoutSec": 300 },
+    { "id": "unit", "cmd": "pnpm test", "required": true, "timeoutSec": 900, "mayModify": ["docs/**"],
+      "note": "regenerates tracked reports under docs/; the factory reports them, humans decide whether to keep" },
+    { "id": "build", "cmd": "pnpm build", "required": false, "timeoutSec": 900 },
+    { "id": "production", "cmd": "pnpm test:production", "required": false, "timeoutSec": 900, "when": "runtime/UI changes" },
+    { "id": "browser", "cmd": "pnpm test:browser", "required": false, "timeoutSec": 1800, "when": "UI/animation changes" },
+    { "id": "regression", "cmd": "pnpm check:regression", "required": false, "timeoutSec": 1800, "when": "animation/physics aggregate scope" },
+    { "id": "lint", "cmd": "pnpm lint", "required": false, "timeoutSec": 300, "note": "known pre-existing vendor diagnostics; report-only" }
+  ],
+  "protectedPaths": [
+    "tests/browser/baselines/**",
+    "public/assets/**",
+    "docs/PUPPET-ART-PROVENANCE.json",
+    "**/PROVENANCE.json",
+    "motion-reference/**",
+    "pnpm-lock.yaml"
+  ],
+  "protectedBranches": [],
+  "deniedCommands": ["pnpm test:browser:update", "--update-baselines"],
+  "specialists": {
+    "gameplay-architect": "rules, state, scoring, input, AI",
+    "animation-specialist": "throws, locomotion, IK, rig",
+    "engine-specialist": "Phaser/React/Vite runtime, Lab, godot/",
+    "sports-physics-specialist": "bag/ball flight, bounce, aiming feel",
+    "art-director": "cohesion, HUD, readability"
+  },
+  "uiSurfaces": ["components/**", "app/**", "lab/**"],
+  "previewCommand": "pnpm dev",
+  "visualQa": "See .agents/skills/arena-visual-qa; never update baselines to silence a failure.",
+  "dataProtection": "No live customer data in this repo; saves are browser-local. Never touch user browser storage."
+}

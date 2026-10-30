@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(node scripts/*)",
+      "Bash(node tests/*)",
+      "Bash(npx playwright *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git switch*)",
+      "Bash(git checkout*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push -u origin factory/*)",
+      "Bash(git push origin factory/*)",
+      "Bash(git push -u origin claude/*)",
+      "Bash(git fetch*)",
+      "Bash(git worktree*)",
+      "Bash(git stash*)",
+      "Bash(ls*)",
+      "Bash(mkdir*)",
+      "Bash(cat *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(wc *)",
+      "Bash(sort *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.pem)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push origin main*)",
+      "Bash(git push origin master*)",
+      "Bash(gh pr merge*)",
+      "Bash(vercel --prod*)",
+      "Bash(vercel deploy*)",
+      "Bash(wrangler deploy*)",
+      "Bash(pnpm publish*)",
+      "Bash(npm publish*)",
+      "Bash(pnpm test:browser:update*)",
+      "mcp__github__merge_pull_request",
+      "mcp__github__enable_pr_auto_merge",
+      "mcp__github__push_files",
+      "mcp__github__create_or_update_file",
+      "mcp__github__delete_file",
+      "mcp__github__create_repository",
+      "mcp__Vercel__create_*",
+      "mcp__Vercel__update_*",
+      "mcp__Vercel__request_*",
+      "mcp__Vercel__assign_alias",
+      "mcp__Vercel__approve_*",
+      "mcp__Vercel__complete_rolling_release",
+      "mcp__Vercel__start_rolling_release",
+      "mcp__Vercel__put_firewall_config",
+      "mcp__Vercel__buy_domain",
+      "mcp__Vercel__replace_domain_dns_records",
+      "mcp__Supabase__apply_migration",
+      "mcp__Supabase__execute_sql",
+      "mcp__Supabase__merge_branch",
+      "mcp__Supabase__reset_branch",
+      "mcp__Supabase__rebase_branch",
+      "mcp__Supabase__delete_branch",
+      "mcp__Supabase__create_project",
+      "mcp__Supabase__pause_project",
+      "mcp__Supabase__restore_project",
+      "mcp__Supabase__deploy_edge_function",
+      "mcp__Supabase__create_edge_function_secret",
+      "mcp__Lovable__deploy_project",
+      "mcp__Lovable__send_message",
+      "mcp__Lovable__query_database"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/factory-guard.mjs\"", "timeout": 20 }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          { "type": "command", "command": "node \"$CLAUDE_PROJECT_DIR/scripts/factory/session-start.mjs\"", "timeout": 20 }
+        ]
+      }
+    ]
+  }
+}
