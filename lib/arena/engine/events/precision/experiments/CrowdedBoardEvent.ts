@@ -425,7 +425,12 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     if (tags.includes('knock-off')) notes.push('knocked a bag off');
     // The classic board keeps the shipped wording exactly.
     const unique = this.rules.board === 'crowded' ? [...new Set(notes)] : [];
-    this.message = `${c.profile.name}: ${bag.points === 3 ? 'in the hole — three points' : bag.points === 1 ? 'on the board — one point' : 'off the board'}${unique.length ? ' · ' + unique.join(', ') : ''}`;
+    // Innings: the nameplates show match points, so the caption carries the round's bag count.
+    const tally =
+      this.rules.scoring === 'innings'
+        ? ` · Round ${this.round + 1}: ${this.ctx.characters.map((p) => `${p.profile.name} ${round[p.id]}`).join(', ')}`
+        : '';
+    this.message = `${c.profile.name}: ${bag.points === 3 ? 'in the hole — three points' : bag.points === 1 ? 'on the board — one point' : 'off the board'}${unique.length ? ' · ' + unique.join(', ') : ''}${tally}`;
     this.log.push({
       round: this.round,
       player: c.id,
