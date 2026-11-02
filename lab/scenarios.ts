@@ -124,6 +124,29 @@ export const SCENARIOS: readonly Scenario[] = [
     'cornhole',
     'P0 browser gamepad slot 0, P1 AI. Real hardware by default. Virtual input is explicitly opt-in.',
   ),
+  // GAMEPLAY EXPERIMENT (see docs/experiments/crowded-board/README.md).
+  // Lab-only variants of live cornhole; Play setup never offers them.
+  define(
+    'cornhole-crowded',
+    'Experiment · cornhole, crowded board',
+    'live',
+    'cornhole',
+    'Bags block and shove: Hole runner slides in, Slide knocks bags in, Roll hops a blocker, Airmail flies over with more scatter. Aim short to leave a blocker. P0 keyboard, P1 board-aware AI. Four bags each, bags add up.',
+  ),
+  define(
+    'cornhole-innings',
+    'Experiment · cornhole, backyard innings',
+    'live',
+    'cornhole',
+    'Shipped board physics with backyard scoring: each round only the difference scores, the round winner throws first, first to 11 (five rounds at most). P0 keyboard, P1 AI.',
+  ),
+  define(
+    'cornhole-crowded-innings',
+    'Experiment · cornhole, crowded board + innings',
+    'live',
+    'cornhole',
+    'Both experiment rules together: physical bags and blockers, and backyard cancellation scoring to 11. P0 keyboard, P1 board-aware AI.',
+  ),
   define(
     'running-live',
     'Running · live',
@@ -228,10 +251,24 @@ export function createRecording(s: Scenario) {
     ],
   };
 }
+/** Rule options for the Lab-only gameplay experiments (none for shipped scenarios). */
+export const EXPERIMENT_OPTIONS: Record<string, LiveConfig['options']> = {
+  'cornhole-crowded': { cornholeBoard: 'crowded', cornholeScoring: 'total' },
+  'cornhole-innings': {
+    cornholeBoard: 'classic',
+    cornholeScoring: 'innings',
+    cornholeAI: 'stock',
+  },
+  'cornhole-crowded-innings': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'innings',
+  },
+};
 export function liveConfig(s: Scenario): LiveConfig {
   return {
     event: s.sport,
     seed: s.seed,
+    ...(EXPERIMENT_OPTIONS[s.id] ? { options: EXPERIMENT_OPTIONS[s.id] } : {}),
     players: [
       {
         id: 'p0',
