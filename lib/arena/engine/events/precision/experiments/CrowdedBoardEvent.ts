@@ -1,13 +1,19 @@
 /**
  * GAMEPLAY EXPERIMENT (prototype; Lab only, never offered on Play setup).
  *
- * A copy of PrecisionEvent's turn flow with two switchable rule changes from
- * CrowdedBoardRules: the crowded board (bags block and shove) and backyard
- * innings scoring. It is selected only when a LiveConfig carries the
- * `cornholeBoard` / `cornholeScoring` options, which the player app never
- * sets. With `cornholeBoard: 'classic'`, `cornholeScoring: 'total'` and
- * `cornholeAI: 'stock'` it reproduces the shipped event throw for throw (a test
- * asserts this), so every difference measured is the rule change itself.
+ * A copy of PrecisionEvent's turn flow with switchable real-cornhole rules
+ * from CrowdedBoardRules: the crowded board (both throwers pitch at the same
+ * board and its bags block and shove) and cancellation innings to 21, with
+ * the scorer throwing first next inning and a switch-ends beat between
+ * innings. It is selected only when a LiveConfig carries the `cornholeBoard`
+ * / `cornholeScoring` options, which the player app never sets.
+ *
+ * The opponent AI is `cornholeAI: 'easy'` (the shipped AI: its favourite shot
+ * at the hole) or `'hard'` (the board-aware planner); both keep the shipped
+ * AI's seeded timing error. With `cornholeBoard: 'classic'`,
+ * `cornholeScoring: 'total'` and the easy AI it reproduces the shipped event
+ * throw for throw (a test asserts this), so every difference measured is the
+ * rule change itself.
  */
 import type {
   PlayableArenaEvent,
@@ -69,6 +75,10 @@ const AI_SCALE = 0.04,
   THROW_TIMEOUT = 1.0,
   /** How long shoved and sliding bags take to come to rest on screen. */
   SETTLE = 0.45,
+  /** Innings: the pause to count the inning and switch ends. */
+  INNING_BREAK = 1.6,
+  /** Innings: within this many points of the target counts as game point (clutch). */
+  GAME_POINT = 6,
   BAGS = 4;
 
 interface Settle {
@@ -82,7 +92,7 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
   id = 'cornhole';
   readonly rules: ExperimentRules;
   private ctx!: EventContext;
-  private aiMode: 'stock' | 'tactical' = 'tactical';
+  readonly aiMode: 'easy' | 'hard';
   private order: number[] = [];
   private turnIndex = 0;
   private throws = 0;
@@ -100,7 +110,7 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
   private bags: PrecisionBag[] = [];
   private match: Record<string, number> = {};
   private message = 'Cards to court';
-  /** A round notice shown in front of the aiming caption for the turn. */
+  /** An inning notice shown in front of the aiming caption for the turn. */
   private notice = '';
   private complete = false;
   private perfect = false;
@@ -122,7 +132,11 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
   }[] = [];
   constructor(options: Record<string, string | number | boolean> = {}) {
     this.rules = rulesFromOptions(options);
-    this.aiMode = options.cornholeAI === 'stock' ? 'stock' : 'tactical';
+    // 'stock' is the earlier name for the easy AI.
+    this.aiMode =
+      options.cornholeAI === 'easy' || options.cornholeAI === 'stock'
+        ? 'easy'
+        : 'hard';
   }
   initialize(context: EventContext) {
     this.ctx = context;
@@ -270,9 +284,12 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
   private bagsEach() {
     return this.ctx.characters.length * BAGS;
   }
+  /** The last bags of the match; in innings, the last bags of an inning on game point. */
   private clutchNow() {
     return this.rules.scoring === 'innings'
-      ? this.roundThrows >= this.ctx.characters.length * 3
+      ? this.roundThrows >= this.ctx.characters.length * 3 &&
+          Math.max(...Object.values(this.match)) >=
+            this.rules.target - GAME_POINT
       : this.throws >= this.ctx.characters.length * 3;
   }
   private window() {
@@ -391,6 +408,8 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     }
     if (this.state === 'result' && time - this.phaseAt > 1.2)
       this.advanceTurn();
+    if (this.state === 'switching' && time - this.phaseAt > INNING_BREAK)
+      this.startInning();
   }
   private resolveTurn(c: ArenaCharacter, time: number) {
     const { landed: bag, tags } = this.settle!;
@@ -425,10 +444,10 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     if (tags.includes('knock-off')) notes.push('knocked a bag off');
     // The classic board keeps the shipped wording exactly.
     const unique = this.rules.board === 'crowded' ? [...new Set(notes)] : [];
-    // Innings: the nameplates show match points, so the caption carries the round's bag count.
+    // Innings: the nameplates show game points, so the caption carries the inning's bag count.
     const tally =
       this.rules.scoring === 'innings'
-        ? ` · Round ${this.round + 1}: ${this.ctx.characters.map((p) => `${p.profile.name} ${round[p.id]}`).join(', ')}`
+        ? ` · Inning ${this.round + 1}: ${this.ctx.characters.map((p) => `${p.profile.name} ${round[p.id]}`).join(', ')}`
         : '';
     this.message = `${c.profile.name}: ${bag.points === 3 ? 'in the hole — three points' : bag.points === 1 ? 'on the board — one point' : 'off the board'}${unique.length ? ' · ' + unique.join(', ') : ''}${tally}`;
     this.log.push({
@@ -477,33 +496,53 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
       this.turnIndex = (this.turnIndex + 1) % n;
       return this.nextPlayer();
     }
-    // End of a round: cancel, award, clear the board.
+    // End of an inning: cancel and award. The bags stay on the board while
+    // the inning is counted, then the players switch ends.
     const ids = this.ctx.characters.map((p) => p.id),
       totals = bagTotals(ids, this.bags),
       award = inningAward(totals);
     for (const id of ids) this.match[id] += award[id];
     for (const p of this.ctx.characters) p.score = this.match[p.id];
     const scorer = ids.find((id) => award[id] > 0);
+    this.lastAward = scorer ? { id: scorer, points: award[scorer] } : undefined;
+    const inning = this.round + 1,
+      summary = scorer
+        ? `${this.name(scorer)} takes inning ${inning} +${award[scorer]}`
+        : `Inning ${inning} cancels out`;
     this.round++;
     this.roundThrows = 0;
-    this.bags = [];
     const best = Math.max(...ids.map((id) => this.match[id]));
     if (best >= this.rules.target || this.round >= this.rules.maxRounds) {
-      this.message = scorer
-        ? `${this.name(scorer)} takes the round +${award[scorer]}`
-        : 'Round cancels out';
+      this.message = summary;
       return this.end();
     }
-    // The scorer throws first next round; everyone else keeps their order.
+    // Whoever scored throws first next inning; if nobody did, the order stays.
     if (scorer) {
       const s = ids.indexOf(scorer);
       this.order = ids.map((_, i) => (s + i) % ids.length);
     }
+    this.state = 'switching';
+    this.phaseAt = this.ctx.time();
+    this.ctx.characters.forEach((c) => (c.substate = 'waiting'));
+    this.message = `${summary} · ${this.scoreLine()} · switch ends`;
+  }
+  private lastAward?: { id: string; points: number };
+  /** "Doug 9, Dan 4", in seat order. */
+  private scoreLine() {
+    return this.ctx.characters
+      .map((p) => `${p.profile.name} ${this.match[p.id]}`)
+      .join(', ');
+  }
+  private startInning() {
+    this.bags = [];
     this.turnIndex = 0;
+    const first = this.active().profile.name,
+      a = this.lastAward;
     this.nextPlayer(
-      scorer
-        ? `Round ${this.round + 1} · ${this.name(scorer)} took the last round +${award[scorer]} and throws first`
-        : `Round ${this.round + 1} · last round cancelled out`,
+      `Inning ${this.round + 1} · ` +
+        (a
+          ? `${this.name(a.id)} scored last inning and throws first`
+          : `last inning cancelled out; ${first} throws first again`),
     );
   }
   private end() {
@@ -526,7 +565,7 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     this.previewKey = '';
     this.message = this.aimMessage();
   }
-  /** The planner's model of a character (timing as the stock AI's spread). */
+  /** The planner's model of a character (timing as the shipped AI's spread). */
   model(c: ArenaCharacter): ThrowerModel {
     const skill = (s: string) => c.stats.event('cornhole', SKILL[s] ?? s, 0.6);
     return {
@@ -577,7 +616,7 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     };
     if (c === this.active()) {
       let ready = true;
-      if (this.aiMode === 'tactical' && this.state === 'aiming') {
+      if (this.aiMode === 'hard' && this.state === 'aiming') {
         if (this.aiPlan?.throw !== this.throws) {
           const evaluations = this.planFor(c);
           this.aiPlan = {
@@ -636,8 +675,18 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
   finish() {
     const winners = this.resolveOutcome().winners;
     this.message =
-      (this.rules.scoring === 'innings' ? this.message + ' · ' : '') +
-      'Final score';
+      this.rules.scoring === 'innings'
+        ? `${this.message} · ${
+            winners.length === 1
+              ? `${this.name(winners[0])} wins ${this.match[winners[0]]}–${Math.max(
+                  ...Object.entries(this.match)
+                    .filter(([id]) => id !== winners[0])
+                    .map(([, points]) => points),
+                  0,
+                )}`
+              : `Tied at the inning cap: ${this.scoreLine()}`
+          } · Final score`
+        : 'Final score';
     this.ctx.characters.forEach((c) => {
       c.substate = 'finished';
       if (winners.includes(c.id)) c.celebrate(1);
@@ -681,10 +730,11 @@ export class CrowdedBoardEvent implements PlayableArenaEvent {
     return {
       title:
         'Cornhole · ' +
-        (this.rules.board === 'crowded' ? 'Crowded board' : 'Classic board') +
         (this.rules.scoring === 'innings'
-          ? ` · Round ${Math.min(this.round + 1, this.rules.maxRounds)} · to ${this.rules.target}`
-          : ''),
+          ? `to ${this.rules.target} · Inning ${Math.min(this.round + 1, this.rules.maxRounds)}`
+          : this.rules.board === 'crowded'
+            ? 'Crowded board'
+            : 'Classic board'),
       stage: { equipment: [placement('cornhole', 0)] },
       phase: this.settle ? 'settling' : this.state,
       message: this.message,

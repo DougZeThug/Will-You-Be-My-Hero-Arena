@@ -1,7 +1,11 @@
 // GAMEPLAY EXPERIMENT: headless, deterministic simulation of Play cornhole
-// under the shipped rules and the three experiment variants.
+// under the shipped rules and the real-cornhole experiment (crowded board,
+// cancellation innings to 21).
 //
-//   node scripts/experiments/cornhole-crowded-sim.mjs [--matches 300] [--out work/qa/gameplay-lab/sim.json]
+//   node scripts/experiments/cornhole-crowded-sim.mjs [--matches 300]
+//     [--variants shipped,real] [--matchups mirror,...] [--out work/qa/gameplay-lab/sim.json]
+//     [--from 0]          first match index, to split one cell across processes
+//     [--game-point 6]    innings clutch window (points from the target); 0 = no clutch
 //
 // It plays whole matches on the pure rules (CrowdedBoardRules) with the real
 // card stats read from an ArenaSession, scripted throwers whose release error
@@ -19,6 +23,8 @@ const arg = (name, fallback) => {
   return i > 0 ? process.argv[i + 1] : fallback;
 };
 const MATCHES = Number(arg('matches', 300));
+const FROM = Number(arg('from', 0));
+const GAME_POINT = Number(arg('game-point', 6));
 const OUT = arg('out', 'work/qa/gameplay-lab/sim.json');
 if (!process.argv.includes('--no-build'))
   execFileSync(process.execPath, ['scripts/experiments/transpile.mjs'], {
@@ -64,6 +70,7 @@ const gauss = (rng) => {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 };
 /** Seconds a throw takes on screen, from turn start to the next turn. */
+const INNING_BREAK = 1.6; // CrowdedBoardEvent's switch-ends pause
 const throwSeconds = (aim, shot, error, moved) =>
   0.4 +
   Math.hypot(aim.x, aim.y) / 0.65 +
@@ -74,7 +81,7 @@ const throwSeconds = (aim, shot, error, moved) =>
   1.2;
 
 const HABITS = new Map();
-function playMatch({ rules, seats, seed }) {
+function playMatch({ rules, seats, seed, measure = true }) {
   const rng = seeded(seed);
   const ids = seats.map((_, i) => 'p' + i);
   const models = seats.map((s, i) => ({
@@ -109,13 +116,25 @@ function playMatch({ rules, seats, seed }) {
         me,
         next: next.slice(0, 1),
         rivals: ids.filter((id) => id !== me.id),
-        clutchNow: k >= n * 3,
+        // The event's clutch rule: the last bags of the match, or in innings
+        // the last bags of an inning on game point (within 6 of the target;
+        // --game-point changes the window, 0 turns the clutch off).
+        clutchNow:
+          k >= n * 3 &&
+          (rules.scoring === 'total' ||
+            (GAME_POINT > 0 &&
+              Math.max(...Object.values(match)) >= rules.target - GAME_POINT)),
       };
-      const evals = T.plan(ctx);
+      // Matchups without a board-aware seat skip the planner (no decision metrics).
+      const plain = {
+        option: { shot: me.favourite, aim: { x: 0, y: 0 }, kind: 'hole' },
+        value: 0,
+      };
+      const evals = measure || policy === 'tactical' ? T.plan(ctx) : [plain];
       // The best option on an empty board for the same thrower and situation:
       // a board-independent habit (e.g. "aim a touch long"), not a decision.
       const habitKey = `${rules.board}:${me.id}:${seats[seat].card}:${me.sigma}:${ctx.clutchNow}:${next[0]?.sigma ?? '-'}:${next[0] ? seats[order[(k + 1) % n]].card : '-'}`;
-      let habit = HABITS.get(habitKey);
+      let habit = measure ? HABITS.get(habitKey) : plain.option;
       if (!habit) {
         habit = T.plan({ ...ctx, bags: [] })[0].option;
         HABITS.set(habitKey, habit);
@@ -130,6 +149,13 @@ function playMatch({ rules, seats, seed }) {
       const def = evals.find(
         (e) => e.option.shot === me.favourite && e.option.kind === 'hole',
       );
+      // Inning context for guard analysis: am I ahead in this inning's bags?
+      const inningNow = R.bagTotals(ids, bags);
+      const aheadNow =
+        inningNow[me.id] >
+        Math.max(
+          ...ids.filter((id) => id !== me.id).map((id) => inningNow[id]),
+        );
       const choice = policy === 'tactical' ? evals[0].option : def.option;
       const window = R.releaseWindow(
         me.skill[choice.shot],
@@ -180,6 +206,9 @@ function playMatch({ rules, seats, seed }) {
         shot: choice.shot,
         kind: choice.kind,
         perfect: Math.abs(error) <= window,
+        measured: measure,
+        ahead: aheadNow,
+        bagIndex: Math.floor(k / n),
         points: res.landed.points,
         delta,
         tags: res.tags,
@@ -219,6 +248,7 @@ function playMatch({ rules, seats, seed }) {
       round >= rules.maxRounds
     )
       return finish(match);
+    seconds += INNING_BREAK;
     if (scorer) {
       const s = ids.indexOf(scorer);
       order = ids.map((_, i) => (s + i) % n);
@@ -244,29 +274,34 @@ function playMatch({ rules, seats, seed }) {
       seconds,
       leadChanges: changes,
       comeback: winners.length === 1 && half && half !== winners[0],
+      capped:
+        rules.scoring === 'innings' &&
+        Math.max(...Object.values(scores)) < rules.target,
       lastThrower: throws.at(-1).player,
       margin: top - Math.min(...Object.values(scores)),
     };
   }
 }
 
+// The shot tuning before the real-cornhole retune, to compare like with like.
+const V1_TUNE = {
+  LEAD: { flat: 42, slide: 64, roll: 40, airmail: 0 },
+  TRANSFER: { flat: 0.55, slide: 1, roll: 0, airmail: 0 },
+  SCATTER: { flat: 1, slide: 1, roll: 1, airmail: 3 },
+  TUNE: { hopMin: 0.55, hopMax: 0.55, hot: 40, hotShoved: 40, touchdown: 1 },
+};
+const REAL = {
+  board: 'crowded',
+  scoring: 'innings',
+  target: 21,
+  maxRounds: 40,
+};
 const VARIANTS = {
-  shipped: { board: 'classic', scoring: 'total', target: 11, maxRounds: 5 },
-  crowded: { board: 'crowded', scoring: 'total', target: 11, maxRounds: 5 },
-  innings: { board: 'classic', scoring: 'innings', target: 11, maxRounds: 5 },
-  'crowded+innings': {
-    board: 'crowded',
-    scoring: 'innings',
-    target: 11,
-    maxRounds: 5,
-  },
-  // A shorter innings match: first to 7, three rounds at most.
-  'crowded+innings7': {
-    board: 'crowded',
-    scoring: 'innings',
-    target: 7,
-    maxRounds: 3,
-  },
+  shipped: { board: 'classic', scoring: 'total', target: 21, maxRounds: 40 },
+  // Real cornhole: both on one board, cancellation innings to 21.
+  real: REAL,
+  // The same game with the shots tuned as in the first experiment.
+  'real-v1': { ...REAL, tune: V1_TUNE },
 };
 const REGULAR = 0.045; // ~68 ms std. dev.: an attentive casual player
 const SHARP = 0.027; // ~40 ms
@@ -284,16 +319,45 @@ const MATCHUPS = {
     { policy: 'tactical', sigma: SHARP },
     { policy: 'tactical', sigma: REGULAR },
   ],
-  // A new player against the stock AI's timing.
-  'loose-vs-ai': [
+  // A new player (favourite shot at the hole) against each AI. Both AIs have
+  // the shipped AI's timing; the hard one reads the board.
+  'loose-vs-hard': [
     { policy: 'default', sigma: LOOSE },
     { policy: 'tactical', ...STOCK_AI },
   ],
+  'loose-vs-easy': {
+    measure: false,
+    seats: [
+      { policy: 'default', sigma: LOOSE },
+      { policy: 'default', ...STOCK_AI },
+    ],
+  },
+  // An attentive player who has not started reading the board, against each AI.
+  'regular-vs-hard': [
+    { policy: 'default', sigma: REGULAR },
+    { policy: 'tactical', ...STOCK_AI },
+  ],
+  'regular-vs-easy': {
+    measure: false,
+    seats: [
+      { policy: 'default', sigma: REGULAR },
+      { policy: 'default', ...STOCK_AI },
+    ],
+  },
   // Mirror: both regular, both tactical. Pacing, tension, hammer, balance.
   mirror: [
     { policy: 'tactical', sigma: REGULAR },
     { policy: 'tactical', sigma: REGULAR },
   ],
+  // The same games as mirror (same seeds) without the decision metrics:
+  // about three times faster, for balance checks.
+  'mirror-fast': {
+    measure: false,
+    seats: [
+      { policy: 'tactical', sigma: REGULAR },
+      { policy: 'tactical', sigma: REGULAR },
+    ],
+  },
 };
 
 const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
@@ -315,14 +379,28 @@ const entropy = (counts) => {
 };
 
 const ONLY = arg('variants', '');
+const ONLY_MATCHUPS = arg('matchups', '');
 const results = {};
 const started = Date.now();
+// Snapshot the shipped-in tuning so a variant's override never leaks.
+const DEFAULT_TUNE = Object.fromEntries(
+  ['LEAD', 'TRANSFER', 'SCATTER', 'TUNE'].map((k) => [k, { ...R[k] }]),
+);
+const applyTune = (tune = {}) => {
+  for (const k of Object.keys(DEFAULT_TUNE))
+    Object.assign(R[k], DEFAULT_TUNE[k], tune[k] ?? {});
+  HABITS.clear();
+};
 for (const [vname, rules] of Object.entries(VARIANTS)) {
   if (ONLY && !ONLY.split(',').includes(vname)) continue;
+  applyTune(rules.tune);
   results[vname] = {};
-  for (const [mname, pair] of Object.entries(MATCHUPS)) {
+  for (const [mname, spec] of Object.entries(MATCHUPS)) {
+    if (ONLY_MATCHUPS && !ONLY_MATCHUPS.split(',').includes(mname)) continue;
+    const pair = Array.isArray(spec) ? spec : spec.seats,
+      measure = Array.isArray(spec) ? true : spec.measure;
     const games = [];
-    for (let i = 0; i < MATCHES; i++) {
+    for (let i = FROM; i < FROM + MATCHES; i++) {
       // Rotate cards and seats so neither card nor seat biases a matchup.
       const cards = i % 2 ? ['Dan', 'Doug'] : ['Doug', 'Dan'];
       const swap = Math.floor(i / 2) % 2 === 1;
@@ -331,11 +409,19 @@ for (const [vname, rules] of Object.entries(VARIANTS)) {
         card: cards[k],
         side: swap ? 1 - k : k,
       }));
-      const g = playMatch({ rules, seats, seed: `sim:${vname}:${mname}:${i}` });
+      const g = playMatch({
+        rules,
+        seats,
+        measure,
+        seed: `sim:${vname}:${mname === 'mirror-fast' ? 'mirror' : mname}:${i}`,
+      });
       g.seats = seats;
       games.push(g);
     }
     const allThrows = games.flatMap((g) => g.throws);
+    const measured = allThrows.filter((t) => t.measured);
+    const innings = games.map((g) => g.rounds.length || 1);
+    const inningRows = games.flatMap((g) => g.rounds);
     const sideWins = [0, 1].map((side) =>
       mean(
         games.map((g) => {
@@ -384,8 +470,25 @@ for (const [vname, rules] of Object.entries(VARIANTS)) {
       ),
       throwsPerMatch:
         Math.round(mean(games.map((g) => g.throws.length)) * 10) / 10,
-      rounds:
-        Math.round(mean(games.map((g) => g.rounds.length || 1)) * 100) / 100,
+      rounds: Math.round(mean(innings) * 100) / 100,
+      inningsP90: quant(innings, 0.9),
+      inningsMax: Math.max(...innings),
+      capRate: pct(mean(games.map((g) => (g.capped ? 1 : 0)))),
+      cancelledInnings: pct(
+        mean(
+          inningRows.map((r) =>
+            Object.values(r.award).every((v) => v === 0) ? 1 : 0,
+          ),
+        ),
+      ),
+      pointsPerInning:
+        Math.round(
+          mean(
+            inningRows.map((r) =>
+              Object.values(r.award).reduce((a, b) => a + b, 0),
+            ),
+          ) * 100,
+        ) / 100,
       seconds: {
         mean: Math.round(mean(games.map((g) => g.seconds))),
         p90: Math.round(
@@ -415,16 +518,17 @@ for (const [vname, rules] of Object.entries(VARIANTS)) {
       // Meaningful decision: the board in front of the thrower makes some
       // option at least 0.25 points better than what they would throw on an
       // empty board in the same situation.
-      decisionThrows: pct(
-        mean(allThrows.map((t) => (t.boardGap >= 0.25 ? 1 : 0))),
-      ),
-      decisionGapMean:
-        Math.round(mean(allThrows.map((t) => t.boardGap)) * 100) / 100,
+      decisionThrows: measure
+        ? pct(mean(measured.map((t) => (t.boardGap >= 0.25 ? 1 : 0))))
+        : null,
+      decisionGapMean: measure
+        ? Math.round(mean(measured.map((t) => t.boardGap)) * 100) / 100
+        : null,
       // Any improvement at all over "favourite shot at the hole" (includes
       // board-independent habits such as aiming a touch long).
-      overDefaultThrows: pct(
-        mean(allThrows.map((t) => (t.gap >= 0.25 ? 1 : 0))),
-      ),
+      overDefaultThrows: measure
+        ? pct(mean(measured.map((t) => (t.gap >= 0.25 ? 1 : 0))))
+        : null,
       // Close calls: the best two options are within 0.15 points and differ in shot.
       interactionThrows: pct(
         mean(allThrows.map((t) => (t.tags.length ? 1 : 0))),
@@ -432,6 +536,18 @@ for (const [vname, rules] of Object.entries(VARIANTS)) {
       tags: tagCounts,
       tacticalChoices: choiceCounts,
       tacticalChoiceEntropy: Math.round(entropy(choiceCounts) * 100) / 100,
+      // Deliberate guards: per 1,000 board-aware throws, and when they come.
+      guards: (() => {
+        const g = tactical.filter((t) => t.kind === 'guard');
+        return {
+          perThousand:
+            Math.round((g.length / Math.max(1, tactical.length)) * 10000) / 10,
+          count: g.length,
+          whenAhead: pct(mean(g.map((t) => (t.ahead ? 1 : 0)))),
+          onLastTwoBags: pct(mean(g.map((t) => (t.bagIndex >= 2 ? 1 : 0)))),
+          // Did the guard's owner win the inning it was thrown in?
+        };
+      })(),
       boardBagsAtLastThrow:
         Math.round(mean(games.map((g) => g.throws.at(-1).bagsOnBoard)) * 10) /
         10,

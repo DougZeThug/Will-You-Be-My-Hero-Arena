@@ -1,4 +1,4 @@
-# Gameplay experiment: the crowded board
+# Gameplay experiment: real cornhole
 
 **Status: prototype for review. Lab only. Not installed in the player app,
 not merged.** The Phaser build is frozen (bug fixes only, see
@@ -9,9 +9,12 @@ build without an explicit decision.
 ## The question
 
 Play cornhole is the game's signature event, and it is a timing test with
-nothing else to think about. Can the bags already on the board give every
-throw a real decision, without losing the printed-sunset backyard feel or
-the "a Perfect release goes in" promise?
+nothing else to think about. The first pass of this experiment made the bags
+on the board physical and tried backyard scoring. After reviewing it, the
+owner asked for **actual cornhole: games to 21, both players on the same set
+of boards**, plus the follow-ups the first pass recommended (give each shot a
+job, make blockers matter, add an easy AI). This revision does that, and
+measures what it does to decisions, balance and game length.
 
 ## What the audit found (shipped rules, commit `1ca6930`)
 
@@ -23,55 +26,66 @@ simulation (results below):
   release error.
 - **Shot, aim and stance are not decisions.** The landing spot does not depend
   on the shot, so the only real difference between the four shots is the
-  width of the green band. Each card's starting shot is already its widest
-  window, and moving the reticle off the hole only hurts. Stepping
-  along the line just moves the band.
+  width of the green band. Moving the reticle off the hole only hurts.
 - **The board does not matter.** Earlier bags only move if a later bag lands
-  within 26 px of them. In simulation, the board changed the best throw on
-  about 2% of throws.
-- **Opponents barely interact,** and the scores just add up: no cancellation,
-  no hammer. Between evenly matched players a third of matches are draws.
+  within 26 px of them.
+- **The scores just add up:** no cancellation, no last-bag advantage, one
+  round of four bags. Between evenly matched players a third of matches are
+  draws.
+- **Watch is not real cornhole either:** each character throws at their own
+  board in their own lane, and the bag totals add up. Watch replays frozen
+  recordings, so this experiment does not touch it.
 
 What should not change: the printed-sunset look, the cards and likenesses,
 bag colours by team, the shot names and keys, the single hold-and-release
 skill, and the shipped promise that a Perfect release at the hole scores
 three on an open lane.
 
-## The experiment
+## The rules now
 
-Two independent rule switches, so their effects can be separated (a 2×2):
+**One board, both players.** Both throwers pitch from the same end at the
+same board, alternating, four bags each per inning, and the bags already on
+the board are physical. The reticle marks where a bag would come to rest on
+an empty board; sliding shots touch down short of it and slide up the board,
+stopping against any bag in the way and shoving it.
 
-**Crowded board** (`cornholeBoard: 'crowded'`). Bags on the board are
-physical. The reticle now marks where a bag _comes to rest_. Sliding shots
-touch down short of it and slide up the board, stopping against any bag in
-the way and shoving it.
+**Cancellation scoring to 21** (official rules). Each inning only the
+difference between the two inning totals scores: a bag in the hole is 3, on
+the board 1. Whoever scored throws first next inning, so the other player has
+the last bag; if the inning cancels out, the order stays. A card's clutch
+bonus (Dan has one) applies to its last bag of an inning played on game
+point, within 6 of 21: the innings version of the shipped "last bags of the
+match". The first player to
+reach 21 or more at the end of an inning wins (no bust). Between innings
+there is a short switch-ends beat while the inning is counted. A 40-inning
+safety cap ends a game that never gets there (the leader wins); real
+cornhole has none, and the results show how often a game would reach it.
 
-| Shot                | Touches down   | Against a bag in its path                                                                                          |
-| ------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Hole runner** (J) | 42 px short    | stops; the struck bag gets 55% of the remaining slide                                                              |
-| **Slide** (K)       | 64 px short    | stops; the struck bag gets _all_ of it: the knock-in shot, for your own bag or (careful) theirs                    |
-| **Roll** (L)        | 40 px short    | hops the first bag and keeps 55% of its travel: aim it a touch long                                                |
-| **Airmail** (E)     | on the reticle | flies over everything, but with 3× the scatter, so even a Perfect release can rim out (about a third of Doug's do) |
+**The shots, at real distances.** The board art is to scale (about 7.2 px
+per inch: the 6-inch hole is 40 px across), so the touchdown distances are
+real ones.
 
-A bag still sliding fast at the hole's lip (more than 40 px of travel left)
-skates across it, so aiming long is not free. Bags shoved off the back edge
-score nothing. On an open lane, every Perfect release with a sliding shot
-still scores three (tested across the whole window and scatter).
+| Shot (key)          | Touches down          | Against a bag in its path                                                                                                     |
+| ------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Slide** (K)       | ~14 in short (100 px) | a true slider. Whatever it hits takes all of its remaining slide, so it knocks your own bag in, and theirs if you're careless |
+| **Hole runner** (J) | ~6 in short (45 px)   | a soft drop: it lands past a bag sitting mid-board, but barely moves what it hits                                             |
+| **Roll** (L)        | ~9 in short (65 px)   | tumbles over the first bag it meets, keeping 25–75% of its travel: a chaotic answer, not a free one                           |
+| **Airmail** (E)     | on the reticle        | flies over everything, with 3× the scatter, so even a Perfect release can rim out                                             |
 
-**Backyard innings** (`cornholeScoring: 'innings'`). Each round of four bags
-each, only the difference between the best and second-best round totals
-scores. The round winner throws first next round, so the trailing player
-gets the last bag. First to 11 at the end of a round wins; five rounds at
-most.
+A sliding bag still moving fast at the lip skates over the hole; a bag that
+was shoved drops in more readily. Bags shoved off the back score nothing. On
+an open lane, every Perfect release with a sliding shot still scores three
+(tested across the whole window and scatter).
 
-The caption also previews what the selected shot would do with a Perfect
-release at the reticle: "Dan's bag in the way: this knocks it in for them",
-"rolls over your own bag", "too hot: skates over the hole".
+The caption previews what the selected shot would do with a Perfect release
+at the reticle ("Dan's bag in the way: this knocks it in for them", "rolls
+over your own bag", "too hot: skates over the hole").
 
-The board-aware AI (`TacticalPlanner.ts`) chooses a shot and a reticle (on
-the hole, a touch long, or short as a blocker) by a deterministic two-ply
-look-ahead, and keeps the shipped AI's seeded timing error, so it has the
-same hands and better judgement.
+**Two AIs.** Both keep the shipped AI's seeded timing error, so they have
+the same hands. The **easy AI** is the shipped one: its favourite shot at the
+hole, whatever is on the board. The **hard AI** (`TacticalPlanner.ts`) picks
+a shot and a reticle (on the hole, a touch long, or short as a guard) by a
+deterministic two-ply look-ahead.
 
 ## Play it
 
@@ -83,14 +97,14 @@ pnpm lab            # http://127.0.0.1:3010
 Pick a scenario, press **Play**, click the stage. P0 is Doug on keyboard 1
 (A/D move, arrows aim, J/K/L/E shots, hold Space), P1 is Dan.
 
-| Lab scenario               | Board   | Scoring       | Dan's AI    |
-| -------------------------- | ------- | ------------- | ----------- |
-| `keyboard-cornhole`        | shipped | shipped       | shipped     |
-| `cornhole-crowded`         | crowded | bags add up   | board-aware |
-| `cornhole-innings`         | shipped | innings to 11 | shipped     |
-| `cornhole-crowded-innings` | crowded | innings to 11 | board-aware |
+| Lab scenario         | Game                                                                       | Dan's AI |
+| -------------------- | -------------------------------------------------------------------------- | -------- |
+| `keyboard-cornhole`  | shipped: one round, bags add up                                            | shipped  |
+| `cornhole-real`      | real cornhole to 21                                                        | easy     |
+| `cornhole-real-hard` | real cornhole to 21                                                        | hard     |
+| `cornhole-crowded`   | one inning on the crowded board, bags add up (a quick look at the physics) | hard     |
 
-Direct links: `?scenario=cornhole-crowded`, `?scenario=cornhole-crowded-innings`.
+Direct link: `?scenario=cornhole-real`.
 
 ## Isolation
 
@@ -98,10 +112,10 @@ Direct links: `?scenario=cornhole-crowded`, `?scenario=cornhole-crowded-innings`
   which only the Lab's experiment scenarios set. Play setup lists the same
   three events, and `playableEvent('cornhole').create()` is still the shipped
   `PrecisionEvent` (tested).
-- With `cornholeBoard: 'classic'`, `cornholeScoring: 'total'` and
-  `cornholeAI: 'stock'` the prototype reproduces the shipped event's caption
-  and scores on every step for three seeds (tested), so measured differences
-  are the rules and not the copy.
+- With `cornholeBoard: 'classic'`, `cornholeScoring: 'total'` and the easy AI
+  the prototype reproduces the shipped event's caption and scores on every
+  step for three seeds (tested), so measured differences are the rules and
+  not the copy.
 - Shared files touched: `EventRegistry.ts` (the cornhole factory reads the
   options), `ArenaSession.ts` (passes them), `lab/scenarios.ts`,
   `tests/run-tests.mjs`. No art, profiles, recordings, Watch code or
@@ -110,116 +124,173 @@ Direct links: `?scenario=cornhole-crowded`, `?scenario=cornhole-crowded-innings`
 
 ## How it was measured
 
-`node scripts/experiments/cornhole-crowded-sim.mjs --matches 400 [--variants crowded]`
-plays whole matches on the pure rules with the real card stats and seeded
+`node scripts/experiments/cornhole-crowded-sim.mjs --matches N [--variants real] [--matchups mirror]`
+plays whole games on the pure rules with the real card stats and seeded
 throwers whose release error is normally distributed. Two policies:
-**default** (the card's starting shot, at the hole: what the shipped AI and
-most new players do) and **board-aware** (the planner). A _board-dependent
+**default** (the card's starting shot, at the hole: what the easy AI and most
+new players do) and **board-aware** (the planner). A _board-dependent
 decision_ is a throw where the board in front of the thrower makes some
 option at least a quarter point better than what the same thrower would
 throw on an empty board. Habits that do not depend on the board (such as
 "aim a touch long") do not count. Every number below reproduces exactly from
 its seed.
 
-`node scripts/experiments/summarize-sim.mjs work/qa/gameplay-lab/sim-*.json`
+Variants: **shipped** (today's rules), **real** (this revision) and
+**real-v1** (the same game to 21 with the first pass's shot tuning, to show
+what the retune changed).
+
+`node scripts/experiments/summarize-sim.mjs work/qa/gameplay-lab/real/sim-*.json`
 prints the tables.
 
-## Results (400 seeded matches per cell, 8,000 in total)
+## Results
 
-**In short.** The two switches do separate jobs. The crowded board brings the
-decisions: the board now changes the best throw on about 15% of throws
-between even players, and 42% when a new player litters it. Innings brings
-the tension: draws fall from 38% to 10-18%, and lead changes triple. Neither
-switch makes the game harder overall, since the hole rate stays at about 78-80%.
-There are four problems to fix before going further:
+Games per cell: shipped 400 (run in the first pass; those rules have not changed), real-v1 150, real 150 for even players and sharp vs regular, 200 for the rest. Timing models (release error std. dev., power units; 0.0667 ≈ 100 ms): sharp 0.027, regular 0.045, loose 0.075; both AIs' error is modelled as mean -0.048, sd 0.065.
 
-1. **The Slide dominates the Hole runner on an open lane.** Its longer slide
-   forgives early releases, so Doug's planner almost never throws a Hole
-   runner. Give the Slide more pace (it skates the hole sooner) or a narrower
-   window.
-2. **Deliberate guarding never pays.** The planner left a blocker on purpose
-   once in about 10,000 throws. Blockers come from misses. Real cornhole
-   rewards guarding late in a round when ahead, and these rules do not yet.
-3. **The board-aware AI is far too strong for a new player** (7-26% for the
-   new player, against 45% today). Ship an easy AI that keeps its favourite
-   shot, or one that only reads the board after the player has seen a block.
-4. **Innings to 11 almost always runs to the five-round cap** (about 3
-   minutes), because rounds cancel. Three rounds (`crowded+innings7`) keeps
-   most of the tension in 108 s.
+### Even players (both regular timing, both board-aware)
 
-Innings also magnifies timing skill. A sharp player beats a regular one 94%
-of the time, against 73% today, so upsets get rarer.
+|                                                         | shipped   | real-v1         | real            |
+| ------------------------------------------------------- | --------- | --------------- | --------------- |
+| Board-dependent decisions (% of throws)                 | 4.5       | 12.4            | 20              |
+| Mean value of reading the board (points/throw)          | 0.04      | 0.22            | 0.49            |
+| Throws touching another bag (%)                         | 5.1       | 15.3            | 15.3            |
+| Shot-choice entropy (0–1)                               | 0.45      | 0.52            | 0.42            |
+| Hole rate (%)                                           | 80.1      | 78.6            | 76.8            |
+| Perfect releases that scored 3 (%)                      | 97        | 90.5            | 89.8            |
+| Deliberate guards (per 1,000 throws)                    | 0         | 0               | 0               |
+| Draws (%)                                               | 38        | 0               | 1.3             |
+| Innings that cancel out (%)                             | –         | 38.9            | 45              |
+| Points scored per inning                                | –         | 1.46            | 1.23            |
+| Innings per game, mean / p90 / max                      | 1 / 1 / 1 | 23.85 / 31 / 37 | 28.42 / 39 / 40 |
+| Games stopped by the 40-inning cap (%)                  | –         | 0               | 4.7             |
+| Game length, mean / p90 (min)                           | 0.6 / 0.6 | 15.0 / 19.5     | 17.6 / 24.1     |
+| Lead changes per game (counting the inning in progress) | 1.46      | 17.36           | 24.55           |
+| Winner was behind at halfway (%)                        | 5         | 18.7            | 26.7            |
+| Doug / Dan win share (%)                                | 54 / 46   | 78.7 / 21.3     | 38.7 / 61.3     |
 
-Matches per cell: 400. Timing models (release error std. dev., power units; 0.0667 ≈ 100 ms): sharp 0.027, regular 0.045, loose 0.075; the shipped AI's error is modelled as mean -0.048, sd 0.065.
+### Skill expression (win share of the first-named side, draws split; seats and cards rotated)
 
-### Mirror match (both regular timing, both board-aware)
+|                                                        | shipped | real-v1 | real |
+| ------------------------------------------------------ | ------- | ------- | ---- |
+| Board-aware vs favourite-shot-at-the-hole, same timing | 50      | 94      | 100  |
+| Sharp vs regular timing, both board-aware              | 72.9    | –       | 100  |
+| New player (loose, favourite shot) vs easy AI          | 50.2    | –       | 44   |
+| New player vs hard AI                                  | 48.6    | –       | 0    |
+| Regular player (favourite shot) vs easy AI             | 80.4    | –       | 99   |
+| Regular player vs hard AI                              | 77.6    | –       | 7.5  |
 
-|                                                | shipped      | innings         | crowded      | crowded+innings | crowded+innings7 |
-| ---------------------------------------------- | ------------ | --------------- | ------------ | --------------- | ---------------- |
-| Board-dependent decisions (% of throws)        | 4            | 3.3             | 14.8         | 15.3            | 14               |
-| Mean value of reading the board (points/throw) | 0.04         | 0.03            | 0.29         | 0.3             | 0.27             |
-| Throws touching another bag (%)                | 5.2          | 4.5             | 15.7         | 16              | 15.9             |
-| Shot-choice entropy (0–1)                      | 0.43         | 0.43            | 0.57         | 0.56            | 0.56             |
-| Hole rate (%)                                  | 80           | 80.4            | 78           | 77.8            | 78               |
-| Perfect releases that scored 3 (%)             | 97           | 97.5            | 90.4         | 89.2            | 89.3             |
-| Draws (%)                                      | 38.3         | 16.3            | 41.5         | 10.5            | 18.5             |
-| Lead changes per match                         | 1.45         | 4.23            | 1.09         | 4.48            | 2.53             |
-| Winner was behind at halfway (%)               | 5            | 8.5             | 1            | 12.3            | 9.8              |
-| Median final margin                            | 2            | 4               | 2            | 3               | 2                |
-| Thrower of the last bag wins (%)               | 33.3         | 16.5            | 28.5         | 25.5            | 16.5             |
-| Doug / Dan win share (%)                       | 54.1 / 45.9  | 55.4 / 44.6     | 54.3 / 45.8  | 56.3 / 43.8     | 53.5 / 46.5      |
-| Rounds per match                               | 1            | 4.98            | 1            | 4.99            | 2.95             |
-| Match length, mean / p90 / max (s)             | 33 / 34 / 34 | 160 / 162 / 163 | 38 / 38 / 39 | 181 / 184 / 187 | 108 / 111 / 112  |
+### Game length against the AI (min, mean / p90)
 
-### Skill expression (win share, draws split; seats and cards rotated)
+|                  | shipped   | real-v1 | real        |
+| ---------------- | --------- | ------- | ----------- |
+| loose-vs-easy    | 0.6 / 0.6 | –       | 9.8 / 13.5  |
+| loose-vs-hard    | 0.6 / 0.6 | –       | 5.0 / 7.5   |
+| regular-vs-easy  | 0.6 / 0.6 | –       | 8.3 / 12.2  |
+| regular-vs-hard  | 0.6 / 0.6 | –       | 8.6 / 13.7  |
+| sharp-vs-regular | 0.6 / 0.6 | –       | 15.4 / 21.6 |
 
-|                                                        | shipped     | innings     | crowded     | crowded+innings | crowded+innings7 |
-| ------------------------------------------------------ | ----------- | ----------- | ----------- | --------------- | ---------------- |
-| Board-aware vs favourite-shot-at-the-hole, same timing | 49.8 / 50.2 | 51 / 49     | 56.1 / 43.9 | 77 / 23         | 67.6 / 32.4      |
-| Sharp vs regular timing, both board-aware              | 72.9 / 27.1 | 94.3 / 5.8  | 69.8 / 30.3 | 92.5 / 7.5      | 87.4 / 12.6      |
-| New player (loose, default) vs AI-timed board-aware    | 45.5 / 54.5 | 42.1 / 57.9 | 26.3 / 73.8 | 7.5 / 92.5      | 11.8 / 88.3      |
-| Board-dependent decisions in new-player games (%)      | 9.6         | 10.2        | 41.9        | 41.5            | 42.1             |
+### What the board-aware thrower chose (even players)
 
-### What the board-aware thrower chose (mirror)
+- **shipped**: flat:hole 1835, roll:hole 941, slide:hole 155, flat:long 139, slide:long 93, airmail:hole 24, roll:long 11, airmail:long 2. Events: own-push-in 131, gift 35.
+- **real-v1**: roll:long 12097, slide:hole 10441, airmail:hole 3052, slide:long 1718, flat:hole 1225, flat:long 46, roll:hole 37. Events: blocked 2266, own-push-in 1785, hot 1275, hop 980, knock-off 423, skid 406, rim 328, gift 31.
+- **real**: slide:hole 23508, airmail:hole 4691, roll:long 3023, flat:hole 1642, slide:long 857, flat:long 224, roll:hole 158, slide:guard 1. Events: own-push-in 3127, blocked 2953, hop 1192, skid 667, rim 644, hot 487, knock-off 239, gift 4.
 
-- **shipped**: flat:hole 1971, roll:hole 792, slide:hole 188, flat:long 152, slide:long 90, airmail:hole 5, roll:long 2. Events: own-push-in 130, gift 39.
-- **innings**: flat:hole 9788, roll:hole 4017, slide:hole 873, flat:long 826, slide:long 395, airmail:hole 15, roll:long 12, airmail:long 1, slide:guard 1. Events: own-push-in 531, gift 203.
-- **crowded**: roll:long 1191, slide:hole 1121, airmail:hole 385, flat:hole 251, slide:long 240, roll:hole 9, flat:long 3. Events: blocked 264, own-push-in 191, hot 153, hop 85, skid 53, knock-off 52, rim 51, gift 5.
-- **crowded+innings**: roll:long 6075, slide:hole 5588, airmail:hole 1850, flat:hole 1241, slide:long 1155, roll:hole 37, flat:long 21, slide:guard 1. Events: blocked 1434, own-push-in 1008, hot 775, hop 449, knock-off 263, skid 248, rim 214, gift 23.
-- **crowded+innings7**: roll:long 3634, slide:hole 3350, airmail:hole 1045, flat:hole 732, slide:long 642, roll:hole 22, flat:long 15. Events: blocked 834, own-push-in 595, hot 437, hop 303, skid 150, rim 130, knock-off 128, gift 15.
+### Balance check: Dan's clutch
 
-Reproduce: `node scripts/experiments/cornhole-crowded-sim.mjs --matches 400 --variants <name>` for each variant, then `node scripts/experiments/summarize-sim.mjs work/qa/gameplay-lab/sim-*.json`. The run took about 20 minutes on 4 cores.
+The same 150 even games (`--matchups mirror-fast`, same seeds as `mirror`),
+with the innings clutch window changed by `--game-point`:
 
-## What simulation cannot tell us
+| Dan's clutch in innings                       | Doug / Dan win share (%) |
+| --------------------------------------------- | ------------------------ |
+| On game point, within 6 of 21 (the prototype) | 38.7 / 61.3              |
+| Within 3 of 21 (`--game-point 3`)             | 41.3 / 58.7              |
+| No clutch (`--game-point 0`)                  | 42.6 / 57.4              |
 
-These need people with hands on controllers:
+One standard error is about 4 points. A faster probe (800 single innings on
+an empty board, both board-aware, regular timing, alternating who throws
+first) puts Dan's edge at 0.07 ± 0.07 points per inning without the clutch
+and 0.17 ± 0.06 with it on every inning, the same whichever player throws
+first.
 
-1. **Is it readable at speed?** Can a player tell whose bag is blocking, and
-   predict a shove, from the court art alone? The caption preview may be
-   doing work that the picture should do.
-2. **Does the slide look right?** It is a 0.45 s eased glide of the existing
-   sprite, with no tumble, no bag-on-bag contact frame, and nothing for a
-   bag falling off the back. It needs a real-browser review at normal speed.
-3. **Is losing a bag to a blocker fun or unfair?** Simulation says a blocker
-   changes the right answer. Only playtesting says whether that feels clever
-   or cheap.
-4. **Pacing of innings.** About 2–3 minutes a match against 35 s today: is
-   that a feature (a real game) or a drag (practice)?
-5. **AI difficulty.** The board-aware AI beats a new player much more often
-   than the shipped AI does. It may need an easy mode that keeps the
-   favourite shot until the player has seen a block.
-6. **Thinking time.** The model assumes no time pressure; the turn still has
-   no clock.
+## What the results say
 
-A suggested 20-minute playtest: 3 matches of `keyboard-cornhole`, then 3 of
-`cornhole-crowded`, then 2 of `cornhole-crowded-innings`. After each block ask
-"what were you deciding before you pressed Space?" and "which throw do you
-remember?". Count the times the player changes shot unprompted.
+1. **The board is now part of the decision.** On 20% of throws the bags in
+   front of the thrower change the best throw by at least a quarter point
+   (shipped: 4.5%), and reading them is worth about half a point a throw.
+   Over a game to 21 that decides the game: at the same timing, a
+   board-aware player beat a player who throws their favourite shot at the
+   hole in every one of 200 games (shipped: 50%). 15% of throws touch
+   another bag (shipped: 5%).
+2. **Each shot has a job, and the Slide is the everyday shot.** Board-aware
+   throwers slide 71% of the time, airmail 14%, roll 9% and throw the Hole
+   runner 5%. That is close to the backyard, where nearly everyone throws a
+   flat slider and the airmail and roll are answers to a blocked lane. The
+   commonest board events are knocking your own bag in (3,127), being
+   stopped by a bag (2,953), the Roll hopping a bag (1,192), landing on a bag
+   and skidding off it (667), an airmail rimming out (644) and a bag skating over the hole
+   (487). Shot variety fell from the first pass (entropy 0.52 to 0.42): the
+   price of evening out the cards (point 5).
+3. **It plays like cornhole.** Draws are nearly gone (1.3% of even games,
+   all tied at the cap; shipped: 38%). 45% of innings cancel out, an inning
+   is worth 1.2 points on average, and in 27% of games the winner was
+   behind at halfway (shipped: 5%).
+4. **Games to 21 are long.** Between even players a game is 28 innings,
+   about 18 minutes (p90 24), and 4.7% would run past 40 innings. Against
+   either AI it is 5 to 10 minutes. That is cancellation scoring doing what
+   it does in the backyard: even players trade innings. The first pass
+   showed that tighter release windows barely shorten it. If it plays long,
+   the levers are the fixed beats around each throw and the 1.6 s
+   switch-ends, or a quick game to 11 offered alongside 21.
+5. **Card balance is fragile over 21 points.** A long game turns a tiny
+   per-inning edge into a lopsided card split. With the first pass's shot
+   tuning Doug won 79% of even games. Moving the Roll's landing spot to 9
+   inches short and limiting Dan's clutch to game point brought it to 39/61
+   for Dan. The clutch is a small part of what is left (no clutch at all:
+   57% Dan); the rest is how the two cards' stats play on a shared board,
+   Dan's tighter scatter against Doug's wider Slide window. Evening it out
+   needs one more pass, best done after a playtest settles the shot roles,
+   because every shot change moves it.
+6. **The two AIs bracket a regular player.** Against the easy AI a new
+   player (loose timing, favourite shot) wins 44%, close to fair, but a
+   regular player wins 99%. The hard AI beats the new player every game and
+   a regular player who does not read the board 92.5% of the time. Over 21
+   points the better thrower nearly always wins (sharp against regular
+   timing: 100%; shipped: 73%). A middle AI is the next step, for example
+   the planner with looser hands, or one that reads the board only some of
+   the time.
+7. **Guards still do not pay.** The board-aware thrower chose a deliberate
+   short guard once in about 34,000 throws: a short bag is rarely a real
+   obstacle when the Airmail and the Roll go over it. Real cornhole has no
+   rule that rewards a blocker, so none was added.
+
+## What needs people
+
+The simulation cannot say whether this is fun. A first playtest, for three
+or four people, each playing `cornhole-real` and then `cornhole-real-hard`:
+
+- Do the four shots feel different and can you tell why a throw did what it
+  did (the caption and the slide on the board)?
+- Is a game to 21 a good length, or would you quit before the end? Note
+  where attention drops.
+- Does the switch-ends beat read, and is the honours rule (scorer throws
+  first) clear without explanation?
+- After a few games, which shot do you reach for, and do you ever look at
+  the board before choosing?
+
+## Not in this prototype
+
+- **Watch.** Watch still shows each character on their own board in their
+  own lane, adding up their bags. It replays frozen recordings, so making it
+  real cornhole means new recordings and a separate change.
+- **The far board.** Only one board is drawn: the camera always shows the
+  board being thrown at, and switching ends is a beat between innings.
+  Drawing the far board is an art decision.
+- **The other ideas in the first report** (called shots, yard conditions
+  and so on) are not part of this revision.
 
 ## Files
 
 - `lib/arena/engine/events/precision/experiments/CrowdedBoardRules.ts`: the pure rules
 - `lib/arena/engine/events/precision/experiments/TacticalPlanner.ts`: the board-aware planner
 - `lib/arena/engine/events/precision/experiments/CrowdedBoardEvent.ts`: the playable event
-- `tests/experiment-tests.mjs`: isolation, parity, rules, determinism (run by `pnpm test`)
+- `tests/experiment-tests.mjs`: isolation, parity, rules, a full game to 21, determinism (run by `pnpm test`)
 - `scripts/experiments/`: simulation and summary

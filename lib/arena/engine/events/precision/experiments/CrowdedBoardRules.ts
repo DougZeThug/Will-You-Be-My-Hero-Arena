@@ -1,28 +1,36 @@
 /**
  * GAMEPLAY EXPERIMENT (prototype, not installed in the player app).
  *
- * "Crowded board" cornhole rules: bags that are already on the board are
- * physical. A shot that slides travels along the board to the reticle and
- * stops against (and shoves) any bag in its way, so a bag left short of the
- * hole becomes a *blocker*, and each of the four shots gets a distinct job:
+ * Real-cornhole rules for Play: both throwers pitch at the same board from the
+ * same end, and the bags already on it are physical. A sliding shot touches
+ * down short of the reticle (where it would come to rest on an empty board),
+ * slides up the board, and stops against (and shoves) any bag in its way. The
+ * board art is to scale (about 7.2 px per inch: the 6-inch hole is 40 px
+ * across), so the distances below are real ones.
  *
- *   Hole runner  lands short and slides in; a blocker stops it and is shoved.
- *   Slide        lands shorter and slides harder: the push / knock-in shot.
- *   Roll         tumbles over the first bag it meets, losing 45% of its travel
- *                (aim it a little long to make up for it).
+ *   Slide        a true slider: lands about 14 inches short and slides hard.
+ *                Whatever it hits takes all of its remaining slide, so it is
+ *                the shot that knocks your own bag in (and theirs, careful).
+ *   Hole runner  a soft drop: lands about 6 inches short, so it gets past a bag
+ *                sitting mid-board, but it barely moves what it hits.
+ *   Roll         lands about 9 inches short and tumbles over the first bag it
+ *                meets. A tumble is chaotic: it keeps 25-75% of its travel.
  *   Airmail      drops straight onto the reticle over any blocker, but with
  *                3x the scatter, so even a Perfect release can rim out.
  *
  * A sliding bag that still has too much pace as it reaches the hole skates
- * across it, so aiming long is not free.
+ * across it; a shoved bag drops in more readily.
  *
  * With an empty lane and a Perfect release aimed at the hole, every sliding
- * shot still scores three, preserving the shipped contract.
+ * shot still scores three, preserving the shipped contract (tested).
  *
- * Optional "backyard innings" scoring: each round, only the difference between
- * the best and second-best round totals scores; the round winner throws first
- * next round (the trailing player gets the last bag, the hammer); first to the
- * target at the end of a round wins.
+ * "Innings" scoring is real cancellation scoring: in each inning (four bags
+ * each) only the difference between the two inning totals scores. Whoever
+ * scored throws first next inning (if nobody did, the order stays), so the
+ * other player has the last bag. First to 21 or more at the end of an inning
+ * wins (official rules: no bust). A card's clutch bonus applies to its last
+ * bag of an inning played on game point (someone within 6 of the target),
+ * the innings counterpart of the shipped "last bags of the match".
  *
  * Everything here is pure and Phaser-free so simulations can run headless.
  */
@@ -43,16 +51,20 @@ export type ScoringRules = 'total' | 'innings';
 export interface ExperimentRules {
   board: BoardRules;
   scoring: ScoringRules;
-  /** Innings: first to this many points at the end of a round wins. */
+  /** Innings: first to this many points at the end of an inning wins. */
   target: number;
-  /** Innings: hard cap on rounds so a practice match always ends. */
+  /**
+   * Innings: a safety cap on innings so a practice game always ends (the
+   * leader wins). Real cornhole has none; the simulations report how often
+   * a game would reach it.
+   */
   maxRounds: number;
 }
 export const DEFAULT_RULES: ExperimentRules = {
   board: 'crowded',
   scoring: 'total',
-  target: 11,
-  maxRounds: 5,
+  target: 21,
+  maxRounds: 40,
 };
 export function rulesFromOptions(
   options: Record<string, string | number | boolean> = {},
@@ -67,14 +79,14 @@ export function rulesFromOptions(
 
 /** How far before the rest point each shot touches down, along the board (stage px). */
 export const LEAD: Record<Shot, number> = {
-  flat: 42,
-  slide: 64,
-  roll: 40,
+  flat: 45,
+  slide: 100,
+  roll: 65,
   airmail: 0,
 };
 /** Share of the remaining slide a struck bag receives. */
 export const TRANSFER: Record<Shot, number> = {
-  flat: 0.55,
+  flat: 0.4,
   slide: 1,
   roll: 0,
   airmail: 0,
@@ -89,10 +101,28 @@ export const SCATTER: Record<Shot, number> = {
 /** Two resting bags touch when their centres are inside this ellipse (stage px). */
 export const CONTACT = { x: 44, y: 13 };
 export const TUNE = {
-  /** Roll: share of the remaining travel kept after hopping a bag. */
-  rollKeep: 0.55,
+  /**
+   * Roll: share of the remaining travel kept after tumbling over a bag. A
+   * tumble is chaotic, so the share runs from `hopMin` to `hopMax`, picked by
+   * a deterministic hash of where the hop happens (no random draws: the same
+   * throw always resolves the same way).
+   */
+  hopMin: 0.25,
+  hopMax: 0.75,
   /** A sliding bag with more travel than this left as it reaches the hole skates over it. */
   hot: 40,
+  /** The same for a bag that was shoved: it has less spin and drops in more readily. */
+  hotShoved: 80,
+  /**
+   * A thrown bag has landed on a resting bag when their centres touch down
+   * inside this share of the CONTACT ellipse (a glancing touchdown carries on).
+   */
+  touchdown: 0.7,
+};
+/** A deterministic 0..1 hash of a point (for the roll's chaotic hop). */
+const hash01 = (p: Vector) => {
+  const v = Math.sin(p.x * 12.9898 + p.y * 78.233) * 43758.5453;
+  return v - Math.floor(v);
 };
 /** The roll's nudge to the bag it hops. */
 const ROLL_NUDGE = 6,
@@ -126,7 +156,7 @@ export interface Resolution {
   landed: PrecisionBag;
   /** Every bag that moved this throw, in order, for presentation and analysis. */
   motions: Motion[];
-  /** Readable tags: 'blocked', 'push-in', 'own-push-in', 'gift', 'knock-off', 'hop', 'skid', 'rim'. */
+  /** Readable tags: 'blocked', 'own-push-in', 'gift', 'knock-off', 'hop', 'skid', 'rim', 'hot'. */
   tags: string[];
 }
 
@@ -163,8 +193,10 @@ export const fastBagPoints = (() => {
   };
 })();
 
-const touching = (a: Vector, b: Vector) =>
-  ((a.x - b.x) / CONTACT.x) ** 2 + ((a.y - b.y) / CONTACT.y) ** 2 < 1;
+const touching = (a: Vector, b: Vector, scale = 1) =>
+  ((a.x - b.x) / (CONTACT.x * scale)) ** 2 +
+    ((a.y - b.y) / (CONTACT.y * scale)) ** 2 <
+  1;
 
 /**
  * Slide `bag` from its position toward `to`, stopping on the hole, off the
@@ -186,11 +218,26 @@ function slide(
     uy = total ? (to.y - from.y) / total : 0;
   let travelled = 0,
     hot = false;
+  // Only bags near the path can be met (positions do not change until a hit
+  // ends this call), so test those alone at each step.
+  const near = board.filter(
+    (b) =>
+      b !== bag &&
+      b.points === 1 &&
+      !ignore.has(b.id) &&
+      b.x > Math.min(from.x, to.x) - CONTACT.x &&
+      b.x < Math.max(from.x, to.x) + CONTACT.x &&
+      b.y > Math.min(from.y, to.y) - CONTACT.y &&
+      b.y < Math.max(from.y, to.y) + CONTACT.y,
+  );
   for (;;) {
     const p = { x: from.x + ux * travelled, y: from.y + uy * travelled };
     let points = fastBagPoints(p);
     // Too much pace left at the lip: it skates across the opening.
-    if (points === 3 && (hot || total - travelled > TUNE.hot)) {
+    if (
+      points === 3 &&
+      (hot || total - travelled > (depth ? TUNE.hotShoved : TUNE.hot))
+    ) {
       if (!hot) out.tags.push('hot');
       hot = true;
       points = travelled >= total ? 3 : 1;
@@ -204,25 +251,25 @@ function slide(
     // A thrown bag that touches down overlapping a bag has landed on it.
     // After that, only bags ahead of the moving bag can stop it (never the
     // one behind that just shoved it).
-    const hit = board.find(
+    const hit = near.find(
       (b) =>
-        b !== bag &&
-        b.points === 1 &&
-        !ignore.has(b.id) &&
-        ((depth === 0 && travelled === 0) ||
-          (b.x - p.x) * ux + (b.y - p.y) * uy > 0) &&
-        touching(p, b),
+        (((b.x - p.x) * ux + (b.y - p.y) * uy > 0 && touching(p, b)) ||
+          (depth === 0 &&
+            travelled === 0 &&
+            touching(p, b, TUNE.touchdown))),
     );
     if (hit) {
       const remaining = total - travelled;
       if (shot === 'roll' && depth === 0) {
-        // Tumble over it: keep half the remaining travel, nudge it slightly.
+        // Tumble over it: keep a chaotic share of the travel, nudge it slightly.
         out.tags.push('hop');
         ignore.add(hit.id);
         shove(hit, ROLL_NUDGE, board, out, depth + 1, ignore, shot);
         bag.x = p.x;
         bag.y = p.y;
-        const rest = remaining * TUNE.rollKeep;
+        const rest =
+          remaining *
+          (TUNE.hopMin + (TUNE.hopMax - TUNE.hopMin) * hash01(p));
         slide(
           bag,
           { x: p.x + ux * rest, y: p.y + uy * rest },
@@ -468,7 +515,7 @@ export function releaseWindow(
   return 0.02 + skill / 30 + (precision ? 0.015 : 0) + (clutch ? 0.01 : 0);
 }
 
-/** Innings: points awarded this round from each player's round total. */
+/** Cancellation scoring: points awarded for an inning from each player's inning total. */
 export function inningAward(roundTotals: Record<string, number>) {
   const ranked = Object.entries(roundTotals).sort((a, b) => b[1] - a[1]);
   const award: Record<string, number> = Object.fromEntries(
@@ -480,7 +527,7 @@ export function inningAward(roundTotals: Record<string, number>) {
   return award;
 }
 
-/** Round totals from the bags currently resolved. */
+/** Inning totals from the bags currently resolved. */
 export function bagTotals(ids: string[], bags: PrecisionBag[]) {
   return Object.fromEntries(
     ids.map((id) => [

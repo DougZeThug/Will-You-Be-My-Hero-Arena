@@ -1,12 +1,12 @@
 /**
  * GAMEPLAY EXPERIMENT: a deterministic, board-aware shot planner.
  *
- * Used by the experiment's tactical AI and by the headless simulations to
- * measure how much a throw's best choice depends on the board. It is a
- * two-ply expectimax over a small option set: my shot and reticle, integrated
- * over my timing error (Gauss-Hermite nodes, no random draws), then the
- * opponent's best single reply. No randomness, so the same board always gives
- * the same plan.
+ * Used by the experiment's hard AI and by the headless simulations to measure
+ * how much a throw's best choice depends on the board. It is a two-ply
+ * expectimax over a small option set: my shot and reticle, integrated over my
+ * timing error and scatter (fixed quadrature nodes, no random draws), then the
+ * next thrower's best single reply. No randomness, so the same board always
+ * gives the same plan.
  */
 import type { Vector } from '../../../input/InputActions';
 import type { PrecisionBag } from '../PrecisionPhysics';
@@ -125,10 +125,11 @@ export function evaluate(ctx: PlanContext, option: Option, depth = 2): number {
       let outcome: number;
       const reply = ctx.next[0];
       if (depth === 2 && reply) {
-        // The next thrower picks the reply that is best for them.
+        // The next thrower picks the reply that is best for them (a guard
+        // only when someone throws after them).
         let best = -Infinity;
         for (const o of OPTIONS)
-          if (o.kind === 'hole' || ctx.next.length > 1) {
+          if (o.kind !== 'guard' || ctx.next.length > 1) {
             const v = evaluate(
               {
                 board: ctx.board,

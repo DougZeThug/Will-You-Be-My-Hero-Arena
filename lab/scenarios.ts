@@ -127,25 +127,25 @@ export const SCENARIOS: readonly Scenario[] = [
   // GAMEPLAY EXPERIMENT (see docs/experiments/crowded-board/README.md).
   // Lab-only variants of live cornhole; Play setup never offers them.
   define(
+    'cornhole-real',
+    'Experiment · real cornhole to 21',
+    'live',
+    'cornhole',
+    'Real cornhole: both throw at the same board, bags block and get knocked in, and only the difference scores each inning. Whoever scored throws first next inning; first to 21. Slide knocks bags in, Hole runner drops past a mid-board bag, Roll tumbles over one, Airmail flies over with more scatter. P0 keyboard, P1 easy AI (its favourite shot at the hole).',
+  ),
+  define(
+    'cornhole-real-hard',
+    'Experiment · real cornhole to 21, hard AI',
+    'live',
+    'cornhole',
+    'The same game against the board-aware AI: it picks its shot and reticle for the bags on the board, with the same hands as the easy AI.',
+  ),
+  define(
     'cornhole-crowded',
-    'Experiment · cornhole, crowded board',
+    'Experiment · cornhole, one inning on the crowded board',
     'live',
     'cornhole',
-    'Bags block and shove: Hole runner slides in, Slide knocks bags in, Roll hops a blocker, Airmail flies over with more scatter. Aim short to leave a blocker. P0 keyboard, P1 board-aware AI. Four bags each, bags add up.',
-  ),
-  define(
-    'cornhole-innings',
-    'Experiment · cornhole, backyard innings',
-    'live',
-    'cornhole',
-    'Shipped board physics with backyard scoring: each round only the difference scores, the round winner throws first, first to 11 (five rounds at most). P0 keyboard, P1 AI.',
-  ),
-  define(
-    'cornhole-crowded-innings',
-    'Experiment · cornhole, crowded board + innings',
-    'live',
-    'cornhole',
-    'Both experiment rules together: physical bags and blockers, and backyard cancellation scoring to 11. P0 keyboard, P1 board-aware AI.',
+    'A quick look at the board physics: one inning of four bags each, bags add up. P0 keyboard, P1 board-aware AI.',
   ),
   define(
     'running-live',
@@ -253,15 +253,20 @@ export function createRecording(s: Scenario) {
 }
 /** Rule options for the Lab-only gameplay experiments (none for shipped scenarios). */
 export const EXPERIMENT_OPTIONS: Record<string, LiveConfig['options']> = {
-  'cornhole-crowded': { cornholeBoard: 'crowded', cornholeScoring: 'total' },
-  'cornhole-innings': {
-    cornholeBoard: 'classic',
-    cornholeScoring: 'innings',
-    cornholeAI: 'stock',
-  },
-  'cornhole-crowded-innings': {
+  'cornhole-real': {
     cornholeBoard: 'crowded',
     cornholeScoring: 'innings',
+    cornholeAI: 'easy',
+  },
+  'cornhole-real-hard': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'innings',
+    cornholeAI: 'hard',
+  },
+  'cornhole-crowded': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'total',
+    cornholeAI: 'hard',
   },
 };
 export function liveConfig(s: Scenario): LiveConfig {
