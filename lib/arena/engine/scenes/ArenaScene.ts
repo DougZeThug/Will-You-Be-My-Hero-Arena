@@ -11,6 +11,7 @@ import {
 } from '../../match-timeline';
 import { placement, characterDepthScale } from '../../equipment-layout';
 import { previewAttempt } from '../../pose-motion';
+import { registeredManifest } from '../../character-registry';
 import type { ArenaBridge } from '../core/ArenaOptions';
 import { BattleDirector } from '../core/BattleDirector';
 import { createEvent } from '../core/EventDirector';
@@ -557,7 +558,15 @@ export class ArenaScene extends Phaser.Scene {
       clip === 'follow' ||
       clip === 'await'
     ) {
-      const a = previewAttempt(p.sport, p.previewPersonality ?? c.personality),
+      const cardId = c.loaded.asset.cardId,
+        // Same release anchor as live attempts: this character's hand socket.
+        a = previewAttempt(
+          p.sport,
+          p.previewPersonality ?? c.personality,
+          cardById(cardId).asset,
+          p.imported?.find((m) => m.cardId === cardId) ??
+            registeredManifest(cardId),
+        ),
         d: DirectedAction = {
           attemptId: a.id,
           actor: c.actor,

@@ -65,7 +65,11 @@ export class CharacterStage extends Phaser.Scene {
     if (!c) return;
     c.place(640, 625, 1.65);
     if (clip.id.startsWith('throw_')) {
-      const a = previewAttempt('cornhole', c.personality);
+      const a = previewAttempt(
+        'cornhole',
+        c.personality,
+        this.scenario.character!,
+      );
       const d: DirectedAction = {
         attemptId: a.id,
         actor: 0,

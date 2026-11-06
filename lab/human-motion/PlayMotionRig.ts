@@ -104,7 +104,6 @@ export class PlayMotionRig implements CharacterRig {
         gait: this.event === 'running' ? PLAY_GAIT : undefined,
       },
     );
-    this.animator.organicEnabled = !frame.reduced;
     // Ratio to the 371 px Lab reference: motor and stride fitting only.
     const display = scale / this.definition.scale;
     this.motor = new CharacterMotor(motionProfiles[id], {
@@ -157,6 +156,9 @@ export class PlayMotionRig implements CharacterRig {
   drive(frame: RigDriveFrame) {
     if (!this.animator) this.build(frame);
     this.squash = frame.squash;
+    // Reduced motion can flip mid-match: re-read it every drive, not just at
+    // build, so the organic/secondary layer follows the live setting.
+    this.animator!.organicEnabled = !frame.reduced;
     const animator = this.animator!,
       planner = this.planner!,
       motor = this.motor!;
