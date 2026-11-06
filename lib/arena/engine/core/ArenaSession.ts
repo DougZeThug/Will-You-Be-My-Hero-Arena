@@ -90,7 +90,7 @@ export class ArenaSession {
         geometry,
       );
     });
-    this.event = registration.create();
+    this.event = registration.create(config.options);
     this.event.initialize({
       characters: this.characters,
       time: () => this.time,

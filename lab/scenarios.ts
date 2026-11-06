@@ -124,6 +124,29 @@ export const SCENARIOS: readonly Scenario[] = [
     'cornhole',
     'P0 browser gamepad slot 0, P1 AI. Real hardware by default. Virtual input is explicitly opt-in.',
   ),
+  // GAMEPLAY EXPERIMENT (see docs/experiments/crowded-board/README.md).
+  // Lab-only variants of live cornhole; Play setup never offers them.
+  define(
+    'cornhole-real',
+    'Experiment · real cornhole to 21',
+    'live',
+    'cornhole',
+    'Real cornhole: both throw at the same board, bags block and get knocked in, and only the difference scores each inning. Whoever scored throws first next inning; first to 21. Slide knocks bags in, Hole runner drops past a mid-board bag, Roll tumbles over one, Airmail flies over with more scatter. P0 keyboard, P1 easy AI (its favourite shot at the hole).',
+  ),
+  define(
+    'cornhole-real-hard',
+    'Experiment · real cornhole to 21, hard AI',
+    'live',
+    'cornhole',
+    'The same game against the board-aware AI: it picks its shot and reticle for the bags on the board, with the same hands as the easy AI.',
+  ),
+  define(
+    'cornhole-crowded',
+    'Experiment · cornhole, one inning on the crowded board',
+    'live',
+    'cornhole',
+    'A quick look at the board physics: one inning of four bags each, bags add up. P0 keyboard, P1 board-aware AI.',
+  ),
   define(
     'running-live',
     'Running · live',
@@ -228,10 +251,29 @@ export function createRecording(s: Scenario) {
     ],
   };
 }
+/** Rule options for the Lab-only gameplay experiments (none for shipped scenarios). */
+export const EXPERIMENT_OPTIONS: Record<string, LiveConfig['options']> = {
+  'cornhole-real': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'innings',
+    cornholeAI: 'easy',
+  },
+  'cornhole-real-hard': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'innings',
+    cornholeAI: 'hard',
+  },
+  'cornhole-crowded': {
+    cornholeBoard: 'crowded',
+    cornholeScoring: 'total',
+    cornholeAI: 'hard',
+  },
+};
 export function liveConfig(s: Scenario): LiveConfig {
   return {
     event: s.sport,
     seed: s.seed,
+    ...(EXPERIMENT_OPTIONS[s.id] ? { options: EXPERIMENT_OPTIONS[s.id] } : {}),
     players: [
       {
         id: 'p0',

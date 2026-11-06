@@ -1074,6 +1074,8 @@ await (
   await import('./puppet-tests.mjs')
 ).testPuppets({ check, setup, m, s, a, testPack, packs });
 await (await import('./live-tests.mjs')).testLive({ check });
+// Gameplay experiment (Lab-only prototype): isolation, parity, rules, determinism.
+await (await import('./experiment-tests.mjs')).testExperiments({ check });
 await (
   await import('./engine-tests.mjs')
 ).testEngine({ check, setup, m, s, a });
