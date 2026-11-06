@@ -564,7 +564,8 @@ export class ArenaScene extends Phaser.Scene {
           p.sport,
           p.previewPersonality ?? c.personality,
           cardById(cardId).asset,
-          registeredManifest(cardId),
+          p.imported?.find((m) => m.cardId === cardId) ??
+            registeredManifest(cardId),
         ),
         d: DirectedAction = {
           attemptId: a.id,

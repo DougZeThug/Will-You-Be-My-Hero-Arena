@@ -11,7 +11,7 @@ export function characterTimeline(character: string, id: string) {
       manifest(`card-${character}`, character, 'human'),
       `card-${character}`,
     );
-    const attempt = previewAttempt('cornhole', personality),
+    const attempt = previewAttempt('cornhole', personality, character),
       beats = attemptBeats(attempt);
     return {
       kind: 'production-throw' as const,
