@@ -42,6 +42,9 @@ export async function testPersonalities({check,setup,m,s,a}){
   for(const sport of m.SPORTS){
    const attempt=motion.previewAttempt(sport,base);
    check(()=>assert.deepEqual(requiredAttemptFields.filter(k=>!(k in attempt)),[],'previewAttempt returns every required Attempt field: '+sport));
+   for(const asset of ['dan','doug']){const sim=await import('../.test-build/simulation.mjs'),at=motion.previewAttempt(sport,base,asset),live=sim.releasePosition(asset,sport,0);
+    check(()=>assert.deepEqual(at.release,live,`previewAttempt releases from the ${asset} hand socket like live attempts: ${sport}`));
+    check(()=>assert.deepEqual([at.trajectory[0].x,at.trajectory[0].y],[live.x,live.y],`previewAttempt flight starts at the ${asset} palm: ${sport}`));}
    check(()=>assert.equal(typeof attempt.id,'string','previewAttempt.id is a string'));
    check(()=>assert.ok(finiteV3(attempt.target)&&finiteV3(attempt.release)&&finiteV3(attempt.velocity),'previewAttempt target/release/velocity are finite V3: '+sport));
    check(()=>assert.ok(Number.isFinite(attempt.duration)&&attempt.duration>0,'previewAttempt.duration is a positive number: '+sport));
