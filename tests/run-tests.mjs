@@ -1116,6 +1116,9 @@ await (
 await (
   await import('./presentation-reduced-motion-tests.mjs')
 ).testPresentationReducedMotion({ check });
+await (
+  await import('./play-motion-rig-reduced-motion-tests.mjs')
+).testPlayMotionRigReducedMotion({ check });
 checks += await (
   await import('./character-performance.test.mjs')
 ).performanceTests();

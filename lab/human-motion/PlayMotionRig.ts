@@ -155,6 +155,7 @@ export class PlayMotionRig implements CharacterRig {
   }
   drive(frame: RigDriveFrame) {
     if (!this.animator) this.build(frame);
+    this.animator!.organicEnabled = !frame.reduced;
     this.squash = frame.squash;
     // Reduced motion can flip mid-match: re-read it every drive, not just at
     // build, so the organic/secondary layer follows the live setting.
