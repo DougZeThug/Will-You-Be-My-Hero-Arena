@@ -8,7 +8,7 @@ import type { ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
 import { firstImpactTime } from './CornholePresentationTiming';
 import { presentationShot } from './CornholePresentationTiming';
-import { placement } from '../../../equipment-layout';
+import { placement } from '../../../equipment-geometry';
 import { scoreTime } from '../../../match-timeline';
 import { project } from '../../../simulation';
 import { sampleBag } from './CornholePhysics';

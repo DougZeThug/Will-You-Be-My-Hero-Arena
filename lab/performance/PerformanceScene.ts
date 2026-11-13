@@ -16,7 +16,7 @@ import { queueArenaAssets } from '../../lib/arena/engine/scenes/CharacterAssetLo
 import { Equipment } from '../../lib/arena/engine/objects/Equipment';
 import { Projectile } from '../../lib/arena/engine/objects/Projectile';
 import { PerformanceFeedback } from '../../lib/arena/engine/presentation/PerformanceFeedback';
-import { placement } from '../../lib/arena/equipment-layout';
+import { placement } from '../../lib/arena/equipment-geometry';
 import { CornholePerformancePlayback } from '../../lib/arena/engine/events/cornhole/CornholePerformancePlayback';
 import { createRecording, resolveScenario } from '../scenarios';
 import { project, simulate } from '../../lib/arena/simulation';

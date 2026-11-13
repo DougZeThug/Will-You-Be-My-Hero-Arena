@@ -27,7 +27,7 @@ export async function testCornholePresentationSlide({ check }) {
     { firstImpactTime, surfaceTravelSeconds, presentationShot } =
       await import('../.test-build/engine/events/cornhole/CornholePresentationTiming.mjs'),
     { surfacePoint, placement, boardDepthScale } =
-      await import('../.test-build/equipment-layout.mjs'),
+      await import('../.test-build/equipment-geometry.mjs'),
     { boardValue } =
       await import('../.test-build/engine/events/cornhole/CornholeBoard.mjs');
   const fixture = JSON.parse(

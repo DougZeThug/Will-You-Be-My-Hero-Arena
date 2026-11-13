@@ -10,7 +10,7 @@ import type {
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
 import { clamp, type InputFrame } from '../../input/InputActions';
-import { placement, boardDepthScale } from '../../../equipment-layout';
+import { placement, boardDepthScale } from '../../../equipment-geometry';
 import { timingGrade } from '../../input/TimingWindow';
 import { PrecisionActionMap } from './PrecisionActionMap';
 /** The four shots a player can select, with the names the controls use. */

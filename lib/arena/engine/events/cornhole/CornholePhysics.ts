@@ -3,7 +3,7 @@ import {
   surfacePoint,
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
-} from '../../../equipment-layout';
+} from '../../../equipment-geometry';
 import { clamp01, smooth } from '../../../match-timeline';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';

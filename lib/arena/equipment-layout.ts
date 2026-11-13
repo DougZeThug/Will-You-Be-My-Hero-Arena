@@ -1,8 +1,10 @@
+// Simulation-dependent presentation layout. Pure geometry (placement,
+// surfacePoint, depth scales) lives in equipment-geometry and is imported from
+// there directly; this module is the only one that may import simulation.
 import {type V3,type Attempt,type Sport} from './model';
 import {project,pathAt} from './simulation';
 import type {XY} from './equipment-art';
 import {clamp,equipmentDepthScale,surfacePoint} from './equipment-geometry';
-export * from './equipment-geometry';
 // The saved path and score stay immutable. Only presentation interpolates from
 // the exact authored palm to the registered playing surface of the new artwork.
 function landingBlend(a:Attempt,elapsed:number){const air=a.duration-(['board','hole'].includes(a.contact)?.28:0),t=clamp(elapsed/air);return t*t*(3-2*t);}

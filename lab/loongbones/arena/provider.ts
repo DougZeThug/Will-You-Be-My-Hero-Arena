@@ -3,7 +3,7 @@ import type { WeightedRigDefinition } from './RigDefinition';
 import { verifyAssetHash } from './assetHash';
 import { WeightedMatchRig } from './WeightedMatchRig';
 import { sideDefinitions } from '../side-rig/definitions';
-import { boardDepthScale } from '../../../lib/arena/equipment-layout';
+import { boardDepthScale } from '../../../lib/arena/equipment-geometry';
 
 /** Imported only by the internal Lab, never by the player-facing application. */
 export async function verifyRig(definition: WeightedRigDefinition) {

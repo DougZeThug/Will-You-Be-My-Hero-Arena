@@ -702,7 +702,10 @@ check(() => assert.deepEqual(snap.attempts[0].release, snapPoint));
 snapshotSetup.characterAssets[0].frameScale = 1;
 check(() => assert.equal(snap.setup.characterAssets[0].frameScale, 0.55));
 check(() => assert.deepEqual(s.validateRecording(snap), []));
-const visual = await import('../.test-build/equipment-layout.mjs'),
+const visual = {
+    ...(await import('../.test-build/equipment-geometry.mjs')),
+    ...(await import('../.test-build/equipment-layout.mjs')),
+  },
   art = await import('../.test-build/equipment-art.mjs');
 const nearBoard = visual.placement('cornhole', 0),
   farBoard = visual.placement('cornhole', 1);

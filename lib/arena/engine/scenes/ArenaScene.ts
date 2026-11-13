@@ -16,7 +16,8 @@ import {
   attemptLength,
   shownAttempts,
 } from '../../match-timeline';
-import { placement, characterDepthScale } from '../../equipment-layout';
+import { placement } from '../../equipment-geometry';
+import { characterDepthScale } from '../../equipment-layout';
 import { previewAttempt } from '../../pose-motion';
 import { registeredManifest } from '../../character-registry';
 import type { ArenaBridge } from '../core/ArenaOptions';

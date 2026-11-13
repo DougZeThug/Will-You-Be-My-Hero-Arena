@@ -12,6 +12,7 @@ import { CameraManager } from '../camera/CameraManager';
 import { EffectsManager } from '../effects/EffectsManager';
 import {
   createVisualObject,
+  isProjectileVisual,
   type VisualPresentation,
 } from '../objects/VisualObjectRegistry';
 import { equipmentSprite } from '../objects/EquipmentSprite';
@@ -182,9 +183,7 @@ export class LiveArenaScene extends Phaser.Scene {
       event: this.session.config.event as ArenaEventStyle,
       time: this.session.time,
       protectedPoints: view.objects
-        .filter((o) =>
-          ['bag', 'basketball', 'football', 'ping-pong'].includes(o.kind),
-        )
+        .filter((o) => isProjectileVisual(o.kind))
         .map((o) => ({
           x: o.x,
           y: o.y,

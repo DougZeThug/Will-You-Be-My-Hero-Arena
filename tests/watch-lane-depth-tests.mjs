@@ -3,11 +3,10 @@ import assert from 'node:assert/strict';
 // Watch draws the back-lane figure at the equipment's lane depth. That is
 // presentation only: recordings, release points and scoring stay byte-identical.
 export async function testWatchLaneDepth({ check, m, s, a }) {
-  const {
-    characterDepthScale,
-    projectilePerspectiveScale,
-    equipmentDepthScale,
-  } = await import('../.test-build/equipment-layout.mjs');
+  const { characterDepthScale, projectilePerspectiveScale } =
+    await import('../.test-build/equipment-layout.mjs');
+  const { equipmentDepthScale } =
+    await import('../.test-build/equipment-geometry.mjs');
   // recordingHash of each Lab scenario simulated here (no registered custom
   // manifests, so unlike the browser Lab hashes 91cd474d/cd9ac447/a04ad94d),
   // captured before the lane-depth change; the browser spec pins the Lab ones.

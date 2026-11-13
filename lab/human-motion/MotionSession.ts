@@ -17,7 +17,7 @@ import { PrecisionProof } from './events/PrecisionProof';
 import { RunningProof } from './events/RunningProof';
 import { CombatProof } from './events/CombatProof';
 import { kineticRecipes } from '../../lib/arena/engine/motion/KineticChains';
-import { placement, boardDepthScale } from '../../lib/arena/equipment-layout';
+import { placement, boardDepthScale } from '../../lib/arena/equipment-geometry';
 export const proofEvents = {
   cornhole: () => new PrecisionProof('cornhole'),
   basketball: () => new PrecisionProof('basketball'),

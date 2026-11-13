@@ -8,7 +8,7 @@ import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
 import { sampleBag } from './CornholePhysics';
 import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
-import { surfacePoint, boardDepthScale } from '../../../equipment-layout';
+import { surfacePoint, boardDepthScale } from '../../../equipment-geometry';
 export class CornholeEvent implements ArenaEvent {
   readonly sport = 'cornhole' as const;
   private recording?: Recording;

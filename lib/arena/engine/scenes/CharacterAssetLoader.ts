@@ -6,19 +6,7 @@ import puppetAssets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { characterProfile } from '../characters/CharacterRegistry';
 import { ARENA_THEME, BOARD_FINISH } from '../presentation/ArenaTheme';
-export const EQUIPMENT_FILES = [
-  'board',
-  'hoop',
-  'target',
-  'table',
-  'bag-yellow',
-  'bag-teal',
-  'football',
-  'basketball',
-  'ping-pong',
-  'cup-yellow',
-  'cup-orange',
-];
+import { EQUIPMENT_ASSET_DIR, EQUIPMENT_FILES } from '../../sport-stage';
 export interface LoadedCharacter {
   asset: AssetManifest;
   puppet?: PuppetAsset;
@@ -30,9 +18,7 @@ export function queueArenaAssets(scene: Phaser.Scene) {
   for (const name of EQUIPMENT_FILES)
     scene.load.image(
       'equipment:' + name,
-      name === 'board'
-        ? BOARD_FINISH.url
-        : '/assets/equipment/' + name + '.png',
+      name === 'board' ? BOARD_FINISH.url : EQUIPMENT_ASSET_DIR + name + '.png',
     );
 }
 export function queueCharacter(
@@ -50,8 +36,7 @@ export function queueCharacter(
     cardKey = 'card:' + index;
   characterProfile(id, asset);
   scene.load.image(cardKey, resolveCharacterImage(asset.cardImage));
-  if (puppet?.joined)
-    scene.load.image(key, resolveCharacterImage(puppet.url));
+  if (puppet?.joined) scene.load.image(key, resolveCharacterImage(puppet.url));
   else
     for (const [pose, frame] of Object.entries(asset.frames ?? {}))
       scene.load.image(

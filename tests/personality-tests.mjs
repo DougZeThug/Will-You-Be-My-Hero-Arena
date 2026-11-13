@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 export async function testPersonalities({check,setup,m,s,a}){
  const p=await import('../.test-build/personality.mjs'),motion=await import('../.test-build/pose-motion.mjs'),summon=await import('../.test-build/summon-motion.mjs'),timeline=await import('../.test-build/match-timeline.mjs');
- const grounding=await import('../.test-build/grounding.mjs'),equipment=await import('../.test-build/equipment-layout.mjs'),art=await import('../.test-build/equipment-art.mjs');
+ const grounding=await import('../.test-build/grounding.mjs'),equipment=await import('../.test-build/equipment-geometry.mjs'),art=await import('../.test-build/equipment-art.mjs');
  const pixels=new Uint8ClampedArray(80*100*4);for(let y=80;y<94;y++)for(let x=10;x<26;x++)pixels[(y*80+x)*4+3]=255;for(let y=85;y<100;y++)for(let x=53;x<73;x++)pixels[(y*80+x)*4+3]=255;
  const feet=grounding.footContacts(80,100,pixels,[40,100],.6);
  check(()=>assert.deepEqual(feet.map(f=>f.y),[-3.5999999999999996,0],'Sole contacts preserve the two actual foot heights in a stance'));

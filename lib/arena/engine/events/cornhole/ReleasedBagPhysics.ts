@@ -15,7 +15,7 @@ import {
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
   placement,
-} from '../../../equipment-layout';
+} from '../../../equipment-geometry';
 import { clamp01, smooth } from '../../../match-timeline';
 import { isDirectShot, surfaceTravelSeconds } from './CornholePresentationTiming';
 import type { BagInteraction } from './CornholeBoard';
@@ -25,7 +25,7 @@ import {
   velocityStretch,
 } from '../../motion/SquashStretch';
 
-/** Court projection: vertical render pixels per metre (see equipment-layout). */
+/** Court projection: vertical render pixels per metre (see equipment-geometry). */
 const COURT_PX_PER_METRE_Y = 78;
 const quintic = (u: number) => u * u * u * (10 - 15 * u + 6 * u * u);
 /** Longest presented board slide, in screen px. */

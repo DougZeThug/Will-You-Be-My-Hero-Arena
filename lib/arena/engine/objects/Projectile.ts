@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import type { Sport } from '../../model';
-import { PROJECTILE_WIDTH, BAG_FLIGHT_FLATTEN } from '../../equipment-layout';
+import { SPORT_STAGE, projectileTexture } from '../../sport-stage';
 import { placeInLayer } from './placeInLayer';
 import type { ProjectileFrame } from '../events/ArenaEvent';
 export class Projectile {
@@ -16,14 +16,7 @@ export class Projectile {
     readonly sport: Sport,
     readonly actor: number,
   ) {
-    const key =
-      sport === 'cornhole'
-        ? actor
-          ? 'bag-teal'
-          : 'bag-yellow'
-        : sport === 'pong'
-          ? 'ping-pong'
-          : sport;
+    const key = projectileTexture(sport, actor);
     this.shadow = scene.add.ellipse(0, 0, 30, 8, 0x171912, 0.16).setDepth(14);
     this.sprite = scene.add.image(0, 0, 'equipment:' + key).setDepth(60);
     this.hide();
@@ -48,8 +41,7 @@ export class Projectile {
         angle,
         alpha: 1,
         scale,
-        flatten:
-          flatten ?? (this.sport === 'cornhole' ? BAG_FLIGHT_FLATTEN : 1),
+        flatten: flatten ?? SPORT_STAGE[this.sport].projectile.flatten,
         ground: { x, y },
       },
       false,
@@ -100,7 +92,7 @@ export class Projectile {
       x: frame.x,
       y: frame.y,
       angle: frame.angle,
-      scale: (PROJECTILE_WIDTH[this.sport] / this.sprite.width) * frame.scale,
+      scale: (SPORT_STAGE[this.sport].projectile.width / this.sprite.width) * frame.scale,
     });
     this.sprite
       .setPosition(x, y)

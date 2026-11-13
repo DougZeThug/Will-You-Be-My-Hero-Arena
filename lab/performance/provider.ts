@@ -1,7 +1,7 @@
 import type { CharacterRigProvider } from '../../lib/arena/engine/characters/CharacterRig';
 import { CharacterPerformanceController } from '../../lib/arena/engine/performance/CharacterPerformanceController';
 import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
-import { boardDepthScale } from '../../lib/arena/equipment-layout';
+import { boardDepthScale } from '../../lib/arena/equipment-geometry';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';
 import { SIDE_RIG_SOCKETS } from '../loongbones/arena/sideRigSockets';

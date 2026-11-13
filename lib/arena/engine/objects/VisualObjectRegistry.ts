@@ -1,6 +1,6 @@
 import type * as Phaser from 'phaser';
 import type { VisualObject } from '../core/LiveTypes';
-import { PROJECTILE_WIDTH, BAG_FLIGHT_FLATTEN } from '../../equipment-layout';
+import { SPORT_STAGE } from '../../sport-stage';
 import { placeInLayer } from './placeInLayer';
 
 export interface VisualPresentation {
@@ -14,12 +14,20 @@ type VisualFactory = (
   team: number,
 ) => VisualPresentation;
 const factories = new Map<string, VisualFactory>();
-/** Event modules register their own equipment renderers without editing the scene. */
-export function registerVisualObject(kind: string, factory: VisualFactory) {
+const projectileKinds = new Set<string>();
+/** Event modules register their own equipment renderers without editing the scene.
+ * `projectile` marks a thrown object the HUD keeps clear of its overlay. */
+export function registerVisualObject(
+  kind: string,
+  factory: VisualFactory,
+  options: { projectile?: boolean } = {},
+) {
   if (factories.has(kind))
     throw Error('Visual object already registered: ' + kind);
   factories.set(kind, factory);
+  if (options.projectile) projectileKinds.add(kind);
 }
+export const isProjectileVisual = (kind: string) => projectileKinds.has(kind);
 export function createVisualObject(
   scene: Phaser.Scene,
   object: VisualObject,
@@ -31,40 +39,45 @@ export function createVisualObject(
   return factory(scene, object, team);
 }
 
-registerVisualObject('bag', (scene, _object, team) => {
-  const sprite = scene.add
-    .image(
-      0,
-      0,
-      'equipment:' + (team % 2 ? 'bag-teal' : 'bag-yellow'),
-      '__BASE',
-    )
-    .setScale(1)
-    .setDepth(1300);
-  return {
-    setVisible: (visible) => {
-      sprite.setVisible(visible);
-    },
-    setLayer: (layer) => {
-      if (sprite.parentContainer === layer) return;
-      if (sprite.parentContainer) sprite.parentContainer.remove(sprite);
-      if (layer) layer.add(sprite);
-      else scene.add.existing(sprite);
-    },
-    update: (o) => {
-      const { x, y, angle, scale } = placeInLayer(sprite, {
-        x: o.x,
-        y: o.y,
-        angle: o.angle ?? 0,
-        scale: PROJECTILE_WIDTH.cornhole / sprite.width,
-      });
-      sprite
-        .setPosition(x, y)
-        .setRotation(angle)
-        .setScale(scale, scale * (o.flatten ?? BAG_FLIGHT_FLATTEN));
-    },
-  };
-});
+registerVisualObject(
+  'bag',
+  (scene, _object, team) => {
+    const bag = SPORT_STAGE.cornhole.projectile;
+    const sprite = scene.add
+      .image(
+        0,
+        0,
+        'equipment:' + (team % 2 ? 'bag-teal' : 'bag-yellow'),
+        '__BASE',
+      )
+      .setScale(1)
+      .setDepth(1300);
+    return {
+      setVisible: (visible) => {
+        sprite.setVisible(visible);
+      },
+      setLayer: (layer) => {
+        if (sprite.parentContainer === layer) return;
+        if (sprite.parentContainer) sprite.parentContainer.remove(sprite);
+        if (layer) layer.add(sprite);
+        else scene.add.existing(sprite);
+      },
+      update: (o) => {
+        const { x, y, angle, scale } = placeInLayer(sprite, {
+          x: o.x,
+          y: o.y,
+          angle: o.angle ?? 0,
+          scale: bag.width / sprite.width,
+        });
+        sprite
+          .setPosition(x, y)
+          .setRotation(angle)
+          .setScale(scale, scale * (o.flatten ?? bag.flatten));
+      },
+    };
+  },
+  { projectile: true },
+);
 registerVisualObject('finish', (scene) => {
   const g = scene.add.graphics();
   for (let x = 0; x < 2; x++)

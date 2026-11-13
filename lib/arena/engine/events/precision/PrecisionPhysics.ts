@@ -3,7 +3,7 @@ import {
   artPoint,
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
-} from '../../../equipment-layout';
+} from '../../../equipment-geometry';
 import { EQUIPMENT_ART } from '../../../equipment-art';
 import type { Vector } from '../../input/InputActions';
 import { HOLE_HALF, overHoleOpening } from '../../../board-geometry';

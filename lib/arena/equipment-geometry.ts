@@ -2,23 +2,18 @@ import { type Sport, type V3 } from './model';
 import { boardSurfaceY, laneZ } from './board-geometry';
 import { clamp01 } from './math';
 import { EQUIPMENT_ART as ART, type XY, type Quad } from './equipment-art';
+import { SPORT_STAGE, EQUIPMENT_GROUND, laneGroundY } from './sport-stage';
 
 // Pure layout geometry intentionally has no simulation/timeline dependency.
 // Match timing imports surfacePoint while simulation imports match timing.
-// Opaque source soles, excluding the transparent padding around each image.
-export const EQUIPMENT_GROUND = {
-  board: 673,
-  hoop: 667,
-  target: 616,
-  table: 528,
-} as const;
+export { EQUIPMENT_GROUND };
 export const PROJECTILE_WIDTH = {
-  cornhole: 60,
-  football: 64,
-  basketball: 46,
-  pong: 20,
+  cornhole: SPORT_STAGE.cornhole.projectile.width,
+  football: SPORT_STAGE.football.projectile.width,
+  basketball: SPORT_STAGE.basketball.projectile.width,
+  pong: SPORT_STAGE.pong.projectile.width,
 } as const;
-export const BAG_FLIGHT_FLATTEN = 0.68;
+export const BAG_FLIGHT_FLATTEN = SPORT_STAGE.cornhole.projectile.flatten;
 export const boardDepthScale = (actor: number) => (actor === 1 ? 0.7 : 1);
 export const equipmentDepthScale = (sport: Sport, actor: number) =>
   sport === 'cornhole' ? boardDepthScale(actor) : actor === 1 ? 0.78 : 1;
@@ -67,35 +62,19 @@ export function placement(
   y: number;
   anchor: XY;
 } {
-  const name =
-    sport === 'cornhole'
-      ? 'board'
-      : sport === 'basketball'
-        ? 'hoop'
-        : sport === 'football'
-          ? 'target'
-          : 'table';
+  const stage = SPORT_STAGE[sport],
+    name = stage.equipment;
   const art = ART[name];
   const scale =
-    (name === 'board'
-      ? 360 / art.width
-      : name === 'hoop'
-        ? 355 / art.height
-        : name === 'target'
-          ? 310 / art.height
-          : 300 / art.width) * equipmentDepthScale(sport, actor);
+    (stage.size.px / art[stage.size.axis]) * equipmentDepthScale(sport, actor);
   const anchor =
-    name === 'board'
-      ? ART.board.hole
-      : name === 'hoop'
-        ? ART.hoop.rim
-        : name === 'target'
-          ? ART.target.center
-          : quadPoint(ART.table.plane, 0.55, 0.5);
-  const ground = 622 - actor * 133,
+    'plane' in stage.anchor
+      ? quadPoint(stage.anchor.plane, stage.anchor.u, stage.anchor.v)
+      : stage.anchor;
+  const ground = laneGroundY(actor),
     sourceGround = EQUIPMENT_GROUND[name];
   const destination = {
-    x: (name === 'board' ? 980 : 925) + actor * (name === 'board' ? 165 : 180),
+    x: stage.anchorX.origin + actor * stage.anchorX.perActor,
     y: ground - (sourceGround - anchor.y) * scale,
   };
   return {
@@ -113,42 +92,47 @@ export function artPoint(sport: Sport, actor: number, p: XY) {
 export function surfacePoint(sport: Sport, actor: number, p: V3): XY {
   const lane = laneZ(actor),
     a = placement(sport, actor),
-    dz = p.z - lane;
-  if (sport === 'cornhole') {
-    const u = register((p.x - 8) / 1.9, 1.2 / 1.9, holeUV.u),
-      v = register((dz + 0.52) / 1.04, 0.5, holeUV.v),
+    dz = p.z - lane,
+    s = SPORT_STAGE[sport].surface;
+  if (s.kind === 'board') {
+    const u = register((p.x - s.x0) / s.xSpan, s.xHole / s.xSpan, holeUV.u),
+      v = register((dz + s.zOffset) / s.zSpan, s.zHole, holeUV.v),
       q = artPoint(sport, actor, quadPoint(ART.board.plane, u, v));
-    return { x: q.x, y: q.y - (p.y - boardSurfaceY(p.x)) * 78 };
+    return { x: q.x, y: q.y - (p.y - boardSurfaceY(p.x)) * s.lift };
   }
-  if (sport === 'football') {
-    const dy = p.y - 2,
+  if (s.kind === 'rings') {
+    const dy = p.y - s.centerY,
       d = Math.hypot(dz, dy);
     if (d < 1e-8) return a.anchor;
     const radius = (axis: 'x' | 'y') =>
-      d <= 0.25
-        ? (d / 0.25) * ART.target.inner[axis]
-        : d <= 0.58
+      d <= s.inner
+        ? (d / s.inner) * ART.target.inner[axis]
+        : d <= s.middle
           ? ART.target.inner[axis] +
-            ((d - 0.25) / 0.33) *
+            ((d - s.inner) / s.innerSpan) *
               (ART.target.middle[axis] - ART.target.inner[axis])
           : ART.target.middle[axis] +
-            ((d - 0.58) / 0.47) *
+            ((d - s.middle) / s.outerSpan) *
               (ART.target.outer[axis] - ART.target.middle[axis]);
     return {
       x: a.anchor.x + (dz / d) * radius('x') * a.scale,
       y: a.anchor.y - (dy / d) * radius('y') * a.scale,
     };
   }
-  if (sport === 'pong') {
+  if (s.kind === 'table') {
     const q = artPoint(
       sport,
       actor,
-      quadPoint(ART.table.plane, (p.x - 7.9) / 1.75, (dz + 0.72) / 1.44),
+      quadPoint(
+        ART.table.plane,
+        (p.x - s.x0) / s.xSpan,
+        (dz + s.zOffset) / s.zSpan,
+      ),
     );
-    return { x: q.x, y: q.y - (p.y - 0.8) * 120 };
+    return { x: q.x, y: q.y - (p.y - s.y0) * s.lift };
   }
   return {
-    x: a.anchor.x + (p.x - 8.8) * 110 + dz * 55,
-    y: a.anchor.y - dz * 38 - (p.y - 2.9) * 78,
+    x: a.anchor.x + (p.x - s.x0) * s.xScale + dz * s.zToX,
+    y: a.anchor.y - dz * s.zToY - (p.y - s.y0) * s.yScale,
   };
 }

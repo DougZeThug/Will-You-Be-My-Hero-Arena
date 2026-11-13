@@ -1,5 +1,5 @@
 import type { Vec2 } from '../../motion/MotionTypes';
-import { artPoint, placement, quadPoint } from '../../../equipment-layout';
+import { artPoint, placement, quadPoint } from '../../../equipment-geometry';
 import { EQUIPMENT_ART } from '../../../equipment-art';
 
 export interface BagContact {

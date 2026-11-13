@@ -4,6 +4,12 @@ import {
   EVENT_PRESENTATION,
   type ArenaEventStyle,
 } from './ArenaTheme';
+import {
+  SPORT_STAGE,
+  LANE_ACCENT_INSET,
+  LANE_GUIDE_X,
+  laneGroundY,
+} from '../../sport-stage';
 /** Sparse world-space paint and signage over baked light. No shaders, new clocks or physics. */
 export class ArenaEnvironment {
   private decor: Phaser.GameObjects.Container;
@@ -68,9 +74,8 @@ export class ArenaEnvironment {
       g.lineStyle(1, ink, 0.22).strokeEllipse(640, 590, 766, 182);
     } else {
       for (const lane of [0, 1]) {
-        const y = lane ? 487 : 620,
-          start = lane ? 510 : 200,
-          end = lane ? 1170 : 1040;
+        const y = laneGroundY(lane) - LANE_ACCENT_INSET,
+          { start, end } = LANE_GUIDE_X[lane];
         g.lineStyle(2, ink, lane ? 0.12 : 0.2).lineBetween(
           start - 35,
           y + 8,
@@ -80,13 +85,32 @@ export class ArenaEnvironment {
         for (let x = start + 90; x < end - 60; x += 95)
           g.lineBetween(x, y + 12, Math.min(x + 26, end), y + 12);
       }
-      if (event === 'basketball')
-        g.lineStyle(2, T.cream, 0.18).strokeEllipse(935, 604, 340, 100);
-      if (event === 'football')
-        for (let x = 580; x < 900; x += 100)
-          g.lineStyle(1, T.cream, 0.15).lineBetween(x, 520, x - 25, 655);
-      if (event === 'pong')
-        g.lineStyle(2, T.cream, 0.15).strokeRoundedRect(660, 493, 540, 158, 12);
+      const court = SPORT_STAGE[event].court;
+      if (court?.kind === 'ring')
+        g.lineStyle(
+          court.stroke.width,
+          T.cream,
+          court.stroke.alpha,
+        ).strokeEllipse(court.x, court.y, court.width, court.height);
+      if (court?.kind === 'yard-lines')
+        for (let x = court.from; x < court.to; x += court.step)
+          g.lineStyle(
+            court.stroke.width,
+            T.cream,
+            court.stroke.alpha,
+          ).lineBetween(x, court.top, x - court.lean, court.bottom);
+      if (court?.kind === 'table')
+        g.lineStyle(
+          court.stroke.width,
+          T.cream,
+          court.stroke.alpha,
+        ).strokeRoundedRect(
+          court.x,
+          court.y,
+          court.width,
+          court.height,
+          court.radius,
+        );
     }
   }
   setVisible(visible: boolean) {

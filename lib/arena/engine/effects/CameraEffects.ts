@@ -1,7 +1,7 @@
 import type * as Phaser from 'phaser';
 import type {DirectedAction} from '../core/BattlePlan';
 import type {Attempt} from '../../model';
-import {surfacePoint} from '../../equipment-layout';
+import {surfacePoint} from '../../equipment-geometry';
 import {firstImpactTime,presentationShot} from '../events/cornhole/CornholePresentationTiming';
 /** Stateless camera emphasis (seek-safe): a quick punch-in toward the impact,
  * bigger for scores and holes, plus the rare clutch shake. Presentation only. */

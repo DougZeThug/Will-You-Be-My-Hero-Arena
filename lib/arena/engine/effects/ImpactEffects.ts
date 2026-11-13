@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import {surfacePoint} from '../../equipment-layout';
+import {surfacePoint} from '../../equipment-geometry';
 import type {Attempt} from '../../model';
 /** Ring tints for a bag contact: scored (gold) and missed (orange). Watch and Play share them. */
 export const CONTACT_GOLD=0xffce25,CONTACT_MISS=0xe79959;

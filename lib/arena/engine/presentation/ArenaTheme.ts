@@ -1,3 +1,4 @@
+import { EQUIPMENT_ASSET_DIR } from '../../sport-stage';
 /** Shared presentation data. It never decides scores, attempts, contacts or input. */
 export const ARENA_THEME = {
   ink: 0x111b20,
@@ -62,10 +63,8 @@ export const bounded = (n: number, max = 1) =>
  * Source hole measured by an ellipse fit to the dark interior (see presentation QA).
  */
 export const BOARD_FINISH = {
-  url: '/assets/equipment/board-finish-v2.png',
+  url: EQUIPMENT_ASSET_DIR + 'board-finish-v2.png',
   width: 2170,
   height: 725,
   hole: { x: 1744.4, y: 202.405 },
-  canonicalWidth: 2206,
-  canonicalHeight: 713,
 } as const;
