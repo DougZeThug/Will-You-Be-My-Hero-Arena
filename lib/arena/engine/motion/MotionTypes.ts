@@ -1,11 +1,7 @@
-import { clamp } from '../../math';
-import {
-  motionSignatures,
-  type CharacterMotionSignature,
-} from './CharacterMotionSignature';
+import type { CharacterId } from '../characters/CharacterIds';
+import type { CharacterMotionSignature } from './CharacterMotionSignature';
 export type Vec2 = { x: number; y: number };
-/** The two playable characters; keys per-character motion data. */
-export type CharacterId = 'dan' | 'doug';
+export type { CharacterId };
 export type MotionPhase =
   | 'settle'
   | 'anticipation'
@@ -104,58 +100,3 @@ export interface MotionProfile {
     phase: number;
   };
 }
-export const motionProfiles: Record<CharacterId, MotionProfile> = {
-  dan: {
-    signature: motionSignatures.dan,
-    id: 'dan',
-    handedness: 'right',
-    heightInches: 68,
-    acceleration: 340,
-    deceleration: 460,
-    turnAcceleration: 560,
-    topSpeed: 215,
-    strideScale: 1,
-    cadence: 1 / 1.025,
-    gazeLimit: 0.055,
-    secondaryGain: 0.00006,
-    idle: 'idle_breathe',
-    success: 'quiet_nod',
-    failure: 'reset_nod',
-    performance: {
-      looseness: 0.28,
-      postureStability: 0.9,
-      gestureEnergy: 0.5,
-      recoverySpeed: 1.18,
-      breathPeriod: 4.3,
-      phase: 0.7,
-    },
-  },
-  doug: {
-    signature: motionSignatures.doug,
-    id: 'doug',
-    handedness: 'right',
-    heightInches: 68,
-    acceleration: 430,
-    deceleration: 390,
-    turnAcceleration: 520,
-    topSpeed: 225,
-    strideScale: 1.02,
-    cadence: 1 / 0.975,
-    gazeLimit: 0.075,
-    secondaryGain: 0.00008,
-    idle: 'weight_shift',
-    success: 'celebrate_open_hand',
-    failure: 'inspect_hand',
-    performance: {
-      looseness: 0.72,
-      postureStability: 0.7,
-      gestureEnergy: 0.74,
-      recoverySpeed: 0.88,
-      breathPeriod: 3.8,
-      phase: 2.4,
-    },
-  },
-};
-export { clamp };
-export const approach = (a: number, b: number, max: number) =>
-  a + clamp(b - a, -max, max);

@@ -13,7 +13,7 @@ import type {
   MotionMarker,
   CharacterId,
 } from '../../lib/arena/engine/motion/MotionTypes';
-import { motionProfiles } from '../../lib/arena/engine/motion/MotionTypes';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 /** Derived clips preserve the approved atlas; these are authoring proofs, not editor exports. */
 export function buildMotionLibrary(
   id: CharacterId,

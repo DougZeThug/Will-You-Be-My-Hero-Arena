@@ -6,6 +6,7 @@ import {
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import type { MotionClip } from '../../lib/arena/engine/motion/MotionTypes';
 import { NATIVE_LIMITS } from '../../lib/arena/engine/performance/NativeLimits';
+import { PERFORMANCE_CLIPS as CLIP } from '../../lib/arena/engine/performance/ClipNames';
 import { bakeOverlap } from '../../lib/arena/engine/motion/OverlapSprings';
 import {
   scalarTrack,
@@ -280,7 +281,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
   // Alive idle: breath, a weight shift and a glance, looped seamlessly.
   const idleEnergy = 0.6 + p.idleEnergy;
   pose(
-    'idle',
+    CLIP.idle,
     3.8,
     [
       [0, neutral],
@@ -332,7 +333,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
   const tracking = { ...attentive, weightX: p.restShift + 16, gaze: -2.2 };
   const background = { layer: 'base' as const, priority: 0, fade: 0.32 };
   pose(
-    'observePrepare',
+    CLIP.observePrepare,
     0.7,
     [
       [0, neutral],
@@ -341,7 +342,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     background,
   );
   pose(
-    'observeFlight',
+    CLIP.observeFlight,
     0.65,
     [
       [0, attentive],
@@ -351,7 +352,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     background,
   );
   pose(
-    'observeAcknowledge',
+    CLIP.observeAcknowledge,
     0.85,
     [
       [0, tracking],
@@ -369,19 +370,19 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     background,
   );
   // Notice flows straight into the take's opening pose (no dwell).
-  pose('look', 0.28 + (1 - p.confidence) * 0.18, [
+  pose(CLIP.look, 0.28 + (1 - p.confidence) * 0.18, [
     [0, { ...neutral, elbow: -6 }],
     [0.55, { ...ready, compression: (neutral.compression + ready.compression) / 2 }],
     [1, ready],
   ]);
   // Standalone settle action (the throw carries its own settle beat).
-  pose('settle', 0.34, [
+  pose(CLIP.settle, 0.34, [
     [0, neutral],
     [1, ready],
   ]);
   const markerAt = (name: string) =>
     Math.round((take.markers[name] ?? 0) * endFrames) / 60;
-  emit('underhand', take, {
+  emit(CLIP.underhand, take, {
     markers: [
       { name: 'anticipate', at: markerAt('anticipate') },
       { name: 'windup', at: markerAt('windup') },
@@ -405,7 +406,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     58,
   );
   pose(
-    'watch',
+    CLIP.watch,
     1.6,
     [
       [0, finish],
@@ -427,7 +428,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     },
     60,
   );
-  pose('positive', p.celebration === 'chestTap' ? 0.25 : 0.3, [
+  pose(CLIP.positive, p.celebration === 'chestTap' ? 0.25 : 0.3, [
     [0, watch],
     [
       0.55,
@@ -439,7 +440,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     [1, response],
   ]);
   const negativeEnd = wrist({ ...response, elbow: -12, gaze: 3 }, 60);
-  pose('negative', 0.46, [
+  pose(CLIP.negative, 0.46, [
     [0, watch],
     [
       0.35,
@@ -496,13 +497,13 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
       ],
       { fade: 0.18 },
     );
-  recovery('recoverWatch', watch);
-  recovery('recoverPositive', response);
-  recovery('recoverNegative', negativeEnd);
-  recovery('recoverRest', rest);
+  recovery(CLIP.recoverWatch, watch);
+  recovery(CLIP.recoverPositive, response);
+  recovery(CLIP.recoverNegative, negativeEnd);
+  recovery(CLIP.recoverRest, rest);
   // Compatibility for callers that request a standalone return-to-idle action.
-  recovery('recover', rest);
-  pose('nod', 0.9, [
+  recovery(CLIP.recover, rest);
+  pose(CLIP.nod, 0.9, [
     [0, response],
     [0.14, { ...response, gaze: -2, chest: 0.6 }],
     [
@@ -539,7 +540,7 @@ export function compilePerformance(p: PerformanceProfile): CompiledPerformance {
     chest: 2.4,
   };
   pose(
-    'chestTap',
+    CLIP.chestTap,
     1.08,
     [
       [0, response],

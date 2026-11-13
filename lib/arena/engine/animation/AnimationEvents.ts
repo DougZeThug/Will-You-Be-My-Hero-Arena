@@ -1,4 +1,4 @@
-export type AnimationMarker =
+export type GameplayMarkerName =
   | 'release'
   | 'contact'
   | 'hitboxOn'
@@ -16,7 +16,7 @@ export type AnimationMarker =
   | 'cancelWindow'
   | 'animationComplete';
 export interface ClipMarker {
-  name: AnimationMarker;
+  name: GameplayMarkerName;
   at: number;
   data?: string;
 }

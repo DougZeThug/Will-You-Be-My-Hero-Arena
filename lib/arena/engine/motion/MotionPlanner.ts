@@ -1,6 +1,7 @@
 import { smoothstep } from '../../math';
 import { AnimationGraph } from './AnimationGraph';
-import { clamp, type MotionClip, type MotionProfile } from './MotionTypes';
+import type { MotionClip, MotionProfile } from './MotionTypes';
+import { clamp } from '../../math';
 import {
   PLANT_TURN_SPEED,
   type CharacterMotor,

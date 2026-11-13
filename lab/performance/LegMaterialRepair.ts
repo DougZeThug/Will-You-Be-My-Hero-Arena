@@ -1,5 +1,6 @@
 import { smooth } from './math';
 import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
+import { isCharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
@@ -24,7 +25,7 @@ const LEG_SPLIT_X = 550;
  * does. Bind positions, UVs and topology are unchanged; only this private
  * runtime copy's weights are derived. Returns the reweighted vertex count. */
 export function followShortsToThighs(id: string, arm: WeightedArmature) {
-  if (id !== 'dan' && id !== 'doug') return 0;
+  if (!isCharacterId(id)) return 0;
   const index = (name: string) => arm.bone.findIndex((b) => b.name === name);
   const pelvis = index('pelvis'),
     near = index('thigh_L'),

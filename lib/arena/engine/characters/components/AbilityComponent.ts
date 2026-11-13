@@ -5,6 +5,10 @@ export interface AbilityDefinition {
   cooldown: number;
   cost: number;
   tags: string[];
+  /** Granted to a character whose profile lists no abilities. */
+  byDefault?: boolean;
+  /** Scales the length of the owner's throw clips (below 1 = quicker). */
+  throwDurationScale?: number;
 }
 const definitions = new Map<string, AbilityDefinition>();
 for (const a of [
@@ -15,6 +19,7 @@ for (const a of [
     cooldown: 10,
     cost: 15,
     tags: ['accuracy'],
+    byDefault: true,
   },
   {
     id: 'burstSprint',
@@ -23,6 +28,7 @@ for (const a of [
     cooldown: 7,
     cost: 18,
     tags: ['speed'],
+    byDefault: true,
   },
   {
     id: 'powerStrike',
@@ -31,19 +37,32 @@ for (const a of [
     cooldown: 6,
     cost: 15,
     tags: ['attack'],
+    byDefault: true,
   },
   ...['clutchPerformer', 'quickRelease', 'ironStamina', 'comebackKid'].map(
-    (id) => ({
+    (id): AbilityDefinition => ({
       id,
       kind: 'passive' as const,
       duration: 0,
       cooldown: 0,
       cost: 0,
       tags: [id],
+      ...(id === 'quickRelease' ? { throwDurationScale: 0.9 } : {}),
     }),
   ),
-])
+] satisfies AbilityDefinition[])
   definitions.set(a.id, a);
+/** The abilities of a character whose profile lists none. */
+export function defaultAbilities() {
+  return [...definitions.values()].filter((a) => a.byDefault).map((a) => a.id);
+}
+/** Combined throw-clip length scale of a set of owned abilities. */
+export function throwDurationScale(owned: readonly string[] = []) {
+  let scale = 1;
+  for (const id of new Set(owned))
+    scale *= definitions.get(id)?.throwDurationScale ?? 1;
+  return scale;
+}
 export class AbilityComponent {
   private ready = new Map<string, number>();
   private active = new Map<string, number>();

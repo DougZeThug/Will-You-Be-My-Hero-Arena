@@ -1,4 +1,4 @@
-import { clamp } from './MotionTypes';
+import { clamp } from '../../math';
 export interface RecoveryPose {
   handHeight: number;
   chestPitch: number;

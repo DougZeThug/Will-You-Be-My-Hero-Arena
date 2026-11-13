@@ -1,3 +1,4 @@
+import type { Vec2 } from '../../motion/MotionTypes';
 /** Authoring landmarks, not a replacement animation runtime or a Spine export.
  * Coordinates are character-local pixels, +Y down, ground at zero.
  * L/R preserve Arena's image-left/image-right convention. */
@@ -32,8 +33,7 @@ export const JOINTS = [
   'toe_R',
 ] as const;
 export type AnatomicalJoint = (typeof JOINTS)[number];
-export type Point = { x: number; y: number };
-export type LandmarkPose = Record<AnatomicalJoint, Point>;
+export type LandmarkPose = Record<AnatomicalJoint, Vec2>;
 export const PARENTS: Partial<Record<AnatomicalJoint, AnatomicalJoint>> = {
   pelvis: 'root',
   spine_lower: 'pelvis',
@@ -76,13 +76,13 @@ export interface AnatomyPlan {
   sockets: Record<string, AnatomicalJoint>;
   notes: string[];
 }
-const midpoint = (a: Point, b: Point): Point => ({
+const midpoint = (a: Vec2, b: Vec2): Vec2 => ({
   x: (a.x + b.x) / 2,
   y: (a.y + b.y) / 2,
 });
 /** A design proxy for projected mass, not a biomechanical measurement or force simulation. */
 export function balanceEstimate(p: LandmarkPose) {
-  const samples: [Point, number][] = [
+  const samples: [Vec2, number][] = [
     [p.head, 0.08],
     [midpoint(p.chest, p.spine_lower), 0.38],
     [p.pelvis, 0.16],
@@ -93,7 +93,7 @@ export function balanceEstimate(p: LandmarkPose) {
           [midpoint(p[`elbow_${side}`], p[`wrist_${side}`]), 0.025],
           [midpoint(p[`hip_${side}`], p[`knee_${side}`]), 0.1],
           [midpoint(p[`knee_${side}`], p[`ankle_${side}`]), 0.04],
-        ] as [Point, number][],
+        ] as [Vec2, number][],
     ),
   ];
   const total = samples.reduce((sum, [, weight]) => sum + weight, 0);

@@ -1,4 +1,5 @@
-import { clamp, type MotionClip } from './MotionTypes';
+import type { MotionClip } from './MotionTypes';
+import { clamp } from '../../math';
 export interface StrideFit {
   clip: string;
   speed: number;

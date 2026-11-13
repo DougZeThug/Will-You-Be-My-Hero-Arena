@@ -9,7 +9,7 @@ export async function testOrganicMotion({ check }) {
   const { matchRecovery } =
     await import('../.test-build/engine/motion/RecoveryMatcher.mjs');
   const { motionProfiles } =
-    await import('../.test-build/engine/motion/MotionTypes.mjs');
+    await import('../.test-build/engine/motion/MotionProfiles.mjs');
   const { MotionCurves } =
     await import('../.test-build/engine/motion/MotionCurves.mjs');
   const values = [30, 60, 120].map((hz) => {

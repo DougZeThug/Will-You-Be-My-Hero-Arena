@@ -1,8 +1,8 @@
 import type {
   AnatomicalJoint,
   LandmarkPose,
-  Point,
 } from '../../lib/arena/engine/characters/anatomy/AnatomyPlan';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 
 /** The user's 2026-09-12 full-body illustration is the proportion authority.
  * ImageGen cleaned its background; the renderer applies uniform scale only.
@@ -20,7 +20,7 @@ export const DAN_SOURCE = {
   origin: { x: 404, y: 1918 },
 } as const;
 
-function sourceToLocal(p: Point): Point {
+function sourceToLocal(p: Vec2): Vec2 {
   return {
     x: (p.x - DAN_SOURCE.origin.x) * DAN_SOURCE.scale,
     y: (p.y - DAN_SOURCE.origin.y) * DAN_SOURCE.scale,

@@ -1,3 +1,4 @@
+import { NATIVE_LIMITS } from './NativeLimits';
 /** Shipped performance take contract: `arena-performance-take-v1`.
  *
  * One file per character and technique. Authored takes and future motion
@@ -58,7 +59,8 @@ export interface PerformanceTake {
 }
 /** Authored pre-overlap hand intent. The compiler adds wrist/chest lag, then
  * enforces the native hand_L limit on every baked frame. */
-const TAKE_WRIST_LIMITS = [-35, 95] as const;
+/** The wrist (hand) range the rig's own native limits allow. */
+const TAKE_WRIST_LIMITS = NATIVE_LIMITS.hand_L;
 const FRAME = 1 / 60;
 
 export function validateTake(input: unknown): PerformanceTake {

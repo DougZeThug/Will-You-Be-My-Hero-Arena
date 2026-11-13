@@ -8,10 +8,8 @@ import {
   landingEvents,
 } from '../../lib/arena/engine/motion/GaitEvents';
 import { CharacterMotor } from '../../lib/arena/engine/movement/CharacterMotor';
-import {
-  motionProfiles,
-  type MotionEvent,
-} from '../../lib/arena/engine/motion/MotionTypes';
+import type { MotionEvent } from '../../lib/arena/engine/motion/MotionTypes';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import type {
   CharacterRig,
   RigDriveFrame,

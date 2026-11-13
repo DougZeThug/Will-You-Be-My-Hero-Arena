@@ -18,7 +18,7 @@ import {
   OrganicMotion,
   PERFORMANCE_BONES,
 } from '../../lib/arena/engine/motion/OrganicMotion';
-import { motionProfiles } from '../../lib/arena/engine/motion/MotionTypes';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import { InertialPose } from './InertialPose';
 import { anatomy, scaleToReference } from '../loongbones/side-rig/anatomy';
 import {
@@ -44,12 +44,12 @@ import {
   supportCompression,
   type SupportedLeg,
 } from '../../lib/arena/engine/motion/SupportAdjustment';
-import {
-  clamp,
-  type MotionEvent,
-  type Vec2,
-  type MotionPose,
+import type {
+  MotionEvent,
+  Vec2,
+  MotionPose,
 } from '../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../lib/arena/math';
 const layers = { base: 0, action: 1, gaze: 2, personality: 3, reaction: 4 };
 /** Native fades persist across ticks. No reset/gotoAndStop in normal playback. */
 export class NativeAnimator {

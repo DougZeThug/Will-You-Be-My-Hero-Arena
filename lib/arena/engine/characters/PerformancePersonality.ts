@@ -1,3 +1,4 @@
+import type { CharacterId } from './CharacterIds';
 export type Emotion =
   | 'successSmall'
   | 'successMedium'
@@ -19,7 +20,7 @@ export interface PerformancePersonality {
   perception: number;
 }
 export const performancePersonalities: Record<
-  'dan' | 'doug',
+  CharacterId,
   PerformancePersonality
 > = {
   dan: {

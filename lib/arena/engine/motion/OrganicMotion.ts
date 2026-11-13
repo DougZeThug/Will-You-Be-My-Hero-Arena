@@ -4,14 +4,14 @@ import {
 } from './KineticChains';
 import { DampedMotion } from './DampedMotion';
 import { bodyBalance, type BalanceState } from './BodyBalance';
-import {
-  clamp,
-  type MotionClip,
-  type MotionPose,
-  type MotionProfile,
-  type Vec2,
+import type {
+  MotionClip,
+  MotionPose,
+  MotionProfile,
+  Vec2,
 } from './MotionTypes';
-export interface PerformanceState {
+import { clamp } from '../../math';
+export interface OrganicState {
   clip: MotionClip;
   time: number;
   rate: number;
@@ -64,7 +64,7 @@ function curve(keys: [number, number][], t: number) {
     (u3 - u2) * slope(i + 1) * h
   );
 }
-function driveAt(s: PerformanceState, t: number) {
+function driveAt(s: OrganicState, t: number) {
   const c = s.clip,
     technique = c.technique;
   if (!technique) return 0;
@@ -92,7 +92,7 @@ function driveAt(s: PerformanceState, t: number) {
 /** Bounded performance over authored motion. No limb lengths, skin weights or game results change. */
 export class OrganicMotion {
   private channels = new Map<string, DampedMotion>();
-  private previousState?: PerformanceState;
+  private previousState?: OrganicState;
   private gaze = new DampedMotion();
   private impact = new DampedMotion();
   private balance?: BalanceState;
@@ -125,7 +125,7 @@ export class OrganicMotion {
     return this.channels.get(name)!.update(target, dt, settle, damping);
   }
   update(input: {
-    state?: PerformanceState;
+    state?: OrganicState;
     pose: MotionPose;
     dt: number;
     time: number;

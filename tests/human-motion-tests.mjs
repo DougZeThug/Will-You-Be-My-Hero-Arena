@@ -3,7 +3,7 @@ export async function testHumanMotion({ check }) {
   const { CharacterMotor } =
     await import('../.test-build/engine/movement/CharacterMotor.mjs');
   const { motionProfiles } =
-    await import('../.test-build/engine/motion/MotionTypes.mjs');
+    await import('../.test-build/engine/motion/MotionProfiles.mjs');
   const { AnimationGraph } =
     await import('../.test-build/engine/motion/AnimationGraph.mjs');
   const { FootLock } =

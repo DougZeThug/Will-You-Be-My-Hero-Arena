@@ -1,4 +1,5 @@
-import { clamp, type MotionPose } from './MotionTypes';
+import type { MotionPose } from './MotionTypes';
+import { clamp } from '../../math';
 export interface BalanceState {
   supportSide: 'right' | 'left' | 'airborne';
   weightBias: number;

@@ -6,9 +6,10 @@ import {
   ActionTimeline,
   type ClipMarker,
 } from '../../animation/AnimationEvents';
-import { semanticClip, REQUIRED_CLIP_MARKERS } from '../../animation/LiveClips';
+import { semanticClip, resolveGameplayClip } from '../../animation/LiveClips';
 import { splineMotion } from '../../animation/SplineMotion';
 import { blendLayer } from '../../animation/LayerMixer';
+import { throwDurationScale } from './AbilityComponent';
 import type { CharacterProfile } from '../CharacterProfile';
 /** Ground speed (px/s) at which each gait clip plays at its authored cadence. */
 const GAIT_SPEEDS: Record<string, number> = {
@@ -36,22 +37,14 @@ export class AnimationComponent {
     private geometry?: PuppetAsset,
   ) {}
   resolve(id: string) {
-    const alias = this.profile.gameplay?.animations?.[id] ?? id;
     try {
-      const clip = semanticClip(alias);
+      const { clip, rejected } = resolveGameplayClip(this.profile, id);
       // Defense in depth: a `gameplay.animations` alias that replaces a
       // clip requiring a specific marker (cornhole's throw clips wait for
       // `release`) with a markerless clip would wedge the event relying on
       // it. Fall back to the canonical clip so the engine keeps
       // progressing; `validateProfile` reports the bad alias at install.
-      const required = REQUIRED_CLIP_MARKERS[id];
-      if (
-        required &&
-        alias !== id &&
-        !required.every((name) => clip.markers.some((m) => m.name === name))
-      )
-        return semanticClip(id);
-      return clip;
+      return clip && !rejected ? clip : semanticClip(id);
     } catch {
       return semanticClip(id);
     }
@@ -72,9 +65,8 @@ export class AnimationComponent {
     this.blendTime = 0.12;
     duration ??=
       clip.duration *
-      (clip.category === 'throw' &&
-      this.profile.gameplay?.abilities?.includes('quickRelease')
-        ? 0.9
+      (clip.category === 'throw'
+        ? throwDurationScale(this.profile.gameplay?.abilities)
         : 1);
     this.timeline.start(
       clip.id,

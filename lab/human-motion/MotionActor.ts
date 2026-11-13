@@ -9,11 +9,11 @@ import {
   gaitStartEvents,
   landingEvents,
 } from '../../lib/arena/engine/motion/GaitEvents';
-import {
-  motionProfiles,
-  type Vec2,
-  type CharacterId,
+import type {
+  Vec2,
+  CharacterId,
 } from '../../lib/arena/engine/motion/MotionTypes';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import { AttachmentManager } from '../../lib/arena/engine/equipment/AttachmentManager';
 import { PropPerformance } from '../../lib/arena/engine/equipment/PropPerformance';
 import { PerformanceTimeline } from '../../lib/arena/engine/motion/PerformanceTimeline';

@@ -1,5 +1,6 @@
 import type { PerformanceAction, PerformanceProfile } from './PerformanceTypes';
 import { underhandMechanics } from './BodyMechanics';
+import { PERFORMANCE_CLIPS as CLIP } from './ClipNames';
 
 /** Sport supplies an action name. These reusable beats supply body intent. */
 export function performanceActions(
@@ -26,7 +27,7 @@ export function performanceActions(
         segments: [
           {
             state: 'notice',
-            clip: 'look',
+            clip: CLIP.look,
             duration: 0.28 + (1 - profile.confidence) * 0.18,
             interruptible: true,
           },
@@ -34,18 +35,18 @@ export function performanceActions(
           // swing without a separate clip (and its stop) in between.
           {
             state: 'settle',
-            clip: 'underhand',
+            clip: CLIP.underhand,
             phases: throwPhases,
           },
           {
             state: 'watchTarget',
-            clip: 'watch',
+            clip: CLIP.watch,
             waitForResult: true,
             interruptible: true,
           },
           {
             state: 'recover',
-            clip: 'recover',
+            clip: CLIP.recover,
             interruptible: true,
           },
         ],
@@ -64,19 +65,19 @@ export function performanceActions(
         segments: [
           {
             state: 'anticipate',
-            clip: 'underhand',
+            clip: CLIP.underhand,
             phases: throwPhases.slice(1),
             cancellableBeforeRelease: true,
           },
           {
             state: 'watchTarget',
-            clip: 'watch',
+            clip: CLIP.watch,
             waitForResult: true,
             interruptible: true,
           },
           {
             state: 'recover',
-            clip: 'recover',
+            clip: CLIP.recover,
             interruptible: true,
           },
         ],
@@ -88,7 +89,12 @@ export function performanceActions(
         name: 'look',
         priority: 1,
         segments: [
-          { state: 'notice', clip: 'look', duration: 0.8, interruptible: true },
+          {
+            state: 'notice',
+            clip: CLIP.look,
+            duration: 0.8,
+            interruptible: true,
+          },
         ],
       },
     ],
@@ -100,7 +106,7 @@ export function performanceActions(
         segments: [
           {
             state: 'settle',
-            clip: 'settle',
+            clip: CLIP.settle,
             duration: 0.5,
             interruptible: true,
           },
@@ -120,7 +126,7 @@ export function performanceActions(
           },
           {
             state: 'recover',
-            clip: 'recover',
+            clip: CLIP.recover,
             interruptible: true,
           },
         ],
@@ -134,7 +140,7 @@ export function performanceActions(
         segments: [
           {
             state: 'recover',
-            clip: 'recover',
+            clip: CLIP.recover,
             interruptible: true,
           },
         ],

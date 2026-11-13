@@ -1,4 +1,5 @@
-import { clamp, type MotionEvent } from './MotionTypes';
+import type { MotionEvent } from './MotionTypes';
+import { clamp } from '../../math';
 import type { CharacterMotor } from '../movement/CharacterMotor';
 /** Contact-driven start/stop response around the measured gait, without changing motor velocity. */
 export class GaitResponse {

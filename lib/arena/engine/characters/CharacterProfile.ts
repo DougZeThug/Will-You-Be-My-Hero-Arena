@@ -1,26 +1,37 @@
 import '../animation/LiveClips';
-import { REQUIRED_CLIP_MARKERS } from '../animation/LiveClips';
-import type { AnimationCategory, ShotStyle } from '../animation/AnimationTypes';
+import { resolveGameplayClip } from '../animation/LiveClips';
+import {
+  ANIMATION_CATEGORIES,
+  type AnimationCategory,
+  type ShotStyle,
+} from '../animation/AnimationTypes';
 import type { Choreography } from '../../puppet-motion';
 import {
   animations,
   animation,
   SHOT_STYLES,
 } from '../animation/AnimationRegistry';
+export interface GameplayProfile {
+  core?: Record<string, number>;
+  events?: Record<string, Record<string, number>>;
+  abilities?: string[];
+  animations?: Record<string, string>;
+}
+export const PERSONALITY_KEYS = [
+  'confidence',
+  'showmanship',
+  'intensity',
+  'calmness',
+  'humor',
+  'patience',
+  'resilience',
+  'sociability',
+] as const;
 export interface CharacterProfile {
   id: string;
   version: 1;
   name: string;
-  personality: {
-    confidence: number;
-    showmanship: number;
-    intensity: number;
-    calmness: number;
-    humor: number;
-    patience: number;
-    resilience: number;
-    sociability: number;
-  };
+  personality: Record<(typeof PERSONALITY_KEYS)[number], number>;
   throwingStyle: {
     speed: number;
     flatness: number;
@@ -37,7 +48,7 @@ export interface CharacterProfile {
   overrides?: Record<string, Choreography>;
   /** Rejected by portable-pack validation; Spine rigs are not supported. */
   rig?: unknown;
-  gameplay?: import('./components/CharacterStats').GameplayProfile;
+  gameplay?: GameplayProfile;
 }
 export function validateProfile(input: unknown) {
   const errors: string[] = [];
@@ -49,16 +60,7 @@ export function validateProfile(input: unknown) {
     errors.push('A version 1 character id is required.');
   if (typeof p.name !== 'string' || !p.name.trim() || p.name.length > 80)
     errors.push('name must be a non-empty string of at most 80 characters.');
-  for (const name of [
-    'confidence',
-    'showmanship',
-    'intensity',
-    'calmness',
-    'humor',
-    'patience',
-    'resilience',
-    'sociability',
-  ] as const) {
+  for (const name of PERSONALITY_KEYS) {
     const value = p.personality?.[name];
     if (!Number.isFinite(value) || value < 0 || value > 1)
       errors.push(`${name} must be between 0 and 1.`);
@@ -83,16 +85,7 @@ export function validateProfile(input: unknown) {
     errors.push('Unknown or invalid shot tendency.');
   for (const [category, pool] of Object.entries(p.pools ?? {}))
     if (
-      ![
-        'idle',
-        'locomotion',
-        'entrance',
-        'ritual',
-        'throw',
-        'celebration',
-        'reaction',
-        'interaction',
-      ].includes(category) ||
+      !(ANIMATION_CATEGORIES as readonly string[]).includes(category) ||
       !Array.isArray(pool) ||
       !pool.length ||
       pool.some((id) => typeof id !== 'string' || !ids.has(id))
@@ -199,18 +192,10 @@ export function validateProfile(input: unknown) {
       // to the canonical clip at runtime as defense in depth.
       const bad: string[] = [];
       for (const [id, target] of Object.entries(g.animations)) {
-        const required = REQUIRED_CLIP_MARKERS[id];
-        if (!required) continue;
-        let clip;
-        try {
-          clip = animation(target);
-        } catch {
-          // Unknown targets are caught at runtime by `AnimationComponent.resolve`
-          // (which falls back to the canonical clip), so they do not need a
-          // hard error here; only marker-lacking registered clips do.
-          continue;
-        }
-        if (!required.every((n) => clip.markers.some((m) => m.name === n)))
+        // Unknown targets are caught at runtime by `AnimationComponent.resolve`
+        // (which falls back to the canonical clip), so they do not need a
+        // hard error here; only marker-lacking registered clips do.
+        if (resolveGameplayClip(p, id, animation).rejected)
           bad.push(`${id} -> ${target}`);
       }
       if (bad.length)

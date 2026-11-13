@@ -10,7 +10,10 @@ import type { Vector } from '../input/InputActions';
 import { AnimationComponent } from './components/AnimationComponent';
 import { PersonalityComponent } from './components/PersonalityComponent';
 import { CharacterStats } from './components/CharacterStats';
-import { AbilityComponent } from './components/AbilityComponent';
+import {
+  AbilityComponent,
+  defaultAbilities,
+} from './components/AbilityComponent';
 import type { ClipMarker } from '../animation/AnimationEvents';
 /** Contact of a precision (cornhole) throw: hole, board or miss. */
 export type ThrowContact = 'hole' | 'board' | 'miss';
@@ -59,11 +62,7 @@ export class ArenaCharacter implements ControllableEntity {
     this.personality = new PersonalityComponent(profile, random);
     this.stats = new CharacterStats(profile);
     this.abilities = new AbilityComponent(
-      profile.gameplay?.abilities ?? [
-        'precisionMode',
-        'burstSprint',
-        'powerStrike',
-      ],
+      profile.gameplay?.abilities ?? defaultAbilities(),
     );
     this.animation.idle = this.personality.choose('idle');
   }

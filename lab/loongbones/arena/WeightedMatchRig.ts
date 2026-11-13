@@ -31,6 +31,7 @@ const SOCKETS: Record<SocketName, string> = {
 /** Main-Lab adapter for verified weighted character definitions. No paper pose is applied
  * to this mesh. Authored bones/weights/IK are sampled by the recording clock. */
 export class WeightedMatchRig implements AuthoredCharacterRig {
+  readonly authored = true;
   readonly continuousThrow = true;
   readonly backend = 'loongbones-weighted';
   /** weightedMatchProvider bakes the lane depth into scale, shadow and sockets. */

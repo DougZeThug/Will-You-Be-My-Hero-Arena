@@ -36,6 +36,7 @@ import type {
   CharacterAnimationRuntime,
   PerformanceProfile,
 } from '../../lib/arena/engine/performance/PerformanceTypes';
+import { PERFORMANCE_CLIPS as CLIP } from '../../lib/arena/engine/performance/ClipNames';
 import {
   compilePerformance,
   installShippedPerformanceClips,
@@ -102,6 +103,9 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private trail: { t: number; x: number; y: number; revision: number }[] = [];
   /** Presentation-only: disables squash & stretch (reduced motion). */
   reducedMotion = false;
+  setReducedMotion(reduced: boolean) {
+    this.reducedMotion = reduced;
+  }
   private warnings = new Set<string>();
   private contactError = 0;
   private starts = 0;
@@ -519,7 +523,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     const pulses: SquashPulse[] = [];
     const markerTime = (name: string) =>
       action?.clip.markers.find((m) => m.name === name)?.at;
-    if (action?.clip.id === 'underhand') {
+    if (action?.clip.id === CLIP.underhand) {
       const release = markerTime('equipmentRelease'),
         finish = markerTime('finish'),
         peak = markerTime('windupPeak');
@@ -529,13 +533,13 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         pulses.push({ at: release - 0.03, amount: 0.055, settle: 0.3 });
       if (finish !== undefined)
         pulses.push({ at: finish - 0.06, amount: -0.05, settle: 0.34 });
-    } else if (action?.clip.id === 'chestTap') {
+    } else if (action?.clip.id === CLIP.chestTap) {
       for (const m of action.clip.markers)
         if (m.name.startsWith('chestTapContact'))
           pulses.push({ at: m.at, amount: -0.03, settle: 0.22 });
-    } else if (action?.clip.id === 'nod')
+    } else if (action?.clip.id === CLIP.nod)
       pulses.push({ at: action.clip.duration * 0.34, amount: -0.03, settle: 0.3 });
-    else if (action?.clip.id === 'negative')
+    else if (action?.clip.id === CLIP.negative)
       pulses.push({ at: action.clip.duration * 0.35, amount: -0.04, settle: 0.3 });
     this.squash =
       action && !this.reducedMotion ? squashOffset(pulses, action.time) : 0;
@@ -549,7 +553,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     // shape in the hand and leaves it without a size jump.
     this.heldObjectLayer.setScale(1 / squash.x, 1 / squash.y);
     this.contactError = 0;
-    if (action?.clip.id === 'chestTap') {
+    if (action?.clip.id === CLIP.chestTap) {
       const influence = chestContactWeight(
         action.time,
         action.clip.markers
@@ -588,14 +592,14 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       (m) => m.name === 'equipmentRelease',
     )?.at;
     const exposure =
-      action?.clip.id === 'underhand' &&
+      action?.clip.id === CLIP.underhand &&
       releaseAt !== undefined &&
       action.time >= releaseAt - 0.07 &&
       action.time < releaseAt + 0.32
         ? 'releaseHand'
         : held
           ? 'grip'
-          : action?.clip.id === 'chestTap' &&
+          : action?.clip.id === CLIP.chestTap &&
               action.time > 0.2 &&
               action.time < 0.82
             ? 'open'
@@ -810,7 +814,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       finish = action?.clip.markers.find((m) => m.name === 'finish')?.at;
     if (
       !action ||
-      action.clip.id !== 'underhand' ||
+      action.clip.id !== CLIP.underhand ||
       peak === undefined ||
       finish === undefined ||
       this.reducedMotion ||
