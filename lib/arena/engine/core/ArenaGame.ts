@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import type { ArenaBridge, ArenaOptions } from './ArenaOptions';
 import { BootScene } from '../scenes/BootScene';
 import { ArenaScene } from '../scenes/ArenaScene';
+import { createPhaserGame } from './createPhaserGame';
 export class ArenaGame {
   readonly game: Phaser.Game;
   private bridge: ArenaBridge;
@@ -13,23 +14,14 @@ export class ArenaGame {
         options.clock.time,
         options.recording?.duration ?? Infinity,
       );
-    this.game = new Phaser.Game({
-      type: Phaser.WEBGL,
-      parent,
-      width: 1280,
-      height: 720,
+    this.game = createPhaserGame(parent, {
       backgroundColor: '#151714',
-      transparent: false,
-      antialias: true,
-      roundPixels: false,
-      audio: { noAudio: true },
-      render: { antialias: true, powerPreference: 'high-performance' },
       fps: { target: 60, smoothStep: true },
-      scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1280,
-        height: 720,
+      extra: {
+        transparent: false,
+        roundPixels: false,
+        render: { powerPreference: 'high-performance' },
+        scale: { width: 1280, height: 720 },
       },
       scene: [new BootScene(this.bridge), new ArenaScene(this.bridge)],
       callbacks: {

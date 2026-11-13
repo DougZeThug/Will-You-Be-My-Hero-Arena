@@ -1,5 +1,5 @@
 import type * as Phaser from 'phaser';
-import { RenderMetrics } from './RenderMetrics';
+import { RenderMetrics, textureBytes } from './RenderMetrics';
 
 export type TelemetryMode = 'realtime' | 'manual';
 export interface TimingSummary {
@@ -185,13 +185,9 @@ export class FrameTelemetry {
     }
     for (const texture of Object.values(this.game.textures?.list ?? {})) {
       counts.textures++;
-      for (const source of texture.source) {
-        counts.textureSources++;
-        counts.textureMBEstimate +=
-          (source.width * source.height * 4) / 1048576;
-      }
+      counts.textureSources += texture.source.length;
     }
-    counts.textureMBEstimate = round(counts.textureMBEstimate);
+    counts.textureMBEstimate = round(textureBytes(this.game) / 1048576);
     this.counters = counts;
     this.lastCounterSample = performance.now();
   }

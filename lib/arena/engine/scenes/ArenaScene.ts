@@ -1,8 +1,14 @@
 import { laneZ } from '../../board-geometry';
-import { RenderMetrics } from '../core/RenderMetrics';
+import { RenderMetrics, textureBytes } from '../core/RenderMetrics';
 import { personalityMoves } from '../../personality';
 import * as Phaser from 'phaser';
-import { cardById, type Recording } from '../../model';
+import {
+  cardById,
+  type Attempt,
+  type MotionPersonality,
+  type Recording,
+} from '../../model';
+import type { ProjectileFrame } from '../events/ArenaEvent';
 import { revealed, project, trajectory } from '../../simulation';
 import {
   completionTime,
@@ -28,6 +34,7 @@ import { cameraEffects } from '../effects/CameraEffects';
 import { ritualDuration } from '../animation/AnimationController';
 import { animation } from '../animation/AnimationRegistry';
 import { BASE_CONTEXT } from '../core/BattleDirector';
+import { addBackdrop, tagCharacterRuntime } from './stage';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { CornholePerformancePlayback } from '../events/cornhole/CornholePerformancePlayback';
@@ -40,6 +47,21 @@ import {
   firstImpactTime,
   presentationShot,
 } from '../events/cornhole/CornholePresentationTiming';
+/** Where a held bag draws: at the hand, lifted and spun through the bag-flip
+ * ritual's toss between u = 0.35 and 0.72. */
+function heldBagPose(
+  hand: { x: number; y: number; angle: number },
+  flipping: boolean,
+  u: number,
+  depth: number,
+) {
+  const flip = flipping && u >= 0.35 && u <= 0.72 ? (u - 0.35) / 0.37 : 0;
+  return {
+    x: hand.x,
+    y: hand.y - Math.sin(flip * Math.PI) * 34 * depth,
+    angle: hand.angle + flip * Math.PI * 2,
+  };
+}
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -69,11 +91,7 @@ export class ArenaScene extends Phaser.Scene {
       const p = this.bridge.current,
         rec = p.recording;
       this.director = rec ? new BattleDirector(rec) : undefined;
-      this.add
-        .image(0, 0, 'arena-background')
-        .setOrigin(0)
-        .setDisplaySize(1280, 720);
-      this.add.rectangle(640, 360, 1280, 720, 0x8c5c29, 0.025);
+      addBackdrop(this, 1280);
       this.floor = this.add.graphics().setDepth(5);
       this.hud = new ArenaHud(this);
       this.kit = new Equipment(this);
@@ -97,14 +115,12 @@ export class ArenaScene extends Phaser.Scene {
             Number.parseInt(cardById(c.loaded.asset.cardId).color.slice(1), 16),
           ),
       );
-      const performanceRevision = this.characters
-        .find((c) => c.rig.performance)
-        ?.rig.debugInfo?.().runtimeRevision;
-      if (typeof performanceRevision === 'string')
-        this.game.canvas.dataset.characterRuntime = performanceRevision;
-      this.game.canvas.dataset.characterBackends = this.characters
-        .map((character) => character.rig.backend ?? 'paper')
-        .join(',');
+      tagCharacterRuntime(
+        this.game.canvas,
+        this.characters.find((c) => c.rig.performance)?.rig.debugInfo?.()
+          .runtimeRevision,
+        this.characters.map((character) => character.rig.backend ?? 'paper'),
+      );
       this.metrics = new RenderMetrics(this.game);
       this.loadMs = Math.round(performance.now() - this.bridge.started);
       this.loaded = true;
@@ -202,14 +218,7 @@ export class ArenaScene extends Phaser.Scene {
       }
       if (rec && p.sport === 'cornhole' && c.rig.performance) {
         if (time < rec.introDuration) {
-          const intro = this.cards[i].entrance(
-            time,
-            i,
-            c.personality,
-            rec.introDuration,
-            p.reduced,
-          );
-          c.place(intro.x, intro.y, intro.scale, intro.alpha, intro.squash);
+          this.enter(c, time, c.personality, rec.introDuration, p.reduced);
         } else this.cards[i].settle();
         this.renderPerformance(c, rec, time);
         continue;
@@ -223,14 +232,13 @@ export class ArenaScene extends Phaser.Scene {
         (rec && time < rec.introDuration) ||
         (!rec && p.previewClip === 'summon')
       ) {
-        const intro = this.cards[i].entrance(
+        const intro = this.enter(
+          c,
           rec ? time : time % (TIMING.entrance + 1),
-          i,
           p.previewPersonality ?? c.personality,
           rec?.introDuration ?? TIMING.entrance,
           p.reduced,
         );
-        c.place(intro.x, intro.y, intro.scale, intro.alpha, intro.squash);
         c.clip(
           plan?.entrances[i] ??
             (p.previewPersonality
@@ -254,8 +262,7 @@ export class ArenaScene extends Phaser.Scene {
           c.finale(
             plan!.finale[i],
             time - completionTime(rec!),
-            plan!.actions.findLast((a) => a.actor === i)?.idle ??
-              plan!.idle[i],
+            this.idleFor(i)!,
             time,
             p.reduced,
           );
@@ -266,23 +273,21 @@ export class ArenaScene extends Phaser.Scene {
             time,
             p.reduced,
             undefined,
-            plan?.actions.findLast(
-              (a, j) =>
-                a.actor === i && rec!.attempts[j].end <= active.start,
-            )?.idle ?? plan?.idle[i],
+            this.idleFor(i, active.start),
           );
           if (time < active.releaseAt) {
-            const hand = c.hand(),
-              ritual = ritualDuration(active, direction!),
+            const ritual = ritualDuration(active, direction!),
               u = ritual ? (time - active.start) / ritual : 0,
-              flip =
-                direction!.ritual === 'bag_flip' && u >= 0.35 && u <= 0.72
-                  ? (u - 0.35) / 0.37
-                  : 0;
+              held = heldBagPose(
+                c.hand(),
+                direction!.ritual === 'bag_flip',
+                u,
+                c.depth,
+              );
             this.projectile(active.id, i).hold(
-              hand.x,
-              hand.y - Math.sin(flip * Math.PI) * 34 * c.depth,
-              hand.angle + flip * Math.PI * 2,
+              held.x,
+              held.y,
+              held.angle,
               c.depth,
             );
           }
@@ -290,10 +295,7 @@ export class ArenaScene extends Phaser.Scene {
           this.preview(c, time);
         else
           c.idle(
-            plan?.actions.findLast(
-              (a, j) => a.actor === i && rec!.attempts[j].end <= time,
-            )?.idle ??
-              plan?.idle[i] ??
+            this.idleFor(i, time) ??
               (p.previewPersonality
                 ? 'legacy_idle_' + personalityMoves(p.previewPersonality).idle
                 : (c.profile.pools.idle?.[0] ?? 'idle_breathe')),
@@ -341,24 +343,15 @@ export class ArenaScene extends Phaser.Scene {
           this.characters[active.actor].releaseWorld(active, direction!),
           time,
         );
-        const bag = this.projectile(active.id, active.actor);
-        bag.release(frame);
-        // Same cornhole depth policy as the performance path: above the board
-        // bags until contactAt, below them while sinking, else in throw order.
-        if (p.sport === 'cornhole')
-          bag.sprite.setDepth(releasedBagDepth(rec, active, time, frame));
         // The ring and hole star mark contactAt; the puff keeps the first
         // impact (release + air time) when the frame reports it.
-        this.effects.contact(
-          active,
-          time,
-          p.reduced || p.low,
-          active.contactAt,
-          undefined,
-          frame.kinematics
+        this.showReleasedBag(rec, active, time, frame, {
+          // Same cornhole depth policy as the performance path.
+          depthed: p.sport === 'cornhole',
+          landAt: frame.kinematics
             ? active.releaseAt + frame.kinematics.airTime
             : undefined,
-        );
+        });
       }
       this.director!.advance(
         time,
@@ -429,6 +422,66 @@ export class ArenaScene extends Phaser.Scene {
     });
     this.hud.setVisible(!p.previewAnimation);
   }
+  private enter(
+    c: CharacterController,
+    time: number,
+    personality: MotionPersonality,
+    duration: number,
+    reduced: boolean,
+  ) {
+    const intro = this.cards[c.actor].entrance(
+      time,
+      c.actor,
+      personality,
+      duration,
+      reduced,
+    );
+    c.place(intro.x, intro.y, intro.scale, intro.alpha, intro.squash);
+    return intro;
+  }
+  /** The idle a character returns to: the one chosen for their latest attempt
+   * that has ended by `time` (any, when omitted), else their plan default. */
+  private idleFor(actor: number, time?: number) {
+    const plan = this.director?.plan,
+      rec = this.bridge.current.recording;
+    return (
+      plan?.actions.findLast(
+        (a, j) =>
+          a.actor === actor &&
+          (time === undefined || rec!.attempts[j].end <= time),
+      )?.idle ?? plan?.idle[actor]
+    );
+  }
+  /** Draws a thrown bag in flight, with the ring, star and landing puff. The
+   * thrown bag draws above every board bag until contactAt, below them while
+   * it sinks into the hole, else with them in throw order. */
+  private showReleasedBag(
+    rec: Recording,
+    attempt: Attempt,
+    time: number,
+    frame: ProjectileFrame,
+    o: {
+      depthed: boolean;
+      landAt?: number;
+      touch?: { x: number; y: number };
+      layer?: Phaser.GameObjects.Container;
+      hand?: { x: number; y: number; scale?: number };
+    },
+  ) {
+    const p = this.bridge.current,
+      bag = this.projectile(attempt.id, attempt.actor);
+    bag.release(frame, o.layer, o.hand);
+    if (o.depthed)
+      bag.sprite.setDepth(releasedBagDepth(rec, attempt, time, frame));
+    this.effects.contact(
+      attempt,
+      time,
+      p.reduced || p.low,
+      attempt.contactAt,
+      o.touch,
+      o.landAt,
+    );
+  }
   private renderPerformanceIdle(c: CharacterController, time: number) {
     const controller = c.rig.performance!;
     controller.observe({ mode: 'rest', elapsed: time });
@@ -492,25 +545,15 @@ export class ArenaScene extends Phaser.Scene {
         hand.flatten,
       );
     else if (take.frame) {
-      const bag = this.projectile(attempt.id, c.actor);
-      bag.release(
-        take.frame,
-        c.rig.heldObjectLayer,
-        controller.runtime.attachment('rightHand'),
-      );
-      // The thrown bag draws above every board bag until contactAt, below
-      // them while it sinks into the hole, else with them in throw order.
-      bag.sprite.setDepth(releasedBagDepth(rec, attempt, time, take.frame));
       // The ring and hole star mark the bag arriving at the target
       // (contactAt); the landing puff marks the first impact at its touch.
-      this.effects.contact(
-        attempt,
-        time,
-        this.bridge.current.reduced || this.bridge.current.low,
-        attempt.contactAt,
-        take.frame.kinematics?.touch,
-        firstImpactTime(attempt, take.shot),
-      );
+      this.showReleasedBag(rec, attempt, time, take.frame, {
+        depthed: true,
+        layer: c.rig.heldObjectLayer,
+        hand: controller.runtime.attachment('rightHand'),
+        touch: take.frame.kinematics?.touch,
+        landAt: firstImpactTime(attempt, take.shot),
+      });
     }
   }
   private libraryPreview(c: CharacterController, time: number, id: string) {
@@ -521,27 +564,24 @@ export class ArenaScene extends Phaser.Scene {
       return;
     }
     if (clip.category === 'entrance') {
-      const intro = this.cards[c.actor].entrance(
+      const intro = this.enter(
+        c,
         time % (TIMING.entrance + 1),
-        c.actor,
         c.personality,
         TIMING.entrance,
         p.reduced,
       );
-      c.place(intro.x, intro.y, intro.scale, intro.alpha, intro.squash);
       c.clip(id, intro.progress, p.reduced);
       return;
     }
     const u = (time % (clip.duration + 0.4)) / clip.duration;
     c.clip(id, Math.min(1, u), p.reduced);
     if (clip.category === 'ritual' || id === 'bag_flip') {
-      const hand = c.hand(),
-        flip =
-          id === 'bag_flip' && u >= 0.35 && u <= 0.72 ? (u - 0.35) / 0.37 : 0;
+      const held = heldBagPose(c.hand(), id === 'bag_flip', u, c.depth);
       this.projectile('library:' + c.actor, c.actor).hold(
-        hand.x,
-        hand.y - Math.sin(flip * Math.PI) * 34 * c.depth,
-        hand.angle + flip * Math.PI * 2,
+        held.x,
+        held.y,
+        held.angle,
         c.depth,
       );
     }
@@ -669,24 +709,11 @@ export class ArenaScene extends Phaser.Scene {
     this.frames++;
     this.frameTime += delta;
     if (this.time.now - this.lastReport > 3000) {
-      const textures = Object.values(
-          this.textures.list,
-        ) as Phaser.Textures.Texture[],
-        bytes = textures.reduce(
-          (n, t) =>
-            n +
-            t.source.reduce(
-              (m: number, s: Phaser.Textures.TextureSource) =>
-                m + s.width * s.height * 4,
-              0,
-            ),
-          0,
-        );
       p.onMetrics?.({
         fps: Math.round(this.frames / (this.frameTime / 1000)),
         frameMs: Math.round((this.frameTime / this.frames) * 10) / 10,
         drawCalls: this.metrics.drawCalls,
-        textureMB: Math.round(bytes / 104857.6) / 10,
+        textureMB: Math.round(textureBytes(this.game) / 104857.6) / 10,
         loadMs: this.loadMs,
       });
       this.frames = 0;

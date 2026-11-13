@@ -6,6 +6,7 @@ import { KeyboardDevice } from '../input/KeyboardDevice';
 import { keyboardLayoutOf } from '../input/InputBindings';
 import { GamepadDevice } from '../input/GamepadDevice';
 import { AudioManager } from '../audio/AudioManager';
+import { createPhaserGame } from './createPhaserGame';
 export class LiveArenaGame {
   readonly session: ArenaSession;
   readonly game: Phaser.Game;
@@ -66,17 +67,9 @@ export class LiveArenaGame {
         options.onReady();
       },
     });
-    this.game = new Phaser.Game({
-      type: Phaser.WEBGL,
-      parent,
-      width: 1280,
-      height: 720,
+    this.game = createPhaserGame(parent, {
       backgroundColor: '#121913',
-      antialias: true,
-      audio: { noAudio: true },
-      render: { antialias: true },
       fps: { target: 60 },
-      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
       scene: [new LiveBootScene(this.session, options), this.scene],
       callbacks: {
         postBoot: (game) => {

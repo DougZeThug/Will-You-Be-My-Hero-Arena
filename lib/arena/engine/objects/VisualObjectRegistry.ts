@@ -1,6 +1,7 @@
 import type * as Phaser from 'phaser';
 import type { VisualObject } from '../core/LiveTypes';
 import { PROJECTILE_WIDTH, BAG_FLIGHT_FLATTEN } from '../../equipment-layout';
+import { placeInLayer } from './placeInLayer';
 
 export interface VisualPresentation {
   setVisible(value: boolean): void;
@@ -51,19 +52,12 @@ registerVisualObject('bag', (scene, _object, team) => {
       else scene.add.existing(sprite);
     },
     update: (o) => {
-      let x = o.x,
-        y = o.y,
-        angle = o.angle ?? 0,
-        scale = PROJECTILE_WIDTH.cornhole / sprite.width;
-      const parent = sprite.parentContainer;
-      if (parent) {
-        const matrix = parent.getWorldTransformMatrix(),
-          point = matrix.applyInverse(x, y);
-        x = point.x;
-        y = point.y;
-        scale /= Math.hypot(matrix.a, matrix.b);
-        angle -= Math.atan2(matrix.b, matrix.a);
-      }
+      const { x, y, angle, scale } = placeInLayer(sprite, {
+        x: o.x,
+        y: o.y,
+        angle: o.angle ?? 0,
+        scale: PROJECTILE_WIDTH.cornhole / sprite.width,
+      });
       sprite
         .setPosition(x, y)
         .setRotation(angle)

@@ -164,7 +164,8 @@ export class ArenaSession {
     });
     this.event.onPause?.();
   }
-  private poll(player: string) {
+  /** This step's input frame: device plus touch overlay, neutral-gated. */
+  private readFrame(player: string) {
     const frame = this.input.poll(player, this.time),
       touch = this.touch.get(player)!;
     if (this.input.device(player) !== touch && frame.family !== 'ai') {
@@ -204,6 +205,10 @@ export class ArenaSession {
     if (!activeInput)
       frame.family = this.frames.get(player)?.family ?? frame.family;
     this.frames.set(player, frame);
+    return frame;
+  }
+  /** Pause key and controller disconnect. */
+  private handlePauseIntent(player: string, frame: InputFrame) {
     // A finished match stays on its result: the pause key and a controller
     // disconnect no longer pause it.
     const down = Number(frame.values.pause ?? 0) > 0.5,
@@ -213,6 +218,10 @@ export class ArenaSession {
     this.pauseDown.set(player, down);
     if (!frame.connected && !this.paused && !finished)
       this.pause(true, 'Controller disconnected. Reconnect it, then resume.');
+  }
+  private poll(player: string) {
+    const frame = this.readFrame(player);
+    this.handlePauseIntent(player, frame);
     return frame;
   }
   advance(delta: number) {
