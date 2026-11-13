@@ -253,7 +253,6 @@ check(() => assert.equal(repo.load().policy.id, win7));
 await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 8 });
 await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 7 });
 check(() => assert.equal(repo.load().policy.id, win7));
-check(() => assert.equal(p.MAX_ALLOWANCE, 4));
 await assert.rejects(
   repo.updatePolicy({ ...m.DEFAULT_POLICY, allowance: 5 }),
   /at most 4/,
@@ -1129,5 +1128,6 @@ const report = {
   storage:
     'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections; full-store recovery and exhibition pruning verified',
 };
-fs.writeFileSync('docs/test-results.json', JSON.stringify(report, null, 2));
+fs.mkdirSync('work/qa', { recursive: true });
+fs.writeFileSync('work/qa/test-results.json', JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

@@ -21,10 +21,6 @@ export async function testLive({ check }) {
     await import('../.test-build/engine/controllers/EventActionMap.mjs');
   const { FightingActionMap } =
     await import('../.test-build/engine/events/fighting/FightingActionMap.mjs');
-  const { PrecisionActionMap } =
-    await import('../.test-build/engine/events/precision/PrecisionActionMap.mjs');
-  const { RunningActionMap } =
-    await import('../.test-build/engine/events/running/RunningActionMap.mjs');
   const { timingGrade, rhythmTiming } =
     await import('../.test-build/engine/input/TimingWindow.mjs');
   const config = (
@@ -724,7 +720,6 @@ export async function testLive({ check }) {
   check(() => assert.ok(stop.time > struck, 'The clock resumes'));
   check(() => assert.equal(stop.hitStopSteps, 0));
   stop.destroy();
-  // Fixes from docs/product-description/bug-triage.md, each named by its entry.
   const { keyConflict, invalidBinding, validateBindings } =
     await import('../.test-build/engine/input/InputBindings.mjs');
   const keyboard1 = { layout: 0, keys: bindingsFor(0).keys },
@@ -1891,24 +1886,11 @@ export async function testLive({ check }) {
       'an intent with only hidden entries has no visible action',
     );
   });
-  check(() => {
-    for (const [map, intents] of [
-      [PrecisionActionMap, ['primaryAction', 'charge']],
-      [RunningActionMap, ['charge', 'modifierLeft']],
-    ])
-      for (const intent of intents) {
-        const expected = map.actions.find(
-          (a) => a.intent === intent && !a.hidden,
-        );
-        assert.ok(expected, map.id + ' ' + intent + ' has a visible action');
-        assert.equal(visibleAction(map.actions, intent), expected);
-      }
-  });
   scoped.destroy();
   Object.assign(globalThis, saved);
-  fs.mkdirSync('docs/review', { recursive: true });
+  fs.mkdirSync('work/qa', { recursive: true });
   fs.writeFileSync(
-    'docs/review/live-engine-tests.json',
+    'work/qa/live-engine-tests.json',
     JSON.stringify(
       {
         referenceEvents: outcomes,

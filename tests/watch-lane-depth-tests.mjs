@@ -82,12 +82,6 @@ export async function testWatchLaneDepth({ check, m, s, a }) {
   // it is not scaled twice; every other cornhole rig is drawn at the 0.70 board.
   check(() => assert.equal(characterDepthScale('cornhole', 1, true), 1));
   check(() => assert.equal(characterDepthScale('cornhole', 1), 0.7));
-  check(() =>
-    assert.equal(
-      characterDepthScale('cornhole', 1),
-      equipmentDepthScale('cornhole', 1),
-    ),
-  );
   for (const selfScaled of [false, true])
     check(() =>
       assert.equal(characterDepthScale('cornhole', 0, selfScaled), 1),

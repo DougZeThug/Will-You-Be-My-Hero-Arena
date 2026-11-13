@@ -223,7 +223,6 @@ export class ArenaSession {
     this.accumulator += Math.min(0.1, Math.max(0, delta));
     while (this.accumulator >= 1 / 60 && !this.paused) {
       this.accumulator -= 1 / 60;
-      // Presentation interpolates from this step's starting state.
       for (const c of this.characters) c.capturePrevious();
       this.previousObjects = new Map(
         this.event.view().objects.map((o) => [objectKey(o), o]),
@@ -266,13 +265,13 @@ export class ArenaSession {
       this.event.update(1 / 60);
     }
   }
-  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
-   * characters and objects between their previous and current step so motion
-   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
   /** Remaining hit-stop steps (0 when the clock is running). */
   get hitStopSteps() {
     return this.stopSteps;
   }
+  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
+   * characters and objects between their previous and current step so motion
+   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
   get alpha() {
     return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
   }

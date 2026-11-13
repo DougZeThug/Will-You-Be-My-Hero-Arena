@@ -97,7 +97,6 @@ export class LiveArenaGame {
       },
     });
   }
-  /** Applies Reduced motion to the running match without restarting it. */
   setReducedMotion(reduced: boolean) {
     this.scene.setReduced(reduced);
   }

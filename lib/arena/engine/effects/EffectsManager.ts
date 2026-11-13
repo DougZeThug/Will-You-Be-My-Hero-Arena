@@ -1,7 +1,6 @@
 import type * as Phaser from 'phaser';
 import type { ArenaCue } from '../core/LiveTypes';
 import { ImpactEffects } from './ImpactEffects';
-/** Seconds each live effect cue stays on screen. */
 const LIFE: Record<string, number> = {
   hit: 0.42,
   block: 0.3,

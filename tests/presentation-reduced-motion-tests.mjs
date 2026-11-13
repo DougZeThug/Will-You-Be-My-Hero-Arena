@@ -5,28 +5,8 @@ import { writeFileSync, mkdtempSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-// Play's CharacterPresentation is the only code path that applies cartoon
-// squash to a Paper/Frame cut-out puppet in Play. Its `puppet()` path
-// (`CharacterPresentation.ts:184`) computes the squash scale `q` from the
-// recorded simulation beats and multiplies it into the puppet rig's scale.
-// STAGE-21 ("Reduced motion … squash and stretch is off") requires that
-// `q` is neutralised when `this.reduced` is set; the `drive()` path does this
-// at `:267`, but until 550141f's squash machinery and the later reduced-motion
-// gate missed the puppet path, leaving every non-Dan/Doug card plus the
-// front companion puppet of a driven rig visibly squashing under Reduced
-// motion.
-//
-// The class is a Phaser-coupled Play class; its transitive import graph pulls
-// in Phaser only through `PaperMesh extends Phaser.GameObjects.Mesh` (every
-// other Phaser usage in the character-rig files is type-only and is elided
-// by `ts.transpileModule`). The pure test suite transpiles `lib/arena` to
-// `.test-build/` but does not stub Phaser, so `import` of
-// `CharacterPresentation.mjs` would otherwise fail under Node. We register a
-// one-line ESM resolve hook that maps the bare `'phaser'` specifier to a
-// minimal stub (`GameObjects.Mesh`, `Geom.Mesh.Vertex`, `Geom.Mesh.Face`),
-// then construct `CharacterPresentation` against stubbed Phaser game objects
-// whose `setScale` records the last call. That lets us assert directly on
-// the rig's scale after `update()` lands on a beat.
+// Invariant: under Reduced motion CharacterPresentation's puppet path must not
+// apply squash scale. Phaser is stubbed via a resolve hook so it runs in Node.
 
 export async function testPresentationReducedMotion({ check }) {
   const stubDir = mkdtempSync(path.join(os.tmpdir(), 'pres-reduced-'));

@@ -65,7 +65,6 @@ export class LiveArenaScene extends Phaser.Scene {
   ) {
     super('LiveArena');
   }
-  /** Applies Reduced motion to the running match without rebuilding it. */
   setReduced(reduced: boolean) {
     this.options.reduced = reduced;
     for (const actor of this.actors) actor.setReduced(reduced);

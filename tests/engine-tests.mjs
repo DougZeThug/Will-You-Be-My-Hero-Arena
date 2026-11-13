@@ -59,5 +59,5 @@ export async function testEngine({check,setup,m,s,a}){
  check(()=>assert.equal(roll.interactions.length,0,'Roll can go around the blocker without displacing it'));
  const flat=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'flat',{x:350,y:400},.4),airmail=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'airmail',{x:350,y:400},.4);
  check(()=>assert.ok(airmail.y<flat.y-60,'Airmail has a substantially higher arc'));
- fs.mkdirSync('docs/review',{recursive:true});fs.writeFileSync('docs/review/engine-metrics.json',JSON.stringify({clips:registry.animations().length,authoredClips:registry.animations().filter(c=>c.motion&&!c.id.startsWith('legacy_')).length,distinctPlans:new Set(plans).size,sampledMatches:30,maxHandStepPer120Samples:maxStep,pushes,collects},null,2));
+ fs.mkdirSync('work/qa',{recursive:true});fs.writeFileSync('work/qa/engine-metrics.json',JSON.stringify({clips:registry.animations().length,authoredClips:registry.animations().filter(c=>c.motion&&!c.id.startsWith('legacy_')).length,distinctPlans:new Set(plans).size,sampledMatches:30,maxHandStepPer120Samples:maxStep,pushes,collects},null,2));
 }

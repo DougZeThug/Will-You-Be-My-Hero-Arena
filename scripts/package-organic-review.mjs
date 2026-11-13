@@ -42,7 +42,7 @@ for (const file of (await walk(qa + '/final-browser')).filter(f => f.endsWith('-
 }
 await fs.writeFile(out + '/validation.json', JSON.stringify({
   date: new Date().toISOString(), regression,
-  pureChecks: (await read('docs/test-results.json')).checks,
+  pureChecks: (await read('work/qa/test-results.json')).checks,
   browser: { passed: 82, skipped: 1, skippedReason: 'Optional approved-image baseline suite' },
   afterCameraFramingFix: { typecheck: 'passed', focusedBrowserTests: 4, visualReview: review },
   performance: (await read(qa + '/videos/unrecorded-performance.json')).realtime,

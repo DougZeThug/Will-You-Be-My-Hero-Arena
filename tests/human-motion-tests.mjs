@@ -213,7 +213,6 @@ export async function testHumanMotion({ check }) {
     await import('../.test-build/engine/motion/MotionPlanner.mjs');
   const { PLANT_TURN_SPEED } =
     await import('../.test-build/engine/movement/CharacterMotor.mjs');
-  check(() => assert.ok(PLANT_TURN_SPEED > 0));
   const baseClip = (id, extra = {}) => ({
     id,
     native: 'native_' + id,

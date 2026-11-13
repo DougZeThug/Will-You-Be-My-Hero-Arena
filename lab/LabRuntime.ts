@@ -29,7 +29,6 @@ const INTENTS = new Set(
     ' ',
   ),
 );
-/** The only browser API lives in this standalone dev entry. No production globals. */
 export class LabRuntime {
   readonly version = 1;
   ready = false;

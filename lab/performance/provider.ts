@@ -29,8 +29,7 @@ const sockets: Record<SocketName, string> = {
   effect: 'chest',
 };
 
-/** The existing per-game rig injection, using the same runtime/content as the Lab.
- * URL imports bundle the original hash-checked assets into the player build. */
+/** URL imports bundle the original hash-checked assets into the player build. */
 export async function performanceMatchProvider(): Promise<CharacterRigProvider> {
   await Promise.all(
     performanceDefinitions.flatMap((d) =>

@@ -35,7 +35,6 @@ export class ImpactEffects {
  begin(){this.used=0;this.sprites.forEach(s=>s.setVisible(false));}
  private sprite(key:string,frames:number,x:number,y:number,progress:number,depth:number,scale=1){if(progress<0||progress>=1)return null;let sprite=this.sprites[this.used++];if(!sprite){sprite=this.scene.add.image(0,0,key);this.sprites.push(sprite);}sprite.setTexture(key).setDepth(depth).setScale(scale).setPosition(x,y).setFrame(Math.min(frames-1,Math.floor(progress*frames))).clearTint().setVisible(true);return sprite;}
  burst(x:number,y:number,progress:number,color=0xffce25,scale=1,depth=65){this.sprite('impact-frames',12,x,y,progress,depth,scale)?.setTint(color);}
- /** Dust cloud where something lands or skids (feet, bag, ball). */
  puff(x:number,y:number,progress:number,scale=1,depth=64){this.sprite('impact-puff',12,x,y-8*scale,progress,depth,scale);}
  star(x:number,y:number,progress:number,scale=1,depth=66){this.sprite('impact-star',10,x,y,progress,depth,scale);}
  /** `holeAt`: when the bag drops in (star burst), if it scores a hole.

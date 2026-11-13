@@ -95,7 +95,6 @@ export class CharacterPresentation {
       scene.add.image(0, -68, loaded.cardKey).setDisplaySize(86, 126),
     ]);
   }
-  /** Keep runtime-owned presentation effects aligned with the live setting. */
   setReduced(reduced: boolean) {
     this.reduced = reduced;
     const runtime = this.rig.performance?.runtime as

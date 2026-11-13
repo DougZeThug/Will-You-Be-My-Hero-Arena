@@ -26,9 +26,8 @@ export function sportThrowMotion(sport: Sport, shot: ShotStyle = 'standard', spe
   const cached = cache.get(key); if (cached) return cached;
   const r = sportRelease(sport, shot), drive = 2 + speed * 3;
   let setup: Pose, load: Pose, release: Pose, follow: Pose, hold: Pose;
-  // Cartoon weight transfer: load back and down, drive the hips through and
-  // lean into release, hold the finish. Hands are placed in character space,
-  // so release positions (and recorded contact geometry) are unchanged.
+  // Hands are placed in character space, so release positions (and recorded
+  // contact geometry) are unchanged by the weight transfer.
   if (sport === 'cornhole') {
     const high = r.y < -230, roll = ['roll', 'flop'].includes(shot);
     setup = { handRX: 49, handRY: -174, handLX: -35, handLY: -176, head: -4, wristR: -12, hipY: -174 };

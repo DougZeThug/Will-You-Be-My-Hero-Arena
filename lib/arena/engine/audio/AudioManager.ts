@@ -9,7 +9,6 @@ const tones: Record<string, [number, number]> = {
   footstep: [125, 0.025],
   victory: [880, 0.22],
 };
-/** Replace the cue bank with authored sounds without changing event modules. */
 export class AudioManager {
   private context?: AudioContext;
   enabled = false;

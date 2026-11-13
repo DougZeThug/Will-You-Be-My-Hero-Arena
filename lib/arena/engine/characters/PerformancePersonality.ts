@@ -43,7 +43,6 @@ export const performancePersonalities: Record<
     },
   },
 };
-/** Seeded selection with recent-use suppression; unavailable equipment gestures are removed. */
 export class GestureMemory {
   recent: Gesture[] = [];
   constructor(private seed: number) {}

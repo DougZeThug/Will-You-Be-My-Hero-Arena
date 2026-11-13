@@ -59,7 +59,6 @@ export default function LiveStage({
             sound: soundOn.current,
             characterRigs,
             onReady: () => mounted && setReady(true),
-            // A finished match stops its clock at the result.
             onSnapshot: (s) =>
               mounted &&
               setSnapshot((prior) =>

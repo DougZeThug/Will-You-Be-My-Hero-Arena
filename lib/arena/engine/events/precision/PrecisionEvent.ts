@@ -189,12 +189,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private power() {
     return clamp((this.ctx.time() - this.chargeAt) / 1.5, 0, 1.2);
   }
-  /** Fire the throw: compute the bag's flight and transition out of
-   * `throwing` into `flight`. Called either from `onCharacterEvent` when the
-   * character's throw clip emits its `release` ClipMarker, or from the
-   * `throwing` watchdog in `update()` when the marker is absent (e.g. a
-   * markerless `gameplay.animations` alias from a user pack), so a bad
-   * alias can never soft-lock the match. */
+  /** Fire the throw (from the `release` marker or the THROW_TIMEOUT watchdog). */
   private releaseBag(c: ArenaCharacter) {
     const target = precisionTarget(),
       error = this.releasePower - this.ideal(),
@@ -274,12 +269,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
       time = this.ctx.time();
     if (this.state === 'entrance' && time - this.phaseAt > 1.45)
       this.nextPlayer();
-    // Defense in depth: the throw clip's `release` marker never fires if a
-    // `gameplay.animations` alias replaced it with a markerless clip (a
-    // documented extension point for user character packs). Once the clip
-    // has had time to play, synthesize the release so the bag flies and the
-    // turn resolves — mirroring the hard caps every sibling transient state
-    // already has, so a wedged throw can never soft-lock the match.
+    // Watchdog for a markerless throw clip; see THROW_TIMEOUT.
     if (this.state === 'throwing' && time - this.throwAt > THROW_TIMEOUT)
       this.releaseBag(c);
     if (['aiming', 'charging'].includes(this.state)) {
@@ -417,7 +407,6 @@ export class PrecisionEvent implements PlayableArenaEvent {
       scores: Object.fromEntries(
         this.ctx.characters.map((c) => [c.id, c.score]),
       ),
-      // Read-only presentation of resolved turns; charging/flight does not spend a displayed bag.
       attempts: Object.fromEntries(
         this.ctx.characters.map((player, index) => [
           player.id,
