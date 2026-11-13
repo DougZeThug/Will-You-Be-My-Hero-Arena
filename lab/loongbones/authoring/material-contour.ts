@@ -1,4 +1,4 @@
-import type { Vec } from './skeleton';
+import type { Vec } from '../side-rig/skeleton';
 
 function halfPlane(points: Vec[], a: Vec, b: Vec, inside = true) {
   const result: Vec[] = [];

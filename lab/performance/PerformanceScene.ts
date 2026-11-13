@@ -6,6 +6,7 @@ import {
 import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
 import { validatePerformanceProfile } from '../../lib/arena/engine/performance/ProfileValidation';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';
 import { queueRig } from '../loongbones/arena/provider';
@@ -120,7 +121,7 @@ export class PerformanceScene extends Phaser.Scene {
     const profile = validatePerformanceProfile(
       options.profile ??
         (selected !== this.selected
-          ? performanceProfiles[selected as 'doug' | 'dan']
+          ? performanceProfiles[selected as CharacterId]
           : this.profile),
     );
     const action = options.action ?? this.action;

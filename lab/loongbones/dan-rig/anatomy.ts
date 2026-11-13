@@ -1,13 +1,7 @@
 /** Source-pixel anatomy of the approved 808×1947 Dan illustration.
  * L/R refer to image sides. Pivots are anatomical centers, not sprite edges.
  * Head pivots at the base of the skull; skull_center is a separate socket. */
-export type Vec = { x: number; y: number };
-export interface Joint {
-  name: string;
-  parent?: string;
-  point: Vec;
-  end?: Vec;
-}
+import { buildSkeleton, type Joint, type Vec } from '../side-rig/skeleton';
 const v = (x: number, y: number): Vec => ({ x, y });
 export const origin = v(404, 1918);
 export const joints: Joint[] = [
@@ -82,41 +76,4 @@ export const joints: Joint[] = [
   { name: 'foot_target_L', parent: 'root', point: v(280, 1770) },
   { name: 'foot_target_R', parent: 'root', point: v(512, 1740) },
 ];
-export const jointByName = Object.fromEntries(joints.map((j) => [j.name, j]));
-export const angle = (a: Vec, b: Vec) => Math.atan2(b.y - a.y, b.x - a.x);
-export const angles = Object.fromEntries(
-  joints.map((j) => [j.name, j.end ? angle(j.point, j.end) : 0]),
-);
-export function inverseRotate(p: Vec, a: number): Vec {
-  return {
-    x: Math.cos(a) * p.x + Math.sin(a) * p.y,
-    y: -Math.sin(a) * p.x + Math.cos(a) * p.y,
-  };
-}
-export const bones = joints.map((j) => {
-  const p = j.parent ? jointByName[j.parent].point : origin;
-  const parentAngle = j.parent ? angles[j.parent] : 0;
-  const delta = inverseRotate(
-    { x: j.point.x - p.x, y: j.point.y - p.y },
-    parentAngle,
-  );
-  const planted = j.name === 'foot_L' || j.name === 'foot_R';
-  const degrees =
-    ((angles[j.name] - (planted ? 0 : parentAngle)) * 180) / Math.PI;
-  return {
-    name: j.name,
-    ...(j.parent ? { parent: j.parent } : {}),
-    ...(planted ? { inheritRotation: false } : {}),
-    length: j.end ? Math.hypot(j.end.x - j.point.x, j.end.y - j.point.y) : 0,
-    transform: { x: delta.x, y: delta.y, skX: degrees, skY: degrees },
-  };
-});
-export const bonePose = joints.flatMap((j, i) => [
-  i,
-  Math.cos(angles[j.name]),
-  Math.sin(angles[j.name]),
-  -Math.sin(angles[j.name]),
-  Math.cos(angles[j.name]),
-  j.point.x - origin.x,
-  j.point.y - origin.y,
-]);
+export const { bones, bonePose } = buildSkeleton(joints, origin);

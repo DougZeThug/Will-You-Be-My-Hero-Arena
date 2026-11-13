@@ -5,6 +5,7 @@ import { verifyRig } from '../loongbones/arena/provider';
 import { performanceDefinitions } from './definitions';
 import './style.css';
 import { bindTuning } from './Tuning';
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 const element = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const select = (id: string) => element<HTMLSelectElement>(id);
@@ -143,7 +144,7 @@ for (const [id, fn] of Object.entries({
     controls();
   },
   defaults: () => {
-    scene.applyProfile(performanceProfiles[scene.selected as 'dan' | 'doug']);
+    scene.applyProfile(performanceProfiles[scene.selected as CharacterId]);
     controls();
   },
   export: () => {
@@ -246,7 +247,7 @@ const api = Object.freeze({
     refresh();
   },
   load: (
-    character: 'doug' | 'dan',
+    character: CharacterId,
     outcome: 'success' | 'board' | 'miss' = 'success',
   ) => {
     scene.playing = false;

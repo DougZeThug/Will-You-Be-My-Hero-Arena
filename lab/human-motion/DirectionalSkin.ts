@@ -2,6 +2,9 @@ import * as Phaser from 'phaser';
 import { NativeMesh } from '../loongbones/NativeMesh';
 import type { NativeArmature } from '../loongbones/NativeFactory';
 
+/** Phaser texture key of a character's rear-garment source image. */
+export const rearSourceKey = (id: string) => id + '-rear-source';
+
 /** Opposite view uses authored rear garment material, not a reversed chest print.
  * Only torso pixels change. Original head, limbs, accessories and source alpha remain authoritative.
  * The near arm stays anatomical right: this is a rear-three-quarter view, not a left-handed clone.
@@ -20,7 +23,7 @@ export class DirectionalSkin {
       .get(originalKey)
       .getSourceImage() as HTMLImageElement;
     const variant = scene.textures
-      .get(id + '-rear-source')
+      .get(rearSourceKey(id))
       .getSourceImage() as HTMLImageElement;
     // Generated source uses magenta outside the garment. Reject that material
     // before compositing, retaining the approved original edge underneath.

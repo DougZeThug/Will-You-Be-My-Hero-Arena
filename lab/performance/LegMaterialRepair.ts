@@ -1,4 +1,5 @@
 import { smooth } from './math';
+import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
 interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
@@ -42,8 +43,8 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
         mesh.weights[cursor + 2 + j * 2],
       );
     cursor += 1 + count * 2;
-    const x = mesh.uvs[v * 2] * 1254,
-      y = mesh.uvs[v * 2 + 1] * 1254;
+    const x = mesh.uvs[v * 2] * SIDE_ATLAS_SIZE,
+      y = mesh.uvs[v * 2 + 1] * SIDE_ATLAS_SIZE;
     const cloth = [...influences.keys()].every((b) =>
       [pelvis, near, far].includes(b),
     );
@@ -82,9 +83,10 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
   }
   const seams = new Map<string, number[]>();
   vertices.forEach((_, v) => {
-    const y = mesh.uvs![v * 2 + 1] * 1254;
+    const y = mesh.uvs![v * 2 + 1] * SIDE_ATLAS_SIZE;
     if (y < HIP_Y || y > WELD_END_Y) return;
-    const key = (mesh.uvs![v * 2] * 1254).toFixed(1) + ',' + y.toFixed(1);
+    const key =
+      (mesh.uvs![v * 2] * SIDE_ATLAS_SIZE).toFixed(1) + ',' + y.toFixed(1);
     seams.set(key, [...(seams.get(key) ?? []), v]);
   });
   const leg = new Set(
@@ -102,7 +104,7 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
     for (const v of group)
       for (const [bone, w] of vertices[v])
         average.set(bone, (average.get(bone) ?? 0) + w / group.length);
-    const y = mesh.uvs![group[0] * 2 + 1] * 1254,
+    const y = mesh.uvs![group[0] * 2 + 1] * SIDE_ATLAS_SIZE,
       weld = 1 - smooth(WELD_FULL_Y, WELD_END_Y, y);
     for (const v of group) {
       const own = vertices[v],

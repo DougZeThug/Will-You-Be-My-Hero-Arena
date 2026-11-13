@@ -1,3 +1,4 @@
+import type { CharacterId } from './MotionTypes';
 /** Movement identity, independent of ability/score stats and shared across events. */
 export interface CharacterMotionSignature {
   rhythm: number;
@@ -11,10 +12,7 @@ export interface CharacterMotionSignature {
   headMovement: number;
   idleActivity: number;
 }
-export const motionSignatures: Record<
-  'dan' | 'doug',
-  CharacterMotionSignature
-> = {
+export const motionSignatures: Record<CharacterId, CharacterMotionSignature> = {
   dan: {
     rhythm: 1,
     looseness: 0.28,

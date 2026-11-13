@@ -1,4 +1,4 @@
-import type { Joint, Vec } from './skeleton';
+import type { Joint, Vec } from '../side-rig/skeleton';
 import { clipMaterialCell } from './material-contour';
 import { clampUnit as clamp } from '../../performance/math';
 export { smooth } from '../../performance/math';

@@ -2,6 +2,8 @@ import type { CharacterRigProvider } from '../../lib/arena/engine/characters/Cha
 import { verifyAssetHash } from '../loongbones/arena/assetHash';
 import { sideDefinitions } from '../loongbones/side-rig/definitions';
 import { PlayMotionRig, type PlayMotionEvent } from './PlayMotionRig';
+import { HAND_TEXTURE_KEY } from './HandAttachments';
+import { rearSourceKey } from './DirectionalSkin';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
 import danTexture from '../loongbones/assets/cornhole-side-v3/dan_tex.png?url';
@@ -41,15 +43,15 @@ export async function sideMotionProvider(
   );
   return {
     preload(scene) {
-      if (!scene.textures.exists('arena-hands-v1'))
-        scene.load.image('arena-hands-v1', handSheet);
+      if (!scene.textures.exists(HAND_TEXTURE_KEY))
+        scene.load.image(HAND_TEXTURE_KEY, handSheet);
       for (const d of sideDefinitions) {
         const id = d.id as keyof typeof files,
           urls = files[id];
         scene.load.json(d.key + '-skeleton', urls.skeleton);
         scene.load.json(d.key + '-atlas', urls.atlas);
         scene.load.image(d.key + '-texture', urls.texture);
-        scene.load.image(id + '-rear-source', rear[id]);
+        scene.load.image(rearSourceKey(id), rear[id]);
       }
     },
     create(scene, character, _profile, placement) {

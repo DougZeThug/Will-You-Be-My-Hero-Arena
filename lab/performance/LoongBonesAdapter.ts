@@ -161,10 +161,10 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     arm.slot.push({ name: 'releaseHand', parent: 'root', color: { aM: 0 } });
     arm.skin[0].slot.push({
       name: 'releaseHand',
-      display: [releaseHandMesh(definition.id as 'dan' | 'doug')],
+      display: [releaseHandMesh(definition.id)],
     });
     const wristSamples = registerHandMaterial(
-      definition.id as 'dan' | 'doug',
+      definition.id,
       arm,
     );
     // The proximal hand drawing extends underneath the continuous forearm.

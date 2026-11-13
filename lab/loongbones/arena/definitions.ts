@@ -85,7 +85,7 @@ export const dougDefinition: WeightedRigDefinition = {
 // Installed Lab motion is a derived export; keep original round-trip/source
 // comparison pages intact and report exactly which bytes are now evaluated.
 for (const definition of [danDefinition, dougDefinition]) {
-  const id = definition.id as 'dan' | 'doug',
+  const id = definition.id,
     provenance = motion[id];
   definition.key = 'lab-' + id + '-cornhole-motion-v2';
   definition.path = '/loongbones/assets/cornhole-motion-v2/';

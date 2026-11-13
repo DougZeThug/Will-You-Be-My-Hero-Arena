@@ -13,6 +13,7 @@ import { installReviewTake } from './ReviewTake';
 import { referenceComparison } from './ReferenceComparison';
 import { defaultReference, referenceCatalog } from './ReferenceCatalog';
 import { workshopControls } from './WorkshopControls';
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 const get = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const params = new URLSearchParams(location.search),
@@ -270,7 +271,7 @@ const api = Object.freeze({
     velocity?: boolean;
     collisions?: boolean;
     equipment?: boolean;
-    focus?: 'arena' | 'dan' | 'doug';
+    focus?: 'arena' | CharacterId;
   }) => {
     if (options.skeleton !== undefined) scene.overlay = options.skeleton;
     if (options.trails !== undefined) scene.trails = options.trails;

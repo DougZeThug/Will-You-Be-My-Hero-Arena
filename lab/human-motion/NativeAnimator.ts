@@ -20,7 +20,7 @@ import {
 } from '../../lib/arena/engine/motion/OrganicMotion';
 import { motionProfiles } from '../../lib/arena/engine/motion/MotionTypes';
 import { InertialPose } from './InertialPose';
-import { anatomy } from '../loongbones/side-rig/anatomy';
+import { anatomy, scaleToReference } from '../loongbones/side-rig/anatomy';
 import {
   contactRoll,
   rolledAnkle,
@@ -32,6 +32,7 @@ import {
   addHandAttachments,
   applyHandExposure,
   compileHandExposures,
+  HAND_TEXTURE_KEY,
   handAtlas,
   newHandSlots,
 } from './HandAttachments';
@@ -95,7 +96,6 @@ export class NativeAnimator {
     scene: Phaser.Scene,
     readonly definition: WeightedRigDefinition,
     options: {
-      forwardKnees?: boolean;
       stance?: { right: number; left: number };
       directional?: boolean;
       /** Extra authored clips for a host event (e.g. Play's running slide). */
@@ -104,10 +104,8 @@ export class NativeAnimator {
       gait?: Parameters<typeof buildMotionLibrary>[3];
     } = {},
   ) {
-    this.performance = new OrganicMotion(
-      motionProfiles[definition.id as 'dan' | 'doug'],
-    );
-    const landmarks = anatomy(definition.id as 'dan' | 'doug').joints;
+    this.performance = new OrganicMotion(motionProfiles[definition.id]);
+    const landmarks = anatomy(definition.id).joints;
     for (const side of ['L', 'R']) {
       const ankle = landmarks.find((j) => j.name === 'foot_' + side)!.point;
       const vector = (name: string) => {
@@ -125,8 +123,8 @@ export class NativeAnimator {
     const arm = data.armature[0];
     this.repairedFootWeights = repairFootMaterial(definition.id, arm);
     this.registeredArmVertices = registerArmMaterial(definition.id, arm);
-    restoreFarArm(definition.id as 'dan' | 'doug', arm);
-    addHandAttachments(definition.id as 'dan' | 'doug', arm);
+    restoreFarArm(definition.id, arm);
+    addHandAttachments(definition.id, arm);
     const body = arm.skin[0].slot.find(
       (s: { name: string }) => s.name === 'body',
     ).display[0];
@@ -145,12 +143,10 @@ export class NativeAnimator {
       this.soleOwners.push(owner);
       i += 1 + count * 2;
     }
-    if (options.forwardKnees) {
-      const far = arm.ik.find((c: { name: string }) => c.name === 'plant_R');
-      if (far) far.bendPositive = true;
-    }
+    const far = arm.ik.find((c: { name: string }) => c.name === 'plant_R');
+    if (far) far.bendPositive = true;
     this.library = buildMotionLibrary(
-      definition.id as 'dan' | 'doug',
+      definition.id,
       arm.animation,
       options.extend,
       options.gait,
@@ -212,21 +208,19 @@ export class NativeAnimator {
     this.authoringData = structuredClone(data);
     assertInterchangeBudget(arm.skin[0].slot.map((s: any) => s.display[0]));
     this.factory = new NativeFactory(scene);
-    this.factory.parseDragonBonesData(data, definition.key + '-human-v2');
+    const dragonBonesName = definition.key + '-human-v2';
+    this.factory.parseDragonBonesData(data, dragonBonesName);
     this.factory.parseTextureAtlasData(
       scene.cache.json.get(definition.key + '-atlas'),
       definition.key + '-texture',
-      definition.key + '-human-v2',
+      dragonBonesName,
     );
     this.factory.parseTextureAtlasData(
       handAtlas,
-      'arena-hands-v1',
-      definition.key + '-human-v2',
+      HAND_TEXTURE_KEY,
+      dragonBonesName,
     );
-    this.actor = this.factory.build(
-      definition.armature,
-      definition.key + '-human-v2',
-    );
+    this.actor = this.factory.build(definition.armature, dragonBonesName);
     this.actor.setScale(definition.scale).setDepth(40);
     this.integrity = new NativeRigIntegrity(this.actor, arm);
     if (options.directional)
@@ -287,9 +281,7 @@ export class NativeAnimator {
   anchors() {
     const hand = this.hand(),
       left = this.joint('leftHand');
-    const depth =
-      this.definition.scale /
-      (371 / (this.definition.id === 'dan' ? 1215 : 1191));
+    const depth = scaleToReference(this.definition.scale, this.definition.id);
     return {
       rightHand: hand,
       leftHand: { ...left, angle: 0 },
@@ -345,10 +337,17 @@ export class NativeAnimator {
     dt: number,
     events: MotionEvent[],
     time: number,
-    aim: Vec2,
-    twoHand = false,
-    target?: Vec2,
-    landingCompression = 0,
+    {
+      aim,
+      twoHand = false,
+      target,
+      landingCompression = 0,
+    }: {
+      aim: Vec2;
+      twoHand?: boolean;
+      target?: Vec2;
+      landingCompression?: number;
+    },
   ) {
     if (this.directional) {
       if (this.directional.facing !== motor.facing) {
@@ -651,9 +650,7 @@ export class NativeAnimator {
       (Number(twoHand) - this.handInfluence) * (1 - Math.exp(-dt / 0.07));
     if (this.handInfluence > 0.005) {
       const hand = this.anchors().twoHandGrip,
-        depth =
-          this.definition.scale /
-          (371 / (this.definition.id === 'dan' ? 1215 : 1191)),
+        depth = scaleToReference(this.definition.scale, this.definition.id),
         desired = { x: hand.x - 16 * depth, y: hand.y + 5 * depth },
         palm = this.joint('leftHand'),
         wrist = this.joint('leftWrist');

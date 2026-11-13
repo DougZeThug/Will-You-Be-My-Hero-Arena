@@ -1,7 +1,8 @@
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 import { applyDougArmMaterial } from './ArmMaterialRecipe.mjs';
 
 /** Private V3.1 bind correction. Atlas pixels, native bones and source exports stay intact. */
-export function registerArmMaterial(id: string, armature: any) {
+export function registerArmMaterial(id: CharacterId, armature: any) {
   if (id !== 'doug') return 0;
   return applyDougArmMaterial(armature);
 }

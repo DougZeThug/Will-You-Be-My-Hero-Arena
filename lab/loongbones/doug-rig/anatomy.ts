@@ -1,4 +1,4 @@
-import { buildSkeleton, type Joint } from '../authoring/skeleton';
+import { buildSkeleton, type Joint } from '../side-rig/skeleton';
 const v = (x: number, y: number) => ({ x, y });
 /** Anatomical centers inside Doug's original 255×589 ready illustration.
  * Overshirt edges do not define shoulders; left/right are image sides. */

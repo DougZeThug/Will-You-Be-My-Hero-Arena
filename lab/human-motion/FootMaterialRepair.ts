@@ -1,3 +1,5 @@
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
 interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
@@ -15,8 +17,7 @@ interface WeightedArmature {
  * All bind positions/UVs stay unchanged. Only this private Lab copy is derived;
  * original atlases, editor files, anatomy and production remain untouched.
  */
-export function repairFootMaterial(id: string, arm: WeightedArmature) {
-  if (!['dan', 'doug'].includes(id)) return 0;
+export function repairFootMaterial(id: CharacterId, arm: WeightedArmature) {
   const near = arm.bone.findIndex((b) => b.name === 'foot_L');
   const far = arm.bone.findIndex((b) => b.name === 'foot_R');
   const mesh = arm.skin[0].slot.find((s) => s.name === 'body')?.display[0];
@@ -43,10 +44,12 @@ export function repairFootMaterial(id: string, arm: WeightedArmature) {
   let repaired = 0;
   for (let f = 0; f < mesh.triangles.length; f += 3) {
     const face = mesh.triangles.slice(f, f + 3);
-    const x = face.reduce((n, i) => n + mesh.uvs![i * 2] * 1254, 0) / 3;
-    const y = face.reduce((n, i) => n + mesh.uvs![i * 2 + 1] * 1254, 0) / 3;
+    const x =
+      face.reduce((n, i) => n + mesh.uvs![i * 2] * SIDE_ATLAS_SIZE, 0) / 3;
+    const y =
+      face.reduce((n, i) => n + mesh.uvs![i * 2 + 1] * SIDE_ATLAS_SIZE, 0) / 3;
     // Inspected transparent gap for Dan; Doug's shoes meet, so preserve their
-    // painted diagonal overlap seam instead of the old vertical leg divider.
+    // painted diagonal overlap seam.
     const tip =
       id === 'dan'
         ? y > 1150 && x < 527

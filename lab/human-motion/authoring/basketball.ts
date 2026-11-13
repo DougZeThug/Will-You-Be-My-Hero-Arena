@@ -1,12 +1,15 @@
 import { smoothTranslate as translate, type LibraryBuilder } from './builder';
 import { handSurfaces } from '../../loongbones/side-rig/hand-surfaces';
-import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
+import type {
+  MotionMarker,
+  CharacterId,
+} from '../../../lib/arena/engine/motion/MotionTypes';
 
 /** One time domain for gather, extension, exposure and release. The former
  * post-pass moved bone keys without moving the release marker. */
 export function addBasketball(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   plants: MotionMarker[],
 ) {
   const end = id === 'dan' ? 136 : 128,

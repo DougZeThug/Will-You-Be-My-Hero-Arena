@@ -49,7 +49,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
       );
       if (!d) return undefined;
       const depth = boardDepthScale(placement.lane),
-        profile = performanceProfiles[d.id as 'dan' | 'doug'];
+        profile = performanceProfiles[d.id];
       const runtime = new LoongBonesAdapter(
         scene,
         {

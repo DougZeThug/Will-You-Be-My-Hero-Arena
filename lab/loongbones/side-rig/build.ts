@@ -2,7 +2,7 @@ import { anatomy, type Person } from './anatomy';
 import { layer, bodyWeights, type Rect } from './mesh';
 import { at, blend, smooth } from '../authoring/weighted-mesh';
 import { sideClips } from './clips';
-import type { Vec } from '../authoring/skeleton';
+import type { Vec } from './skeleton';
 import { assertInterchangeBudget } from './limits';
 import { shirtBackRegistration } from './cloth';
 import { bodyMaterials } from './body-materials';

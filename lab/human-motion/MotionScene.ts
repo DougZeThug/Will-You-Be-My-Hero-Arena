@@ -5,6 +5,8 @@ import { queueArenaAssets } from '../../lib/arena/engine/scenes/CharacterAssetLo
 import { Equipment } from '../../lib/arena/engine/objects/Equipment';
 import { HUMAN_CHAINS } from '../../lib/arena/engine/motion/HumanSkeleton';
 import { NativeAnimator } from './NativeAnimator';
+import { HAND_TEXTURE_KEY } from './HandAttachments';
+import { rearSourceKey } from './DirectionalSkin';
 import { RigDebugView } from './RigDebugView';
 import { MotionSession, type ProofEvent } from './MotionSession';
 import { KeyboardDevice } from '../../lib/arena/engine/input/KeyboardDevice';
@@ -17,6 +19,7 @@ import {
   retargetReference,
   type ReferenceTrack,
 } from '../../lib/arena/engine/motion-tools/ReferenceMotion';
+import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 export class MotionScene extends Phaser.Scene {
   session!: MotionSession;
   ready = false;
@@ -28,7 +31,7 @@ export class MotionScene extends Phaser.Scene {
   velocityView = false;
   collisionView = false;
   equipmentView = false;
-  focus: 'arena' | 'dan' | 'doug' = 'arena';
+  focus: 'arena' | CharacterId = 'arena';
   reference?: ReferenceTrack;
   referenceOffset = 0;
   retargetOverlay = false;
@@ -56,14 +59,14 @@ export class MotionScene extends Phaser.Scene {
   }
   preload() {
     this.load.image(
-      'arena-hands-v1',
+      HAND_TEXTURE_KEY,
       '/human-motion/assets/hands/hand-sheet-v1.png',
     );
     sideDefinitions.forEach((d) => queueRig(this, d));
     if (this.proof === 'fighting' || this.proof === 'running')
       for (const id of ['dan', 'doug'])
         this.load.image(
-          id + '-rear-source',
+          rearSourceKey(id),
           `/human-motion/assets/directional/${id}-rear-source.png`,
         );
     queueArenaAssets(this);
@@ -91,7 +94,6 @@ export class MotionScene extends Phaser.Scene {
                 : 0.85),
           },
           {
-            forwardKnees: true,
             ...(this.proof === 'basketball'
               ? { stance: { right: -30, left: 35 } }
               : this.proof === 'cornhole'
@@ -449,7 +451,7 @@ export class MotionScene extends Phaser.Scene {
       y: number;
       height: number;
     }[]) {
-      // Same obstacle bounds, now a readable low training hurdle with planted feet.
+      // A readable low training hurdle drawn at the obstacle bounds.
       this.props.fillStyle(0x171d20, 0.18).fillEllipse(o.x, o.y + 2, 44, 7);
       this.props
         .fillStyle(0x18272d)

@@ -9,13 +9,16 @@ import { addBasketball } from './authoring/basketball';
 import { addCombat } from './authoring/combat';
 import { addCornhole } from './authoring/cornhole';
 import { addGestures } from './authoring/gestures';
-import type { MotionMarker } from '../../lib/arena/engine/motion/MotionTypes';
+import type {
+  MotionMarker,
+  CharacterId,
+} from '../../lib/arena/engine/motion/MotionTypes';
 import { motionProfiles } from '../../lib/arena/engine/motion/MotionTypes';
 /** Derived clips preserve the approved atlas; these are authoring proofs, not editor exports. */
 export function buildMotionLibrary(
-  id: 'dan' | 'doug',
+  id: CharacterId,
   original: NativeClip[],
-  extend?: (library: LibraryBuilder, id: 'dan' | 'doug') => void,
+  extend?: (library: LibraryBuilder, id: CharacterId) => void,
   gait?: GaitTuning,
 ) {
   const library = createLibrary(original);

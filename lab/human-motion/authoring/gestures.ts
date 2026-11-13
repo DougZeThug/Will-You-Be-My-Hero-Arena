@@ -2,11 +2,14 @@ import { type LibraryBuilder, type BoneTrack } from './builder';
 import { motionSignatures } from '../../../lib/arena/engine/motion/CharacterMotionSignature';
 import { gestureHand } from '../../loongbones/side-rig/hand-surfaces';
 import type { Knot } from '../../loongbones/cornhole-motion/curves';
-import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
+import type {
+  MotionMarker,
+  CharacterId,
+} from '../../../lib/arena/engine/motion/MotionTypes';
 /** Semantic, equipment-independent gestures. Athletic clips never contain celebration logic. */
 export function addGestures(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   plants: MotionMarker[],
 ) {
   const energy = motionSignatures[id].gestureEnergy;

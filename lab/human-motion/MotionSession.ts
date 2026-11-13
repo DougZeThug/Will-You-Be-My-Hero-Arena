@@ -68,8 +68,8 @@ export class MotionSession {
           : [
               { x: 250, y: 610 },
               // Match the projected throwing distance to the same depth scale
-              // as the rig, board and sampled hand velocity. The old far lane
-              // required invisible horizontal acceleration to reach its board.
+              // as the rig, board and sampled hand velocity; otherwise the far
+              // lane would need invisible horizontal acceleration to reach it.
               {
                 x:
                   placement(
@@ -88,7 +88,7 @@ export class MotionSession {
     this.actors = animators.map(
       (animator, i) =>
         new MotionActor(
-          animator.definition.id as 'dan' | 'doug',
+          animator.definition.id,
           animator,
           placements[i],
           this.event,

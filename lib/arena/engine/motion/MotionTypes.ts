@@ -4,6 +4,8 @@ import {
   type CharacterMotionSignature,
 } from './CharacterMotionSignature';
 export type Vec2 = { x: number; y: number };
+/** The two playable characters; keys per-character motion data. */
+export type CharacterId = 'dan' | 'doug';
 export type MotionPhase =
   | 'settle'
   | 'anticipation'
@@ -102,7 +104,7 @@ export interface MotionProfile {
     phase: number;
   };
 }
-export const motionProfiles: Record<'dan' | 'doug', MotionProfile> = {
+export const motionProfiles: Record<CharacterId, MotionProfile> = {
   dan: {
     signature: motionSignatures.dan,
     id: 'dan',

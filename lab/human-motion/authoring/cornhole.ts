@@ -9,6 +9,7 @@ import reference from '../../../motion-reference/cornhole/reference-throw.json';
 import type {
   MotionMarker,
   MotionPhase,
+  CharacterId,
 } from '../../../lib/arena/engine/motion/MotionTypes';
 
 import {
@@ -22,7 +23,7 @@ import {
 } from './cornhole-curves';
 export function addCornhole(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   plants: MotionMarker[],
 ) {
   for (const [style, technique] of Object.entries(styleTraits)) {

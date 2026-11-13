@@ -1,8 +1,9 @@
+import type { CharacterId } from '../../../lib/arena/engine/motion/MotionTypes';
 /** Source-space ownership. These partitions only cut mesh topology; they do
  * not repaint pixels, change the source silhouette or move bind landmarks.
  * A vertex chosen by x alone made triangles stretch across the far arm and
  * between the legs when the pelvis began to move (visible zipper artifacts). */
-export function bodyMaterials(pixels: Uint8ClampedArray, id: 'dan' | 'doug') {
+export function bodyMaterials(pixels: Uint8ClampedArray, id: CharacterId) {
   const quad = (
     name: string,
     y0: number,
