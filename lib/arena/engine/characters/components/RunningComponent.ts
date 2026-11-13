@@ -1,11 +1,11 @@
 import type { ArenaCharacter, CharacterComponent } from '../ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import {
+  JUMP_SPEED,
   LANE_CHANGE_COOLDOWN,
   RUN_GRAVITY,
   type RunnerMotion,
-} from '../../events/running/RunningPhysics';
-const JUMP_SPEED = 300;
+} from '../../events/running/RunningConstants';
 export class RunningComponent implements CharacterComponent {
   constructor(
     private c: ArenaCharacter,

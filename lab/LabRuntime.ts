@@ -9,6 +9,7 @@ import type { Intent } from '../lib/arena/engine/input/InputActions';
 import type { PadSnapshot } from '../lib/arena/engine/input/GamepadDevice';
 import { GamepadDevice } from '../lib/arena/engine/input/GamepadDevice';
 import { KeyboardDevice } from '../lib/arena/engine/input/KeyboardDevice';
+import { keyboardLayoutOf } from '../lib/arena/engine/input/InputBindings';
 import { characterTimeline } from './character-timeline';
 import {
   SCENARIOS,
@@ -436,7 +437,7 @@ export class LabRuntime {
             : new KeyboardDevice(
                 player.device,
                 player.bindings,
-                player.device === 'keyboard2' ? 1 : 0,
+                keyboardLayoutOf(player.device),
                 this.host,
               ),
         );

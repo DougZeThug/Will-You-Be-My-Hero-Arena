@@ -1,17 +1,10 @@
 import type { ArenaCharacter } from '../../characters/ArenaCharacter';
+import {
+  LANE_CHANGE_COOLDOWN,
+  RUN_GRAVITY,
+  type RunnerMotion,
+} from './RunningConstants';
 import { clamp } from '../../input/InputActions';
-export interface RunnerMotion {
-  sprint: number;
-  brake: boolean;
-  slide: number;
-  stumble: number;
-  finished: number;
-  lane: number;
-  laneClock: number;
-  hits: Set<string>;
-  /** Where this runner started; progress is measured from here. */
-  startX?: number;
-}
 export interface Obstacle {
   id: string;
   x: number;
@@ -21,9 +14,6 @@ export interface Obstacle {
   height: number;
 }
 export const RUNNING_LENGTH = 2400;
-export const RUN_GRAVITY = 590;
-/** Seconds between lane changes, whether from a held direction or a dodge. */
-export const LANE_CHANGE_COOLDOWN = 0.24;
 /** Lane depth: runners nearer the camera (larger y) are drawn larger. */
 export function laneScale(y: number) {
   return 0.65 + ((y - 520) / 62) * 0.035;

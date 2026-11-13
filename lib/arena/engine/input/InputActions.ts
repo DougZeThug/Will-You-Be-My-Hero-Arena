@@ -62,6 +62,3 @@ export function radialDeadzone(v: Vector, zone = 0.18): Vector {
   const r = clamp((m - zone) / (1 - zone));
   return { x: (v.x / m) * r, y: (v.y / m) * r };
 }
-export function numberValue(v: number | Vector | undefined) {
-  return typeof v === 'number' ? v : 0;
-}

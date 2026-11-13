@@ -1,3 +1,4 @@
+import { sha256Hex } from './arena/assetHash';
 /** Identity of the unchanged editor export supplied by the user, not a general
  * promise that all LoongBones exports/features work. Hash every incoming file. */
 const prefix = 'arena-editor-test_';
@@ -28,15 +29,7 @@ export async function identifyEditorExport(
   files: File[],
 ): Promise<EditorExportVerification | null> {
   const hashes = await Promise.all(
-    files.map(async (file) => {
-      const digest = await crypto.subtle.digest(
-        'SHA-256',
-        await file.arrayBuffer(),
-      );
-      return Array.from(new Uint8Array(digest), (byte) =>
-        byte.toString(16).padStart(2, '0'),
-      ).join('');
-    }),
+    files.map(async (file) => sha256Hex(await file.arrayBuffer())),
   );
   if (
     hashes.length !== editorFiles.length ||

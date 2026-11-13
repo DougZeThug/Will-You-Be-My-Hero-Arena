@@ -1,5 +1,6 @@
 import type { CharacterRigProvider } from '../../../lib/arena/engine/characters/CharacterRig';
 import type { WeightedRigDefinition } from './RigDefinition';
+import { verifyAssetHash } from './assetHash';
 import { WeightedMatchRig } from './WeightedMatchRig';
 import { sideDefinitions } from '../side-rig/definitions';
 import { boardDepthScale } from '../../../lib/arena/equipment-layout';
@@ -11,19 +12,10 @@ export async function verifyRig(definition: WeightedRigDefinition) {
     definition.atlas,
     definition.texture,
   ]) {
-    const response = await fetch(definition.path + file);
-    if (!response.ok) throw Error('Cannot load ' + file);
-    const digest = await crypto.subtle.digest(
-      'SHA-256',
-      await response.arrayBuffer(),
-    );
-    const hash = [...new Uint8Array(digest)]
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-    if (hash !== definition.hashes[file])
-      throw Error(
-        `${definition.id === 'dan' ? 'Dan' : 'Doug'} fixture hash mismatch: ${file}`,
-      );
+    await verifyAssetHash(definition.path + file, definition.hashes[file], {
+      load: 'Cannot load ' + file,
+      mismatch: `${definition.id === 'dan' ? 'Dan' : 'Doug'} fixture hash mismatch: ${file}`,
+    });
   }
 }
 export function queueRig(

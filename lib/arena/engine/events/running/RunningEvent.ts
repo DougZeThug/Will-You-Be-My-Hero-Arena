@@ -14,9 +14,9 @@ import {
   laneScale,
   stumbleTime,
   RUNNING_LENGTH,
-  type RunnerMotion,
   type Obstacle,
 } from './RunningPhysics';
+import type { RunnerMotion } from './RunningConstants';
 export class RunningEvent implements PlayableArenaEvent {
   id = 'running';
   private ctx!: EventContext;

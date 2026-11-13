@@ -12,6 +12,7 @@ import {
   bindingsFor,
   invalidBinding,
   keyConflict,
+  keyboardLayoutOf,
   validateBindings,
   type Bindings,
 } from '@/lib/arena/engine/input/InputBindings';
@@ -62,7 +63,7 @@ function readSavedBindings(): SavedBindings {
   return saved;
 }
 const deviceBindings = (device: string, saved = readSavedBindings()) =>
-  saved[device] ?? bindingsFor(device === 'keyboard2' ? 1 : 0);
+  saved[device] ?? bindingsFor(keyboardLayoutOf(device));
 const slot = (i: number, saved?: SavedBindings): PlayerSlot => {
   const device = i === 0 ? 'keyboard' : 'ai';
   return {
@@ -143,7 +144,7 @@ export default function PlayableArena({
         code,
         intent,
         slots.map(({ s }) => ({
-          layout: s.device === 'keyboard2' ? 1 : 0,
+          layout: keyboardLayoutOf(s.device),
           keys: s.bindings.keys,
         })),
         slots.findIndex(({ index }) => index === i),
@@ -187,7 +188,7 @@ export default function PlayableArena({
         .filter(({ s }) => isKeyboard(s.device)),
       clash = bindingsConflict(
         keyboards.map(({ s }) => ({
-          layout: s.device === 'keyboard2' ? 1 : 0,
+          layout: keyboardLayoutOf(s.device),
           keys: s.bindings.keys,
         })),
       );
@@ -454,7 +455,7 @@ export default function PlayableArena({
                   onClick={() => {
                     setRemapNotice(null);
                     change(i, {
-                      bindings: bindingsFor(p.device === 'keyboard2' ? 1 : 0),
+                      bindings: bindingsFor(keyboardLayoutOf(p.device)),
                     });
                   }}
                 >

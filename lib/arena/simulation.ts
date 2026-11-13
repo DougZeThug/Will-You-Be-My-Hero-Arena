@@ -16,7 +16,6 @@ export function hash(text:string){return seedHash(text).toString(16).padStart(8,
 export const rng=seeded;
 const normal=(r:()=>number)=>Math.sqrt(-2*Math.log(Math.max(1e-9,r())))*Math.cos(2*Math.PI*r());
 export function project(p:V3){return {x:140+p.x*85+p.z*55,y:610-p.z*38-p.y*78};}
-export function unprojectSocket(x:number,y:number,z:number):V3{return {x:(x-140-z*55)/85,y:(610-z*38-y)/78,z};}
 export function releasePosition(asset:string,sport:Sport,actor:number,prepared?:AssetManifest):V3 {const f=prepared?.frames?.[releasePose(sport)],scale=prepared?.frameScale;const local=f&&scale?{x:(f.hand[0]-f.origin[0])*scale,y:(f.hand[1]-f.origin[1])*scale}:paperSocket(asset,releasePose(sport));return{x:1+local.x/85,y:-local.y/78,z:laneZ(actor)};}
 export function cupPosition(id:number,z:number):V3 {const row=id<1?0:id<3?1:2;const col=id-(row===0?0:row===1?1:3);return{x:8.4+row*.32,y:1.05,z:z+(col-row/2)*.32};}
 export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{contact:Attempt['contact'];score:number}{

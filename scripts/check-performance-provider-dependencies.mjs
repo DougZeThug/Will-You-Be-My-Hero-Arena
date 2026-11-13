@@ -6,10 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = process.cwd();
 const productionEntry = 'lab/performance/provider.ts';
-const stageEntries = [
-  'components/arena/ArenaStage.tsx',
-  'components/arena/live/LiveStage.tsx',
-];
+// ArenaStage and LiveStage both load the provider through this one module.
+const stageEntries = ['components/arena/rig-provider.ts'];
 const tsconfigPath = path.join(root, 'tsconfig.json');
 const tsconfig = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
 if (tsconfig.error)
@@ -46,7 +44,7 @@ const allowedLabProductionPaths = [
   /^lab\/human-motion\/(?:ArmMaterialRegistration|FootMaterialRepair)\.ts$/,
   /^lab\/human-motion\/ArmMaterialRecipe\.mjs$/,
   /^lab\/loongbones\/(?:NativeFactory|NativeMesh|NativeSlot|validate-export)\.ts$/,
-  /^lab\/loongbones\/arena\/(?:RigDefinition|definitions)\.ts$/,
+  /^lab\/loongbones\/arena\/(?:RigDefinition|definitions|assetHash|sideRigSockets)\.ts$/,
   /^lab\/loongbones\/assets\//,
   /^lab\/loongbones\/cornhole-motion\/(?:curves|throws)\.ts$/,
   /^lab\/loongbones\/side-rig\/(?:anatomy|definitions|limits|skeleton)\.ts$/,

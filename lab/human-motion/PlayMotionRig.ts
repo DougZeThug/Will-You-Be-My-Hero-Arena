@@ -14,18 +14,9 @@ import type {
   RigDriveFrame,
   SocketName,
 } from '../../lib/arena/engine/characters/CharacterRig';
+import { SIDE_RIG_SOCKETS } from '../loongbones/arena/sideRigSockets';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 
-const joints: Record<SocketName, string> = {
-  throwingHand: 'rightHand',
-  offHand: 'leftHand',
-  head: 'head',
-  chest: 'chest',
-  waist: 'pelvis',
-  footL: 'rightAnkle',
-  footR: 'leftAnkle',
-  effect: 'chest',
-};
 /** World px per unit body scale of the Play puppet, so a side-view runner
  * stands exactly as tall as the puppet it replaces (both are 5'8"). */
 const PLAY_RIG_HEIGHT = 307;
@@ -285,7 +276,7 @@ export class PlayMotionRig implements CharacterRig {
   }
   socket(name: SocketName) {
     return this.animator
-      ? this.animator.joint(joints[name])
+      ? this.animator.joint(SIDE_RIG_SOCKETS[name])
       : { x: 0, y: 0 };
   }
   socketTransform(name: SocketName) {

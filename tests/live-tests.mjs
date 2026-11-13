@@ -776,7 +776,7 @@ export async function testLive({ check }) {
   const { laneScale } =
     await import('../.test-build/engine/events/running/RunningPhysics.mjs');
   const { ATTACKS } =
-    await import('../.test-build/engine/characters/components/CombatComponent.mjs');
+    await import('../.test-build/engine/events/fighting/Attacks.mjs');
   // B-26: a roll curls around the bags it meets once, however many there are.
   const hole = precisionTarget();
   let spot;

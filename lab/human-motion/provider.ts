@@ -1,4 +1,5 @@
 import type { CharacterRigProvider } from '../../lib/arena/engine/characters/CharacterRig';
+import { verifyAssetHash } from '../loongbones/arena/assetHash';
 import { sideDefinitions } from '../loongbones/side-rig/definitions';
 import { PlayMotionRig, type PlayMotionEvent } from './PlayMotionRig';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
@@ -29,18 +30,11 @@ export async function sideMotionProvider(
     sideDefinitions.flatMap((d) =>
       Object.entries(files[d.id as keyof typeof files]).map(
         async ([kind, url]) => {
-          const response = await fetch(url);
-          if (!response.ok) throw Error('Cannot load side rig asset ' + url);
-          const digest = await crypto.subtle.digest(
-            'SHA-256',
-            await response.arrayBuffer(),
-          );
-          const actual = [...new Uint8Array(digest)]
-            .map((n) => n.toString(16).padStart(2, '0'))
-            .join('');
           const original = d[kind as 'skeleton' | 'atlas' | 'texture'];
-          if (actual !== d.hashes[original])
-            throw Error('Side rig asset hash mismatch: ' + original);
+          await verifyAssetHash(url, d.hashes[original], {
+            load: 'Cannot load side rig asset ' + url,
+            mismatch: 'Side rig asset hash mismatch: ' + original,
+          });
         },
       ),
     ),

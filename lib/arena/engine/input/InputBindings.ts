@@ -42,6 +42,10 @@ export const SECOND_KEYS: Bindings['keys'] = {
   celebrate: 'NumpadDecimal',
   pause: 'Backspace',
 };
+/** Keyboard layout index for a device id: 1 for the second keyboard, else 0. */
+export function keyboardLayoutOf(device: string): 0 | 1 {
+  return device === 'keyboard2' ? 1 : 0;
+}
 export function bindingsFor(
   player: number,
   saved?: Partial<Bindings>,

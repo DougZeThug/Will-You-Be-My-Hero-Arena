@@ -8,6 +8,8 @@ import type {
 import TouchControls from './TouchControls';
 import { inputGlyph } from '@/lib/arena/engine/input/InputGlyphs';
 import { playableEvent } from '@/lib/arena/engine/core/EventRegistry';
+import { loadRigProvider } from '../rig-provider';
+import { keyboardLayoutOf } from '@/lib/arena/engine/input/InputBindings';
 export default function LiveStage({
   config,
   onExit,
@@ -42,16 +44,10 @@ export default function LiveStage({
       .then(async ({ LiveArenaGame }) => {
         if (!mounted || !host.current) return;
         try {
-          const characterRigs =
-            config.event === 'cornhole'
-              ? await (
-                  await import('../../../lab/performance/provider')
-                ).performanceMatchProvider()
-              : config.event === 'running' || config.event === 'fighting'
-                ? await (
-                    await import('../../../lab/human-motion/provider')
-                  ).sideMotionProvider(config.event)
-                : undefined;
+          const characterRigs = await loadRigProvider({
+            mode: 'live',
+            sport: config.event,
+          });
           if (!mounted || !host.current) return;
           game.current = new LiveArenaGame(host.current, {
             config,
@@ -225,7 +221,7 @@ export default function LiveStage({
                     snapshot?.players.find((s) => s.id === p.id)?.family ??
                       'keyboard',
                     p.bindings,
-                    p.device === 'keyboard2' ? 1 : 0,
+                    keyboardLayoutOf(p.device),
                   )}{' '}
                   move ·{' '}
                   {config.event === 'cornhole'
@@ -244,7 +240,7 @@ export default function LiveStage({
                   snapshot?.players.find((s) => s.id === p.id)?.family ??
                   'keyboard'
                 }
-                player={p.device === 'keyboard2' ? 1 : 0}
+                player={keyboardLayoutOf(p.device)}
                 resetCharge={
                   config.event === 'cornhole' &&
                   !['charging', 'aiming'].includes(

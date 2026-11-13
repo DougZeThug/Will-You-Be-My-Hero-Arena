@@ -3,6 +3,7 @@ import { ArenaSession } from './ArenaSession';
 import type { LiveOptions } from './LiveTypes';
 import { LiveBootScene, LiveArenaScene } from '../scenes/LiveArenaScene';
 import { KeyboardDevice } from '../input/KeyboardDevice';
+import { keyboardLayoutOf } from '../input/InputBindings';
 import { GamepadDevice } from '../input/GamepadDevice';
 import { AudioManager } from '../audio/AudioManager';
 export class LiveArenaGame {
@@ -25,7 +26,7 @@ export class LiveArenaGame {
           new KeyboardDevice(
             p.device,
             p.bindings,
-            p.device === 'keyboard2' ? 1 : 0,
+            keyboardLayoutOf(p.device),
             parent,
           ),
         );
