@@ -1,3 +1,4 @@
+import { clamp } from '../../math';
 export type Vector = { x: number; y: number };
 export type Intent =
   | 'move'
@@ -54,8 +55,7 @@ export interface InputSignal {
   magnitude?: number;
   angle?: number;
 }
-export const clamp = (n: number, min = 0, max = 1) =>
-  Math.max(min, Math.min(max, n));
+export { clamp };
 export function radialDeadzone(v: Vector, zone = 0.18): Vector {
   const m = Math.hypot(v.x, v.y);
   if (!Number.isFinite(m) || m <= zone) return { x: 0, y: 0 };

@@ -2,12 +2,14 @@ import type { Attempt } from '../../../model';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import { surfacePoint } from '../../../equipment-geometry';
 
+/** Shots that fly straight onto the board with no slide phase. */
+export const isDirectShot = (shot: ShotStyle) =>
+  ['airmail', 'highArc', 'collect', 'drag', 'desperation'].includes(shot);
+
 /** Duration between first board contact and the immutable final outcome. */
 export function surfaceTravelSeconds(attempt: Attempt, shot: ShotStyle) {
   const onBoard = ['board', 'hole'].includes(attempt.contact),
-    direct = ['airmail', 'highArc', 'collect', 'drag', 'desperation'].includes(
-      shot,
-    );
+    direct = isDirectShot(shot);
   const target = surfacePoint('cornhole', attempt.actor, attempt.target),
     touch = attempt.boardResolution?.touch
       ? surfacePoint('cornhole', attempt.actor, attempt.boardResolution.touch)

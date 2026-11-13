@@ -1,3 +1,4 @@
+import { smoothstep } from '../../math';
 import { AnimationGraph } from './AnimationGraph';
 import { clamp, type MotionClip, type MotionProfile } from './MotionTypes';
 import {
@@ -114,7 +115,7 @@ export class MotionPlanner {
           break;
         }
       const u = clamp((t - a.at) / Math.max(0.00001, b.at - a.at), 0, 1),
-        s = u * u * (3 - 2 * u);
+        s = smoothstep(u);
       return { x: a.x + (b.x - a.x) * s, y: a.y + (b.y - a.y) * s };
     };
     const from = sample(Math.max(0, state.time)),

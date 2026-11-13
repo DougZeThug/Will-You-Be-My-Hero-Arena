@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 export async function performanceTests() {
   const { CharacterPerformanceController, alignedSubstep } =
     await import('../.test-build/engine/performance/CharacterPerformanceController.mjs');
-  const { performanceProfiles, validatePerformanceProfile } =
-    await import('../.test-build/engine/performance/PerformanceProfiles.mjs');
+  const { performanceProfiles } =
+      await import('../.test-build/engine/performance/PerformanceProfiles.mjs'),
+    { validatePerformanceProfile } =
+      await import('../.test-build/engine/performance/ProfileValidation.mjs');
   let checks = 0;
   const check = (fn) => {
     fn();

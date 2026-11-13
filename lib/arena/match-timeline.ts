@@ -1,3 +1,4 @@
+import { clamp01, smooth } from './math';
 import {
   EVENTS,
   type Attempt,
@@ -41,11 +42,7 @@ export type MatchPhase =
   | 'result'
   | 'reset'
   | 'complete';
-export const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-export const smooth = (n: number) => {
-  const t = clamp01(n);
-  return t * t * (3 - 2 * t);
-};
+export { clamp01, smooth };
 export const flightDuration = (sport: Sport) =>
   sport === 'football' ? 0.78 : sport === 'basketball' ? 1.38 : 1.25;
 export const releaseLead = TIMING.ready + TIMING.anticipation + TIMING.throw;

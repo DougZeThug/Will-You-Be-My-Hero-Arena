@@ -1,4 +1,13 @@
 import type { Attempt, Recording, V3 } from '../../../model';
+import {
+  BOARD,
+  HOLE_HALF,
+  boardSurfaceY,
+  laneZ,
+  overHoleOpening,
+} from '../../../board-geometry';
+
+export { HOLE_HALF };
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
 import {
@@ -8,17 +17,13 @@ import {
   placement,
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
-import { surfaceTravelSeconds } from './CornholePresentationTiming';
+import { isDirectShot, surfaceTravelSeconds } from './CornholePresentationTiming';
 import type { BagInteraction } from './CornholeBoard';
 import {
   squashOffset,
   squashScale,
   velocityStretch,
 } from '../../motion/SquashStretch';
-export {
-  firstImpactTime,
-  surfaceTravelSeconds,
-} from './CornholePresentationTiming';
 
 /** Court projection: vertical render pixels per metre (see equipment-layout). */
 const COURT_PX_PER_METRE_Y = 78;
@@ -50,16 +55,13 @@ export const blendSeconds = (air: number) => Math.min(0.22, 0.35 * air);
 /** Board-surface point (the same slope form the board solver records). */
 const onBoard = (x: number, z: number): V3 => ({
   x,
-  y: 0.16 + ((x - 8) / 1.9) * 0.34,
+  y: boardSurfaceY(x),
   z,
 });
 
 /** Drawn resting bag half-size in screen px at depth scale 1: the 60 px
  * sprite's opaque art (about 96% of it) at the 0.52 resting flatten. */
 const BAG_HALF = { x: 29, y: 14 };
-/** Drawn hole opening half-extents in screen px at depth scale 1: the dark
- * interior of board-finish-v2 (240 × 104 source px) at the board's scale. */
-export const HOLE_HALF = { x: 20, y: 8.3 };
 
 type XYPoint = { x: number; y: number };
 
@@ -88,11 +90,7 @@ function chordCrossesOpening(
 function overOpening(p: XYPoint, actor: number) {
   const anchor = placement('cornhole', actor).anchor,
     s = boardDepthScale(actor);
-  return (
-    ((p.x - anchor.x) / (HOLE_HALF.x * s)) ** 2 +
-      ((p.y - anchor.y) / (HOLE_HALF.y * s)) ** 2 <
-    1
-  );
+  return overHoleOpening(p, anchor, s);
 }
 
 /** First chord fraction (0..1) at which a bag sliding a→b touches a resting
@@ -161,8 +159,8 @@ export function holeRest(a: Attempt): { rest: XYPoint; run: number } {
     e = (dx / hx) ** 2 + (dy / hy) ** 2;
   if (e < 1) {
     // Over the opening: run on along the board, within half the room.
-    const front = surfacePoint('cornhole', a.actor, onBoard(8, a.target.z)),
-      knee = surfacePoint('cornhole', a.actor, onBoard(9.2, a.target.z)),
+    const front = surfacePoint('cornhole', a.actor, onBoard(BOARD.frontX, a.target.z)),
+      knee = surfacePoint('cornhole', a.actor, onBoard(BOARD.holeX, a.target.z)),
       m = (knee.y - front.y) / (knee.x - front.x),
       qa = 1 / hx ** 2 + (m / hy) ** 2,
       qb = 2 * (dx / hx ** 2 + (m * dy) / hy ** 2),
@@ -253,9 +251,9 @@ export function presentationSlide(
   // the hole), so three samples invert it exactly.
   const screen = (x: number) =>
       surfacePoint('cornhole', a.actor, onBoard(x, a.target.z)),
-    front = screen(8).x,
-    hole = screen(9.2).x,
-    back = screen(9.9).x,
+    front = screen(BOARD.frontX).x,
+    hole = screen(BOARD.holeX).x,
+    back = screen(BOARD.backX).x,
     want = target.x - distance;
   let x =
     want <= hole
@@ -266,8 +264,8 @@ export function presentationSlide(
     x = edge;
     clamp = 'front';
   }
-  const dz = a.target.z - a.actor * 3.5;
-  if (a.contact === 'board' && a.target.x > 9.2 && Math.abs(dz) < 0.19) {
+  const dz = a.target.z - laneZ(a.actor);
+  if (a.contact === 'board' && a.target.x > BOARD.holeX && Math.abs(dz) < 0.19) {
     const disc = 9.2 + Math.sqrt(0.19 ** 2 - dz ** 2);
     if (x < disc) {
       x = disc;
@@ -618,13 +616,7 @@ export function releasedBag(
 ): ProjectileFrame {
   const velocity = release.velocity!;
   const target = surfacePoint('cornhole', a.actor, a.target);
-  const direct = [
-    'airmail',
-    'highArc',
-    'collect',
-    'drag',
-    'desperation',
-  ].includes(shot);
+  const direct = isDirectShot(shot);
   // The presentation solver (not a recording) chose this touch point.
   const motion = slideMotion(a, shot, release),
     presented = !!motion;

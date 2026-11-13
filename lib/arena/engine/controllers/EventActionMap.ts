@@ -1,7 +1,6 @@
 import type { InputSignal, Intent, InputPhase } from '../input/InputActions';
 export interface ControlContext {
   state: string;
-  canCancel: boolean;
   held: Set<Intent>;
   facing: number;
 }
@@ -12,7 +11,6 @@ export interface ActionDefinition {
   label: string;
   states?: string[];
   modifiers?: Intent[];
-  buffer?: number;
   hidden?: boolean;
 }
 export interface ComboDefinition {

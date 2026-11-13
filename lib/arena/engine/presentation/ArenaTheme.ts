@@ -9,39 +9,33 @@ export const ARENA_THEME = {
   warmTint: 0xfff2df,
   font: 'Impact, Arial Narrow, sans-serif',
   background: '/assets/arena-sunset-v2.png',
-  panel: { width: 312, height: 94, margin: 24, radius: 7 },
 } as const;
 export const EVENT_PRESENTATION = {
   cornhole: {
     title: 'CORNHOLE',
     unit: 'BAGS',
     accent: 0xe7b75b,
-    zone: 'TOSS COURT',
   },
   basketball: {
     title: 'BASKETBALL',
     unit: 'SHOTS',
     accent: 0xea9b58,
-    zone: 'SHOOTING COURT',
   },
   football: {
     title: 'FOOTBALL',
     unit: 'THROWS',
     accent: 0x89a993,
-    zone: 'TARGET RANGE',
   },
   pong: {
     title: 'BEER PONG',
     unit: 'SHOTS',
     accent: 0xdc846c,
-    zone: 'TABLE COURT',
   },
-  running: { title: 'RUNNING', unit: '%', accent: 0x9cbd9a, zone: 'TRACK' },
+  running: { title: 'RUNNING', unit: '%', accent: 0x9cbd9a },
   fighting: {
     title: 'FIGHTING',
     unit: 'HP',
     accent: 0xd78e76,
-    zone: 'COMBAT COURT',
   },
 } as const;
 export type ArenaEventStyle = keyof typeof EVENT_PRESENTATION;

@@ -3,7 +3,7 @@
  * One file per character and technique. Authored takes and future motion
  * capture both land here; see ./takes/README.md for the mapping.
  */
-export const TAKE_CHANNELS = [
+const TAKE_CHANNELS = [
   'weightX',
   'compression',
   'hips',
@@ -21,7 +21,7 @@ export const TAKE_CHANNELS = [
 /** Optional footwork (rig px offsets of the planted IK targets from their
  * stance). Absent = planted. Captured steps, hops and heel-to-toe transfer
  * arrive here; the adapter then checks feet against their moving targets. */
-export const TAKE_FOOT_CHANNELS = [
+const TAKE_FOOT_CHANNELS = [
   'frontFootX',
   'frontFootY',
   'backFootX',
@@ -29,7 +29,7 @@ export const TAKE_FOOT_CHANNELS = [
 ] as const;
 export type TakeChannel = (typeof TAKE_CHANNELS)[number];
 export type TakeFootChannel = (typeof TAKE_FOOT_CHANNELS)[number];
-export const TAKE_MARKERS = [
+const TAKE_MARKERS = [
   'anticipate',
   'windup',
   'windupPeak',
@@ -58,7 +58,7 @@ export interface PerformanceTake {
 }
 /** Authored pre-overlap hand intent. The compiler adds wrist/chest lag, then
  * enforces the native hand_L limit on every baked frame. */
-export const TAKE_WRIST_LIMITS = [-35, 95] as const;
+const TAKE_WRIST_LIMITS = [-35, 95] as const;
 const FRAME = 1 / 60;
 
 export function validateTake(input: unknown): PerformanceTake {

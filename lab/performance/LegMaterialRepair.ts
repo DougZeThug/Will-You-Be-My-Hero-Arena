@@ -1,3 +1,4 @@
+import { smooth } from './math';
 interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
@@ -14,10 +15,6 @@ const HIP_Y = 690;
 const HEM_Y = 815;
 /** Atlas column (px) where the near shorts leg meets the far one at the hem. */
 const LEG_SPLIT_X = 550;
-const smooth = (a: number, b: number, x: number) => {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
 
 /** The source binds the whole shorts to the pelvis down to the hem, while the
  * performance keeps the knees softly bent: each thigh turns ~15° under a rigid

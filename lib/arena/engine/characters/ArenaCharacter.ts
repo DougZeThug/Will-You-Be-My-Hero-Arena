@@ -174,9 +174,6 @@ export class ArenaCharacter implements ControllableEntity {
   setPresentedHand(provider?: () => { x: number; y: number }) {
     this.presentedHand = provider;
   }
-  getState() {
-    return this.state;
-  }
   controlState() {
     return this.substate;
   }

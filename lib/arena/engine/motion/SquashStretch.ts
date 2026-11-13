@@ -1,3 +1,4 @@
+import { smoothstep } from '../../math';
 /** Stateless cartoon squash & stretch for whole characters and props.
  *
  * A pulse is an event time plus a signed amplitude (positive stretches
@@ -32,7 +33,7 @@ export function squashOffset(pulses: readonly SquashPulse[], time: number) {
     if (t < 0 || t > settle) continue;
     if (t < ATTACK) {
       const u = t / ATTACK;
-      total += p.amount * u * u * (3 - 2 * u);
+      total += p.amount * smoothstep(u);
       continue;
     }
     const s = t - ATTACK,

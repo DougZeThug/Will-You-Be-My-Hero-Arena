@@ -1,3 +1,4 @@
+import { laneZ } from '../../board-geometry';
 import { RenderMetrics } from '../core/RenderMetrics';
 import { personalityMoves } from '../../personality';
 import * as Phaser from 'phaser';
@@ -145,12 +146,11 @@ export class ArenaScene extends Phaser.Scene {
     this.event?.finish();
     this.event = createEvent(sport);
     if (rec) this.event.initialize(rec);
-    this.event.playIntro();
     this.projectiles.forEach((p) => p.destroy());
     this.projectiles.clear();
     this.floor.clear();
     for (let actor = 0; actor < 2; actor++) {
-      const start = project({ x: 1, y: 0, z: actor * 3.5 }),
+      const start = project({ x: 1, y: 0, z: laneZ(actor) }),
         end = placement(sport, actor).x - 18;
       this.floor
         .lineStyle(2, 0xf3e6c7, 0.45)
@@ -582,8 +582,8 @@ export class ArenaScene extends Phaser.Scene {
           reactionDelay: 0.05,
         };
       a.actor = c.actor;
-      a.target.z = c.actor * 3.5;
-      a.release.z = c.actor * 3.5;
+      a.target.z = laneZ(c.actor);
+      a.release.z = laneZ(c.actor);
       // previewAttempt flew lane 0; re-derive the flight for this actor's lane.
       const path = trajectory(a.release, a.target, a.duration, a.contact);
       a.trajectory = path.path;

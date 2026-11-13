@@ -1,21 +1,13 @@
 import { addGaits, type GaitTuning } from './gait';
-import {
-  rotation,
-  translate,
-  pulse,
-  type BoneTrack,
-  type LibraryBuilder,
-} from './builder';
-import { handSurfaces } from '../../loongbones/side-rig/hand-surfaces';
+import { translate, pulse, type LibraryBuilder } from './builder';
 import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
-import { motionProfiles } from '../../../lib/arena/engine/motion/MotionTypes';
 export function addLocomotion(
   library: LibraryBuilder,
   id: 'dan' | 'doug',
   plants: MotionMarker[],
   gait: GaitTuning = {},
 ) {
-  const { add, athletic } = library;
+  const { athletic } = library;
   addGaits(library, id, gait);
   athletic(
     'pivot',

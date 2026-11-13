@@ -1,6 +1,6 @@
 import {CARDS,COPIES,USERS,EVENTS,SPORTS,type Card,type User,type OwnedCopy,type AssetManifest,type Sport,type Setup,type Recording} from './model';
 import {manifest,validateAsset} from './assets';
-import {simulate,contactScore,validateRecording} from './simulation';
+import {simulate,validateRecording} from './simulation';
 import {LocalArenaRepository,type ArenaRepository} from './persistence';
 export interface IdentityProvider {current():Promise<User>;select(id:string):Promise<User>}
 export interface CardCatalog {all():Promise<Card[]>;get(cardId:string):Promise<Card>}

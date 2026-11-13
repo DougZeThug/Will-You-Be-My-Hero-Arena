@@ -19,7 +19,6 @@ export type ArenaLabAPI = Pick<
   | 'restoreGamepad'
   | 'setRigQA'
 >;
-export type ArenaLabState = ReturnType<ArenaLabAPI['getState']>;
 export function createLabAPI(lab: LabRuntime): Readonly<ArenaLabAPI> {
   return Object.freeze({
     version: lab.version,

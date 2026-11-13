@@ -1,9 +1,10 @@
 import { type Sport, type V3 } from './model';
+import { boardSurfaceY, laneZ } from './board-geometry';
+import { clamp01 } from './math';
 import { EQUIPMENT_ART as ART, type XY, type Quad } from './equipment-art';
 
 // Pure layout geometry intentionally has no simulation/timeline dependency.
 // Match timing imports surfacePoint while simulation imports match timing.
-export const EQUIPMENT_URL = '/assets/equipment/';
 // Opaque source soles, excluding the transparent padding around each image.
 export const EQUIPMENT_GROUND = {
   board: 673,
@@ -21,7 +22,7 @@ export const BAG_FLIGHT_FLATTEN = 0.68;
 export const boardDepthScale = (actor: number) => (actor === 1 ? 0.7 : 1);
 export const equipmentDepthScale = (sport: Sport, actor: number) =>
   sport === 'cornhole' ? boardDepthScale(actor) : actor === 1 ? 0.78 : 1;
-export const clamp = (n: number) => Math.max(0, Math.min(1, n));
+export { clamp01 as clamp };
 export function quadPoint(q: Quad, u: number, v: number): XY {
   return {
     x:
@@ -110,14 +111,14 @@ export function artPoint(sport: Sport, actor: number, p: XY) {
   return { x: a.x + p.x * a.scale, y: a.y + p.y * a.scale };
 }
 export function surfacePoint(sport: Sport, actor: number, p: V3): XY {
-  const lane = actor * 3.5,
+  const lane = laneZ(actor),
     a = placement(sport, actor),
     dz = p.z - lane;
   if (sport === 'cornhole') {
     const u = register((p.x - 8) / 1.9, 1.2 / 1.9, holeUV.u),
       v = register((dz + 0.52) / 1.04, 0.5, holeUV.v),
       q = artPoint(sport, actor, quadPoint(ART.board.plane, u, v));
-    return { x: q.x, y: q.y - (p.y - (0.16 + ((p.x - 8) / 1.9) * 0.34)) * 78 };
+    return { x: q.x, y: q.y - (p.y - boardSurfaceY(p.x)) * 78 };
   }
   if (sport === 'football') {
     const dy = p.y - 2,

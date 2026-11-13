@@ -1,7 +1,7 @@
 import { AnimationGraph } from '../motion/AnimationGraph';
 import { AttachmentManager } from '../equipment/AttachmentManager';
 import { performanceActions } from './Choreography';
-import { validatePerformanceProfile } from './PerformanceProfiles';
+import { validatePerformanceProfile } from './ProfileValidation';
 import {
   permitsActionEntry,
   permitsPerformanceTransition,
@@ -18,7 +18,7 @@ import type {
   PerformanceObservation,
 } from './PerformanceTypes';
 
-export const PERFORMANCE_SUBSTEP = 1 / 120;
+const PERFORMANCE_SUBSTEP = 1 / 120;
 /** Substep ending on the next absolute 1/120 s boundary of the performance
  * clock, so hand sampling (and the release velocity fitted from it) never
  * depends on how a caller partitions its advances: step(a) then step(b)

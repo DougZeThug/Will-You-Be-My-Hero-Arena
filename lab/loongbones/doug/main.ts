@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { RigReviewScene } from '../arena/RigReviewScene';
 import { danDefinition, dougDefinition } from '../arena/definitions';
 import { sideDefinitions } from '../side-rig/definitions';
+import { verifyRig } from '../arena/provider';
 const query = new URLSearchParams(location.search);
 const character = query.get('character') === 'dan' ? 'dan' : 'doug';
 const definition =
@@ -23,7 +24,6 @@ characterSelect.addEventListener('change', () => {
   query.get('version') === '2'
     ? `../assets/cornhole-motion-v2/${definition.id}-motion-v2-import.zip`
     : `../assets/cornhole-side-v3/${definition.id}-side-v3-import.zip`;
-import { verifyRig } from '../arena/provider';
 const status = document.querySelector<HTMLOutputElement>('#status')!,
   select = document.getElementById('clip') as unknown as HTMLSelectElement;
 await verifyRig(definition).catch((error) => {

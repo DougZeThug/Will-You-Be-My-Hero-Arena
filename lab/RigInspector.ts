@@ -129,9 +129,10 @@ export class RigInspector {
       court ? this.sourceCourt!.base.y : 625,
     );
     for (const object of root.list) {
-      if (object instanceof Phaser.GameObjects.Mesh)
-        object.setTint(options.silhouette ? 0 : 0xfff2df);
-      if (object instanceof Phaser.GameObjects.Image)
+      if (
+        object instanceof Phaser.GameObjects.Mesh ||
+        object instanceof Phaser.GameObjects.Image
+      )
         object.setTint(options.silhouette ? 0 : 0xfff2df);
     }
     this.graphics.clear();

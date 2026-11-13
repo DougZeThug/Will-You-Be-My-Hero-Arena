@@ -45,14 +45,12 @@ export interface PersistentObject {
 export interface ArenaEvent {
   readonly sport: Sport;
   initialize(recording: Recording): void;
-  playIntro(): { equipment: string; lanes: number };
   performAction(
     attempt: Attempt,
     direction: DirectedAction,
     release: ReleaseFrame,
     time: number,
   ): ProjectileFrame;
-  resolveResult(attempt: Attempt): { points: number; outcome: string };
   /** `pushStarts`: optional presentation timing (by moved object id): when
    * the active attempt's thrown object reaches what it pushes, and how long
    * the push lasts (seconds). */
@@ -60,6 +58,5 @@ export interface ArenaEvent {
     time: number,
     pushStarts?: ReadonlyMap<string, { start: number; duration: number }>,
   ): PersistentObject[];
-  playReaction(direction: DirectedAction): string;
   finish(): void;
 }

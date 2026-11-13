@@ -8,6 +8,7 @@ import {
 } from '../../equipment-layout';
 import { EQUIPMENT_ART as ART } from '../../equipment-art';
 import { cupPosition } from '../../simulation';
+import { laneZ } from '../../board-geometry';
 import { equipmentSprite } from './EquipmentSprite';
 export class Equipment {
   private objects: Phaser.GameObjects.GameObject[] = [];
@@ -65,7 +66,7 @@ export class Equipment {
           contacts.filter((a) => a.actor === actor).at(-1)?.removedCups ?? [];
         for (const { id, pos } of Array.from({ length: 6 }, (_, id) => ({
           id,
-          pos: surfacePoint('pong', actor, cupPosition(id, actor * 3.5)),
+          pos: surfacePoint('pong', actor, cupPosition(id, laneZ(actor))),
         })).sort((a, b) => a.pos.y - b.pos.y)) {
           if (removed.includes(id)) continue;
           const cup = this.scene.add

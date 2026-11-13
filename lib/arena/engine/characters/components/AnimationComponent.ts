@@ -1,3 +1,4 @@
+import { smoothstep } from '../../../math';
 import { REST, mixPuppet, type PuppetPose } from '../../../puppet-motion';
 import { handFrame } from '../../../hand-geometry';
 import { puppetJoints, type PuppetAsset } from '../../../puppet-geometry';
@@ -93,7 +94,7 @@ export class AnimationComponent {
     this.blend = 0;
     this.blendTime = 0.16;
   }
-  sample(time: number, _speed = this.speed): PuppetPose {
+  sample(time: number): PuppetPose {
     const clip = this.timeline.clip
       ? this.resolve(this.timeline.clip)
       : this.resolve(this.locomotion || this.idle);
@@ -122,7 +123,7 @@ export class AnimationComponent {
       ? mixPuppet(
           this.from,
           pose,
-          this.blend * this.blend * (3 - 2 * this.blend),
+          smoothstep(this.blend),
         )
       : pose;
   }
@@ -151,7 +152,7 @@ export class AnimationComponent {
     }
     this.blend = Math.min(1, this.blend + dt / this.blendTime);
     this.timeline.update(dt, emit);
-    this.pose = this.sample(time, speed);
+    this.pose = this.sample(time);
   }
   handAt(time: number) {
     const pose = this.sample(time);

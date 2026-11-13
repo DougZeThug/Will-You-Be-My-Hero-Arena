@@ -1,4 +1,5 @@
 import type { V3 } from '../../../model';
+import { BOARD, boardSurfaceY } from '../../../board-geometry';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { BagOutcome } from './CornholePhysics';
 export interface BoardBag {
@@ -24,13 +25,18 @@ export interface BoardResolution {
   touch?: V3;
 }
 export function boardValue(p: V3, lane: number) {
-  if (Math.hypot(p.x - 9.2, p.z - lane) <= 0.19) return 3;
-  if (p.x >= 8 && p.x <= 9.9 && Math.abs(p.z - lane) <= 0.52) return 1;
+  if (Math.hypot(p.x - BOARD.holeX, p.z - lane) <= BOARD.holeRadius) return 3;
+  if (
+    p.x >= BOARD.frontX &&
+    p.x <= BOARD.backX &&
+    Math.abs(p.z - lane) <= BOARD.laneHalfWidth
+  )
+    return 1;
   return 0;
 }
 const onSurface = (p: V3, lane: number) => ({
   ...p,
-  y: boardValue(p, lane) ? 0.16 + ((p.x - 8) / 1.9) * 0.34 : 0,
+  y: boardValue(p, lane) ? boardSurfaceY(p.x) : 0,
 });
 function segmentDistance(p: V3, a: V3, b: V3) {
   const dx = b.x - a.x,
@@ -72,7 +78,7 @@ export function resolveBoard(
               : 'frontSlide'
         : target.x < 8
           ? 'short'
-          : target.x > 9.9
+          : target.x > BOARD.backX
             ? 'long'
             : target.z < lane
               ? 'missLeft'
@@ -95,7 +101,7 @@ export function resolveBoard(
       const collect =
         thrownScore === 3 &&
         ['airmail', 'collect', 'drag'].includes(shot) &&
-        Math.hypot(bag.position.x - 9.2, bag.position.z - lane) < 0.66;
+        Math.hypot(bag.position.x - BOARD.holeX, bag.position.z - lane) < 0.66;
       const push = [
         'flat',
         'fast',
@@ -110,7 +116,7 @@ export function resolveBoard(
         prior = bag.score,
         kind = collect ? 'collect' : shot === 'cut' ? 'kick' : 'push';
       const proposed = collect
-        ? { x: 9.2, y: 0.4, z: lane }
+        ? { x: BOARD.holeX, y: 0.4, z: lane }
         : {
             ...from,
             x: from.x + (shot === 'fast' || shot === 'push' ? 0.36 : 0.21),
@@ -129,7 +135,7 @@ export function resolveBoard(
       outcome = collect ? 'collect' : kind === 'kick' ? 'kick' : 'push';
     }
   if (!interactions.length && thrownScore === 1) {
-    if (Math.hypot(target.x - 9.2, target.z - lane) < 0.28) outcome = 'hang';
+    if (Math.hypot(target.x - BOARD.holeX, target.z - lane) < 0.28) outcome = 'hang';
     else if (shot === 'flop') outcome = 'bounce';
     else if (colliders.length && shot !== 'roll') outcome = 'collision';
   }
@@ -155,7 +161,7 @@ export function resolveBoard(
     outcome =
       shot === 'roll'
         ? 'rollOff'
-        : Math.hypot(touch.x - 9.2, touch.z - lane) < 0.33
+        : Math.hypot(touch.x - BOARD.holeX, touch.z - lane) < 0.33
           ? 'lipOut'
           : 'slideOff';
   }

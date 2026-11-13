@@ -20,7 +20,7 @@ export const DAN_SOURCE = {
   origin: { x: 404, y: 1918 },
 } as const;
 
-export function sourceToLocal(p: Point): Point {
+function sourceToLocal(p: Point): Point {
   return {
     x: (p.x - DAN_SOURCE.origin.x) * DAN_SOURCE.scale,
     y: (p.y - DAN_SOURCE.origin.y) * DAN_SOURCE.scale,

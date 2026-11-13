@@ -6,7 +6,7 @@ import {
 } from '../../../equipment-layout';
 import { clamp01, smooth } from '../../../match-timeline';
 import type { ShotStyle } from '../../animation/AnimationTypes';
-import type { XY, ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
+import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
 export type BagOutcome =
   | 'cleanHole'

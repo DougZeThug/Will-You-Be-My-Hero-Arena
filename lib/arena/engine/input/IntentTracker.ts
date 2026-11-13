@@ -1,5 +1,4 @@
 import {
-  numberValue,
   type InputFrame,
   type InputSignal,
   type Intent,
@@ -32,8 +31,7 @@ export class IntentTracker {
       ...Object.keys(this.old),
       ...Object.keys(values),
     ]) as Set<Intent>) {
-      const value = values[intent] ?? 0,
-        old = this.old[intent];
+      const value = values[intent] ?? 0;
       if (typeof value !== 'number') {
         signals.push({
           intent,

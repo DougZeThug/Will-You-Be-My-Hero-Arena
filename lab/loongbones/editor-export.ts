@@ -1,7 +1,7 @@
 /** Identity of the unchanged editor export supplied by the user, not a general
  * promise that all LoongBones exports/features work. Hash every incoming file. */
 const prefix = 'arena-editor-test_';
-export const editorFiles = [
+const editorFiles = [
   {
     name: `${prefix}ske.json`,
     hash: 'b0d06e19ee8f49943736e828a9f7a6756f011900e66290dd71296f6c9d1f286c',

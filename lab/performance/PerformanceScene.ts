@@ -3,10 +3,8 @@ import {
   CharacterPerformanceController,
   alignedSubstep,
 } from '../../lib/arena/engine/performance/CharacterPerformanceController';
-import {
-  performanceProfiles,
-  validatePerformanceProfile,
-} from '../../lib/arena/engine/performance/PerformanceProfiles';
+import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
+import { validatePerformanceProfile } from '../../lib/arena/engine/performance/ProfileValidation';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';

@@ -15,7 +15,7 @@ const rotate = (name: string, points: Knot[], duration: number) => ({
 
 /** Authoring-only constraint bake. Runtime evaluates ordinary DragonBones
  * timelines; there is no procedural pose clock competing with the match. */
-export function sideThrow(id: Person, style: CornholeStyle) {
+function sideThrow(id: Person, style: CornholeStyle) {
   const {
     duration: end,
     release,

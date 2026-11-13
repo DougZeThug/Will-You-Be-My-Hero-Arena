@@ -1,3 +1,4 @@
+import { clamp } from '../../math';
 import {
   motionSignatures,
   type CharacterMotionSignature,
@@ -153,7 +154,6 @@ export const motionProfiles: Record<'dan' | 'doug', MotionProfile> = {
     },
   },
 };
-export const clamp = (n: number, lo: number, hi: number) =>
-  Math.max(lo, Math.min(hi, n));
+export { clamp };
 export const approach = (a: number, b: number, max: number) =>
   a + clamp(b - a, -max, max);

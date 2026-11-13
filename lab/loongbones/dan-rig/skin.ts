@@ -1,17 +1,11 @@
 import { joints, origin, bonePose } from './anatomy';
-type Influence = Record<string, number>;
-const clamp = (v: number) => Math.max(0, Math.min(1, v));
-const smooth = (a: number, b: number, v: number) => {
-  const t = clamp((v - a) / (b - a));
-  return t * t * (3 - 2 * t);
-};
-const blend = (a: Influence, b: Influence, t: number): Influence => {
-  const out: Influence = {};
-  for (const [n, w] of Object.entries(a)) out[n] = (out[n] ?? 0) + w * (1 - t);
-  for (const [n, w] of Object.entries(b)) out[n] = (out[n] ?? 0) + w * t;
-  return out;
-};
-const at = (name: string): Influence => ({ [name]: 1 });
+import {
+  at,
+  blend,
+  clamp,
+  smooth,
+  type Influence,
+} from '../authoring/weighted-mesh';
 /** Anatomical regions prevent nearby hand bones from capturing shirt/shorts.
  * The connected shoulder surface blends into the arm; cells bordering the
  * transparent arm/torso gap retain separate vertices so a hand cannot drag cloth. */

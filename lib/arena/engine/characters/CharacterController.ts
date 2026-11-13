@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { resolvePersonality } from '../../personality';
 import { project } from '../../simulation';
-import type { Attempt, Clip, MotionPersonality, Sport } from '../../model';
+import { laneZ } from '../../board-geometry';
+import type { Attempt, MotionPersonality } from '../../model';
 import { animation } from '../animation/AnimationRegistry';
 import {
   sampleClip,
@@ -12,7 +13,6 @@ import {
 import { scoreTime, clamp01 } from '../../match-timeline';
 import { PaperCharacterRig } from './PaperCharacterRig';
 import { FrameCharacterRig } from './FrameCharacterRig';
-import { SpineCharacterRig } from './SpineCharacterRig';
 import { characterProfile } from './CharacterRegistry';
 import {
   isAuthoredRig,
@@ -51,7 +51,7 @@ export class CharacterController {
     profile?: CharacterProfile,
     provider?: CharacterRigProvider,
   ) {
-    this.base = project({ x: 1, y: 0, z: actor * 3.5 });
+    this.base = project({ x: 1, y: 0, z: laneZ(actor) });
     this.profile =
       profile ?? characterProfile(loaded.asset.cardId, loaded.asset);
     this.personality = resolvePersonality(loaded.asset, loaded.asset.cardId);
@@ -127,8 +127,6 @@ export class CharacterController {
       d,
       time,
       this.profile,
-      legacy,
-      this.releaseLocal(a, d),
       reduced,
       idleBefore,
     );
@@ -249,8 +247,6 @@ export class CharacterController {
           d,
           a.releaseAt,
           this.profile,
-          this.personality,
-          desired,
         ),
         hand = handFrame(
           puppetJoints(pose, this.loaded.puppet).rightArm,
@@ -301,9 +297,7 @@ export class CharacterController {
         this.rig.backend ??
         (this.rig instanceof PaperCharacterRig
           ? 'connected-paper'
-          : this.rig instanceof SpineCharacterRig
-            ? 'spine'
-            : 'frame-pack'),
+          : 'frame-pack'),
       rigDetails: this.rig.debugInfo?.() ?? null,
       root: {
         x: root.x,

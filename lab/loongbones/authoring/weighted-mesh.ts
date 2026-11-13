@@ -1,6 +1,6 @@
 import type { Joint, Vec } from './skeleton';
 import { clipMaterialCell } from './material-contour';
-import { clampUnit as clamp, smooth } from '../../performance/math';
+import { clampUnit as clamp } from '../../performance/math';
 export { smooth } from '../../performance/math';
 export type Influence = Record<string, number>;
 export { clamp };
@@ -11,7 +11,7 @@ export function blend(a: Influence, b: Influence, t: number): Influence {
   for (const [n, w] of Object.entries(b)) out[n] = (out[n] ?? 0) + w * t;
   return out;
 }
-export interface SkinDefinition {
+interface SkinDefinition {
   name: string;
   origin: Vec;
   joints: Joint[];

@@ -1,5 +1,5 @@
 import { IntentTracker } from '../input/IntentTracker';
-import type { InputFrame, Intent, InputSignal } from '../input/InputActions';
+import type { InputFrame, Intent } from '../input/InputActions';
 import type { ControllableEntity, ActionPayload } from './ControllableEntity';
 import {
   resolveAction,
@@ -37,7 +37,6 @@ export class PlayerController {
       }
       const context = {
         state: this.entity.controlState(),
-        canCancel: this.entity.canCancel(),
         held,
         facing: this.entity.getFacing(),
       };
@@ -61,7 +60,7 @@ export class PlayerController {
         this.buffer.push({
           command,
           payload,
-          expires: time + (definition?.buffer ?? this.map.bufferSeconds),
+          expires: time + (this.map.bufferSeconds),
         });
         this.buffer = this.buffer.slice(-4);
         this.buffered++;

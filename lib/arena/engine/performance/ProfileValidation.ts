@@ -1,6 +1,6 @@
 import type { PerformanceProfile } from './PerformanceTypes';
 
-export const profileLimits: Record<
+const profileLimits: Record<
   Exclude<keyof PerformanceProfile, 'id' | 'celebration'>,
   [number, number]
 > = {

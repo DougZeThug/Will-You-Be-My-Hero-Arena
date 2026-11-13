@@ -149,11 +149,10 @@ export class RunningEvent implements PlayableArenaEvent {
     }
   }
   ai(c: ArenaCharacter, time: number): InputFrame {
-    const m = this.motions.get(c.id)!,
-      // React in time rather than at a fixed distance: a hurdle needs the
+    // React in time rather than at a fixed distance: a hurdle needs the
       // runner airborne before it and still clear of it on landing, a bar
       // needs the slide to last until it is passed.
-      obstacle = this.obstacles.find(
+    const obstacle = this.obstacles.find(
         (o) =>
           o.x > c.body.x &&
           o.x - c.body.x <

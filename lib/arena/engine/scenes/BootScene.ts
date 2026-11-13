@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import type {ArenaBridge} from '../core/ArenaOptions';
 import {queueArenaAssets,queueCharacter,prepareCharacterTextures,type LoadedCharacter} from './CharacterAssetLoader';
-export {EQUIPMENT_FILES,type LoadedCharacter} from './CharacterAssetLoader';
+export {type LoadedCharacter} from './CharacterAssetLoader';
 export class BootScene extends Phaser.Scene{
  private loaded:LoadedCharacter[]=[];private failed=false;
  constructor(private bridge:ArenaBridge){super('Boot');}

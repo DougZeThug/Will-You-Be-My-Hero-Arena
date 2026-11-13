@@ -1,5 +1,5 @@
 import type { PuppetPose } from '../../puppet-motion';
-export const POSE_LAYERS = {
+const POSE_LAYERS = {
   lower: [
     'hipX',
     'hipY',

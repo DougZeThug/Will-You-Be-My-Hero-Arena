@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import type { ArenaBridge, ArenaOptions } from './ArenaOptions';
 import { BootScene } from '../scenes/BootScene';
 import { ArenaScene } from '../scenes/ArenaScene';
-import { spineBackend } from '../characters/SpineCharacterRig';
 export class ArenaGame {
   readonly game: Phaser.Game;
   private bridge: ArenaBridge;
@@ -14,7 +13,6 @@ export class ArenaGame {
         options.clock.time,
         options.recording?.duration ?? Infinity,
       );
-    const spine = spineBackend();
     this.game = new Phaser.Game({
       type: Phaser.WEBGL,
       parent,
@@ -33,7 +31,6 @@ export class ArenaGame {
         width: 1280,
         height: 720,
       },
-      plugins: spine ? { scene: [spine.scenePlugin] } : undefined,
       scene: [new BootScene(this.bridge), new ArenaScene(this.bridge)],
       callbacks: {
         postBoot: (game) => {

@@ -214,7 +214,7 @@ export default function LiveStage({
       ) : (
         config.players
           .filter((p) => p.device !== 'ai')
-          .map((p, i) => (
+          .map((p) => (
             <div key={p.id} className="player-control-panel">
               <div className="control-player-label">
                 <strong>

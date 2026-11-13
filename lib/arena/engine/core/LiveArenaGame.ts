@@ -5,7 +5,6 @@ import { LiveBootScene, LiveArenaScene } from '../scenes/LiveArenaScene';
 import { KeyboardDevice } from '../input/KeyboardDevice';
 import { GamepadDevice } from '../input/GamepadDevice';
 import { AudioManager } from '../audio/AudioManager';
-import { spineBackend } from '../characters/SpineCharacterRig';
 export class LiveArenaGame {
   readonly session: ArenaSession;
   readonly game: Phaser.Game;
@@ -66,7 +65,6 @@ export class LiveArenaGame {
         options.onReady();
       },
     });
-    const spine = spineBackend();
     this.game = new Phaser.Game({
       type: Phaser.WEBGL,
       parent,
@@ -78,7 +76,6 @@ export class LiveArenaGame {
       render: { antialias: true },
       fps: { target: 60 },
       scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-      plugins: spine ? { scene: [spine.scenePlugin] } : undefined,
       scene: [new LiveBootScene(this.session, options), this.scene],
       callbacks: {
         postBoot: (game) => {

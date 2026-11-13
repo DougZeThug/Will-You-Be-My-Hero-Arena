@@ -18,8 +18,6 @@ export interface ControllableEntity {
   aim(direction: Vector): void;
   performAction(action: string, payload?: ActionPayload): boolean;
   canPerform(action: string): boolean;
-  getState(): EntityState;
   controlState(): string;
-  canCancel(): boolean;
   getFacing(): number;
 }

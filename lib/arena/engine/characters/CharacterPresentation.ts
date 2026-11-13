@@ -5,7 +5,7 @@ import { createCharacterRig } from './createCharacterRig';
 import { PaperCharacterRig } from './PaperCharacterRig';
 import type { CharacterRig } from './CharacterRig';
 import type { CharacterRigProvider } from './CharacterRig';
-import { clamp } from '../input/InputActions';
+import { clamp, clamp01, smoothstep } from '../../math';
 import { mixPuppet } from '../../puppet-motion';
 import { squashOffset, squashScale } from '../motion/SquashStretch';
 import { presentedTime } from './PresentationClock';
@@ -135,7 +135,7 @@ export class CharacterPresentation {
   private shownFacing(time: number) {
     const facing = this.facing ?? 1,
       u = clamp((time - this.flipAt) / 0.1),
-      f = this.flipFrom + (facing - this.flipFrom) * u * u * (3 - 2 * u);
+      f = this.flipFrom + (facing - this.flipFrom) * smoothstep(u);
     return u >= 1
       ? facing
       : Math.sign(f || facing) * Math.max(0.04, Math.abs(f));
@@ -184,7 +184,7 @@ export class CharacterPresentation {
     const c = this.character,
       b = presentedBody(c, alpha),
       u = clamp((time - this.index * 0.2) / 1.05),
-      ease = u * u * (3 - 2 * u),
+      ease = smoothstep(u),
       offset = (1 - ease) * -55,
       lift = Math.sin(ease * Math.PI) * 26,
       q =
@@ -362,7 +362,7 @@ export class CharacterPresentation {
       const t = performance.segmentTime;
       if (this.liveRelease === null)
         // Charging: ease into a held top of the backswing.
-        target = Math.max(0, Math.min(1, (peakAt + 0.05 - t) / 0.2));
+        target = clamp01((peakAt + 0.05 - t) / 0.2);
       else {
         const remaining = releaseAt - t,
           left = this.liveRelease - timeline.time;

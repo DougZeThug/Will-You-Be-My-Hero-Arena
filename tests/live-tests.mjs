@@ -775,12 +775,8 @@ export async function testLive({ check }) {
     resolvePrecisionLanding,
     bagPoints,
     precisionTarget,
-    HOLE_HALF: playHoleHalf,
   } = await import(
     '../.test-build/engine/events/precision/PrecisionPhysics.mjs'
-  );
-  const { HOLE_HALF: drawnHoleHalf } = await import(
-    '../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'
   );
   const { laneScale } =
     await import('../.test-build/engine/events/running/RunningPhysics.mjs');
@@ -1019,13 +1015,6 @@ export async function testLive({ check }) {
   check(() => assert.equal(bagPoints(faraway), 0));
   // Play scores the drawn hole: a 40 x 16.6 px ellipse (half-axes 20 and 8.3),
   // wide and flat, not a circle. Offsets are from the hole's centre.
-  check(() =>
-    assert.deepEqual(
-      playHoleHalf,
-      drawnHoleHalf,
-      "Play's scoring ellipse matches the drawn hole opening",
-    ),
-  );
   for (const [dx, dy, points] of [
     [0, 0, 3],
     [0, 8, 3],

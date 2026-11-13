@@ -28,7 +28,7 @@ const joints: Record<SocketName, string> = {
 };
 /** World px per unit body scale of the Play puppet, so a side-view runner
  * stands exactly as tall as the puppet it replaces (both are 5'8"). */
-export const PLAY_RIG_HEIGHT = 307;
+const PLAY_RIG_HEIGHT = 307;
 /** Play runs at 1.7-2.7 m/s in body terms. A real run at that speed covers
  * about 1.5 m per stride cycle, twice the Lab proof's short measured-cadence
  * strides, so the stride is doubled instead of stretching the legs to their

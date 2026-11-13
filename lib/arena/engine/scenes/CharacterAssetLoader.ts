@@ -5,7 +5,6 @@ import { resolveCharacterImage } from '../../character-registry';
 import puppetAssets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { characterProfile } from '../characters/CharacterRegistry';
-import { spineBackend } from '../characters/SpineCharacterRig';
 import { ARENA_THEME, BOARD_FINISH } from '../presentation/ArenaTheme';
 export const EQUIPMENT_FILES = [
   'board',
@@ -48,12 +47,10 @@ export function queueCharacter(
       (puppetAssets as unknown as Record<string, PuppetAsset>)[card.asset] ??
       asset.puppet,
     key = 'character:' + index,
-    cardKey = 'card:' + index,
-    profile = characterProfile(id, asset);
+    cardKey = 'card:' + index;
+  characterProfile(id, asset);
   scene.load.image(cardKey, resolveCharacterImage(asset.cardImage));
-  if (profile.rig && spineBackend())
-    spineBackend()!.preload(scene, key, profile.rig);
-  else if (puppet?.joined)
+  if (puppet?.joined)
     scene.load.image(key, resolveCharacterImage(puppet.url));
   else
     for (const [pose, frame] of Object.entries(asset.frames ?? {}))

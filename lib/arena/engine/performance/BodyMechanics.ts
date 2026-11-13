@@ -1,3 +1,4 @@
+import { clamp01, smoothRange } from '../../math';
 import type { PerformanceProfile } from './PerformanceTypes';
 import danTake from './takes/dan-underhand';
 import dougTake from './takes/doug-underhand';
@@ -35,22 +36,17 @@ const TAKES: Record<string, PerformanceTake> = {
 };
 
 /** The shipped take for a character (authored now; captured later). */
-export function performanceTake(id: string): PerformanceTake {
+function performanceTake(id: string): PerformanceTake {
   const take = TAKES[id];
   if (!take) throw Error(`No underhand take for ${id}`);
   return take;
 }
 
 /** Peak backward / forward world arm swing of a take, in degrees. */
-export function takeSwingPeaks(take: PerformanceTake) {
+function takeSwingPeaks(take: PerformanceTake) {
   const swing = take.channels.armSwing;
   return { back: Math.max(...swing), forward: -Math.min(...swing) };
 }
-
-const smoothstep = (a: number, b: number, x: number) => {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
 
 /**
  * Converts a take (world arm swing + local wrist, in seconds) into the rig's
@@ -77,13 +73,13 @@ export function underhandMechanics(p: PerformanceProfile): BodyTake {
   const swing = c.armSwing.map((v, i) => {
     // Blend the two gains through zero so the drive keeps a smooth velocity.
     const gain =
-      forwardGain + (backGain - forwardGain) * smoothstep(-12, 12, v);
+      forwardGain + (backGain - forwardGain) * smoothRange(-12, 12, v);
     let value = v * gain;
     const t = take.times[i];
     value -=
       p.releaseLift *
       Math.sin(
-        Math.PI * Math.max(0, Math.min(1, (t - (release - 0.12)) / 0.36)),
+        Math.PI * clamp01((t - (release - 0.12)) / 0.36),
       );
     return value;
   });

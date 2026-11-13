@@ -7,24 +7,6 @@ import {
   animation,
   SHOT_STYLES,
 } from '../animation/AnimationRegistry';
-export interface SpineRigDefinition {
-  format: 'spine';
-  version: string;
-  skeleton: string;
-  atlas: string;
-  scale: number;
-  animations: Record<string, string>;
-  events: Record<string, Record<string, number>>;
-  bones: {
-    throwingHand: string;
-    offHand: string;
-    head: string;
-    chest: string;
-    waist: string;
-    footL: string;
-    footR: string;
-  };
-}
 export interface CharacterProfile {
   id: string;
   version: 1;
@@ -53,7 +35,8 @@ export interface CharacterProfile {
     tags: string[];
   }[];
   overrides?: Record<string, Choreography>;
-  rig?: SpineRigDefinition;
+  /** Rejected by portable-pack validation; Spine rigs are not supported. */
+  rig?: unknown;
   gameplay?: import('./components/CharacterStats').GameplayProfile;
 }
 export function validateProfile(input: unknown) {

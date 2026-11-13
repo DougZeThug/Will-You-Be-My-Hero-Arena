@@ -185,7 +185,6 @@ export class LabRuntime {
     this.telemetry = undefined;
     this.clock?.stop();
     this.recorded?.destroy();
-    this.clock?.stop();
     this.live?.destroy();
     this.actor?.destroy();
     // Phaser defers destruction to the next step, including when its RAF is stopped.

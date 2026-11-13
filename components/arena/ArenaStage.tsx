@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ArenaOptions } from '@/lib/arena/engine/core/ArenaOptions';
 import type { ArenaGame } from '@/lib/arena/engine/core/ArenaGame';
-export type StageProps = ArenaOptions;
+type StageProps = ArenaOptions;
 export default function ArenaStage(props: StageProps) {
   const effectiveSport = props.recording?.setup.sport ?? props.sport;
   // The cornhole performance rig plays recorded Watch contests and the idle

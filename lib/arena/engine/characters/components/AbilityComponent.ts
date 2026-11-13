@@ -7,9 +7,6 @@ export interface AbilityDefinition {
   tags: string[];
 }
 const definitions = new Map<string, AbilityDefinition>();
-export function registerAbility(a: AbilityDefinition) {
-  definitions.set(a.id, a);
-}
 for (const a of [
   {
     id: 'precisionMode',
@@ -46,7 +43,7 @@ for (const a of [
     }),
   ),
 ])
-  registerAbility(a);
+  definitions.set(a.id, a);
 export class AbilityComponent {
   private ready = new Map<string, number>();
   private active = new Map<string, number>();

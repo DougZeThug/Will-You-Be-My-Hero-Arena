@@ -15,8 +15,7 @@ import {
 import type { NativeClip } from './NativeClip';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 export const PERFORMANCE_REVISION = 'cornhole-cartoon-take-v1';
-export const PERFORMANCE_ASSET_REVISION = 'side-v3-attachment-r4';
-export const PERFORMANCE_HAND_LIMITS = NATIVE_LIMITS.hand_L;
+const PERFORMANCE_ASSET_REVISION = 'side-v3-attachment-r4';
 
 export type PerformanceArmatureData = {
   name: string;
@@ -27,17 +26,6 @@ export type PerformanceArmatureData = {
   animation: NativeClip[];
 };
 
-const map = {
-  hips: 'pelvis',
-  lowerSpine: 'spine_lower',
-  upperSpine: 'spine_mid',
-  chest: 'chest',
-  shoulder: 'clavicle_L',
-  upperArm: 'upper_arm_L',
-  elbow: 'forearm_L',
-  counterArm: 'upper_arm_R',
-  counterElbow: 'forearm_R',
-} as const;
 type Pose = Record<BodyChannel, number>;
 const TORSO = ['hips', 'lowerSpine', 'upperSpine', 'chest'] as const;
 /** One full-body pose compiler. Action owns articulated support, spine and arms;
