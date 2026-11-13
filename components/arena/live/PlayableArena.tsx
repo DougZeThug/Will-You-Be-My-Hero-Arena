@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { CARDS, type AssetManifest } from '@/lib/arena/model';
 import { cardImageUrl } from '@/lib/arena/character-registry';
 import {
@@ -16,7 +16,10 @@ import {
   validateBindings,
   type Bindings,
 } from '@/lib/arena/engine/input/InputBindings';
-import { visibleAction } from '@/lib/arena/engine/controllers/EventActionMap';
+import {
+  visibleAction,
+  visibleActions,
+} from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
@@ -120,6 +123,10 @@ export default function PlayableArena({
     setError('');
     setPlayers((p) => p.map((s, j) => (i === j ? { ...s, ...patch } : s)));
   };
+  const controlMap = useMemo(
+    () => playableEvent(event).create().registerControls(),
+    [event],
+  );
   const actionLabel = (intent: string) =>
     intent === 'move'
       ? 'movement'
@@ -127,10 +134,7 @@ export default function PlayableArena({
         ? 'aiming'
         : intent === 'moveAxes' || intent === 'aimAxes'
           ? `the ${intent === 'moveAxes' ? 'move' : 'aim'} stick axis`
-          : (visibleAction(
-              playableEvent(event).create().registerControls().actions,
-              intent,
-            )?.label ??
+          : (visibleAction(controlMap.actions, intent)?.label ??
             INPUT_NAMES[intent] ??
             intent);
   const bindKey = (i: number, intent: Intent, code: string) => {
@@ -239,13 +243,7 @@ export default function PlayableArena({
       />
     );
   const current = playableEvent(event),
-    map = current.create().registerControls(),
-    controls = map.actions.filter(
-      (a, i, all) =>
-        !a.hidden &&
-        !['move', 'aim'].includes(a.intent) &&
-        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
-    );
+    controls = visibleActions(controlMap);
   return (
     <section className="playable-setup">
       <div className="live-toolbar">

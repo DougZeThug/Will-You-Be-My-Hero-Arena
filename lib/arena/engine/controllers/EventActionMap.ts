@@ -42,6 +42,17 @@ export function resolveAction(
 export function visibleAction(actions: ActionDefinition[], intent: string) {
   return actions.find((a) => a.intent === intent && !a.hidden);
 }
+// One button per intent for the touch pad and the setup screen: the first
+// non-hidden action of each intent, without the continuous move/aim sticks.
+export function visibleActions(map: EventActionMap) {
+  return map.actions.filter(
+    (a, i, all) =>
+      !a.hidden &&
+      a.intent !== 'move' &&
+      a.intent !== 'aim' &&
+      all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
+  );
+}
 export class ComboRecognizer {
   private history: { intent: Intent; time: number }[] = [];
   push(signal: InputSignal, combos: ComboDefinition[] = []) {

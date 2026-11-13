@@ -6,6 +6,7 @@ import { performanceDefinitions } from './definitions';
 import './style.css';
 import { bindTuning } from './Tuning';
 import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import { downloadJson } from '../../lib/arena/download';
 const element = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const select = (id: string) => element<HTMLSelectElement>(id);
@@ -148,15 +149,11 @@ for (const [id, fn] of Object.entries({
     controls();
   },
   export: () => {
-    const file = new Blob([JSON.stringify(scene.profile, null, 2) + '\n'], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(file);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${scene.selected}-performance-candidate.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadJson(
+      `${scene.selected}-performance-candidate.json`,
+      scene.profile,
+      '\n',
+    );
   },
 }))
   element(id).addEventListener('click', () => safe(fn));

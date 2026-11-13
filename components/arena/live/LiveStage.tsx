@@ -31,9 +31,10 @@ export default function LiveStage({
     [error, setError] = useState(''),
     [ready, setReady] = useState(false),
     [sound, setSound] = useState(false);
-  const map = useRef(
+  // Created once per config; the parent keys this stage by seed.
+  const [map] = useState(() =>
     playableEvent(config.event).create().registerControls(),
-  ).current;
+  );
   useEffect(() => {
     reducedMotion.current = reduced;
     game.current?.setReducedMotion(reduced);

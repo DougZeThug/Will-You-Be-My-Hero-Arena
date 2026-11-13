@@ -5,7 +5,10 @@ import type {
   Vector,
   DeviceFamily,
 } from '@/lib/arena/engine/input/InputActions';
-import type { EventActionMap } from '@/lib/arena/engine/controllers/EventActionMap';
+import {
+  visibleActions,
+  type EventActionMap,
+} from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Bindings } from '@/lib/arena/engine/input/InputBindings';
 import { inputGlyph } from '@/lib/arena/engine/input/InputGlyphs';
 function Stick({
@@ -104,13 +107,7 @@ export default function TouchControls({
       sender.current('charge', 0);
     }
   }, [resetCharge]);
-  const actions = map.actions.filter(
-      (a, i, all) =>
-        !a.hidden &&
-        a.intent !== 'move' &&
-        a.intent !== 'aim' &&
-        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
-    ),
+  const actions = visibleActions(map),
     // Moves that need a held modifier (the Brawl's grapple) get their own
     // button, which presses the modifier and the action together.
     chords = map.actions.filter(

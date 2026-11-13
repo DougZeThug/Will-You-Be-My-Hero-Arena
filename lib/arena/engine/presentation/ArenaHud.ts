@@ -6,6 +6,61 @@ import {
   type PresentationState,
 } from './ArenaTheme';
 
+interface Offset {
+  dx: number;
+  dy: number;
+}
+/** Panel geometry for one player count; all offsets are relative to the panel corner. */
+interface PlayerPanelLayout {
+  /** Vertical distance between the first and second row of panels. */
+  rowStep: number;
+  height: number;
+  radius: number;
+  strokeAlpha: number;
+  shadow?: Offset & { alpha: number };
+  scoreBox?: Offset & { w: number; h: number; radius: number };
+  name: Offset & { size: number; maxWidth: number };
+  score: Offset & { size: number; maxWidth?: number };
+  status: Offset & { size: number; maxWidth: number };
+  /** Draws the remaining-attempt pips or the meter bar below the name. */
+  progress?: { dx: number; dy: number; meterDy: number };
+  /** The name dims for an inactive player. */
+  dimInactiveName: boolean;
+}
+const PANEL_X = [24, 944];
+const PANEL_W = 312;
+// One or two players get the large panel; four-player events keep every
+// competitor visible inside the same top-corner area with compact panels.
+const LARGE_PANEL: PlayerPanelLayout = {
+  rowStep: 0,
+  height: 94,
+  radius: 7,
+  strokeAlpha: 0.8,
+  shadow: { dx: 3, dy: 3, alpha: 0.23 },
+  scoreBox: { dx: 241, dy: 8, w: 63, h: 69, radius: 4 },
+  name: { dx: 19, dy: 25, size: 26, maxWidth: 205 },
+  score: { dx: 278, dy: 38, size: 49, maxWidth: 55 },
+  status: { dx: 19, dy: 65, size: 11, maxWidth: 210 },
+  progress: { dx: 19, dy: 42, meterDy: 44 },
+  dimInactiveName: true,
+};
+const COMPACT_PANEL: PlayerPanelLayout = {
+  rowStep: 49,
+  height: 45,
+  radius: 4,
+  strokeAlpha: 0.65,
+  name: { dx: 15, dy: 13, size: 18, maxWidth: 215 },
+  score: { dx: 278, dy: 22, size: 29 },
+  status: { dx: 15, dy: 33, size: 10, maxWidth: 220 },
+  dimInactiveName: false,
+};
+const layoutFor = (playerCount: number) =>
+  playerCount > 2 ? COMPACT_PANEL : LARGE_PANEL;
+const panelOrigin = (layout: PlayerPanelLayout, i: number) => ({
+  x: PANEL_X[i % 2],
+  y: 24 + Math.floor(i / 2) * layout.rowStep,
+});
+
 /** Compact, camera-independent canvas HUD shared by Watch, Play and the motion workshop.
  * Changes follow the authoritative sample time; seeking cannot fire timers or score awards.
  */
@@ -48,7 +103,7 @@ export class ArenaHud {
     this.phase = text(640, 116, 13, '#d0c4a9').setOrigin(0.5);
     this.phase.setFontFamily('Arial, sans-serif').setFontStyle('bold');
     for (let i = 0; i < 4; i++) {
-      const x = i % 2 ? 944 : 24;
+      const x = PANEL_X[i % 2];
       this.players.push({
         name: text(x + 19, 49, 26),
         score: text(x + 278, 62, 49).setOrigin(0.5),
@@ -82,14 +137,11 @@ export class ArenaHud {
       );
     this.visibility = {
       header: clear(475, 53, 330, 86),
-      players: this.players.map((_, i) =>
-        clear(
-          i % 2 ? 944 : 24,
-          24 + (state.players.length > 2 ? Math.floor(i / 2) * 49 : 0),
-          312,
-          state.players.length > 2 ? 45 : 94,
-        ),
-      ),
+      players: this.players.map((_, i) => {
+        const layout = layoutFor(state.players.length),
+          { x, y } = panelOrigin(layout, i);
+        return clear(x, y, PANEL_W, layout.height);
+      }),
     };
     this.root
       .setScale(1 / zoom)
@@ -123,84 +175,85 @@ export class ArenaHud {
           .lineStyle(1, theme.accent, 0.65)
           .lineBetween(500, 132, 780, 132);
       }
+      const layout = layoutFor(state.players.length);
       for (let i = 0; i < 4; i++) {
         const p = state.players[i],
-          x = i % 2 ? 944 : 24,
+          { x, y } = panelOrigin(layout, i),
+          h = layout.height,
           color = i % 2 ? T.teal : T.gold;
         const labels = this.players[i];
         for (const label of Object.values(labels))
           label.setVisible(!!p && this.visibility.players[i]);
         if (!p || !this.visibility.players[i]) continue;
-        if (state.players.length > 2) {
-          // Four-player events keep every competitor visible inside the same top-corner area.
-          const y = 24 + Math.floor(i / 2) * 49;
-          this.panels.fillStyle(T.ink, 0.97).fillRoundedRect(x, y, 312, 45, 4);
+        const { shadow, scoreBox, progress } = layout;
+        if (shadow)
           this.panels
-            .lineStyle(1, color, 0.65)
-            .strokeRoundedRect(x, y, 312, 45, 4);
-          this.panels
-            .fillStyle(color, p.active ? 1 : 0.4)
-            .fillRect(x + 1, y + 1, 4, 43);
-          labels.name
-            .setPosition(x + 15, y + 13)
-            .setFontSize(18)
-            .setText(p.name.toUpperCase())
-            .setScale(1);
-          labels.name.setScale(
-            Math.min(1, 215 / Math.max(1, labels.name.width)),
-          );
-          labels.score
-            .setPosition(x + 278, y + 22)
-            .setFontSize(29)
-            .setText(String(Math.ceil(p.score)))
-            .setScale(1);
-          labels.status
-            .setPosition(x + 15, y + 33)
-            .setFontSize(10)
-            .setText(
-              `${p.remaining === undefined ? '' : p.remaining + ' ' + theme.unit + ' LEFT · '}${p.status ?? (p.active ? 'YOUR TURN' : 'WAITING')}`.toUpperCase(),
-            )
-            .setScale(1);
-          labels.status.setScale(
-            Math.min(1, 220 / Math.max(1, labels.status.width)),
-          );
-          continue;
-        }
-        labels.name.setPosition(x + 19, 49).setFontSize(26);
-        labels.score.setPosition(x + 278, 62).setFontSize(49);
-        labels.status.setPosition(x + 19, 89).setFontSize(11);
+            .fillStyle(0x000000, shadow.alpha)
+            .fillRoundedRect(
+              x + shadow.dx,
+              y + shadow.dy,
+              PANEL_W,
+              h,
+              layout.radius,
+            );
         this.panels
-          .fillStyle(0x000000, 0.23)
-          .fillRoundedRect(x + 3, 27, 312, 94, 7);
-        this.panels.fillStyle(T.ink, 0.97).fillRoundedRect(x, 24, 312, 94, 7);
+          .fillStyle(T.ink, 0.97)
+          .fillRoundedRect(x, y, PANEL_W, h, layout.radius);
         this.panels
-          .lineStyle(1, color, 0.8)
-          .strokeRoundedRect(x, 24, 312, 94, 7);
+          .lineStyle(1, color, layout.strokeAlpha)
+          .strokeRoundedRect(x, y, PANEL_W, h, layout.radius);
         this.panels
           .fillStyle(color, p.active ? 1 : 0.4)
-          .fillRect(x + 1, 25, 4, 92);
-        this.panels
-          .fillStyle(0x080f13, 1)
-          .fillRoundedRect(x + 241, 32, 63, 69, 4);
+          .fillRect(x + 1, y + 1, 4, h - 2);
+        if (scoreBox)
+          this.panels
+            .fillStyle(0x080f13, 1)
+            .fillRoundedRect(
+              x + scoreBox.dx,
+              y + scoreBox.dy,
+              scoreBox.w,
+              scoreBox.h,
+              scoreBox.radius,
+            );
         labels.name
-          .setText(p.name.toUpperCase())
-          .setColor(p.active ? '#ffedc8' : '#d4d3c7');
-        labels.name.setScale(Math.min(1, 205 / Math.max(1, labels.name.width)));
-        labels.score.setText(String(Math.ceil(p.score)));
+          .setPosition(x + layout.name.dx, y + layout.name.dy)
+          .setFontSize(layout.name.size)
+          .setText(p.name.toUpperCase());
+        if (layout.dimInactiveName)
+          labels.name.setColor(p.active ? '#ffedc8' : '#d4d3c7');
+        labels.name.setScale(
+          Math.min(1, layout.name.maxWidth / Math.max(1, labels.name.width)),
+        );
+        labels.score
+          .setPosition(x + layout.score.dx, y + layout.score.dy)
+          .setFontSize(layout.score.size)
+          .setText(String(Math.ceil(p.score)));
         labels.score.setScale(
-          Math.min(1, 55 / Math.max(1, labels.score.width)),
+          layout.score.maxWidth === undefined
+            ? 1
+            : Math.min(
+                1,
+                layout.score.maxWidth / Math.max(1, labels.score.width),
+              ),
         );
-        labels.status.setText(
-          (
-            (p.remaining === undefined
-              ? ''
-              : `${p.remaining} ${theme.unit} LEFT · `) +
-            (p.status ?? (p.active ? 'YOUR TURN' : 'WAITING'))
-          ).toUpperCase(),
-        );
+        labels.status
+          .setPosition(x + layout.status.dx, y + layout.status.dy)
+          .setFontSize(layout.status.size)
+          .setText(
+            (
+              (p.remaining === undefined
+                ? ''
+                : `${p.remaining} ${theme.unit} LEFT · `) +
+              (p.status ?? (p.active ? 'YOUR TURN' : 'WAITING'))
+            ).toUpperCase(),
+          );
         labels.status.setScale(
-          Math.min(1, 210 / Math.max(1, labels.status.width)),
+          Math.min(
+            1,
+            layout.status.maxWidth / Math.max(1, labels.status.width),
+          ),
         );
+        if (!progress) continue;
         if (p.remaining !== undefined && p.total !== undefined) {
           const total = Math.min(12, Math.max(0, p.total));
           for (let n = 0; n < total; n++)
@@ -209,12 +262,25 @@ export class ArenaHud {
                 n < p.remaining ? color : 0x405057,
                 n < p.remaining ? 1 : 0.55,
               )
-              .fillRoundedRect(x + 19 + n * 17, 66, 11, 8, 2);
+              .fillRoundedRect(
+                x + progress.dx + n * 17,
+                y + progress.dy,
+                11,
+                8,
+                2,
+              );
         } else if (p.meter !== undefined) {
-          this.panels.fillStyle(0x35434a).fillRect(x + 19, 68, 190, 4);
+          this.panels
+            .fillStyle(0x35434a)
+            .fillRect(x + progress.dx, y + progress.meterDy, 190, 4);
           this.panels
             .fillStyle(color)
-            .fillRect(x + 19, 68, 190 * bounded(p.meter), 4);
+            .fillRect(
+              x + progress.dx,
+              y + progress.meterDy,
+              190 * bounded(p.meter),
+              4,
+            );
         }
       }
     }

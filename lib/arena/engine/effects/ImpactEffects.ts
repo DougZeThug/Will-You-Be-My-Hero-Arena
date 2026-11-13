@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import {surfacePoint} from '../../equipment-layout';
 import type {Attempt} from '../../model';
+/** Ring tints for a bag contact: scored (gold) and missed (orange). Watch and Play share them. */
+export const CONTACT_GOLD=0xffce25,CONTACT_MISS=0xe79959;
 /** Tiny reusable frame atlases (ring, cartoon dust puff, star burst), sampled
  * by game time rather than timer tweens, so seeks and replays are exact. */
 export class ImpactEffects {
@@ -42,7 +44,7 @@ export class ImpactEffects {
   * target at contactAt); the ring stays at the target at contactAt. */
  contact(a:Attempt,time:number,reduced:boolean,holeAt?:number,touch?:{x:number;y:number},landAt?:number){
   if(reduced)return;const q=surfacePoint(a.sport,a.actor,a.target),u=time-a.contactAt;
-  this.burst(q.x,q.y,u/.38,a.score?0xffce25:0xe79959);
+  this.burst(q.x,q.y,u/.38,a.score?CONTACT_GOLD:CONTACT_MISS);
   // A small puff where the bag first lands, drawn under the bag (depth 60).
   if(a.sport==='cornhole'&&a.contact!=='miss'){const t=touch??(a.boardResolution?.touch?surfacePoint('cornhole',a.actor,a.boardResolution.touch):q);this.puff(t.x,t.y+6,(landAt===undefined?u:time-landAt)/.45,.5,59);}
   if(a.contact==='hole'&&holeAt!==undefined)this.star(q.x,q.y-10,(time-holeAt)/.55,.8);

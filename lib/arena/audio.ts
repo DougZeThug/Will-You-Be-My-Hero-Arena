@@ -1,3 +1,4 @@
+import { playTone } from './engine/audio/ToneSynth';
 export class ArenaAudio {
   private ctx: AudioContext | null = null;
   muted = true;
@@ -46,38 +47,36 @@ export class ArenaAudio {
                 ? [112, 76]
                 : [83];
     tones.forEach((freq, i) => {
-      const osc = ctx.createOscillator(),
-        gain = ctx.createGain();
-      osc.type =
-        kind === 'miss' || kind === 'boardImpact' ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      if (kind === 'release')
-        osc.frequency.exponentialRampToValueAtTime(55, now + 0.17);
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(
-        kind === 'miss' || kind === 'boardImpact' ? 0.035 : 0.055,
-        now + 0.025 + i * 0.035,
+      const osc = playTone(
+        ctx,
+        now,
+        {
+          type: kind === 'miss' || kind === 'boardImpact' ? 'triangle' : 'sine',
+          frequency: freq,
+          glide: kind === 'release' ? { to: 55, after: 0.17 } : undefined,
+          gain: 0,
+          attack: {
+            to: kind === 'miss' || kind === 'boardImpact' ? 0.035 : 0.055,
+            after: 0.025 + i * 0.035,
+          },
+          decayAfter: (kind === 'victory' ? 1 : 0.38) + i * 0.05,
+          stopAfter: 1.3,
+        },
+        now,
+        () => {
+          this.nodes = this.nodes.filter((n) => n !== osc);
+        },
       );
-      gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        now + (kind === 'victory' ? 1 : 0.38) + i * 0.05,
-      );
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 1.3);
       this.nodes.push(osc);
-      osc.onended = () => {
-        osc.disconnect();
-        gain.disconnect();
-        this.nodes = this.nodes.filter((n) => n !== osc);
-      };
     });
   }
   stop() {
     for (const n of this.nodes)
       try {
         n.stop();
-      } catch {}
+      } catch {
+        // An oscillator that already ended throws when stopped again.
+      }
     this.nodes = [];
   }
   destroy() {

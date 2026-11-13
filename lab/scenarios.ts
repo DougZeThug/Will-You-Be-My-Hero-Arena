@@ -4,7 +4,7 @@ import { RULES_VERSION, simulate, hash } from '../lib/arena/simulation';
 import { attemptBeats, completionTime } from '../lib/arena/match-timeline';
 import {
   animation,
-  animations,
+  visibleAnimations,
 } from '../lib/arena/engine/animation/AnimationRegistry';
 import { bindingsFor } from '../lib/arena/engine/input/InputBindings';
 import type { LiveConfig } from '../lib/arena/engine/core/LiveTypes';
@@ -247,12 +247,10 @@ export function characterCheckpoints(s: Scenario): Checkpoint[] {
   return characterTimeline(s.character!, s.animation!).checkpoints;
 }
 export const clipCatalog = () =>
-  animations()
-    .filter((c) => !c.id.startsWith('legacy_'))
-    .map((c) => ({
-      id: c.id,
-      category: c.category,
-      duration: c.duration,
-      tags: [...c.tags],
-      markers: c.markers.map((m) => ({ ...m })),
-    }));
+  visibleAnimations().map((c) => ({
+    id: c.id,
+    category: c.category,
+    duration: c.duration,
+    tags: [...c.tags],
+    markers: c.markers.map((m) => ({ ...m })),
+  }));

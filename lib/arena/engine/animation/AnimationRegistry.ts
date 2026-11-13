@@ -19,3 +19,5 @@ export const SHOT_STYLES:ShotStyle[]=['standard','flat','airmail','roll','slide'
 for(const shot of SHOT_STYLES)registerAnimation({id:'throw_'+shot,category:'throw',tags:['throw',shot],duration:.82,weight:1,intensity:.5,markers:[{at:.62,name:'release'}],spine:'throw_'+shot});
 export const animation=(id:string)=>{const clip=registry.get(id);if(!clip)throw Error(`Unregistered animation: ${id}`);return clip;};
 export const animations=()=>[...registry.values()];
+/** Registered clips without the internal `legacy_` preview clips that the library pickers hide. */
+export const visibleAnimations=()=>animations().filter(c=>!c.id.startsWith('legacy_'));

@@ -1,4 +1,5 @@
 import type { ArenaCue } from '../core/LiveTypes';
+import { playTone } from './ToneSynth';
 const tones: Record<string, [number, number]> = {
   release: [380, 0.055],
   hole: [740, 0.15],
@@ -22,24 +23,15 @@ export class AudioManager {
   cue(cue: ArenaCue) {
     if (!this.enabled || cue.kind !== 'audio' || !this.context) return;
     const ctx = this.context,
-      [frequency, duration] = tones[cue.name] ?? [240, 0.06],
-      osc = ctx.createOscillator(),
-      gain = ctx.createGain();
-    osc.type = cue.name === 'punch' ? 'triangle' : 'sine';
-    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(
-      frequency * 0.65,
-      ctx.currentTime + duration,
-    );
-    gain.gain.setValueAtTime(0.055, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-    osc.onended = () => {
-      osc.disconnect();
-      gain.disconnect();
-    };
+      [frequency, duration] = tones[cue.name] ?? [240, 0.06];
+    playTone(ctx, ctx.currentTime, {
+      type: cue.name === 'punch' ? 'triangle' : 'sine',
+      frequency,
+      glide: { to: frequency * 0.65, after: duration },
+      gain: 0.055,
+      decayAfter: duration,
+      stopAfter: duration,
+    });
   }
   destroy() {
     void this.context?.close();

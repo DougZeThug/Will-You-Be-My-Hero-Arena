@@ -3,6 +3,7 @@ import './style.css';
 import { LabRuntime } from './LabRuntime';
 import { createLabAPI } from './API';
 import { SCENARIOS, type ScenarioOptions } from './scenarios';
+import { downloadJson } from '../lib/arena/download';
 import type { RigQAOptions } from './rig-qa';
 
 const element = <T = HTMLElement>(id: string) =>
@@ -193,16 +194,7 @@ element('copy-link').addEventListener('click', () =>
   }),
 );
 element('export').addEventListener('click', () => {
-  const url = URL.createObjectURL(
-    new Blob([JSON.stringify(lab.getState(), null, 2)], {
-      type: 'application/json',
-    }),
-  );
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `${lab.getState().scenario.id}-state.json`;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadJson(`${lab.getState().scenario.id}-state.json`, lab.getState());
 });
 document
   .querySelectorAll<HTMLButtonElement>('[data-intent]')
