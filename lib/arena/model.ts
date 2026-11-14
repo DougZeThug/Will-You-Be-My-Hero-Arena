@@ -27,6 +27,12 @@ export interface PaperFrame {url:string;width:number;height:number;origin:[numbe
 export interface AssetManifest {performance?:CharacterProfile;puppet?:PuppetAsset;personality?:MotionPersonality;renderMode?:'paper-frames';frames?:Record<string,PaperFrame>;frameScale?:number;version:1;cardId:string;cardImage:string;family:Family;sheet:string;parts:Record<string,{url:string;width:number;height:number}>;scale:number;groundAnchor:[number,number];facing:'right-three-quarter';clips:Clip[];attachments:Record<string,[number,number]>;supportedEvents:Sport[];props:string[];effectPalette:string[];signatureMove:string;audioCues:Record<string,string>}
 export const SPORTS:Sport[]=['cornhole','football','pong','basketball'];
 export const CLIPS:Clip[]=['summon','idle','walk','prepare','cornhole','football','pong','basketball','follow','await','success','miss','special','disappointment','victory'];
+/** The collection preview's clip protocol: what each Clip name makes the arena preview play. */
+export const PREVIEW_ENTRANCE:Clip='summon',PREVIEW_REST:Clip='idle',PREVIEW_WALK:Clip='walk';
+/** A throw: the clip named for the sport, or one of the throw phases. */
+export const isThrowPreview=(clip:Clip,sport:Sport)=>clip===sport||clip==='prepare'||clip==='follow'||clip==='await';
+/** The frustration reaction; every other non-throw clip plays the celebration. */
+export const isFrustrationPreview=(clip:Clip)=>clip==='miss'||clip==='disappointment';
 export const EVENTS:Record<Sport,{name:string;short:string;attempts:number;unit:string;description:string;rules:string[]}>={
  cornhole:{name:'Cornhole',short:'Bags of glory',attempts:4,unit:'bags',description:'Four bags. A suspicious amount of confidence.',rules:['Quick arcade preset: four alternating throws each. Gross scoring, without cancellation.','Hole = 3, bag resting on the board = 1, floor = 0. Most board shots can push earlier bags, a cut kicks one aside, a roll curls around them, and an airmail or collect bag that drops in can carry bags into the hole with it.','Separate identical boards. Board contacts and displacements are recorded before playback. Starting order is locked.']},
  football:{name:'Football',short:'Thread the needle',attempts:5,unit:'throws',description:'A target wall. An entirely inflated sense of ability.',rules:['Five alternating throws each at identical target walls.','Concentric targets score 3, 2, or 1. Outside the outer circle = 0. A boundary belongs to its inner, higher-value zone.','The ball spirals to its recorded impact. There are no catches or bonus points.']},
