@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { sha256File } from './lib/hash.mjs';
 
 // Specific, guarded recovery for this known round trip. Never rewrites received files.
 const dir = 'lab/loongbones/assets/dan-editor-r2';
@@ -207,10 +207,7 @@ for (let i = 0; i < dense.length;) {
 meshOf(target).weights = sparse;
 const derivedName = 'dan-arena-restored_ske.json';
 await fs.writeFile(`${dir}/${derivedName}`, JSON.stringify(restored));
-const sha = async (path) =>
-  createHash('sha256')
-    .update(await fs.readFile(path))
-    .digest('hex');
+const sha = sha256File;
 const originalFiles = [
   'original-export.zip',
   'dan-editor-r2_ske.json',

@@ -15,7 +15,8 @@ import {
 } from '../loongbones/cornhole-motion/curves';
 import type { NativeClip } from './NativeClip';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
-export const PERFORMANCE_REVISION = 'cornhole-cartoon-take-v1';
+import { PERFORMANCE_REVISION } from './revision';
+export { PERFORMANCE_REVISION };
 const PERFORMANCE_ASSET_REVISION = 'side-v3-attachment-r4';
 
 export type PerformanceArmatureData = {

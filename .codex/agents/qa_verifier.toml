@@ -16,8 +16,9 @@ were given, ask the Lead for them rather than inventing a pass bar.
 Method:
 1. Record `git status --short` and the starting revision before running
    anything. After running checks, record it again and report any tracked file
-   that changed (e.g. docs/test-results.json and import examples regenerate
-   under `pnpm test`). Do not revert or stage them; report them.
+   that changed (e.g. docs/import-examples regenerates under `pnpm test`;
+   test reports go to the ignored work/qa/, e.g. work/qa/test-results.json).
+   Do not revert or stage them; report them.
 2. Run the checks the change warrants: `pnpm typecheck`, `pnpm test`,
    `pnpm build`, relevant `pnpm test:browser` specs, and `pnpm check:regression`
    when the aggregate scope is warranted. Read failures, not just exit codes.

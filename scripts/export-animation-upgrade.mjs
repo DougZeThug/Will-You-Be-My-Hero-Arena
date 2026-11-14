@@ -1,10 +1,6 @@
 import fs from 'node:fs/promises';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+import { launchBrowser } from './lib/browser.mjs';
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
   await page.goto(

@@ -8,6 +8,7 @@ import {
 } from './check-performance-provider-dependencies.mjs';
 process.env.NODE_ENV = 'production';
 const { createBuilder } = await import('vite');
+// Internal vinext path: only valid for the exact vinext pin in package.json.
 const { runPrerender } = await import('vinext/internal/build/run-prerender');
 
 // Use the same build and export APIs as vinext's CLI, but allow native worker

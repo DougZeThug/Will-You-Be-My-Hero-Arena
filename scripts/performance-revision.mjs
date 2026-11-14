@@ -1,12 +1,20 @@
-import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import ts from 'typescript';
 
 /** The shipped cornhole runtime revision as declared by the sole motion
- * compiler. Node scripts cannot import the TypeScript module, so read the
- * exported constant from source; the browser specs import it directly. */
+ * compiler. Node scripts cannot import TypeScript directly, so transpile the
+ * dependency-free revision module and import the result; the browser specs
+ * import the same constant through compile.ts. */
 export async function shippedPerformanceRevision() {
-  const compiled = await readFile('lab/performance/compile.ts', 'utf8');
-  const match = compiled.match(/PERFORMANCE_REVISION = '([^']+)'/);
-  assert.ok(match, 'compile.ts must declare the shipped PERFORMANCE_REVISION');
-  return match[1];
+  const source = await readFile('lab/performance/revision.ts', 'utf8');
+  const code = ts.transpileModule(source, {
+    compilerOptions: {
+      target: ts.ScriptTarget.ES2022,
+      module: ts.ModuleKind.ES2022,
+    },
+  }).outputText;
+  const { PERFORMANCE_REVISION } = await import(
+    'data:text/javascript;base64,' + Buffer.from(code).toString('base64')
+  );
+  return PERFORMANCE_REVISION;
 }

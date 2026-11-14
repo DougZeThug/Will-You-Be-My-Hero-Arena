@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { readdir, readFile, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { chromium } from 'playwright';
-import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { qaServer } from './qa-server.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 import { auditProductionAssets } from './production-assets.mjs';
 import { shippedPerformanceRevision } from './performance-revision.mjs';
 
@@ -59,10 +59,7 @@ try {
     label: 'production',
     env: { PORT: port },
   });
-  browser = await chromium.launch({
-    ...browserLaunchOptions(),
-    headless: true,
-  });
+  browser = await launchBrowser();
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1080 },
   });
