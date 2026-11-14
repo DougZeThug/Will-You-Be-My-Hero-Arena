@@ -9,12 +9,12 @@ import type {
 import type { ReleaseKinematics } from '../../../lib/arena/engine/equipment/AttachmentManager';
 import type { EventActionMap } from '../../../lib/arena/engine/controllers/EventActionMap';
 import { placement } from '../../../lib/arena/equipment-geometry';
-import { advanceBasketball } from '../../../lib/arena/engine/physics/BasketballFlight';
+import { advanceBasketball } from '../BasketballFlight';
 import {
   advanceBag,
   bagContact,
   type BagContact,
-} from '../../../lib/arena/engine/events/cornhole/ScreenBagDynamics';
+} from './ScreenBagDynamics';
 export interface ProofProjectile {
   id: number;
   owner: string;

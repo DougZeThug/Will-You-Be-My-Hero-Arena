@@ -10,13 +10,13 @@ import type {
   InputFrame,
 } from '../../lib/arena/engine/input/InputActions';
 import { MotionActor } from './MotionActor';
-import { CharacterProximity } from '../../lib/arena/engine/movement/CharacterProximity';
+import { CharacterProximity } from './CharacterProximity';
 import type { NativeAnimator } from './NativeAnimator';
 import type { MotionEventModule } from './events/contracts';
 import { PrecisionProof } from './events/PrecisionProof';
 import { RunningProof } from './events/RunningProof';
 import { CombatProof } from './events/CombatProof';
-import { kineticRecipes } from '../../lib/arena/engine/motion/KineticChains';
+import { kineticRecipes } from './motion/KineticChains';
 import { placement, boardDepthScale } from '../../lib/arena/equipment-geometry';
 export const proofEvents = {
   cornhole: () => new PrecisionProof('cornhole'),

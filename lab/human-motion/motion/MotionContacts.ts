@@ -1,4 +1,4 @@
-import type { MotionEvent, Vec2 } from './MotionTypes';
+import type { MotionEvent, Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
 
 export type ContactName =
   | 'leftFoot'

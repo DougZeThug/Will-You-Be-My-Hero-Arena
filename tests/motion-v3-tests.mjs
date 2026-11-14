@@ -2,13 +2,13 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 export async function testMotionV3({ check }) {
   const { matchStride, gaitSupport } =
-    await import('../.test-build/engine/motion/StrideMatcher.mjs');
+    await import('../.test-build/lab/human-motion/motion/StrideMatcher.mjs');
   const { MotionContacts } =
-    await import('../.test-build/engine/motion/MotionContacts.mjs');
+    await import('../.test-build/lab/human-motion/motion/MotionContacts.mjs');
   const { CharacterProximity } =
-    await import('../.test-build/engine/movement/CharacterProximity.mjs');
+    await import('../.test-build/lab/human-motion/CharacterProximity.mjs');
   const { advanceBasketball } =
-    await import('../.test-build/engine/physics/BasketballFlight.mjs');
+    await import('../.test-build/lab/human-motion/BasketballFlight.mjs');
   const { AttachmentManager } =
     await import('../.test-build/engine/equipment/AttachmentManager.mjs');
   const clips = [

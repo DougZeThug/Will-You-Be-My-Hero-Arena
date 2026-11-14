@@ -1,4 +1,4 @@
-import { clamp } from '../../math';
+import { clamp } from '../../../lib/arena/math';
 export interface RecoveryPose {
   handHeight: number;
   chestPitch: number;

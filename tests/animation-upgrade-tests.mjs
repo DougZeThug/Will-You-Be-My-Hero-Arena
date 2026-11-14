@@ -5,7 +5,7 @@ export async function testAnimationUpgrade({ check }) {
   const { chestContactWeight } =
     await import('../.test-build/engine/motion/ContactEnvelope.mjs');
   const { PropPerformance } =
-    await import('../.test-build/engine/equipment/PropPerformance.mjs');
+    await import('../.test-build/lab/human-motion/PropPerformance.mjs');
   const clip = {
     id: 'throw',
     native: 'throw',

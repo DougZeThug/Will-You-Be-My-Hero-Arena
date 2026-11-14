@@ -1,5 +1,5 @@
 import type * as Phaser from 'phaser';
-import { RenderMetrics, textureBytes } from './RenderMetrics';
+import { RenderMetrics, textureBytes } from '../lib/arena/engine/core/RenderMetrics';
 
 export type TelemetryMode = 'realtime' | 'manual';
 export interface TimingSummary {

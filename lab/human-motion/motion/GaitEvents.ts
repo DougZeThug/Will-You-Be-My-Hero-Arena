@@ -1,6 +1,6 @@
-import type { GraphState } from './AnimationGraph';
+import type { GraphState } from '../../../lib/arena/engine/motion/AnimationGraph';
 import { gaitSupport } from './StrideMatcher';
-import type { MotionEvent } from './MotionTypes';
+import type { MotionEvent } from '../../../lib/arena/engine/motion/MotionTypes';
 /** Foot contacts for a gait clip that has just started: the feet in stance
  * plant and the others release, as if the gait had been running all along.
  * `cycle` is the caller's cycle count for the events. */

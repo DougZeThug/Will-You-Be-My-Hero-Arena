@@ -3,7 +3,7 @@ import {
   type PerformancePersonality,
   type Emotion,
   type Gesture,
-} from '../characters/PerformancePersonality';
+} from '../../../lib/arena/engine/characters/PerformancePersonality';
 export type PerformancePhase =
   | 'IDLE'
   | 'PRE_ACTION'

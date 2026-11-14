@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 export async function testAnatomy({ check }) {
   const { DAN_ANATOMY: plan } =
-    await import('../.test-build/engine/characters/anatomy/dan.mjs');
+    await import('../.test-build/lab/anatomy/dan.mjs');
   const { JOINTS, PARENTS, balanceEstimate, validateAnatomyPlan } =
-    await import('../.test-build/engine/characters/anatomy/AnatomyPlan.mjs');
+    await import('../.test-build/lab/anatomy/AnatomyPlan.mjs');
   check(() => assert.deepEqual(validateAnatomyPlan(plan), []));
   check(() => assert.equal(plan.status, 'landmark-proposal'));
   // Every joint reaches one root, without cycles or a head-parented shoulder.

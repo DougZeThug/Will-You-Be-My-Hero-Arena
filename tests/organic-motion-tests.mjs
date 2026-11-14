@@ -3,15 +3,15 @@ export async function testOrganicMotion({ check }) {
   const { DampedMotion, InertialChannel } =
     await import('../.test-build/engine/motion/DampedMotion.mjs');
   const { OrganicMotion } =
-    await import('../.test-build/engine/motion/OrganicMotion.mjs');
+    await import('../.test-build/lab/human-motion/motion/OrganicMotion.mjs');
   const { bodyBalance } =
-    await import('../.test-build/engine/motion/BodyBalance.mjs');
+    await import('../.test-build/lab/human-motion/motion/BodyBalance.mjs');
   const { matchRecovery } =
-    await import('../.test-build/engine/motion/RecoveryMatcher.mjs');
+    await import('../.test-build/lab/human-motion/motion/RecoveryMatcher.mjs');
   const { motionProfiles } =
     await import('../.test-build/engine/motion/MotionProfiles.mjs');
   const { MotionCurves } =
-    await import('../.test-build/engine/motion/MotionCurves.mjs');
+    await import('../.test-build/lab/human-motion/motion/MotionCurves.mjs');
   const values = [30, 60, 120].map((hz) => {
     const d = new DampedMotion();
     for (let i = 0; i < hz; i++) d.update(1, 1 / hz, 0.3, 0.85);

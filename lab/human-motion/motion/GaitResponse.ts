@@ -1,6 +1,6 @@
-import type { MotionEvent } from './MotionTypes';
-import { clamp } from '../../math';
-import type { CharacterMotor } from '../movement/CharacterMotor';
+import type { MotionEvent } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
+import type { CharacterMotor } from '../../../lib/arena/engine/movement/CharacterMotor';
 /** Contact-driven start/stop response around the measured gait, without changing motor velocity. */
 export class GaitResponse {
   phase:

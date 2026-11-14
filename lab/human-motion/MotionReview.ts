@@ -1,6 +1,6 @@
 import type { MotionScene } from './MotionScene';
-import type { CurveFrame } from '../../lib/arena/engine/motion/MotionCurves';
-import { referenceCurves } from '../../lib/arena/engine/motion-tools/ReferenceCurves';
+import type { CurveFrame } from './motion/MotionCurves';
+import { referenceCurves } from './motion-tools/ReferenceCurves';
 const ns = 'http://www.w3.org/2000/svg';
 const svgElement = (name: string, attrs: Record<string, string>) => {
   const e = document.createElementNS(ns, name);

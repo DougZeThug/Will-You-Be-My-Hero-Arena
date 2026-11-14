@@ -7,13 +7,13 @@ export async function testHumanMotion({ check }) {
   const { AnimationGraph } =
     await import('../.test-build/engine/motion/AnimationGraph.mjs');
   const { FootLock } =
-    await import('../.test-build/engine/movement/FootLock.mjs');
+    await import('../.test-build/lab/human-motion/motion/FootLock.mjs');
   const { AttachmentManager } =
     await import('../.test-build/engine/equipment/AttachmentManager.mjs');
   const { validateHumanRig, SIDE_RIG_BONES } =
     await import('../.test-build/engine/motion/HumanSkeleton.mjs');
   const { importReference, retargetReference, retargetMotion } =
-    await import('../.test-build/engine/motion-tools/ReferenceMotion.mjs');
+    await import('../.test-build/lab/human-motion/motion-tools/ReferenceMotion.mjs');
   const motor = new CharacterMotor(
     motionProfiles.dan,
     { x: 0, y: 0 },
@@ -210,7 +210,7 @@ export async function testHumanMotion({ check }) {
   // pivot plant starts at the plant speed and plays through its recovery,
   // even though the motor stops reporting a turn once facing flips.
   const { MotionPlanner } =
-    await import('../.test-build/engine/motion/MotionPlanner.mjs');
+    await import('../.test-build/lab/human-motion/motion/MotionPlanner.mjs');
   const { PLANT_TURN_SPEED } =
     await import('../.test-build/engine/movement/CharacterMotor.mjs');
   const baseClip = (id, extra = {}) => ({

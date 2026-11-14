@@ -17,7 +17,7 @@ First read `AGENTS.md`. Then locate the real implementation; do not assume:
   `ReleasedBagPhysics.ts`, `ScreenBagDynamics.ts`, `CornholeBoard.ts`),
   `lib/arena/engine/events/precision/` (`PrecisionPhysics.ts`, live Play), and
   `lib/arena/simulation.ts` for recorded Watch outcomes.
-- Basketball: `lib/arena/engine/physics/BasketballFlight.ts` and `simulation.ts`.
+- Basketball: `lab/human-motion/BasketballFlight.ts` and `simulation.ts`.
 - Football, beer pong: `simulation.ts` and equipment/object code. They are
   Watch-only recordings with their own paths and must not be migrated
   incidentally.

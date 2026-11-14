@@ -2,15 +2,15 @@ import {
   techniqueResponse as techniques,
   responseChain as chain,
 } from './KineticChains';
-import { DampedMotion } from './DampedMotion';
+import { DampedMotion } from '../../../lib/arena/engine/motion/DampedMotion';
 import { bodyBalance, type BalanceState } from './BodyBalance';
 import type {
   MotionClip,
   MotionPose,
   MotionProfile,
   Vec2,
-} from './MotionTypes';
-import { clamp } from '../../math';
+} from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 export interface OrganicState {
   clip: MotionClip;
   time: number;

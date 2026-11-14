@@ -1,7 +1,7 @@
 import type {
   AnatomicalJoint,
   LandmarkPose,
-} from '../../lib/arena/engine/characters/anatomy/AnatomyPlan';
+} from '../anatomy/AnatomyPlan';
 import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 
 /** The user's 2026-09-12 full-body illustration is the proportion authority.

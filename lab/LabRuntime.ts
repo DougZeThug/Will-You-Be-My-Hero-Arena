@@ -2,7 +2,7 @@ import type * as Phaser from 'phaser';
 import { ArenaGame } from '../lib/arena/engine/core/ArenaGame';
 import { LiveArenaGame } from '../lib/arena/engine/core/LiveArenaGame';
 import { ArenaScene } from '../lib/arena/engine/scenes/ArenaScene';
-import { FrameTelemetry } from '../lib/arena/engine/core/FrameTelemetry';
+import { FrameTelemetry } from './FrameTelemetry';
 import { PlaybackClock } from '../lib/arena/clock';
 import { matchState } from '../lib/arena/match-timeline';
 import type { Intent } from '../lib/arena/engine/input/InputActions';

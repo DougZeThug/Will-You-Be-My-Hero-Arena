@@ -1,4 +1,4 @@
-import type { Vec2 } from '../../motion/MotionTypes';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 /** Authoring landmarks, not a replacement animation runtime or a Spine export.
  * Coordinates are character-local pixels, +Y down, ground at zero.
  * L/R preserve Arena's image-left/image-right convention. */

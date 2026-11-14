@@ -1,5 +1,5 @@
-import type { Vec2 } from '../motion/MotionTypes';
-import type { MotorSweep } from './CharacterMotor';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
+import type { MotorSweep } from '../../lib/arena/engine/movement/CharacterMotor';
 export interface BodySpace {
   id: string;
   position: Vec2;

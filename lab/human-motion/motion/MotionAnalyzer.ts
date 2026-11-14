@@ -1,4 +1,4 @@
-import type { MotionPose, MotionEvent, Vec2 } from './MotionTypes';
+import type { MotionPose, MotionEvent, Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
 import { MotionCurves } from './MotionCurves';
 export interface MotionWarning {
   time: number;

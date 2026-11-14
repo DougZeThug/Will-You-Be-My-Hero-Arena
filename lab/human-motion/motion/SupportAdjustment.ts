@@ -1,4 +1,4 @@
-import type { Vec2 } from './MotionTypes';
+import type { Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
 export interface SupportedLeg {
   hip: Vec2;
   knee: Vec2;

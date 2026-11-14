@@ -2,21 +2,21 @@ import {
   CharacterMotor,
   type MovementCollision,
 } from '../../lib/arena/engine/movement/CharacterMotor';
-import { MotionPlanner } from '../../lib/arena/engine/motion/MotionPlanner';
-import { MotionAnalyzer } from '../../lib/arena/engine/motion/MotionAnalyzer';
-import { MotionContacts } from '../../lib/arena/engine/motion/MotionContacts';
+import { MotionPlanner } from './motion/MotionPlanner';
+import { MotionAnalyzer } from './motion/MotionAnalyzer';
+import { MotionContacts } from './motion/MotionContacts';
 import {
   gaitStartEvents,
   landingEvents,
-} from '../../lib/arena/engine/motion/GaitEvents';
+} from './motion/GaitEvents';
 import type {
   Vec2,
   CharacterId,
 } from '../../lib/arena/engine/motion/MotionTypes';
 import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import { AttachmentManager } from '../../lib/arena/engine/equipment/AttachmentManager';
-import { PropPerformance } from '../../lib/arena/engine/equipment/PropPerformance';
-import { PerformanceTimeline } from '../../lib/arena/engine/motion/PerformanceTimeline';
+import { PropPerformance } from './PropPerformance';
+import { PerformanceTimeline } from './motion/PerformanceTimeline';
 import { performancePersonalities } from '../../lib/arena/engine/characters/PerformancePersonality';
 import { motionSignatures } from '../../lib/arena/engine/motion/CharacterMotionSignature';
 import type {

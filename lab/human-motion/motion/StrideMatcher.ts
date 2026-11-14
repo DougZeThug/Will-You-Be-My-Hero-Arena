@@ -1,5 +1,5 @@
-import type { MotionClip } from './MotionTypes';
-import { clamp } from '../../math';
+import type { MotionClip } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 export interface StrideFit {
   clip: string;
   speed: number;

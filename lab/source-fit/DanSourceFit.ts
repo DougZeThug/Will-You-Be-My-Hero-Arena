@@ -4,7 +4,7 @@ import { prepareCharacterTextures } from '../../lib/arena/engine/scenes/Characte
 import {
   PARENTS,
   balanceEstimate,
-} from '../../lib/arena/engine/characters/anatomy/AnatomyPlan';
+} from '../anatomy/AnatomyPlan';
 import { DAN_SOURCE, DAN_FITTED_POSE } from './dan-registration';
 
 /** Static reference-source view, not an authored skeletal animation rig.

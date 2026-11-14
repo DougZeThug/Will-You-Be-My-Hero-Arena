@@ -1,4 +1,4 @@
-import type { MotionClip } from './MotionTypes';
+import type { MotionClip } from '../../../lib/arena/engine/motion/MotionTypes';
 export type Technique = NonNullable<MotionClip['technique']>;
 /** Shared response configuration. Authored poses still supply the primary performance. */
 export const techniqueResponse: Record<

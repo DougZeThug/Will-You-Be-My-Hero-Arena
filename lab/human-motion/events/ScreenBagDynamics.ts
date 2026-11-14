@@ -1,6 +1,6 @@
-import type { Vec2 } from '../../motion/MotionTypes';
-import { artPoint, placement, quadPoint } from '../../../equipment-geometry';
-import { EQUIPMENT_ART } from '../../../equipment-art';
+import type { Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
+import { artPoint, placement, quadPoint } from '../../../lib/arena/equipment-geometry';
+import { EQUIPMENT_ART } from '../../../lib/arena/equipment-art';
 
 export interface BagContact {
   phase: 'flight' | 'board' | 'hole' | 'ground' | 'settled';

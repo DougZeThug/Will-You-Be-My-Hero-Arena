@@ -1,5 +1,5 @@
-import type { Vec2 } from './MotionTypes';
-import { clamp } from '../../math';
+import type { Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 /** Shape-preserving Hermite velocity through intermediate root samples.
  * Extremes stop, monotone breakdowns do not. No overshoot beyond authored reach. */
 export function sampleRoot(points: (Vec2 & { at: number })[], t: number): Vec2 {

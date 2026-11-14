@@ -1,12 +1,12 @@
 import * as Phaser from 'phaser';
 import { MotionScene } from './MotionScene';
 import { proofEvents, type ProofEvent } from './MotionSession';
-import { FrameTelemetry } from '../../lib/arena/engine/core/FrameTelemetry';
+import { FrameTelemetry } from '../FrameTelemetry';
 import {
   importReference,
   retargetReference,
   retargetMotion,
-} from '../../lib/arena/engine/motion-tools/ReferenceMotion';
+} from './motion-tools/ReferenceMotion';
 import type { Intent } from '../../lib/arena/engine/input/InputActions';
 import { motionReview } from './MotionReview';
 import { installReviewTake } from './ReviewTake';

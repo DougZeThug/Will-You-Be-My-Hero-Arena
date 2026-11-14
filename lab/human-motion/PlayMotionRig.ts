@@ -1,12 +1,12 @@
 import * as Phaser from 'phaser';
 import { NativeAnimator } from './NativeAnimator';
 import { addPlayRunning } from './authoring/play';
-import { MotionPlanner } from '../../lib/arena/engine/motion/MotionPlanner';
-import { MotionContacts } from '../../lib/arena/engine/motion/MotionContacts';
+import { MotionPlanner } from './motion/MotionPlanner';
+import { MotionContacts } from './motion/MotionContacts';
 import {
   gaitStartEvents,
   landingEvents,
-} from '../../lib/arena/engine/motion/GaitEvents';
+} from './motion/GaitEvents';
 import { CharacterMotor } from '../../lib/arena/engine/movement/CharacterMotor';
 import type { MotionEvent } from '../../lib/arena/engine/motion/MotionTypes';
 import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';

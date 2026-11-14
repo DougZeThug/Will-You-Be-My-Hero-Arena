@@ -1,5 +1,5 @@
-import type { Vec2 } from './MotionTypes';
-import { clamp } from '../../math';
+import type { Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 
 /** Rotate a planted foot about its support region, rather than its ankle.
  * `pivot` is the unrotated ankle→contact vector in world pixels; angles are radians.

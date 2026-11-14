@@ -1,4 +1,4 @@
-import type { Vec2 } from '../motion/MotionTypes';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 export interface BallFlight {
   position: Vec2;
   velocity: Vec2;

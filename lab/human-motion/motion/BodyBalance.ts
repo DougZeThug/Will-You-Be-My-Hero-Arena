@@ -1,5 +1,5 @@
-import type { MotionPose } from './MotionTypes';
-import { clamp } from '../../math';
+import type { MotionPose } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 export interface BalanceState {
   supportSide: 'right' | 'left' | 'airborne';
   weightBias: number;

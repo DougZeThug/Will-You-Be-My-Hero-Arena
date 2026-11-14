@@ -12,13 +12,13 @@ import { MotionSession, type ProofEvent } from './MotionSession';
 import { KeyboardDevice } from '../../lib/arena/engine/input/KeyboardDevice';
 import { bindingsFor } from '../../lib/arena/engine/input/InputBindings';
 import { GamepadDevice } from '../../lib/arena/engine/input/GamepadDevice';
-import type { BagContact } from '../../lib/arena/engine/events/cornhole/ScreenBagDynamics';
+import type { BagContact } from './events/ScreenBagDynamics';
 import { ArenaHud } from '../../lib/arena/engine/presentation/ArenaHud';
 import { ArenaEnvironment } from '../../lib/arena/engine/presentation/ArenaEnvironment';
 import {
   retargetReference,
   type ReferenceTrack,
-} from '../../lib/arena/engine/motion-tools/ReferenceMotion';
+} from './motion-tools/ReferenceMotion';
 import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
 export class MotionScene extends Phaser.Scene {
   session!: MotionSession;

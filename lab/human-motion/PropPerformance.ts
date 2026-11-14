@@ -1,4 +1,4 @@
-import type { Vec2 } from '../motion/MotionTypes';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 /** Brief decorative toss of the held object. Does not enter scoring/projectile rules. */
 export class PropPerformance {
   flight: {

@@ -11,20 +11,20 @@ import {
   SIDE_RIG_BONES,
   validateHumanRig,
 } from '../../lib/arena/engine/motion/HumanSkeleton';
-import type { MotionPlanner } from '../../lib/arena/engine/motion/MotionPlanner';
+import type { MotionPlanner } from './motion/MotionPlanner';
 import type { CharacterMotor } from '../../lib/arena/engine/movement/CharacterMotor';
-import { FootLock } from '../../lib/arena/engine/movement/FootLock';
+import { FootLock } from './motion/FootLock';
 import {
   OrganicMotion,
   PERFORMANCE_BONES,
-} from '../../lib/arena/engine/motion/OrganicMotion';
+} from './motion/OrganicMotion';
 import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import { InertialPose } from './InertialPose';
 import { anatomy, scaleToReference } from '../loongbones/side-rig/anatomy';
 import {
   contactRoll,
   rolledAnkle,
-} from '../../lib/arena/engine/motion/FootContactRoll';
+} from './motion/FootContactRoll';
 import { repairFootMaterial } from './FootMaterialRepair';
 import { registerArmMaterial } from './ArmMaterialRegistration';
 import { restoreFarArm } from './FarArmMaterial';
@@ -43,7 +43,7 @@ import { DirectionalSkin } from './DirectionalSkin';
 import {
   supportCompression,
   type SupportedLeg,
-} from '../../lib/arena/engine/motion/SupportAdjustment';
+} from './motion/SupportAdjustment';
 import type {
   MotionEvent,
   Vec2,

@@ -1,11 +1,11 @@
 import * as Phaser from 'phaser';
 import type { CharacterController } from '../lib/arena/engine/characters/CharacterController';
-import { DAN_ANATOMY } from '../lib/arena/engine/characters/anatomy/dan';
+import { DAN_ANATOMY } from './anatomy/dan';
 import {
   PARENTS,
   balanceEstimate,
   validateAnatomyPlan,
-} from '../lib/arena/engine/characters/anatomy/AnatomyPlan';
+} from './anatomy/AnatomyPlan';
 import type { Vec2 } from '../lib/arena/engine/motion/MotionTypes';
 import {
   DEFAULT_RIG_QA,

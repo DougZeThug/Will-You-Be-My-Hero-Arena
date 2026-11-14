@@ -5,7 +5,7 @@ export async function testMotionV31({ check }) {
   const { RigIntegrityValidator } =
     await import('../.test-build/engine/motion/RigIntegrityValidator.mjs');
   const { GaitResponse } =
-    await import('../.test-build/engine/motion/GaitResponse.mjs');
+    await import('../.test-build/lab/human-motion/motion/GaitResponse.mjs');
   const source = [
     { x: 0, y: 0 },
     { x: 0, y: 100 },

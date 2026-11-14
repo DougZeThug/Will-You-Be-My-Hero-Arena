@@ -1,4 +1,4 @@
-import type { MotionPose, Vec2 } from './MotionTypes';
+import type { MotionPose, Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
 export interface CurveFrame {
   time: number;
   position: Record<string, Vec2>;

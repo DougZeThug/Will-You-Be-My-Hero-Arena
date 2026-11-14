@@ -1,11 +1,11 @@
-import { smoothstep } from '../../math';
-import { AnimationGraph } from './AnimationGraph';
-import type { MotionClip, MotionProfile } from './MotionTypes';
-import { clamp } from '../../math';
+import { smoothstep } from '../../../lib/arena/math';
+import { AnimationGraph } from '../../../lib/arena/engine/motion/AnimationGraph';
+import type { MotionClip, MotionProfile } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp } from '../../../lib/arena/math';
 import {
   PLANT_TURN_SPEED,
   type CharacterMotor,
-} from '../movement/CharacterMotor';
+} from '../../../lib/arena/engine/movement/CharacterMotor';
 import { matchRecovery, type RecoveryPose } from './RecoveryMatcher';
 import { sampleRoot } from './RootCurve';
 import { matchStride, type StrideFit } from './StrideMatcher';
