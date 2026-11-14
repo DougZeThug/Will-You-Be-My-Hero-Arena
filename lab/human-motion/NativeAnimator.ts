@@ -6,7 +6,9 @@ import {
 import { NativeMesh } from '../loongbones/NativeMesh';
 import { dragonBones as db } from '../loongbones/vendor/dragonBones';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
-import { buildMotionLibrary } from './authoring';
+import type { buildMotionLibrary } from './authoring';
+import { prepareArmature, type NativeAnimatorOptions } from './ArmaturePreparation';
+import { setConstraintWeight, setSlotAlpha, slotAlpha } from './NativeBridge';
 import {
   SIDE_RIG_BONES,
   validateHumanRig,
@@ -25,13 +27,8 @@ import {
   contactRoll,
   rolledAnkle,
 } from './motion/FootContactRoll';
-import { repairFootMaterial } from './FootMaterialRepair';
-import { registerArmMaterial } from './ArmMaterialRegistration';
-import { restoreFarArm } from './FarArmMaterial';
 import {
-  addHandAttachments,
   applyHandExposure,
-  compileHandExposures,
   HAND_TEXTURE_KEY,
   handAtlas,
   newHandSlots,
@@ -91,18 +88,11 @@ export class NativeAnimator {
   readonly registeredArmVertices: number;
   readonly integrity: NativeRigIntegrity;
   readonly directional?: DirectionalSkin;
-  private soleOwners: ('left' | 'right' | null)[] = [];
+  private soleOwners: ('left' | 'right' | null)[];
   constructor(
     scene: Phaser.Scene,
     readonly definition: WeightedRigDefinition,
-    options: {
-      stance?: { right: number; left: number };
-      directional?: boolean;
-      /** Extra authored clips for a host event (e.g. Play's running slide). */
-      extend?: Parameters<typeof buildMotionLibrary>[2];
-      /** Host gait tuning (Play strides and arm swing). */
-      gait?: Parameters<typeof buildMotionLibrary>[3];
-    } = {},
+    options: NativeAnimatorOptions = {},
   ) {
     this.performance = new OrganicMotion(motionProfiles[definition.id]);
     const landmarks = anatomy(definition.id).joints;
@@ -120,91 +110,13 @@ export class NativeAnimator {
     const data = structuredClone(
       scene.cache.json.get(definition.key + '-skeleton'),
     );
-    const arm = data.armature[0];
-    this.repairedFootWeights = repairFootMaterial(definition.id, arm);
-    this.registeredArmVertices = registerArmMaterial(definition.id, arm);
-    restoreFarArm(definition.id, arm);
-    addHandAttachments(definition.id, arm);
-    const body = arm.skin[0].slot.find(
-      (s: { name: string }) => s.name === 'body',
-    ).display[0];
-    for (let i = 0; i < body.weights.length;) {
-      const count = body.weights[i];
-      let owner: 'left' | 'right' | null = null,
-        strongest = 0;
-      for (let j = 0; j < count; j++) {
-        const bone = arm.bone[body.weights[i + 1 + j * 2]].name,
-          weight = body.weights[i + 2 + j * 2];
-        if (weight > strongest && ['foot_L', 'foot_R'].includes(bone)) {
-          owner = bone === 'foot_L' ? 'right' : 'left';
-          strongest = weight;
-        }
-      }
-      this.soleOwners.push(owner);
-      i += 1 + count * 2;
-    }
-    const far = arm.ik.find((c: { name: string }) => c.name === 'plant_R');
-    if (far) far.bendPositive = true;
-    this.library = buildMotionLibrary(
-      definition.id,
-      arm.animation,
-      options.extend,
-      options.gait,
-    );
-    compileHandExposures(this.library);
-    // Event stance places effectors relative to the pelvis. Skin bind matrices,
-    // anatomical bones and limb lengths remain unchanged.
-    if (options.stance) {
-      for (const side of ['right', 'left'] as const) {
-        const name = 'foot_target_' + (side === 'right' ? 'L' : 'R');
-        const target = arm.bone.find((b: { name: string }) => b.name === name);
-        const delta = options.stance[side] - target.transform.x;
-        target.transform.x += delta;
-        // Measured locomotion already owns its foot placement in canonical bind space.
-        for (const c of this.library.native.filter((c) =>
-          ['v2_walk', 'v2_jog', 'v2_run', 'v2_sprint'].includes(c.name),
-        ))
-          for (const t of c.bone ?? [])
-            if (t.name === name)
-              for (const k of (t.translateFrame ?? []) as { x: number }[])
-                k.x -= delta;
-      }
-    }
-    arm.animation = this.library.native;
-    this.validation = validateHumanRig(
-      arm.bone.map((b: { name: string }) => b.name),
-    );
-    if (!this.validation.valid)
-      throw Error(
-        'Human rig missing ' +
-          this.validation.missing.map((m) => m.semantic).join(', '),
-      );
-    // Optional two-hand target. Existing topology and anatomical bind transforms stay untouched.
-    arm.bone.push({
-      name: 'equipment_target',
-      parent: 'root',
-      transform: { x: 0, y: -230 },
-    });
-    arm.ik.push({
-      name: 'equipment_hand',
-      bone: 'forearm_R',
-      target: 'equipment_target',
-      chain: 1,
-      bendPositive: false,
-      weight: 0,
-    });
-    arm.bone.push(
-      { name: 'chest_contact', parent: 'chest', transform: { x: -37, y: 34 } },
-      { name: 'chest_target', parent: 'root', transform: { x: 0, y: -300 } },
-    );
-    arm.ik.push({
-      name: 'chest_hand',
-      bone: 'forearm_L',
-      target: 'chest_target',
-      chain: 1,
-      bendPositive: false,
-      weight: 0,
-    });
+    const prepared = prepareArmature(definition, data, options);
+    this.repairedFootWeights = prepared.repairedFootWeights;
+    this.registeredArmVertices = prepared.registeredArmVertices;
+    this.soleOwners = prepared.soleOwners;
+    this.library = prepared.library;
+    this.validation = prepared.validation;
+    const { arm } = prepared;
     this.authoringData = structuredClone(data);
     assertInterchangeBudget(arm.skin[0].slot.map((s: any) => s.display[0]));
     this.factory = new NativeFactory(scene);
@@ -308,14 +220,7 @@ export class NativeAnimator {
     b.invalidUpdate();
   }
   private constraintWeight(name: string, weight: number) {
-    // Audited pinned DragonBones 5.5 bridge: the only native weight setter is internal.
-    const c = this.actor.armature._constraints.find((c) => c.name === name) as
-      | db.IKConstraint
-      | undefined;
-    if (!c || !('_weight' in c))
-      throw Error('Pinned IK bridge incompatible: ' + name);
-    c._weight = clamp(weight, 0, 1);
-    c.invalidUpdate();
+    setConstraintWeight(this.actor.armature, name, weight);
   }
   private releaseExposure() {
     // Pinned native color timeline can remain just below an integer frame at
@@ -324,12 +229,194 @@ export class NativeAnimator {
     for (const name of ['grip', 'open', 'relaxed']) {
       const slot = this.actor.armature.getSlot(name);
       if (!slot) throw Error('Missing registered hand exposure ' + name);
-      const color = new db.ColorTransform();
-      color.copyFrom(slot._colorTransform);
-      color.alphaMultiplier = name === 'open' ? 1 : 0;
-      slot._setColor(color);
+      setSlotAlpha(slot, name === 'open' ? 1 : 0);
     }
     this.actor.armature.advanceTime(0);
+  }
+  /** Organic overlay: procedural impulses, inertia and bounded bone offsets. */
+  private applyOrganic(
+    planner: MotionPlanner,
+    motor: CharacterMotor,
+    dt: number,
+    events: MotionEvent[],
+    time: number,
+    active: ReturnType<MotionPlanner['graph']['active']>,
+    aim: Vec2,
+    target: Vec2 | undefined,
+  ) {
+    if (this.organicEnabled) {
+      for (const e of events)
+        if (e.name === 'land') this.performance.impulse(0.65);
+      const state =
+        planner.graph.get('reaction') ??
+        planner.graph.get('action') ??
+        planner.graph.get('base');
+      const adjustment = this.performance.update({
+        state,
+        pose: this.pose(time, motor),
+        dt,
+        time,
+        grounded: motor.grounded,
+        contacts: ['right', 'left'].filter((s) => !!this.feet.target(s)),
+        velocity: motor.velocity,
+        acceleration: motor.acceleration,
+        facing: Math.sign(this.actor.scaleX),
+        aim,
+        target,
+        recoverySeconds: planner.recovery.seconds,
+      });
+      this.inertia.apply(
+        this.actor.armature,
+        active
+          .filter((s) => s.clip.layer !== 'personality')
+          .map((s) => s.revision)
+          .join(':'),
+        dt,
+        planner.recovery.seconds,
+      );
+      for (const [name, offset] of Object.entries(adjustment)) {
+        const b = this.actor.armature.getBone(name)!;
+        b.offset.x += offset.x;
+        b.offset.y += offset.y;
+        b.offset.rotation += offset.rotation;
+        b.invalidUpdate();
+      }
+      this.actor.armature.advanceTime(0);
+    }
+  }
+  /** Capture plant and release contacts for this tick's events. */
+  private captureContacts(
+    planner: MotionPlanner,
+    motor: CharacterMotor,
+    events: MotionEvent[],
+  ) {
+    // Capture contact at the evaluated native pose, then preserve its world target above moving roots.
+    for (const e of events)
+      if (e.foot) {
+        if (e.name === 'footPlant') {
+          const from =
+            this.previousFeet.get(e.foot) ?? this.joint(e.foot + 'Ankle');
+          const point = {
+            x: from.x,
+            y: motor.position.y + this.groundOffset(e.foot)!,
+          };
+          if (Math.abs(motor.velocity.x) > 6) {
+            // Place the upcoming support under the moving hip, within this
+            // character's actual leg reach; do not lock an airborne trailing foot.
+            const hip = this.joint(e.foot + 'Hip'),
+              knee = this.joint(e.foot + 'Knee'),
+              ankle = this.joint(e.foot + 'Ankle');
+            const length =
+              Math.hypot(knee.x - hip.x, knee.y - hip.y) +
+              Math.hypot(ankle.x - knee.x, ankle.y - knee.y);
+            const reach = Math.sqrt(
+              Math.max(0, (length * 0.995) ** 2 - (point.y - hip.y) ** 2),
+            );
+            const horizon = planner.graph.get('action') ? 0.04 : 0.1;
+            point.x =
+              hip.x +
+              clamp(motor.velocity.x * horizon, -reach * 0.75, reach * 0.75);
+          }
+          if (
+            !this.feet.target(e.foot) &&
+            Math.hypot(from.x - point.x, from.y - point.y) > 3
+          )
+            this.touchdowns.set(e.foot, { from, age: 0 });
+          this.feet.plant(e.foot, point);
+          this.releasedFeet.delete(e.foot);
+        } else if (e.name === 'footRelease') {
+          this.touchdowns.delete(e.foot);
+          const old = this.previousFeet.get(e.foot),
+            now = this.joint(e.foot + 'Ankle');
+          if (old)
+            this.releasedFeet.set(e.foot, {
+              x: old.x - now.x,
+              y: old.y - now.y,
+              age: 0,
+            });
+          this.feet.release(e.foot);
+        }
+      }
+    if (!motor.grounded) {
+      for (const side of ['right', 'left']) {
+        if (this.feet.target(side)) {
+          const old = this.previousFeet.get(side),
+            now = this.joint(side + 'Ankle');
+          if (old)
+            this.releasedFeet.set(side, {
+              x: old.x - now.x,
+              y: old.y - now.y,
+              age: 0,
+            });
+        }
+      }
+      this.feet.clear();
+      this.touchdowns.clear();
+    }
+  }
+  /** Pin supported feet to their world contact and let released feet decay. */
+  private applyFootLocks(
+    planner: MotionPlanner,
+    motor: CharacterMotor,
+    dt: number,
+    gait: ReturnType<MotionPlanner['graph']['get']>,
+  ) {
+    this.contactPoses.clear();
+    for (const side of ['right', 'left']) {
+      const target = this.feet.target(side),
+        native = 'foot_target_' + (side === 'right' ? 'L' : 'R');
+      if (target) {
+        const foot = this.actor.armature.getBone(
+          'foot_' + (side === 'right' ? 'L' : 'R'),
+        )!;
+        const action =
+          planner.graph.get('reaction') ?? planner.graph.get('action') ?? gait;
+        const roll = contactRoll(
+          action?.clip.footContactRoll ? foot.animationPose.rotation : 0,
+        );
+        foot.offset.rotation = roll.radians - foot.animationPose.rotation;
+        foot.invalidUpdate();
+        const v =
+          this.footVectors[side][roll.region === 'heel' ? 'heel' : 'toe'];
+        const pivot = {
+          x: v.x * this.actor.scaleX,
+          y: v.y * this.definition.scale,
+        };
+        const angle = roll.radians * Math.sign(this.actor.scaleX);
+        const supported = rolledAnkle(target, pivot, angle);
+        this.contactPoses.set(side, {
+          ankle: supported,
+          anchor: { x: target.x, y: target.y },
+          region: roll.region,
+          angle,
+          pivot,
+        });
+        const touchdown = this.touchdowns.get(side);
+        if (touchdown) {
+          touchdown.age += dt;
+          const t = Math.min(1, touchdown.age / 0.075),
+            blend = t * t * (3 - 2 * t);
+          this.feet.setInfluence(side, blend);
+          this.offsetTarget(native, {
+            x: touchdown.from.x + (supported.x - touchdown.from.x) * blend,
+            y: touchdown.from.y + (supported.y - touchdown.from.y) * blend,
+          });
+          if (t === 1) this.touchdowns.delete(side);
+        } else this.offsetTarget(native, supported);
+      } else {
+        const released = this.releasedFeet.get(side);
+        if (released) {
+          released.age += dt;
+          const decay = Math.exp(-released.age / 0.065),
+            now = this.joint(side + 'Ankle');
+          this.offsetTarget(native, {
+            x: now.x + released.x * decay,
+            y: now.y + released.y * decay,
+          });
+          if (decay < 0.005) this.releasedFeet.delete(side);
+        }
+      }
+    }
   }
   advance(
     planner: MotionPlanner,
@@ -452,45 +539,7 @@ export class NativeAnimator {
       chest.invalidUpdate();
       this.actor.armature.advanceTime(0);
     }
-    if (this.organicEnabled) {
-      for (const e of events)
-        if (e.name === 'land') this.performance.impulse(0.65);
-      const state =
-        planner.graph.get('reaction') ??
-        planner.graph.get('action') ??
-        planner.graph.get('base');
-      const adjustment = this.performance.update({
-        state,
-        pose: this.pose(time, motor),
-        dt,
-        time,
-        grounded: motor.grounded,
-        contacts: ['right', 'left'].filter((s) => !!this.feet.target(s)),
-        velocity: motor.velocity,
-        acceleration: motor.acceleration,
-        facing: Math.sign(this.actor.scaleX),
-        aim,
-        target,
-        recoverySeconds: planner.recovery.seconds,
-      });
-      this.inertia.apply(
-        this.actor.armature,
-        active
-          .filter((s) => s.clip.layer !== 'personality')
-          .map((s) => s.revision)
-          .join(':'),
-        dt,
-        planner.recovery.seconds,
-      );
-      for (const [name, offset] of Object.entries(adjustment)) {
-        const b = this.actor.armature.getBone(name)!;
-        b.offset.x += offset.x;
-        b.offset.y += offset.y;
-        b.offset.rotation += offset.rotation;
-        b.invalidUpdate();
-      }
-      this.actor.armature.advanceTime(0);
-    }
+    this.applyOrganic(planner, motor, dt, events, time, active, aim, target);
     if (!this.groundOffsets.size) {
       this.groundScale = this.definition.scale;
       for (const side of ['right', 'left'])
@@ -499,125 +548,8 @@ export class NativeAnimator {
           this.joint(side + 'Ankle').y - motor.position.y,
         );
     }
-    // Capture contact at the evaluated native pose, then preserve its world target above moving roots.
-    for (const e of events)
-      if (e.foot) {
-        if (e.name === 'footPlant') {
-          const from =
-            this.previousFeet.get(e.foot) ?? this.joint(e.foot + 'Ankle');
-          const point = {
-            x: from.x,
-            y: motor.position.y + this.groundOffset(e.foot)!,
-          };
-          if (Math.abs(motor.velocity.x) > 6) {
-            // Place the upcoming support under the moving hip, within this
-            // character's actual leg reach; do not lock an airborne trailing foot.
-            const hip = this.joint(e.foot + 'Hip'),
-              knee = this.joint(e.foot + 'Knee'),
-              ankle = this.joint(e.foot + 'Ankle');
-            const length =
-              Math.hypot(knee.x - hip.x, knee.y - hip.y) +
-              Math.hypot(ankle.x - knee.x, ankle.y - knee.y);
-            const reach = Math.sqrt(
-              Math.max(0, (length * 0.995) ** 2 - (point.y - hip.y) ** 2),
-            );
-            const horizon = planner.graph.get('action') ? 0.04 : 0.1;
-            point.x =
-              hip.x +
-              clamp(motor.velocity.x * horizon, -reach * 0.75, reach * 0.75);
-          }
-          if (
-            !this.feet.target(e.foot) &&
-            Math.hypot(from.x - point.x, from.y - point.y) > 3
-          )
-            this.touchdowns.set(e.foot, { from, age: 0 });
-          this.feet.plant(e.foot, point);
-          this.releasedFeet.delete(e.foot);
-        } else if (e.name === 'footRelease') {
-          this.touchdowns.delete(e.foot);
-          const old = this.previousFeet.get(e.foot),
-            now = this.joint(e.foot + 'Ankle');
-          if (old)
-            this.releasedFeet.set(e.foot, {
-              x: old.x - now.x,
-              y: old.y - now.y,
-              age: 0,
-            });
-          this.feet.release(e.foot);
-        }
-      }
-    if (!motor.grounded) {
-      for (const side of ['right', 'left']) {
-        if (this.feet.target(side)) {
-          const old = this.previousFeet.get(side),
-            now = this.joint(side + 'Ankle');
-          if (old)
-            this.releasedFeet.set(side, {
-              x: old.x - now.x,
-              y: old.y - now.y,
-              age: 0,
-            });
-        }
-      }
-      this.feet.clear();
-      this.touchdowns.clear();
-    }
-    this.contactPoses.clear();
-    for (const side of ['right', 'left']) {
-      const target = this.feet.target(side),
-        native = 'foot_target_' + (side === 'right' ? 'L' : 'R');
-      if (target) {
-        const foot = this.actor.armature.getBone(
-          'foot_' + (side === 'right' ? 'L' : 'R'),
-        )!;
-        const action =
-          planner.graph.get('reaction') ?? planner.graph.get('action') ?? gait;
-        const roll = contactRoll(
-          action?.clip.footContactRoll ? foot.animationPose.rotation : 0,
-        );
-        foot.offset.rotation = roll.radians - foot.animationPose.rotation;
-        foot.invalidUpdate();
-        const v =
-          this.footVectors[side][roll.region === 'heel' ? 'heel' : 'toe'];
-        const pivot = {
-          x: v.x * this.actor.scaleX,
-          y: v.y * this.definition.scale,
-        };
-        const angle = roll.radians * Math.sign(this.actor.scaleX);
-        const supported = rolledAnkle(target, pivot, angle);
-        this.contactPoses.set(side, {
-          ankle: supported,
-          anchor: { x: target.x, y: target.y },
-          region: roll.region,
-          angle,
-          pivot,
-        });
-        const touchdown = this.touchdowns.get(side);
-        if (touchdown) {
-          touchdown.age += dt;
-          const t = Math.min(1, touchdown.age / 0.075),
-            blend = t * t * (3 - 2 * t);
-          this.feet.setInfluence(side, blend);
-          this.offsetTarget(native, {
-            x: touchdown.from.x + (supported.x - touchdown.from.x) * blend,
-            y: touchdown.from.y + (supported.y - touchdown.from.y) * blend,
-          });
-          if (t === 1) this.touchdowns.delete(side);
-        } else this.offsetTarget(native, supported);
-      } else {
-        const released = this.releasedFeet.get(side);
-        if (released) {
-          released.age += dt;
-          const decay = Math.exp(-released.age / 0.065),
-            now = this.joint(side + 'Ankle');
-          this.offsetTarget(native, {
-            x: now.x + released.x * decay,
-            y: now.y + released.y * decay,
-          });
-          if (decay < 0.005) this.releasedFeet.delete(side);
-        }
-      }
-    }
+    this.captureContacts(planner, motor, events);
+    this.applyFootLocks(planner, motor, dt, gait);
     // Preserve foot targets when a run settles into a taller standing pose.
     // Lower the pelvis within the real leg reach instead of stretching shins
     // or silently moving the planted ankle. Release this correction gradually.
@@ -787,8 +719,7 @@ export class NativeAnimator {
       handExposure: Object.fromEntries(
         ['grip', 'open', 'relaxed', ...newHandSlots, 'farHand'].map((name) => [
           name,
-          this.actor.armature.getSlot(name)?._colorTransform.alphaMultiplier ??
-            0,
+          slotAlpha(this.actor.armature.getSlot(name)),
         ]),
       ),
       performance: {

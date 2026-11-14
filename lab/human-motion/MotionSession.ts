@@ -17,7 +17,7 @@ import { PrecisionProof } from './events/PrecisionProof';
 import { RunningProof } from './events/RunningProof';
 import { CombatProof } from './events/CombatProof';
 import { kineticRecipes } from './motion/KineticChains';
-import { placement, boardDepthScale } from '../../lib/arena/equipment-geometry';
+import { proofConfig } from './ProofConfig';
 export const proofEvents = {
   cornhole: () => new PrecisionProof('cornhole'),
   basketball: () => new PrecisionProof('basketball'),
@@ -40,8 +40,11 @@ export class MotionSession {
   private accumulator = 0;
   private manualRemainder = 0;
   readonly proximity = new CharacterProximity();
+  /** Collision bodies. Only called once `actors` exists: the movement
+   * collision callback below runs from motor updates, never while the actors
+   * are being constructed. */
   bodies() {
-    return (this.actors ?? []).map((a) => ({
+    return this.actors.map((a) => ({
       id: a.id,
       position: { ...a.motor.position },
       radius: 49,
@@ -54,37 +57,7 @@ export class MotionSession {
     animators: NativeAnimator[],
   ) {
     this.event = proofEvents[scenario]();
-    const placements =
-      scenario === 'fighting'
-        ? [
-            { x: 470, y: 610 },
-            { x: 720, y: 610 },
-          ]
-        : scenario === 'running'
-          ? [
-              { x: 210, y: 610 },
-              { x: 280, y: 520 },
-            ]
-          : [
-              { x: 250, y: 610 },
-              // Match the projected throwing distance to the same depth scale
-              // as the rig, board and sampled hand velocity; otherwise the far
-              // lane would need invisible horizontal acceleration to reach it.
-              {
-                x:
-                  placement(
-                    scenario === 'cornhole' ? 'cornhole' : 'basketball',
-                    1,
-                  ).anchor.x -
-                  (placement(
-                    scenario === 'cornhole' ? 'cornhole' : 'basketball',
-                    0,
-                  ).anchor.x -
-                    250) *
-                    boardDepthScale(1),
-                y: 478,
-              },
-            ];
+    const placements = proofConfig[scenario].placements();
     this.actors = animators.map(
       (animator, i) =>
         new MotionActor(
