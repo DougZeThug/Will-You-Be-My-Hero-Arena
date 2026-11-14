@@ -6,7 +6,7 @@ import {
   applyDougArmMaterial,
   DOUG_ARM_MATERIAL_MARKER,
   DOUG_ARM_MATERIAL_RECIPE,
-} from '../lab/human-motion/ArmMaterialRecipe.mjs';
+} from '../lab/rig-shared/ArmMaterialRecipe.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const ASSET_DIR = path.join(ROOT, 'lab/loongbones/assets/cornhole-side-v3');

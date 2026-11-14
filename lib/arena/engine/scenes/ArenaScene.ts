@@ -25,6 +25,7 @@ import { Equipment } from '../objects/Equipment';
 import { ImpactEffects } from '../effects/ImpactEffects';
 import { cameraEffects } from '../effects/CameraEffects';
 import { addBackdrop, tagCharacterRuntime } from './stage';
+import { SPORT_STAGE } from '../../sport-stage';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { releasedBagDepth } from '../events/cornhole/ReleasedBagPhysics';
@@ -256,9 +257,7 @@ export class ArenaScene extends Phaser.Scene {
             ? 'FINAL'
             : active?.actor === i
               ? status?.phase === 'bagFlight'
-                ? p.sport === 'cornhole'
-                  ? 'BAG FLIGHT'
-                  : 'BALL FLIGHT'
+                ? SPORT_STAGE[p.sport].flightLabel
                 : status?.phase === 'boardTravel'
                   ? 'BOARD TRAVEL'
                   : (status?.phase ?? 'READY').replace(

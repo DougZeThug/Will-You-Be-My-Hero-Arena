@@ -11,7 +11,7 @@ import {
   sampleScalar,
   type Knot,
 } from '../loongbones/cornhole-motion/curves';
-import type { NativeClip } from './NativeClip';
+import type { NativeClip } from '../rig-shared/NativeClip';
 
 export type Pose = Record<BodyChannel, number>;
 export const TORSO = ['hips', 'lowerSpine', 'upperSpine', 'chest'] as const;

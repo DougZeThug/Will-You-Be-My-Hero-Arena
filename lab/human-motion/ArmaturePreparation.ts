@@ -2,8 +2,8 @@ import type * as Phaser from 'phaser';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 import { buildMotionLibrary } from './authoring';
 import { validateHumanRig } from '../../lib/arena/engine/motion/HumanSkeleton';
-import { repairFootMaterial } from './FootMaterialRepair';
-import { registerArmMaterial } from './ArmMaterialRegistration';
+import { repairFootMaterial } from '../rig-shared/FootMaterialRepair';
+import { registerArmMaterial } from '../rig-shared/ArmMaterialRegistration';
 import { restoreFarArm } from './FarArmMaterial';
 import { addHandAttachments, compileHandExposures } from './HandAttachments';
 

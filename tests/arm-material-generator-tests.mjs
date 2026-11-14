@@ -5,7 +5,7 @@ import path from 'node:path';
 import {
   applyDougArmMaterial,
   readDougArmMaterialMarker,
-} from '../lab/human-motion/ArmMaterialRecipe.mjs';
+} from '../lab/rig-shared/ArmMaterialRecipe.mjs';
 import {
   auditedArmMesh,
   generateDougArmMaterial,

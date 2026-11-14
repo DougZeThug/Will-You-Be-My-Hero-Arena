@@ -1,4 +1,5 @@
 import { clamp01 } from './math';
+import { SPORT_STAGE } from './sport-stage';
 import {
   EVENTS,
   type Attempt,
@@ -43,7 +44,7 @@ export type MatchPhase =
   | 'reset'
   | 'complete';
 export const flightDuration = (sport: Sport) =>
-  sport === 'football' ? 0.78 : sport === 'basketball' ? 1.38 : 1.25;
+  SPORT_STAGE[sport].flightSeconds;
 export const releaseLead = TIMING.ready + TIMING.anticipation + TIMING.throw;
 export function personalityTiming(
   sport: Sport,

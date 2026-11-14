@@ -12,11 +12,11 @@ import type {
 import type {
   NativeBoneTrack as BoneTrack,
   NativeClip,
-} from '../../performance/NativeClip';
+} from '../../rig-shared/NativeClip';
 export type {
   NativeBoneTrack as BoneTrack,
   NativeClip,
-} from '../../performance/NativeClip';
+} from '../../rig-shared/NativeClip';
 export const rotation = (
   name: string,
   keys: Knot[],

@@ -39,10 +39,10 @@ const forbiddenPaths = [
 // production island explicit: new Lab files are denied until deliberately
 // classified, rather than relying only on UI naming conventions.
 const allowedLabProductionPaths = [
-  /^lab\/performance\/(?:provider|definitions|LoongBonesAdapter|RigMaterialSetup|ClipEmitter|PerformancePoses|LegMaterialRepair|compile|revision|NativeClip|ReleaseHands|HandMaterialRegistration)\.ts$/,
+  /^lab\/performance\/(?:provider|definitions|LoongBonesAdapter|RigMaterialSetup|ClipEmitter|PerformancePoses|LegMaterialRepair|compile|revision|ReleaseHands|HandMaterialRegistration)\.ts$/,
   /^lab\/performance\/assets\//,
-  /^lab\/human-motion\/(?:ArmMaterialRegistration|FootMaterialRepair)\.ts$/,
-  /^lab\/human-motion\/ArmMaterialRecipe\.mjs$/,
+  /^lab\/rig-shared\/(?:ArmMaterialRegistration|FootMaterialRepair|NativeClip)\.ts$/,
+  /^lab\/rig-shared\/ArmMaterialRecipe\.mjs$/,
   /^lab\/loongbones\/(?:NativeFactory|NativeMesh|NativeSlot|validate-export)\.ts$/,
   /^lab\/loongbones\/arena\/(?:RigDefinition|definitions|assetHash|sideRigSockets)\.ts$/,
   /^lab\/loongbones\/assets\//,

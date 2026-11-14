@@ -1,6 +1,6 @@
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import type { MotionClip } from '../../lib/arena/engine/motion/MotionTypes';
-import type { NativeClip } from './NativeClip';
+import type { NativeClip } from '../rig-shared/NativeClip';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 import { createClipEmitter } from './ClipEmitter';
 import { authorPerformancePoses } from './PerformancePoses';

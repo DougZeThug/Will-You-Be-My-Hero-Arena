@@ -31,6 +31,11 @@ Asset and profile tooling
   (`pnpm motion:apply-profile`).
 - `generate-doug-arm-material.mjs`: derived Doug arm material
   (`pnpm generate:doug-arm-material`).
+- `build-cornhole-motion.mjs`: regenerate the cornhole-motion-v2 rigs (needs the
+  lab server, `pnpm lab`; output is byte-identical to the committed assets).
+- `build-cornhole-side.mjs`: regenerate the cornhole-side-v3 rigs (needs `pnpm lab`).
+- `build-dan-rig.mjs`: regenerate the Dan weighted-v1 rig (needs `pnpm lab`).
+- `build-doug-rig.mjs`: regenerate the Doug weighted-v1 rig (needs `pnpm lab`).
 - `author-release-hands.mjs`: rebuild release-hand crops from preserved sources.
 - `audit-dan-editor-export.mjs`: audit/restore the Dan editor round trip.
 - `prepare-loongbones-proof.mjs`: rebuild the pinned LoongBones runtime.

@@ -91,6 +91,10 @@ export interface SportStage {
     flatten: number;
   };
   shadow: { maxWidth: number; height: number };
+  /** Seconds from release to contact on the Watch timeline (match-timeline). */
+  flightSeconds: number;
+  /** HUD status text while the projectile is airborne. */
+  flightLabel: 'BAG FLIGHT' | 'BALL FLIGHT';
   /** Optional presentation decorations on top of the equipment. */
   scoreLabels?: readonly { text: string; ring: number }[];
   cups?: {
@@ -148,6 +152,8 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
       flatten: 0.68,
     },
     shadow: { maxWidth: 330, height: 16 },
+    flightSeconds: 1.25,
+    flightLabel: 'BAG FLIGHT',
   },
   football: {
     equipment: 'target',
@@ -165,6 +171,8 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     art: ['target', 'football'],
     projectile: { texture: 'football', width: 64, flatten: 1 },
     shadow: { maxWidth: 240, height: 24 },
+    flightSeconds: 0.78,
+    flightLabel: 'BALL FLIGHT',
     // Distance of each ring label from the target centre, as a fraction of the
     // outer ring radius (the 3 sits on the bullseye).
     scoreLabels: [
@@ -200,6 +208,8 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     art: ['hoop', 'basketball'],
     projectile: { texture: 'basketball', width: 46, flatten: 1 },
     shadow: { maxWidth: 240, height: 24 },
+    flightSeconds: 1.38,
+    flightLabel: 'BALL FLIGHT',
     frontNet: true,
     court: {
       stroke: { width: 2, alpha: 0.18 },
@@ -227,6 +237,8 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     art: ['table', 'cup-yellow', 'cup-orange', 'ping-pong'],
     projectile: { texture: 'ping-pong', width: 20, flatten: 1 },
     shadow: { maxWidth: 240, height: 24 },
+    flightSeconds: 1.25,
+    flightLabel: 'BALL FLIGHT',
     cups: {
       textures: ['cup-yellow', 'cup-orange'],
       originY: [64 / 407, 66 / 422],

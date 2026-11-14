@@ -4,13 +4,13 @@ import { dragonBones as db } from '../loongbones/vendor/dragonBones';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 import { validateExport } from '../loongbones/validate-export';
 import { validateHumanRig } from '../../lib/arena/engine/motion/HumanSkeleton';
-import { registerArmMaterial } from '../human-motion/ArmMaterialRegistration';
-import { repairFootMaterial } from '../human-motion/FootMaterialRepair';
+import { registerArmMaterial } from '../rig-shared/ArmMaterialRegistration';
+import { repairFootMaterial } from '../rig-shared/FootMaterialRepair';
 import { followShortsToThighs } from './LegMaterialRepair';
 import {
   DOUG_ARM_MATERIAL_RECIPE,
   readDougArmMaterialMarker,
-} from '../human-motion/ArmMaterialRecipe.mjs';
+} from '../rig-shared/ArmMaterialRecipe.mjs';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
 import { compilePerformance, installShippedPerformanceClips } from './compile';
