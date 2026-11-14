@@ -1,7 +1,7 @@
 import type { ArenaCharacter } from '../../characters/ArenaCharacter';
 import { CombatComponent } from '../../characters/components/CombatComponent';
 import { ATTACKS } from './Attacks';
-import { clamp } from '../../input/InputActions';
+import { clamp } from '../../../math';
 export interface CombatHit {
   attacker: ArenaCharacter;
   target: ArenaCharacter;

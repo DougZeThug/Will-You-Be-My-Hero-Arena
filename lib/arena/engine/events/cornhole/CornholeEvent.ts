@@ -8,7 +8,11 @@ import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
 import { sampleBag } from './CornholePhysics';
 import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
-import { surfacePoint, boardDepthScale } from '../../../equipment-geometry';
+import {
+  surfacePoint,
+  boardDepthScale,
+  BAG_REST_FLATTEN,
+} from '../../../equipment-geometry';
 export class CornholeEvent implements ArenaEvent {
   readonly sport = 'cornhole' as const;
   private recording?: Recording;
@@ -43,7 +47,7 @@ export class CornholeEvent implements ArenaEvent {
           ...q,
           angle: -0.1,
           scale: boardDepthScale(actor),
-          flatten: 0.52,
+          flatten: BAG_REST_FLATTEN,
           alpha,
           ground: q,
         },

@@ -1,4 +1,5 @@
 import type { Sport } from './model';
+import { LANE_SPACING } from './board-geometry';
 import { EQUIPMENT_ART as ART, type XY, type Quad } from './equipment-art';
 
 // The one per-sport stage table: which drawn equipment a sport uses, where it
@@ -16,7 +17,12 @@ export const EQUIPMENT_GROUND = {
 } as const satisfies Record<EquipmentName, number>;
 // Court-plane screen pixels shared by every sport's lanes (actor 0 is the
 // near lane, actor 1 the back lane). The painted lane accents sit 2px above it.
-export const laneGroundY = (actor: number) => 622 - actor * 133;
+// One lane's z step in screen px (LANE_SPACING world units at 38 px per z);
+// exactly 133, so lane arithmetic below stays bit-identical to the literal.
+export const LANE_SCREEN_STEP = LANE_SPACING * 38;
+export const laneGroundY = (actor: number) => 622 - actor * LANE_SCREEN_STEP;
+// Court plane under a thrown bag's shadow: simulation project() at z = lane.
+export const laneShadowY = (actor: number) => 610 - actor * LANE_SCREEN_STEP;
 export const LANE_ACCENT_INSET = 2;
 // Painted lane guides (ArenaEnvironment): the same for every lane sport.
 export const LANE_GUIDE_X = [

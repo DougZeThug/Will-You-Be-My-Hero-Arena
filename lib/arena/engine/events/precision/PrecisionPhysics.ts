@@ -5,10 +5,10 @@ import {
   BAG_FLIGHT_FLATTEN,
 } from '../../../equipment-geometry';
 import { EQUIPMENT_ART } from '../../../equipment-art';
+import { clamp01 } from '../../../math';
 import type { Vector } from '../../input/InputActions';
-import { HOLE_HALF, overHoleOpening } from '../../../board-geometry';
+import { overHoleOpening } from '../../../board-geometry';
 
-export { HOLE_HALF };
 export interface PrecisionBag {
   id: string;
   owner: string;
@@ -29,7 +29,7 @@ export interface PrecisionFlight {
 }
 export const precisionTarget = () => placement('cornhole', 0).anchor;
 export function flightPosition(f: PrecisionFlight) {
-  const t = Math.max(0, Math.min(1, f.age / f.duration));
+  const t = clamp01(f.age / f.duration);
   return {
     x: f.origin.x + (f.target.x - f.origin.x) * t,
     y:

@@ -3,7 +3,7 @@ import { ArenaSession } from './ArenaSession';
 import type { LiveOptions } from './LiveTypes';
 import { LiveBootScene, LiveArenaScene } from '../scenes/LiveArenaScene';
 import { KeyboardDevice } from '../input/KeyboardDevice';
-import { keyboardLayoutOf } from '../input/InputBindings';
+import { isKeyboardDevice, keyboardLayoutOf } from '../input/InputBindings';
 import { GamepadDevice } from '../input/GamepadDevice';
 import { AudioManager } from '../audio/AudioManager';
 import { createPhaserGame } from './createPhaserGame';
@@ -21,7 +21,7 @@ export class LiveArenaGame {
       'Playable arena. Focus here for keyboard controls.',
     );
     options.config.players.forEach((p) => {
-      if (p.device === 'keyboard' || p.device === 'keyboard2')
+      if (isKeyboardDevice(p.device))
         this.session.assign(
           p.id,
           new KeyboardDevice(

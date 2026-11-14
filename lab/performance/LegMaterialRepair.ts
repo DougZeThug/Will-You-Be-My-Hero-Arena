@@ -1,4 +1,4 @@
-import { smooth } from './math';
+import { smoothRange as smooth } from '../../lib/arena/math';
 import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
 import { isCharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 interface WeightedMesh {

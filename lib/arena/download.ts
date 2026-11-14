@@ -9,7 +9,7 @@ export function downloadText(
   link.href = url;
   link.download = name;
   link.click();
-  // Revoke after the browser has started the download.
+  // Revoking synchronously can cancel the download before the browser has started it.
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 

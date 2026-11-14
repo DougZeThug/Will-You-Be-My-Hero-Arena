@@ -27,6 +27,14 @@ export function firstImpactTime(attempt: Attempt, shot: ShotStyle) {
   return attempt.contactAt - surfaceTravelSeconds(attempt, shot);
 }
 
+/** The impact boundary any sport's presentation reacts to: cornhole's first
+ * physical touch (once its shot is known), otherwise the saved contactAt. */
+export function impactTime(attempt: Attempt, shot?: ShotStyle) {
+  return attempt.sport === 'cornhole' && shot
+    ? firstImpactTime(attempt, shot)
+    : attempt.contactAt;
+}
+
 /** Resolve the one presentation shot shared by direction, physics, effects,
  * HUD phases, and cues. A generated historical direction takes precedence. */
 export function presentationShot(

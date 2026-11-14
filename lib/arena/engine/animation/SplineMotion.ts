@@ -1,6 +1,7 @@
 import {REST,type Choreography,type PuppetPose} from '../../puppet-motion';
 import {animationEase} from '../../animation-easing';
 import {puppetOverlap} from './PuppetOverlap';
+import {clamp01} from '../../math';
 type Sampled={at:number;pose:PuppetPose;ease?:string};
 const cache=new WeakMap<Choreography,Sampled[]>();
 /** Explicit accents (`power2.out`, `power3.in`, `sine.out`…) retime their
@@ -27,7 +28,7 @@ export function splineMotion(definition:Choreography|undefined,progress:number,l
 function sampleSpline(definition:Choreography|undefined,progress:number,loop:boolean):PuppetPose{
  if(!definition)return {...REST};
  let keys=cache.get(definition);if(!keys){let pose={...REST};keys=definition.keys.map(k=>{pose={...pose,...k.pose};return{at:k.at,pose:{...pose},ease:k.ease};});cache.set(definition,keys);}
- const t=Math.max(0,Math.min(1,progress)),i=keys.findIndex((k,j)=>j>0&&t<=k.at);
+ const t=clamp01(progress),i=keys.findIndex((k,j)=>j>0&&t<=k.at);
  if(i<1)return{...keys[t===0?0:keys.length-1].pose};
  const n=keys.length,a=keys[i-1],b=keys[i],span=b.at-a.at,raw=(t-a.at)/span,u=accent(b.ease)?raw+(animationEase(b.ease!,raw)-raw)*ACCENT:raw,u2=u*u,u3=u2*u,result={...REST};
  const wraps=loop&&n>=3&&keys[0].at===0&&keys[n-1].at===1;

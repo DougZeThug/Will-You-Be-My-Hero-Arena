@@ -1,5 +1,6 @@
 import {type MotionPersonality} from './model';
-import {TIMING,smooth,clamp01} from './match-timeline';
+import {TIMING} from './match-timeline';
+import {smooth,clamp01} from './math';
 import {idleMotion,poseBlend,type PaperMotion} from './pose-motion';
 import {personalityMoves} from './personality';
 import {CARD_PRESENTATION_SCALE} from './grounding';

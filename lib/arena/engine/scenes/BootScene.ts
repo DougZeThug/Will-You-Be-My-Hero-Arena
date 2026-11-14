@@ -7,7 +7,6 @@ import {
   prepareCharacterTextures,
   type LoadedCharacter,
 } from './CharacterAssetLoader';
-export { type LoadedCharacter } from './CharacterAssetLoader';
 export interface BootSpec {
   characterRigs?: { preload(scene: Phaser.Scene): void };
   loadError(key: string): string;

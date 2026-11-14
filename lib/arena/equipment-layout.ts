@@ -4,10 +4,11 @@
 import {type V3,type Attempt,type Sport} from './model';
 import {project,pathAt} from './simulation';
 import type {XY} from './equipment-art';
-import {clamp,equipmentDepthScale,surfacePoint} from './equipment-geometry';
+import {clamp01,smoothstep} from './math';
+import {equipmentDepthScale,surfacePoint} from './equipment-geometry';
 // The saved path and score stay immutable. Only presentation interpolates from
 // the exact authored palm to the registered playing surface of the new artwork.
-function landingBlend(a:Attempt,elapsed:number){const air=a.duration-(['board','hole'].includes(a.contact)?.28:0),t=clamp(elapsed/air);return t*t*(3-2*t);}
+function landingBlend(a:Attempt,elapsed:number){const air=a.duration-(['board','hole'].includes(a.contact)?.28:0),t=clamp01(elapsed/air);return smoothstep(t);}
 // Watch draws a back-lane character at the same lane depth as its equipment.
 // The one exception is a rig that already scales itself by the board depth
 // (the cornhole performance rig from lab/performance/provider.ts): it keeps 1
@@ -18,13 +19,13 @@ export function projectileRotation(a:Attempt,elapsed:number){
  if(a.sport==='football')return Math.sin(elapsed*18)*.12;
  const air=a.duration-.28;
  if(a.contact!=='board'||elapsed<=air)return elapsed*3;
- const t=clamp((elapsed-air)/.28),settle=t*t*(3-2*t);
+ const t=clamp01((elapsed-air)/.28),settle=smoothstep(t);
  return air*3+(-.1-air*3)*settle;
 }
 export function presentedPoint(a:Attempt,p:V3,elapsed:number):XY{
  const air=a.duration-(['board','hole'].includes(a.contact)?.28:0);
  if(elapsed>=air)return surfacePoint(a.sport,a.actor,p);
- const touch=pathAt(a,air),original=project(p),end=project(touch),target=surfacePoint(a.sport,a.actor,touch),t=clamp(elapsed/air);
+ const touch=pathAt(a,air),original=project(p),end=project(touch),target=surfacePoint(a.sport,a.actor,touch),t=clamp01(elapsed/air);
  // A linear endpoint correction preserves the recorded parabola and exact palm.
  return{x:original.x+(target.x-end.x)*t,y:original.y+(target.y-end.y)*t};
 }

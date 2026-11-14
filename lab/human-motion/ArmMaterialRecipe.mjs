@@ -1,5 +1,5 @@
 import { registerLimbPoint } from '../../lib/arena/engine/motion/LimbRegistration.ts';
-import { smooth } from '../performance/math.ts';
+import { smoothRange as smooth } from '../../lib/arena/math.ts';
 
 export const DOUG_ARM_MATERIAL_RECIPE = 'doug-arm-material-v1';
 export const DOUG_ARM_MATERIAL_MARKER = 'arenaArmMaterialCorrection';

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import type { LoadedCharacter } from '../../lib/arena/engine/scenes/BootScene';
+import type { LoadedCharacter } from '../../lib/arena/engine/scenes/CharacterAssetLoader';
 import { prepareCharacterTextures } from '../../lib/arena/engine/scenes/CharacterAssetLoader';
 import {
   PARENTS,

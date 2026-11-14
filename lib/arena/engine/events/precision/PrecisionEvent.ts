@@ -9,8 +9,14 @@ import type {
 } from '../../characters/ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
-import { clamp, type InputFrame } from '../../input/InputActions';
-import { placement, boardDepthScale } from '../../../equipment-geometry';
+import { clamp } from '../../../math';
+import type { InputFrame } from '../../input/InputActions';
+import {
+  placement,
+  boardDepthScale,
+  BAG_REST_FLATTEN,
+} from '../../../equipment-geometry';
+import { HOLE_HALF } from '../../../board-geometry';
 import { timingGrade } from '../../input/TimingWindow';
 import { PrecisionActionMap } from './PrecisionActionMap';
 /** The four shots a player can select, with the names the controls use. */
@@ -47,7 +53,6 @@ const MISS_X = 490,
    */
   THROW_TIMEOUT = 1.0;
 import {
-  HOLE_HALF,
   precisionTarget,
   flightPosition,
   resolvePrecisionLanding,
@@ -439,7 +444,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
       objects: [
         ...this.bags
           .filter((b) => b.points === 1)
-          .map((b) => ({ ...b, flatten: 0.52, kind: 'bag' as const })),
+          .map((b) => ({ ...b, flatten: BAG_REST_FLATTEN, kind: 'bag' as const })),
         ...(this.flight
           ? [
               {

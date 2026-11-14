@@ -7,7 +7,6 @@ import { performanceProfiles } from '../../lib/arena/engine/performance/Performa
 import { validatePerformanceProfile } from '../../lib/arena/engine/performance/ProfileValidation';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
 import { isCharacterId } from '../../lib/arena/engine/characters/CharacterIds';
-import { CHARACTERS } from '../../lib/arena/engine/characters/CharacterRoster';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';
 import { queueRig } from '../loongbones/arena/provider';
@@ -20,6 +19,7 @@ import { placement } from '../../lib/arena/equipment-geometry';
 import { CornholePerformancePlayback } from '../../lib/arena/engine/events/cornhole/CornholePerformancePlayback';
 import { createRecording, resolveScenario } from '../scenarios';
 import { project, simulate } from '../../lib/arena/simulation';
+import { PERFORMANCE_CLIPS } from '../../lib/arena/engine/performance/ClipNames';
 import { performanceActions } from '../../lib/arena/engine/performance/Choreography';
 import type { Attempt } from '../../lib/arena/model';
 import { scoreTime } from '../../lib/arena/match-timeline';
@@ -122,7 +122,7 @@ export class PerformanceScene extends Phaser.Scene {
     const profile = validatePerformanceProfile(
       options.profile ??
         (selected !== this.selected
-          ? CHARACTERS[selected].performance
+          ? performanceProfiles[selected]
           : this.profile),
     );
     const action = options.action ?? this.action;
@@ -332,7 +332,7 @@ export class PerformanceScene extends Phaser.Scene {
       ];
     }
     const notice = 0.28 + (1 - this.profile.confidence) * 0.18;
-    const underhand = this.runtime.clips.get('underhand')!,
+    const underhand = this.runtime.clips.get(PERFORMANCE_CLIPS.underhand)!,
       duration = underhand.duration,
       marker = (name: string) =>
         underhand.markers.find((m) => m.name === name)!.at;

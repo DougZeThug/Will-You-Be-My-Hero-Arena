@@ -10,7 +10,8 @@ import {
   actionPose,
   ritualDuration,
 } from '../animation/AnimationController';
-import { scoreTime, clamp01 } from '../../match-timeline';
+import { scoreTime } from '../../match-timeline';
+import { clamp01 } from '../../math';
 import { characterProfile } from './CharacterRegistry';
 import {
   isAuthoredRig,
@@ -27,7 +28,7 @@ import { mixPuppet, type PuppetPose } from '../../puppet-motion';
 import { handFrame } from '../../hand-geometry';
 import { sportRelease } from '../animation/SportMechanics';
 import type { ReleaseFrame } from '../events/ArenaEvent';
-import { smooth } from '../../match-timeline';
+import { smooth } from '../../math';
 import { squashScale } from '../motion/SquashStretch';
 export class CharacterController {
   readonly rig: CharacterRig;

@@ -47,6 +47,7 @@ import type {
   MotionPose,
 } from '../../lib/arena/engine/motion/MotionTypes';
 import { clamp } from '../../lib/arena/math';
+import { smoothstep } from '../../lib/arena/math';
 const layers = { base: 0, action: 1, gaze: 2, personality: 3, reaction: 4 };
 /** Native fades persist across ticks. No reset/gotoAndStop in normal playback. */
 export class NativeAnimator {
@@ -395,7 +396,7 @@ export class NativeAnimator {
         if (touchdown) {
           touchdown.age += dt;
           const t = Math.min(1, touchdown.age / 0.075),
-            blend = t * t * (3 - 2 * t);
+            blend = smoothstep(t);
           this.feet.setInfluence(side, blend);
           this.offsetTarget(native, {
             x: touchdown.from.x + (supported.x - touchdown.from.x) * blend,

@@ -1,12 +1,10 @@
 import { type Sport, type V3 } from './model';
 import { boardSurfaceY, laneZ } from './board-geometry';
-import { clamp01 } from './math';
 import { EQUIPMENT_ART as ART, type XY, type Quad } from './equipment-art';
 import { SPORT_STAGE, EQUIPMENT_GROUND, laneGroundY } from './sport-stage';
 
 // Pure layout geometry intentionally has no simulation/timeline dependency.
 // Match timing imports surfacePoint while simulation imports match timing.
-export { EQUIPMENT_GROUND };
 export const PROJECTILE_WIDTH = {
   cornhole: SPORT_STAGE.cornhole.projectile.width,
   football: SPORT_STAGE.football.projectile.width,
@@ -14,10 +12,11 @@ export const PROJECTILE_WIDTH = {
   pong: SPORT_STAGE.pong.projectile.width,
 } as const;
 export const BAG_FLIGHT_FLATTEN = SPORT_STAGE.cornhole.projectile.flatten;
+/** A bag lying on the board (and the pose a bag eases into on landing). */
+export const BAG_REST_FLATTEN = 0.52;
 export const boardDepthScale = (actor: number) => (actor === 1 ? 0.7 : 1);
 export const equipmentDepthScale = (sport: Sport, actor: number) =>
   sport === 'cornhole' ? boardDepthScale(actor) : actor === 1 ? 0.78 : 1;
-export { clamp01 as clamp };
 export function quadPoint(q: Quad, u: number, v: number): XY {
   return {
     x:

@@ -2,12 +2,12 @@ import type * as Phaser from 'phaser';
 import type {DirectedAction} from '../core/BattlePlan';
 import type {Attempt} from '../../model';
 import {surfacePoint} from '../../equipment-geometry';
-import {firstImpactTime,presentationShot} from '../events/cornhole/CornholePresentationTiming';
+import {impactTime,presentationShot} from '../events/cornhole/CornholePresentationTiming';
 /** Stateless camera emphasis (seek-safe): a quick punch-in toward the impact,
  * bigger for scores and holes, plus the rare clutch shake. Presentation only. */
 export function cameraEffects(camera:Phaser.Cameras.Scene2D.Camera,time:number,a:Attempt|undefined,d:DirectedAction|undefined,reduced:boolean){
  if(!a||reduced){camera.setZoom(1).setScroll(0,0);return;}
- const impact=a.sport==='cornhole'?firstImpactTime(a,presentationShot(a,d?.shot)):a.contactAt;
+ const impact=impactTime(a,presentationShot(a,d?.shot));
  const strength=a.contact==='hole'?1:a.score>0?.6:a.contact==='miss'?0:.3;
  // Punch toward the first impact, then again (bigger) when a bag drops in.
  const pulse=(u:number)=>u<0||u>.6?0:Math.sin(Math.PI/2*Math.min(1,u/.07))*Math.exp(-u/.17);

@@ -55,7 +55,6 @@ export interface InputSignal {
   magnitude?: number;
   angle?: number;
 }
-export { clamp };
 export function radialDeadzone(v: Vector, zone = 0.18): Vector {
   const m = Math.hypot(v.x, v.y);
   if (!Number.isFinite(m) || m <= zone) return { x: 0, y: 0 };

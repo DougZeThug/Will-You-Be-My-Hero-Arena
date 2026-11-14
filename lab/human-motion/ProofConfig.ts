@@ -1,5 +1,7 @@
 import { placement, boardDepthScale } from '../../lib/arena/equipment-geometry';
-import type { ProofEvent } from './MotionSession';
+
+/** The events the proofs cover; MotionSession's `proofEvents` is keyed by it. */
+export type ProofEvent = 'cornhole' | 'basketball' | 'running' | 'fighting';
 
 type Point = { x: number; y: number };
 export interface ProofConfig {

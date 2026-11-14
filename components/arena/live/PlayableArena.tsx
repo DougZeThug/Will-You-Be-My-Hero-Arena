@@ -12,6 +12,7 @@ import {
   bindingsFor,
   invalidBinding,
   keyConflict,
+  isKeyboardDevice,
   keyboardLayoutOf,
   validateBindings,
   type Bindings,
@@ -29,9 +30,7 @@ const BINDINGS_KEY = 'wybmh-input-bindings-v2',
   LEGACY_BINDINGS_KEY = 'wybmh-input-bindings-v1';
 type SavedBindings = Partial<Record<string, Bindings>>;
 const remappable = (device: string) =>
-  device === 'keyboard' ||
-  device === 'keyboard2' ||
-  device.startsWith('gamepad:');
+  isKeyboardDevice(device) || device.startsWith('gamepad:');
 function readSavedBindings(): SavedBindings {
   const saved: SavedBindings = {};
   if (typeof localStorage === 'undefined') return saved;
@@ -95,8 +94,6 @@ const INPUT_NAMES: Record<string, string> = {
   celebrate: 'celebrate',
   pause: 'pause',
 };
-const isKeyboard = (device: string) =>
-  device === 'keyboard' || device === 'keyboard2';
 export default function PlayableArena({
   imports,
   reduced,
@@ -143,7 +140,7 @@ export default function PlayableArena({
     const p = players[i],
       slots = players
         .map((s, index) => ({ s, index }))
-        .filter(({ s, index }) => index === i || isKeyboard(s.device)),
+        .filter(({ s, index }) => index === i || isKeyboardDevice(s.device)),
       found = keyConflict(
         code,
         intent,
@@ -189,7 +186,7 @@ export default function PlayableArena({
     // the per-key check, so the keyboard players are checked together here.
     const keyboards = players
         .map((s, index) => ({ s, index }))
-        .filter(({ s }) => isKeyboard(s.device)),
+        .filter(({ s }) => isKeyboardDevice(s.device)),
       clash = bindingsConflict(
         keyboards.map(({ s }) => ({
           layout: keyboardLayoutOf(s.device),

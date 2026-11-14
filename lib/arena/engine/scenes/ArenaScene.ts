@@ -18,7 +18,7 @@ import { createEvent } from '../core/EventDirector';
 import type { ArenaEvent } from '../events/ArenaEvent';
 import type { DirectorCue } from '../core/BattlePlan';
 import { CharacterController } from '../characters/CharacterController';
-import type { LoadedCharacter } from './BootScene';
+import type { LoadedCharacter } from './CharacterAssetLoader';
 import { CardPortal } from '../objects/CardPortal';
 import { Projectile } from '../objects/Projectile';
 import { Equipment } from '../objects/Equipment';

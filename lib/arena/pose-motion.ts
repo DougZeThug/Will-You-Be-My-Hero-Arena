@@ -1,6 +1,7 @@
 import {type AssetManifest,type Attempt,type Sport,type MotionPersonality,type V3} from './model';
 import {FRAME_SCALE,releasePose,type PaperPose} from './paper';
-import {attemptBeats,smooth,clamp01,flightDuration,personalityTiming,TIMING} from './match-timeline';
+import {attemptBeats,flightDuration,personalityTiming,TIMING} from './match-timeline';
+import {smooth,clamp01} from './math';
 import {personalityMoves,motionStyle,DEFAULT_PERSONALITY} from './personality';
 import {boardSurfaceY} from './board-geometry';
 import {contactScore,cupPosition,releasePosition,trajectory} from './simulation';

@@ -22,6 +22,7 @@ import assets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { seeded } from './Random';
 import type { InputFrame, Intent } from '../input/InputActions';
+import { clamp01 } from '../../math';
 /** Identity of a presented object across fixed steps ('held' passes owners). */
 export const objectKey = (o: VisualObject) => o.id + ':' + (o.owner ?? '');
 export class ArenaSession {
@@ -282,7 +283,7 @@ export class ArenaSession {
    * characters and objects between their previous and current step so motion
    * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
   get alpha() {
-    return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
+    return this.paused ? 1 : clamp01(this.accumulator * 60);
   }
   /** Object state at the start of the latest fixed step, keyed by objectKey. */
   previousObjects = new Map<string, VisualObject>();

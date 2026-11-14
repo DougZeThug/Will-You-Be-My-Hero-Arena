@@ -1,8 +1,6 @@
 import * as Phaser from 'phaser';
-import {
-  BootScene,
-  type LoadedCharacter,
-} from '../lib/arena/engine/scenes/BootScene';
+import { BootScene } from '../lib/arena/engine/scenes/BootScene';
+import type { LoadedCharacter } from '../lib/arena/engine/scenes/CharacterAssetLoader';
 import { CharacterController } from '../lib/arena/engine/characters/CharacterController';
 import { PlaybackClock } from '../lib/arena/clock';
 import { animation } from '../lib/arena/engine/animation/AnimationRegistry';

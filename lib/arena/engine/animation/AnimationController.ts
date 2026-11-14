@@ -1,5 +1,6 @@
 import {REST,mixPuppet,type PuppetPose} from '../../puppet-motion';
-import {clamp01,smooth,scoreTime} from '../../match-timeline';
+import {scoreTime} from '../../match-timeline';
+import {clamp01,smooth} from '../../math';
 import type {Attempt} from '../../model';
 import type {CharacterProfile} from '../characters/CharacterProfile';
 import type {DirectedAction} from '../core/BattlePlan';

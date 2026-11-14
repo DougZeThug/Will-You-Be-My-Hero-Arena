@@ -27,7 +27,7 @@ export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{con
 }
 export function trajectory(start:V3,target:V3,duration:number,contact:Attempt['contact']):{path:Point[];velocity:V3}{
  const slide=contact==='board'||contact==='hole',airDuration=duration-(slide?.28:0),touch={...target};
- if(slide){const lane=start.z;if(contact==='hole')touch.x=8.65;else{const dx=target.x-9.2,dz=target.z-lane,d=Math.max(.001,Math.hypot(dx,dz));touch.x=Math.max(8.001,Math.min(9.899,target.x+dx/d*.25));touch.z=Math.max(lane-.519,Math.min(lane+.519,target.z+dz/d*.25));}touch.y=boardSurfaceY(touch.x);}
+ if(slide){const lane=start.z;if(contact==='hole')touch.x=8.65;else{const dx=target.x-BOARD.holeX,dz=target.z-lane,d=Math.max(.001,Math.hypot(dx,dz));touch.x=Math.max(8.001,Math.min(9.899,target.x+dx/d*.25));touch.z=Math.max(lane-.519,Math.min(lane+.519,target.z+dz/d*.25));}touch.y=boardSurfaceY(touch.x);}
  const g=9.8, velocity={x:(touch.x-start.x)/airDuration,y:(touch.y-start.y+.5*g*airDuration*airDuration)/airDuration,z:(touch.z-start.z)/airDuration};
  const path:Point[]=[];for(let i=0;i<=50;i++){const t=airDuration*i/50;path.push({t,x:start.x+velocity.x*t,y:start.y+velocity.y*t-.5*g*t*t,z:start.z+velocity.z*t});}
  if(slide)for(let i=1;i<=14;i++){const t=i/14,f=1-(1-t)*(1-t);path.push({t:airDuration+t*.28,x:touch.x+(target.x-touch.x)*f,y:touch.y+(target.y-touch.y)*f,z:touch.z+(target.z-touch.z)*f});}
@@ -47,7 +47,7 @@ export function simulate(setup:Setup):Recording {
   const strategy=part.strategy,variance=(strategy==='steady'?.85:1.15)*(1+(60-card.consistency)/200),specialty=card.specialty===sport?.92:1.02;
   const pressure=round>=budget-1?1+(65-card.composure)/250:1;
   const spread=variance*specialty*pressure*(1+(66-card.accuracy)/200);
-  let target:V3={x:9.2+normal(r)*.65*spread,y:0,z:lane+normal(r)*.36*spread};let targetId:number|undefined;
+  let target:V3={x:BOARD.holeX+normal(r)*.65*spread,y:0,z:lane+normal(r)*.36*spread};let targetId:number|undefined;
   if(sport==='cornhole'){target.y=target.x>=BOARD.frontX&&target.x<=BOARD.backX&&Math.abs(target.z-lane)<=BOARD.laneHalfWidth?boardSurfaceY(target.x):0;}
   if(sport==='football')target={x:8.8,y:2+normal(r)*.60*spread,z:lane+normal(r)*.60*spread};
   if(sport==='pong'){const open=[0,1,2,3,4,5].filter(c=>!removed[actor].includes(c));targetId=open[Math.floor(r()*open.length)];if(targetId===undefined)targetId=0;const c=cupPosition(targetId,lane);target={x:c.x+normal(r)*.10*spread,y:c.y,z:c.z+normal(r)*.10*spread};}

@@ -4,7 +4,8 @@ import {type MotionPersonality,type Attempt} from './model';
 
 import {personalityMoves} from './personality';
 
-import {attemptBeats,clamp01,smooth} from './match-timeline';
+import {attemptBeats} from './match-timeline';
+import {clamp01,smooth} from './math';
 
 
 

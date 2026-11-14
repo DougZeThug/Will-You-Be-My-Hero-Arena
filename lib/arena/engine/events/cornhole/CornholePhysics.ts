@@ -3,8 +3,10 @@ import {
   surfacePoint,
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
+  BAG_REST_FLATTEN,
 } from '../../../equipment-geometry';
-import { clamp01, smooth } from '../../../match-timeline';
+import { laneShadowY } from '../../../sport-stage';
+import { clamp01, smooth } from '../../../math';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import type { ReleaseFrame, ProjectileFrame } from '../ArenaEvent';
 import { releasedBag } from './ReleasedBagPhysics';
@@ -79,7 +81,7 @@ export function sampleBag(
       };
   const ground = {
     x: release.x + (target.x - release.x) * t,
-    y: 610 - a.actor * 133 + (target.y - (610 - a.actor * 133)) * t,
+    y: laneShadowY(a.actor) + (target.y - laneShadowY(a.actor)) * t,
   };
   const rolls = ['roll', 'flop', 'trick'].includes(shot);
   let x = release.x + (touch.x - release.x) * t,
@@ -106,7 +108,7 @@ export function sampleBag(
       smooth(roll ? (u - 0.55) / 0.45 : u);
     flatten =
       impactFlatten +
-      (0.52 - impactFlatten) * s +
+      (BAG_REST_FLATTEN - impactFlatten) * s +
       (roll ? 0.18 * Math.sin(u * Math.PI * 2) * (1 - u) : 0);
   }
   if (elapsed >= a.duration) {
@@ -119,7 +121,7 @@ export function sampleBag(
       flatten *= 1 - u * 0.6;
     } else if (a.contact === 'board') {
       angle += (-0.1 - angle) * smooth(u);
-      flatten += (0.52 - flatten) * smooth(u);
+      flatten += (BAG_REST_FLATTEN - flatten) * smooth(u);
     } else {
       x += u * 23;
       y += u * 7 - Math.sin(u * Math.PI) * 12;

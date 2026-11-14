@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { MotionScene } from './MotionScene';
-import { proofEvents, type ProofEvent } from './MotionSession';
+import { proofEvents } from './MotionSession';
+import type { ProofEvent } from './ProofConfig';
 import { FrameTelemetry } from '../FrameTelemetry';
 import {
   importReference,

@@ -20,7 +20,7 @@ Live scenarios assign Doug (`p0`) to keyboard, except `controller-cornhole` uses
 
 ## Public contract
 
-[`API.ts`](API.ts) exports the authoritative `ArenaLabAPI` and `ArenaLabState` types and `createLabAPI`. `main.ts` exposes that frozen facade at `window.__HERO_ARENA__`, containing only these members. It does not expose the `LabRuntime` instance, Phaser game, mutable session, destroy method or arbitrary evaluation. Browser helpers should import the shared types rather than invent a second contract.
+[`API.ts`](API.ts) exports the authoritative `ArenaLabAPI` type and `createLabAPI`. The state shape is `ReturnType<ArenaLabAPI['getState']>`. `main.ts` exposes that frozen facade at `window.__HERO_ARENA__`, containing only these members. It does not expose the `LabRuntime` instance, Phaser game, mutable session, destroy method or arbitrary evaluation. Browser helpers should import the shared types rather than invent a second contract.
 
 ```ts
 import type { LabRuntime } from './LabRuntime';

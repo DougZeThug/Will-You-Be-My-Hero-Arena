@@ -4,7 +4,7 @@ import {
   RUN_GRAVITY,
   type RunnerMotion,
 } from './RunningConstants';
-import { clamp } from '../../input/InputActions';
+import { clamp } from '../../../math';
 export interface Obstacle {
   id: string;
   x: number;

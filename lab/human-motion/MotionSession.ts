@@ -17,14 +17,13 @@ import { PrecisionProof } from './events/PrecisionProof';
 import { RunningProof } from './events/RunningProof';
 import { CombatProof } from './events/CombatProof';
 import { kineticRecipes } from './motion/KineticChains';
-import { proofConfig } from './ProofConfig';
+import { proofConfig, type ProofEvent } from './ProofConfig';
 export const proofEvents = {
   cornhole: () => new PrecisionProof('cornhole'),
   basketball: () => new PrecisionProof('basketball'),
   running: () => new RunningProof(),
   fighting: () => new CombatProof(),
-};
-export type ProofEvent = keyof typeof proofEvents;
+} satisfies Record<ProofEvent, () => MotionEventModule>;
 export class MotionSession {
   readonly actors: MotionActor[];
   readonly event: MotionEventModule;

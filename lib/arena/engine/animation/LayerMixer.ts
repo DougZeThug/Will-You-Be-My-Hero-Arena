@@ -1,4 +1,5 @@
 import type { PuppetPose } from '../../puppet-motion';
+import { clamp01 } from '../../math';
 const POSE_LAYERS = {
   lower: [
     'hipX',
@@ -21,6 +22,6 @@ export function blendLayer(
 ) {
   const p = { ...base };
   for (const key of POSE_LAYERS[layer])
-    p[key] += (overlay[key] - p[key]) * Math.max(0, Math.min(1, weight));
+    p[key] += (overlay[key] - p[key]) * clamp01(weight);
   return p;
 }
