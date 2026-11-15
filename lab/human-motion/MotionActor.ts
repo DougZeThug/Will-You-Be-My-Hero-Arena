@@ -259,8 +259,10 @@ export class MotionActor implements ControllableEntity {
         this.prop.toss(
           this.animator.hand(),
           0.3,
-          // Doug's reference, for either character.
-          scaleToReference(this.animator.definition.scale, 'doug'),
+          scaleToReference(
+            this.animator.definition.scale,
+            this.animator.definition.id,
+          ),
         );
       if (event.name === 'propCatch') this.prop.catch(this.animator.hand());
       if (event.name.startsWith('chestTapContact'))
