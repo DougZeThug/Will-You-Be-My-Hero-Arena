@@ -95,7 +95,6 @@ export interface MotionProfile {
     looseness: number;
     postureStability: number;
     gestureEnergy: number;
-    recoverySpeed: number;
     breathPeriod: number;
     phase: number;
   };

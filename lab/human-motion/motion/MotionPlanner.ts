@@ -27,7 +27,7 @@ export class MotionPlanner {
     footPhase: 0,
   });
   observePose(pose: RecoveryPose) {
-    this.recovery = matchRecovery(pose, this.profile.performance.recoverySpeed);
+    this.recovery = matchRecovery(pose, this.profile.signature.recoverySpeed);
   }
   constructor(
     clips: MotionClip[],
