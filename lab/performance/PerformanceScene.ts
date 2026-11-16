@@ -3,11 +3,10 @@ import {
   CharacterPerformanceController,
   alignedSubstep,
 } from '../../lib/arena/engine/performance/CharacterPerformanceController';
-import {
-  performanceProfiles,
-  validatePerformanceProfile,
-} from '../../lib/arena/engine/performance/PerformanceProfiles';
+import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
+import { validatePerformanceProfile } from '../../lib/arena/engine/performance/ProfileValidation';
 import type { PerformanceProfile } from '../../lib/arena/engine/performance/PerformanceTypes';
+import { isCharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';
 import { queueRig } from '../loongbones/arena/provider';
@@ -16,10 +15,11 @@ import { queueArenaAssets } from '../../lib/arena/engine/scenes/CharacterAssetLo
 import { Equipment } from '../../lib/arena/engine/objects/Equipment';
 import { Projectile } from '../../lib/arena/engine/objects/Projectile';
 import { PerformanceFeedback } from '../../lib/arena/engine/presentation/PerformanceFeedback';
-import { placement } from '../../lib/arena/equipment-layout';
+import { placement } from '../../lib/arena/equipment-geometry';
 import { CornholePerformancePlayback } from '../../lib/arena/engine/events/cornhole/CornholePerformancePlayback';
 import { createRecording, resolveScenario } from '../scenarios';
 import { project, simulate } from '../../lib/arena/simulation';
+import { PERFORMANCE_CLIPS } from '../../lib/arena/engine/performance/ClipNames';
 import { performanceActions } from '../../lib/arena/engine/performance/Choreography';
 import type { Attempt } from '../../lib/arena/model';
 import { scoreTime } from '../../lib/arena/match-timeline';
@@ -118,11 +118,11 @@ export class PerformanceScene extends Phaser.Scene {
     } = {},
   ) {
     const selected = options.character ?? this.selected;
-    if (!['doug', 'dan'].includes(selected)) throw Error('Unknown character');
+    if (!isCharacterId(selected)) throw Error('Unknown character');
     const profile = validatePerformanceProfile(
       options.profile ??
         (selected !== this.selected
-          ? performanceProfiles[selected as 'doug' | 'dan']
+          ? performanceProfiles[selected]
           : this.profile),
     );
     const action = options.action ?? this.action;
@@ -332,7 +332,7 @@ export class PerformanceScene extends Phaser.Scene {
       ];
     }
     const notice = 0.28 + (1 - this.profile.confidence) * 0.18;
-    const underhand = this.runtime.clips.get('underhand')!,
+    const underhand = this.runtime.clips.get(PERFORMANCE_CLIPS.underhand)!,
       duration = underhand.duration,
       marker = (name: string) =>
         underhand.markers.find((m) => m.name === name)!.at;

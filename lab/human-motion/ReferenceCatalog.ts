@@ -1,4 +1,4 @@
-import type { ProofEvent } from './MotionSession';
+import type { ProofEvent } from './ProofConfig';
 
 export interface ReviewReference {
   id: string;

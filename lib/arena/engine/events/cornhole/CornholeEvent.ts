@@ -8,7 +8,11 @@ import type { Attempt, Recording } from '../../../model';
 import type { DirectedAction } from '../../core/BattlePlan';
 import { sampleBag } from './CornholePhysics';
 import { pushedBag, type PushTiming } from './ReleasedBagPhysics';
-import { surfacePoint, boardDepthScale } from '../../../equipment-layout';
+import {
+  surfacePoint,
+  boardDepthScale,
+  BAG_REST_FLATTEN,
+} from '../../../equipment-geometry';
 export class CornholeEvent implements ArenaEvent {
   readonly sport = 'cornhole' as const;
   private recording?: Recording;
@@ -17,9 +21,6 @@ export class CornholeEvent implements ArenaEvent {
       throw Error('Cornhole requires a cornhole recording.');
     this.recording = recording;
   }
-  playIntro() {
-    return { equipment: 'board', lanes: 2 };
-  }
   performAction(
     a: Attempt,
     d: DirectedAction,
@@ -27,12 +28,6 @@ export class CornholeEvent implements ArenaEvent {
     time: number,
   ) {
     return sampleBag(a, d.shot, release, time);
-  }
-  resolveResult(a: Attempt) {
-    return {
-      points: a.score,
-      outcome: a.boardResolution?.outcome ?? a.contact,
-    };
   }
   /** `pushStarts` (by pushed bag id): when the presented thrown bag reaches
    * each bag it pushes and how long the shove lasts. Without it a push keeps
@@ -52,7 +47,7 @@ export class CornholeEvent implements ArenaEvent {
           ...q,
           angle: -0.1,
           scale: boardDepthScale(actor),
-          flatten: 0.52,
+          flatten: BAG_REST_FLATTEN,
           alpha,
           ground: q,
         },
@@ -82,9 +77,6 @@ export class CornholeEvent implements ArenaEvent {
           frame(hit.id, active.actor, { x: drawn.x, y: drawn.y }, drawn.alpha);
       }
     return [...objects.values()];
-  }
-  playReaction(d: DirectedAction) {
-    return d.reaction;
   }
   finish() {
     this.recording = undefined;

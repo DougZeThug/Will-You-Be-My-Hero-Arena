@@ -37,11 +37,11 @@ export async function testEngine({check,setup,m,s,a}){
   engine.advance(.01,e=>events.push(e.id),false);check(()=>assert.equal(events.length,count,'Seeking and pause do not emit historical sounds'));
   for(const attempt of rec.attempts){
    const d=rec.direction.actions[attempt.index],character=characters[attempt.actor],release={x:122,y:d.shot==='airmail'?-246:-214};
-   const pose=poses.actionPose(attempt,d,attempt.releaseAt,character.profile,attempt.personality,release),hand=geometry.puppetJoints(pose,character.asset.puppet).rightArm.end;
+   const pose=poses.actionPose(attempt,d,attempt.releaseAt,character.profile),hand=geometry.puppetJoints(pose,character.asset.puppet).rightArm.end;
    const from={x:225+hand.x,y:610-attempt.actor*133+hand.y};
    const first=physics.sampleBag(attempt,d.shot,from,attempt.releaseAt);
    check(()=>assert.ok(distance(first,from)<1e-9,'Projectile starts exactly at the evaluated palm'));
-   const pre=poses.actionPose(attempt,d,attempt.releaseAt-1e-6,character.profile,attempt.personality,release),preHand=geometry.puppetJoints(pre,character.asset.puppet).rightArm.end;
+   const pre=poses.actionPose(attempt,d,attempt.releaseAt-1e-6,character.profile),preHand=geometry.puppetJoints(pre,character.asset.puppet).rightArm.end;
    check(()=>assert.ok(distance(preHand,hand)<.01,'No jump across the release marker'));
    for(let frame=0;frame<120;frame++){const point=physics.sampleBag(attempt,d.shot,from,attempt.releaseAt+frame/60);check(()=>assert.ok([point.x,point.y,point.angle,point.scale,point.flatten,point.alpha].every(Number.isFinite)));}
    pushes+=attempt.boardResolution.interactions.filter(x=>x.kind==='push').length;collects+=attempt.boardResolution.interactions.filter(x=>x.kind==='collect').length;
@@ -59,5 +59,5 @@ export async function testEngine({check,setup,m,s,a}){
  check(()=>assert.equal(roll.interactions.length,0,'Roll can go around the blocker without displacing it'));
  const flat=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'flat',{x:350,y:400},.4),airmail=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'airmail',{x:350,y:400},.4);
  check(()=>assert.ok(airmail.y<flat.y-60,'Airmail has a substantially higher arc'));
- fs.mkdirSync('docs/review',{recursive:true});fs.writeFileSync('docs/review/engine-metrics.json',JSON.stringify({clips:registry.animations().length,authoredClips:registry.animations().filter(c=>c.motion&&!c.id.startsWith('legacy_')).length,distinctPlans:new Set(plans).size,sampledMatches:30,maxHandStepPer120Samples:maxStep,pushes,collects},null,2));
+ fs.mkdirSync('work/qa',{recursive:true});fs.writeFileSync('work/qa/engine-metrics.json',JSON.stringify({clips:registry.animations().length,authoredClips:registry.animations().filter(c=>c.motion&&!c.id.startsWith('legacy_')).length,distinctPlans:new Set(plans).size,sampledMatches:30,maxHandStepPer120Samples:maxStep,pushes,collects},null,2));
 }

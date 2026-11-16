@@ -1,5 +1,6 @@
 import type * as Phaser from 'phaser';
 import type { LiveView } from '../core/LiveTypes';
+import { clamp01 } from '../../math';
 export class CameraManager {
   private x = 640;
   private zoom = 1;
@@ -35,7 +36,7 @@ export class CameraManager {
   /** Impact: a cartoon shake (a few px, longer for bigger hits) and a quick
    * punch-in. Presentation only; callers skip it for reduced motion. */
   cue(intensity = 0.2) {
-    const i = Math.max(0, Math.min(1, intensity));
+    const i = clamp01(intensity);
     this.camera.shake(90 + 110 * i, 0.0015 + 0.0045 * i);
     this.punch = Math.max(this.punch, i);
   }

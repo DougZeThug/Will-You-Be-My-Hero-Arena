@@ -7,7 +7,7 @@ export const throwStyles = [
   'blocker',
 ] as const;
 export type CornholeStyle = (typeof throwStyles)[number];
-export const motionProfiles = {
+export const throwMotionProfiles = {
   dan: {
     scale: 371 / 1900,
     settle: 20,
@@ -38,10 +38,10 @@ export const motionProfiles = {
   },
 };
 export function cornholeThrow(
-  character: keyof typeof motionProfiles,
+  character: keyof typeof throwMotionProfiles,
   style: CornholeStyle,
 ) {
-  const p = motionProfiles[character],
+  const p = throwMotionProfiles[character],
     high = style === 'airmail',
     roll = style === 'roll';
   const extra = high ? 7 : style === 'blocker' ? 3 : 0;

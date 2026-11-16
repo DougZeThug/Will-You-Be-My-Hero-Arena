@@ -1,9 +1,7 @@
-import {
-  approach,
-  clamp,
-  type Vec2,
-  type MotionProfile,
-} from '../motion/MotionTypes';
+import type { Vec2, MotionProfile } from '../motion/MotionTypes';
+import { clamp } from '../../math';
+const approach = (a: number, b: number, max: number) =>
+  a + clamp(b - a, -max, max);
 export interface MotorSweep {
   position: Vec2;
   blockedX?: boolean;

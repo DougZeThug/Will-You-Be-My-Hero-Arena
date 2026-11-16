@@ -1,3 +1,6 @@
+import { smoothRange as smooth } from '../../lib/arena/math';
+import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
+import { isCharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 interface WeightedMesh {
   vertices?: number[];
   weights?: number[];
@@ -14,10 +17,6 @@ const HIP_Y = 690;
 const HEM_Y = 815;
 /** Atlas column (px) where the near shorts leg meets the far one at the hem. */
 const LEG_SPLIT_X = 550;
-const smooth = (a: number, b: number, x: number) => {
-  const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
 
 /** The source binds the whole shorts to the pelvis down to the hem, while the
  * performance keeps the knees softly bent: each thigh turns ~15° under a rigid
@@ -26,7 +25,7 @@ const smooth = (a: number, b: number, x: number) => {
  * does. Bind positions, UVs and topology are unchanged; only this private
  * runtime copy's weights are derived. Returns the reweighted vertex count. */
 export function followShortsToThighs(id: string, arm: WeightedArmature) {
-  if (id !== 'dan' && id !== 'doug') return 0;
+  if (!isCharacterId(id)) return 0;
   const index = (name: string) => arm.bone.findIndex((b) => b.name === name);
   const pelvis = index('pelvis'),
     near = index('thigh_L'),
@@ -45,8 +44,8 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
         mesh.weights[cursor + 2 + j * 2],
       );
     cursor += 1 + count * 2;
-    const x = mesh.uvs[v * 2] * 1254,
-      y = mesh.uvs[v * 2 + 1] * 1254;
+    const x = mesh.uvs[v * 2] * SIDE_ATLAS_SIZE,
+      y = mesh.uvs[v * 2 + 1] * SIDE_ATLAS_SIZE;
     const cloth = [...influences.keys()].every((b) =>
       [pelvis, near, far].includes(b),
     );
@@ -85,9 +84,10 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
   }
   const seams = new Map<string, number[]>();
   vertices.forEach((_, v) => {
-    const y = mesh.uvs![v * 2 + 1] * 1254;
+    const y = mesh.uvs![v * 2 + 1] * SIDE_ATLAS_SIZE;
     if (y < HIP_Y || y > WELD_END_Y) return;
-    const key = (mesh.uvs![v * 2] * 1254).toFixed(1) + ',' + y.toFixed(1);
+    const key =
+      (mesh.uvs![v * 2] * SIDE_ATLAS_SIZE).toFixed(1) + ',' + y.toFixed(1);
     seams.set(key, [...(seams.get(key) ?? []), v]);
   });
   const leg = new Set(
@@ -105,7 +105,7 @@ export function followShortsToThighs(id: string, arm: WeightedArmature) {
     for (const v of group)
       for (const [bone, w] of vertices[v])
         average.set(bone, (average.get(bone) ?? 0) + w / group.length);
-    const y = mesh.uvs![group[0] * 2 + 1] * 1254,
+    const y = mesh.uvs![group[0] * 2 + 1] * SIDE_ATLAS_SIZE,
       weld = 1 - smooth(WELD_FULL_Y, WELD_END_Y, y);
     for (const v of group) {
       const own = vertices[v],

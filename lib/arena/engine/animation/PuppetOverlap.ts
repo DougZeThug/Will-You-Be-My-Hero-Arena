@@ -1,5 +1,6 @@
 import { REST, type Choreography, type PuppetPose } from '../../puppet-motion';
 import { bakeOverlap } from '../motion/OverlapSprings';
+import { clamp01 } from '../../math';
 
 /** Cartoon follow-through for the paper puppet: the head drags behind body
  * lean and hip travel and overshoots when they stop; the free hand trails the
@@ -71,7 +72,7 @@ export function puppetOverlap(
     byDuration.set(key, table);
   }
   const s = table.samples,
-    x = Math.max(0, Math.min(1, progress)) * (s.length - 1),
+    x = clamp01(progress) * (s.length - 1),
     i = Math.min(s.length - 2, Math.floor(x)),
     u = x - i,
     a = s[i],

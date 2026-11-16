@@ -3,9 +3,10 @@ import { ArenaSession } from './ArenaSession';
 import type { LiveOptions } from './LiveTypes';
 import { LiveBootScene, LiveArenaScene } from '../scenes/LiveArenaScene';
 import { KeyboardDevice } from '../input/KeyboardDevice';
+import { isKeyboardDevice, keyboardLayoutOf } from '../input/InputBindings';
 import { GamepadDevice } from '../input/GamepadDevice';
 import { AudioManager } from '../audio/AudioManager';
-import { spineBackend } from '../characters/SpineCharacterRig';
+import { createPhaserGame } from './createPhaserGame';
 export class LiveArenaGame {
   readonly session: ArenaSession;
   readonly game: Phaser.Game;
@@ -20,13 +21,13 @@ export class LiveArenaGame {
       'Playable arena. Focus here for keyboard controls.',
     );
     options.config.players.forEach((p) => {
-      if (p.device === 'keyboard' || p.device === 'keyboard2')
+      if (isKeyboardDevice(p.device))
         this.session.assign(
           p.id,
           new KeyboardDevice(
             p.device,
             p.bindings,
-            p.device === 'keyboard2' ? 1 : 0,
+            keyboardLayoutOf(p.device),
             parent,
           ),
         );
@@ -66,19 +67,9 @@ export class LiveArenaGame {
         options.onReady();
       },
     });
-    const spine = spineBackend();
-    this.game = new Phaser.Game({
-      type: Phaser.WEBGL,
-      parent,
-      width: 1280,
-      height: 720,
+    this.game = createPhaserGame(parent, {
       backgroundColor: '#121913',
-      antialias: true,
-      audio: { noAudio: true },
-      render: { antialias: true },
       fps: { target: 60 },
-      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-      plugins: spine ? { scene: [spine.scenePlugin] } : undefined,
       scene: [new LiveBootScene(this.session, options), this.scene],
       callbacks: {
         postBoot: (game) => {
@@ -100,7 +91,6 @@ export class LiveArenaGame {
       },
     });
   }
-  /** Applies Reduced motion to the running match without restarting it. */
   setReducedMotion(reduced: boolean) {
     this.scene.setReduced(reduced);
   }

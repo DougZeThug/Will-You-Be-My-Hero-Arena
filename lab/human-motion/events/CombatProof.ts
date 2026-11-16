@@ -4,7 +4,7 @@ import type { MotionActor } from '../MotionActor';
 import type { ActionPayload } from '../../../lib/arena/engine/controllers/ControllableEntity';
 import type { MotionEvent } from '../../../lib/arena/engine/motion/MotionTypes';
 import type { EventActionMap } from '../../../lib/arena/engine/controllers/EventActionMap';
-import { CombatIntentRhythm } from '../../../lib/arena/engine/motion/CombatIntentRhythm';
+import { CombatIntentRhythm } from '../motion/CombatIntentRhythm';
 export class CombatProof implements MotionEventModule {
   id = 'fighting';
   actors: MotionActor[] = [];

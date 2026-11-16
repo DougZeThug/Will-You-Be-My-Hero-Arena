@@ -1,7 +1,7 @@
 /** Rebuild the isolated proof's pinned MIT runtime. No global install or Phaser replacement. */
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import crypto from 'node:crypto';
+import { sha256 } from './lib/hash.mjs';
 import ts from 'typescript';
 
 const revision = '64b6c69ae35777c2404be68c9192e2c56906079e';
@@ -72,7 +72,7 @@ for (const suffix of ['ske.json', 'tex.json', 'tex.png']) {
   const name = `mecha_1406_${suffix}`;
   const bytes = await download(`Pixi/Demos/resource/mecha_1406/${name}`);
   await fs.writeFile(`${assets}/${name}`, bytes);
-  hashes[name] = crypto.createHash('sha256').update(bytes).digest('hex');
+  hashes[name] = sha256(bytes);
 }
 await fs.writeFile(
   `${destination}/provenance.json`,

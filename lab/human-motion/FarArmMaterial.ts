@@ -1,10 +1,11 @@
 import { anatomy } from '../loongbones/side-rig/anatomy';
 import { registerLimbPoint } from '../../lib/arena/engine/motion/LimbRegistration';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 
 /** The side-view source exposes only a narrow far-arm edge. It cannot unfold
  * into an overhead arm. Reuse the complete isolated arm drawing in its own
  * bind space, behind the body; no runtime stretching or fabricated pixels. */
-export function restoreFarArm(id: 'dan' | 'doug', arm: any) {
+export function restoreFarArm(id: CharacterId, arm: any) {
   const rig = anatomy(id);
   const index = (name: string) =>
     arm.bone.findIndex((b: any) => b.name === name);

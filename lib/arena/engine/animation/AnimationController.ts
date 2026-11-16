@@ -1,6 +1,7 @@
 import {REST,mixPuppet,type PuppetPose} from '../../puppet-motion';
-import {clamp01,smooth,scoreTime} from '../../match-timeline';
-import type {Attempt,MotionPersonality} from '../../model';
+import {scoreTime} from '../../match-timeline';
+import {clamp01,smooth} from '../../math';
+import type {Attempt} from '../../model';
 import type {CharacterProfile} from '../characters/CharacterProfile';
 import type {DirectedAction} from '../core/BattlePlan';
 import {animation} from './AnimationRegistry';
@@ -30,7 +31,7 @@ export function idlePose(id:string,time:number,profile:CharacterProfile,waiting=
  return mixed;
 }
 export function ritualDuration(a:Attempt,d:DirectedAction){return d.ritual?Math.min(animation(d.ritual).duration,Math.max(0,a.releaseAt-a.start-.43)):0;}
-export function actionPose(a:Attempt,d:DirectedAction,time:number,profile:CharacterProfile,_legacy:MotionPersonality,_release:{x:number;y:number},reduced=false,idleBefore?:string){
+export function actionPose(a:Attempt,d:DirectedAction,time:number,profile:CharacterProfile,reduced=false,idleBefore?:string){
  const ritual=ritualDuration(a,d),ritualEnd=a.start+ritual,result=scoreTime(a)+d.reactionDelay;
  // The follow-through is held (breathing, tracking the flight) until the
  // result instead of returning to a dead-still rest pose mid-flight.

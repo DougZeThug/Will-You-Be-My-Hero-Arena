@@ -7,6 +7,7 @@ import {JoinedSurface} from './JoinedSurface';
 import {PaperMesh} from './PaperMesh';
 import type {CharacterRig,SocketName} from './CharacterRig';
 export class PaperCharacterRig implements CharacterRig {
+ readonly family='paper' as const;
  readonly root:Phaser.GameObjects.Container;readonly shadow:Phaser.GameObjects.Graphics;
  private joined:JoinedSurface;private upper:PaperMesh;private head:Phaser.GameObjects.Image;
  private legs:PaperMesh[];private joints:ReturnType<typeof puppetJoints>;private pose:PuppetPose={...REST};
@@ -29,5 +30,6 @@ export class PaperCharacterRig implements CharacterRig {
   this.shadow.clear();for(const foot of [j.leftLeg.end,j.rightLeg.end]){const opacity=1-Math.min(.75,Math.max(0,-22-foot.y)/35);for(const [w,h,a] of [[54,10,.07],[42,6,.14],[34,3.4,.22]])this.shadow.fillStyle(0x291f18,a*opacity).fillEllipse(foot.x,0,w,h);}
  }
  socket(name:SocketName){const j=this.joints;return name==='throwingHand'?handFrame(j.rightArm,this.pose.wristR).palm:name==='offHand'?handFrame(j.leftArm,this.pose.wristL).palm:name==='head'?j.neck:name==='chest'?{x:j.neck.x,y:j.neck.y+44}:name==='footL'?j.leftLeg.end:name==='footR'?j.rightLeg.end:j.hip;}
+ hideShadow(){this.shadow.setVisible(false);}
  destroy(){this.root.destroy(true);}
 }

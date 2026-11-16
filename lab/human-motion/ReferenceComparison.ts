@@ -2,6 +2,7 @@ import type { MotionScene } from './MotionScene';
 import mapping from '../../motion-reference/cornhole/reference-throw.json';
 import { motionSignatures } from '../../lib/arena/engine/motion/CharacterMotionSignature';
 import { defaultReference, referenceCatalog } from './ReferenceCatalog';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 type Point = { x: number; y: number; confidence: number };
 type Sample = { timestamp: number; image: Record<string, Point> };
 /** Local development reference footage and actual Phaser pixels share the performance clock. */
@@ -58,7 +59,7 @@ export function referenceComparison(
       document.getElementById(
         'review-character',
       ) as unknown as HTMLSelectElement
-    ).value as 'dan' | 'doug';
+    ).value as CharacterId;
     const a = scene.session.actors.find((a) => a.id === id)!;
     const start =
       a.personality.history.findLast((h) => h.phase === 'ACTION')?.time ?? 0.2;

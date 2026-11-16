@@ -1,34 +1,30 @@
 import * as Phaser from 'phaser';
 import { NativeAnimator } from './NativeAnimator';
 import { addPlayRunning } from './authoring/play';
-import { MotionPlanner } from '../../lib/arena/engine/motion/MotionPlanner';
-import { MotionContacts } from '../../lib/arena/engine/motion/MotionContacts';
-import { gaitSupport } from '../../lib/arena/engine/motion/StrideMatcher';
-import { CharacterMotor } from '../../lib/arena/engine/movement/CharacterMotor';
+import { MotionPlanner } from './motion/MotionPlanner';
+import { MotionContacts } from './motion/MotionContacts';
 import {
-  motionProfiles,
-  type MotionEvent,
-} from '../../lib/arena/engine/motion/MotionTypes';
+  gaitStartEvents,
+  landingEvents,
+} from './motion/GaitEvents';
+import { CharacterMotor } from '../../lib/arena/engine/movement/CharacterMotor';
+import type { MotionEvent } from '../../lib/arena/engine/motion/MotionTypes';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import type {
   CharacterRig,
   RigDriveFrame,
   SocketName,
 } from '../../lib/arena/engine/characters/CharacterRig';
+import {
+  ARENA_STANDING_HEIGHT,
+  displayScale,
+} from '../loongbones/side-rig/anatomy';
+import { SIDE_RIG_SOCKETS } from '../loongbones/arena/sideRigSockets';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 
-const joints: Record<SocketName, string> = {
-  throwingHand: 'rightHand',
-  offHand: 'leftHand',
-  head: 'head',
-  chest: 'chest',
-  waist: 'pelvis',
-  footL: 'rightAnkle',
-  footR: 'leftAnkle',
-  effect: 'chest',
-};
 /** World px per unit body scale of the Play puppet, so a side-view runner
  * stands exactly as tall as the puppet it replaces (both are 5'8"). */
-export const PLAY_RIG_HEIGHT = 307;
+const PLAY_RIG_HEIGHT = 307;
 /** Play runs at 1.7-2.7 m/s in body terms. A real run at that speed covers
  * about 1.5 m per stride cycle, twice the Lab proof's short measured-cadence
  * strides, so the stride is doubled instead of stretching the legs to their
@@ -87,16 +83,20 @@ export class PlayMotionRig implements CharacterRig {
     // points); the root stays at the origin so socket() is world space too.
     this.root = scene.add.container(0, 0);
   }
+  private actorScaleFor(laneScale: number) {
+    return (
+      (this.definition.scale * PLAY_RIG_HEIGHT * laneScale) /
+      ARENA_STANDING_HEIGHT
+    );
+  }
   private build(frame: RigDriveFrame) {
-    const id = this.definition.id as 'dan' | 'doug';
-    const scale =
-      (this.definition.scale * PLAY_RIG_HEIGHT * this.scale) / 371;
+    const id = this.definition.id;
+    const scale = this.actorScaleFor(this.scale);
     this.actorScale = scale;
     this.animator = new NativeAnimator(
       this.scene,
       { ...this.definition, scale },
       {
-        forwardKnees: true,
         directional: true,
         extend: (library) => addPlayRunning(library),
         // Fighters close distance in short guarded steps (the proof's own
@@ -105,7 +105,7 @@ export class PlayMotionRig implements CharacterRig {
       },
     );
     // Ratio to the 371 px Lab reference: motor and stride fitting only.
-    const display = scale / this.definition.scale;
+    const display = displayScale(this.definition, scale);
     this.motor = new CharacterMotor(motionProfiles[id], {
       x: frame.x,
       y: frame.y,
@@ -208,34 +208,14 @@ export class PlayMotionRig implements CharacterRig {
       .filter((e) => !e.foot || !active || e.clip === active.clip.id);
     const gait = planner.graph.get('base');
     if (!active && gait?.clip.gait && oldGait !== gait.revision) {
-      const support = gaitSupport(
-        gait.time / gait.clip.duration,
-        gait.clip.gait.stance,
+      events.push(
+        ...gaitStartEvents(gait, gait.clip.gait.stance, frame.time, 0),
       );
-      for (const foot of ['right', 'left'] as const)
-        events.push({
-          name: support.includes(foot) ? 'footPlant' : 'footRelease',
-          foot,
-          at: 0,
-          clip: gait.clip.id,
-          time: frame.time,
-          cycle: 0,
-        });
     }
     let impact = 0;
     if (!wasGrounded && motor.grounded) {
       impact = this.airborneSpeed;
-      events.push(
-        { name: 'land', at: 0, clip: 'land', time: frame.time, cycle: 0 },
-        ...(['left', 'right'] as const).map((foot) => ({
-          name: 'footPlant',
-          foot,
-          at: 0,
-          clip: 'land',
-          time: frame.time,
-          cycle: 0,
-        })),
-      );
+      events.push(...landingEvents(frame.time, 'land'));
     }
     this.contacts.update(dt, events, impact);
     planner.gaitResponse.update(motor, events, dt);
@@ -245,10 +225,7 @@ export class PlayMotionRig implements CharacterRig {
       dt,
       events,
       frame.time,
-      { x: 0, y: 0 },
-      false,
-      undefined,
-      this.contacts.compression,
+      { aim: { x: 0, y: 0 }, landingCompression: this.contacts.compression },
     );
     // Sort with the other lane objects by ground line, as the puppet does.
     animator.actor.setDepth(frame.y + 20);
@@ -256,9 +233,8 @@ export class PlayMotionRig implements CharacterRig {
   }
   private rescale(scale: number) {
     this.scale = scale;
-    this.actorScale =
-      (this.definition.scale * PLAY_RIG_HEIGHT * scale) / 371;
-    const display = this.actorScale / this.definition.scale;
+    this.actorScale = this.actorScaleFor(scale);
+    const display = displayScale(this.definition, this.actorScale);
     this.animator!.definition.scale = this.actorScale;
     this.motor!.verticalScale = display;
     this.planner!.displayScale = display;
@@ -285,7 +261,7 @@ export class PlayMotionRig implements CharacterRig {
   }
   socket(name: SocketName) {
     return this.animator
-      ? this.animator.joint(joints[name])
+      ? this.animator.joint(SIDE_RIG_SOCKETS[name])
       : { x: 0, y: 0 };
   }
   socketTransform(name: SocketName) {

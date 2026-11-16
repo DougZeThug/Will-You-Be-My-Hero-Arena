@@ -4,7 +4,7 @@ import {
   sampleScalar,
   type Knot,
 } from '../../loongbones/cornhole-motion/curves';
-import { anatomy } from '../../loongbones/side-rig/anatomy';
+import { anatomy, sideReferenceScale } from '../../loongbones/side-rig/anatomy';
 import { handSurfaces } from '../../loongbones/side-rig/hand-surfaces';
 import {
   rotation,
@@ -12,6 +12,7 @@ import {
   type BoneTrack,
   type LibraryBuilder,
 } from './builder';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 
 /** Host tuning for the measured gaits. The Lab proofs use the defaults.
  * `strideScale` lengthens every stride (foot sweep and travel metadata
@@ -27,7 +28,7 @@ export interface GaitTuning {
  */
 export function addGaits(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   tuning: GaitTuning = {},
 ) {
   const strideScale = tuning.strideScale ?? 1,
@@ -35,7 +36,7 @@ export function addGaits(
     armGain = tuning.armGain ?? 1;
   const rig = anatomy(id),
     signature = motionSignatures[id];
-  const scale = 371 / (id === 'dan' ? 1215 : 1191);
+  const scale = sideReferenceScale(id);
   const channel = (name: keyof typeof reference.channels, u: number) =>
     sampleScalar(
       reference.channels[name].map(([t, v]) => [t, v] as Knot),

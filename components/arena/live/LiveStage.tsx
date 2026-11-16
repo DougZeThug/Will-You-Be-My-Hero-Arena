@@ -6,8 +6,11 @@ import type {
   LiveSnapshot,
 } from '@/lib/arena/engine/core/LiveTypes';
 import TouchControls from './TouchControls';
+import { chargeAction } from '@/lib/arena/engine/controllers/EventActionMap';
 import { inputGlyph } from '@/lib/arena/engine/input/InputGlyphs';
 import { playableEvent } from '@/lib/arena/engine/core/EventRegistry';
+import { loadRigProvider } from '../rig-provider';
+import { keyboardLayoutOf } from '@/lib/arena/engine/input/InputBindings';
 export default function LiveStage({
   config,
   onExit,
@@ -29,9 +32,12 @@ export default function LiveStage({
     [error, setError] = useState(''),
     [ready, setReady] = useState(false),
     [sound, setSound] = useState(false);
-  const map = useRef(
+  // Created once per config; the parent keys this stage by seed.
+  const [map] = useState(() =>
     playableEvent(config.event).create().registerControls(),
-  ).current;
+  );
+  const { presentation } = playableEvent(config.event),
+    charge = chargeAction(map);
   useEffect(() => {
     reducedMotion.current = reduced;
     game.current?.setReducedMotion(reduced);
@@ -42,16 +48,10 @@ export default function LiveStage({
       .then(async ({ LiveArenaGame }) => {
         if (!mounted || !host.current) return;
         try {
-          const characterRigs =
-            config.event === 'cornhole'
-              ? await (
-                  await import('../../../lab/performance/provider')
-                ).performanceMatchProvider()
-              : config.event === 'running' || config.event === 'fighting'
-                ? await (
-                    await import('../../../lab/human-motion/provider')
-                  ).sideMotionProvider(config.event)
-                : undefined;
+          const characterRigs = await loadRigProvider({
+            mode: 'live',
+            sport: config.event,
+          });
           if (!mounted || !host.current) return;
           game.current = new LiveArenaGame(host.current, {
             config,
@@ -59,7 +59,6 @@ export default function LiveStage({
             sound: soundOn.current,
             characterRigs,
             onReady: () => mounted && setReady(true),
-            // A finished match stops its clock at the result.
             onSnapshot: (s) =>
               mounted &&
               setSnapshot((prior) =>
@@ -118,24 +117,15 @@ export default function LiveStage({
             >
               <strong>{p.name}</strong>
               <span>
-                {config.event === 'fighting'
-                  ? `${Math.ceil(p.health)} HP`
-                  : config.event === 'running'
-                    ? `${p.score}%`
-                    : p.score + ' PTS'}
+                {presentation.scoreText(p)}
               </span>
               <progress
-                aria-label={
-                  p.name +
-                  (config.event === 'fighting' ? ' health' : ' stamina')
-                }
+                aria-label={p.name + presentation.meter.label}
                 max="100"
-                value={config.event === 'fighting' ? p.health : p.stamina}
+                value={p[presentation.meter.value]}
               />
               <small>
-                {config.event === 'fighting'
-                  ? `Energy ${Math.ceil(p.stamina)}`
-                  : 'Stamina ' + Math.ceil(p.stamina)}{' '}
+                {`${presentation.energyLabel} ${Math.ceil(p.stamina)}`}{' '}
                 · {p.family === 'ai' ? 'AI' : p.family}
               </small>
             </div>
@@ -214,7 +204,7 @@ export default function LiveStage({
       ) : (
         config.players
           .filter((p) => p.device !== 'ai')
-          .map((p, i) => (
+          .map((p) => (
             <div key={p.id} className="player-control-panel">
               <div className="control-player-label">
                 <strong>
@@ -226,14 +216,10 @@ export default function LiveStage({
                     snapshot?.players.find((s) => s.id === p.id)?.family ??
                       'keyboard',
                     p.bindings,
-                    p.device === 'keyboard2' ? 1 : 0,
+                    keyboardLayoutOf(p.device),
                   )}{' '}
                   move ·{' '}
-                  {config.event === 'cornhole'
-                    ? 'Aim, hold charge, then release in green. On screen: tap charge, then release.'
-                    : config.event === 'running'
-                      ? 'Sprint, jump hurdles, slide under bars. On-screen sprint toggles.'
-                      : 'Move into range, attack, guard or dodge. Chain light, light, heavy.'}
+                  {presentation.help}
                 </span>
               </div>
               <TouchControls
@@ -245,10 +231,10 @@ export default function LiveStage({
                   snapshot?.players.find((s) => s.id === p.id)?.family ??
                   'keyboard'
                 }
-                player={p.device === 'keyboard2' ? 1 : 0}
+                player={keyboardLayoutOf(p.device)}
                 resetCharge={
-                  config.event === 'cornhole' &&
-                  !['charging', 'aiming'].includes(
+                  !!charge?.states &&
+                  !charge.states.includes(
                     snapshot?.players.find((s) => s.id === p.id)?.state ?? '',
                   )
                 }

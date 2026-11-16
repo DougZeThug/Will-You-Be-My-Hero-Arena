@@ -1,12 +1,6 @@
-import {CARDS,COPIES,USERS,EVENTS,SPORTS,type Card,type User,type OwnedCopy,type AssetManifest,type Sport,type Setup,type Recording} from './model';
-import {manifest,validateAsset} from './assets';
-import {simulate,contactScore,validateRecording} from './simulation';
+import {COPIES,USERS,type User,type OwnedCopy} from './model';
 import {LocalArenaRepository,type ArenaRepository} from './persistence';
-export interface IdentityProvider {current():Promise<User>;select(id:string):Promise<User>}
-export interface CardCatalog {all():Promise<Card[]>;get(cardId:string):Promise<Card>}
-export interface OwnedCardProvider {list(userId:string):Promise<OwnedCopy[]>;verify(userId:string,copyId:string,cardId:string):Promise<boolean>}
-export interface CharacterAssetProvider {get(cardId:string):Promise<AssetManifest>}
-export interface EventAdapter {id:Sport;definition:typeof EVENTS[Sport];sceneAssets:string[];actionMap:{human:string;cat:string};simulate(setup:Setup):Recording;validate(recording:Recording):string[]}
-export interface ArenaServices {identity:IdentityProvider;catalog:CardCatalog;ownership:OwnedCardProvider;characters:CharacterAssetProvider;events:Record<Sport,EventAdapter>;results:ArenaRepository;authority:'local-demo'}
-const eventArt:Record<Sport,string[]>={cornhole:['board','bag-yellow','bag-teal'],football:['target','football'],basketball:['hoop','basketball'],pong:['table','cup-yellow','cup-orange','ping-pong']};
-export function createDemoServices(storage:Storage):ArenaServices {let selected=USERS[0];return {authority:'local-demo',identity:{async current(){return selected;},async select(id){const user=USERS.find(u=>u.id===id);if(!user)throw Error('Unknown demo identity.');selected=user;return user;}},catalog:{async all(){return structuredClone(CARDS);},async get(id){const card=CARDS.find(c=>c.id===id);if(!card)throw Error('Card is missing from the catalog.');return structuredClone(card);}},ownership:{async list(userId){return structuredClone(COPIES.filter(c=>c.userId===userId));},async verify(userId,copyId,cardId){return COPIES.some(c=>c.userId===userId&&c.id===copyId&&c.cardId===cardId);}},characters:{async get(cardId){const card=CARDS.find(c=>c.id===cardId);if(!card)throw Error('Prepare this card’s competitor assets first.');const asset=manifest(cardId,card.asset,card.family);const validation=validateAsset(asset);if(validation.errors.length)throw Error(validation.errors.join('; '));return asset;}},events:Object.fromEntries(SPORTS.map(id=>[id,{id,definition:EVENTS[id],sceneAssets:['/assets/paper-arena.webp',...eventArt[id].map(name=>'/assets/equipment/'+name+'.png')],actionMap:{human:id,cat:`paw-${id}`},simulate(setup:Setup){if(setup.sport!==id)throw Error('Setup sport differs from this adapter.');return simulate(setup);},validate:validateRecording}])) as Record<Sport,EventAdapter>,results:new LocalArenaRepository(storage)};}
+export interface IdentityProvider {select(id:string):Promise<User>}
+export interface OwnedCardProvider {list(userId:string):Promise<OwnedCopy[]>}
+export interface ArenaServices {identity:IdentityProvider;ownership:OwnedCardProvider;results:ArenaRepository}
+export function createDemoServices(storage:Storage):ArenaServices {return {identity:{async select(id){const user=USERS.find(u=>u.id===id);if(!user)throw Error('Unknown demo identity.');return user;}},ownership:{async list(userId){return structuredClone(COPIES.filter(c=>c.userId===userId));}},results:new LocalArenaRepository(storage)};}

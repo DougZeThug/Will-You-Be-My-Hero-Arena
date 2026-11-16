@@ -1,4 +1,4 @@
-import { clamp } from './MotionTypes';
+import { clamp } from '../../math';
 
 /** Analytic damped convergence, in seconds. No variable-frame Euler springs. */
 export class DampedMotion {

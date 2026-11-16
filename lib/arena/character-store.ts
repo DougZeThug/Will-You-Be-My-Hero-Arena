@@ -2,6 +2,7 @@ import {validateCharacterPack,packImageMap,packFiles,type CharacterPack} from '.
 import {registerCharacter,registeredManifest} from './character-registry';
 import {CARDS} from './model';
 import {POSE_NAMES} from './paper';
+import {isKeyPixel} from './key-colour';
 
 const DB='wybmh-character-library-v1';
 const verified=new WeakSet<object>();
@@ -26,7 +27,7 @@ export async function verifyPackImages(pack:CharacterPack){
   const pose=POSE_NAMES.find(p=>name===p+'.png');if(!pose&&!puppet)continue;
   if(puppet&&(image.width!==puppet.width||image.height!==puppet.height))throw Error('Articulated atlas dimensions do not match the drawing.');
   const frame=pose?pack.manifest.frames![pose]:puppet!;if(image.width!==frame.width||image.height!==frame.height)throw Error('Pose dimensions do not match the drawing: '+pose);
-  const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d')!;ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;let clear=0,solid=0;for(let i=3;i<pixels.length;i+=4){const keyed=puppet?.keyColor&&pixels[i-3]>110&&pixels[i-1]>100&&pixels[i-2]<Math.min(pixels[i-3],pixels[i-1])*.70;if(pixels[i]<10||keyed)clear++;if(pixels[i]>245&&!keyed)solid++;}
+  const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const ctx=canvas.getContext('2d')!;ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;let clear=0,solid=0;for(let i=3;i<pixels.length;i+=4){const keyed=puppet?.keyColor&&isKeyPixel(pixels[i-3],pixels[i-2],pixels[i-1]);if(pixels[i]<10||keyed)clear++;if(pixels[i]>245&&!keyed)solid++;}
   if(clear/(pixels.length/4)<.05||solid/(pixels.length/4)<.05)throw Error('The '+(pose??'articulated atlas')+' drawing needs a prepared background and a visible character. Codex must finish the cutout before installing.');
  }
  verified.add(pack);

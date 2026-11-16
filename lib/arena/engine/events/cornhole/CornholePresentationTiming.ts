@@ -2,12 +2,14 @@ import type { Attempt } from '../../../model';
 import type { ShotStyle } from '../../animation/AnimationTypes';
 import { surfacePoint } from '../../../equipment-geometry';
 
+/** Shots that fly straight onto the board with no slide phase. */
+export const isDirectShot = (shot: ShotStyle) =>
+  ['airmail', 'highArc', 'collect', 'drag', 'desperation'].includes(shot);
+
 /** Duration between first board contact and the immutable final outcome. */
 export function surfaceTravelSeconds(attempt: Attempt, shot: ShotStyle) {
   const onBoard = ['board', 'hole'].includes(attempt.contact),
-    direct = ['airmail', 'highArc', 'collect', 'drag', 'desperation'].includes(
-      shot,
-    );
+    direct = isDirectShot(shot);
   const target = surfacePoint('cornhole', attempt.actor, attempt.target),
     touch = attempt.boardResolution?.touch
       ? surfacePoint('cornhole', attempt.actor, attempt.boardResolution.touch)
@@ -23,6 +25,14 @@ export function surfaceTravelSeconds(attempt: Attempt, shot: ShotStyle) {
  * Saved contactAt remains the final target/outcome boundary. */
 export function firstImpactTime(attempt: Attempt, shot: ShotStyle) {
   return attempt.contactAt - surfaceTravelSeconds(attempt, shot);
+}
+
+/** The impact boundary any sport's presentation reacts to: cornhole's first
+ * physical touch (once its shot is known), otherwise the saved contactAt. */
+export function impactTime(attempt: Attempt, shot?: ShotStyle) {
+  return attempt.sport === 'cornhole' && shot
+    ? firstImpactTime(attempt, shot)
+    : attempt.contactAt;
 }
 
 /** Resolve the one presentation shot shared by direction, physics, effects,

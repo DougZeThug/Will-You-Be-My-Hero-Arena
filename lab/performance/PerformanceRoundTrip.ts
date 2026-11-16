@@ -1,4 +1,5 @@
 import type { CompiledPerformance, PerformanceArmatureData } from './compile';
+import { PERFORMANCE_CLIPS } from '../../lib/arena/engine/performance/ClipNames';
 
 const canonical = (value: unknown) => JSON.stringify(value);
 const keyframeAt = (track: object[] | undefined, frame: number) => {
@@ -47,7 +48,7 @@ export function assertPerformanceEditorRoundTrip(
   // Named pose gates make the review intent explicit even though the complete
   // curves above are also compared. Frame indices correspond to preparation,
   // release, follow-through and recovery in the shipped underhand take.
-  const underhand = authoritativeMotion.clips.get('underhand')!;
+  const underhand = authoritativeMotion.clips.get(PERFORMANCE_CLIPS.underhand)!;
   const poses: [string, number][] = [
     [underhand.native, Math.round(underhand.duration * 60 * 0.29)],
     [

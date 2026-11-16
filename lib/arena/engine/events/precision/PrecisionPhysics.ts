@@ -3,9 +3,12 @@ import {
   artPoint,
   boardDepthScale,
   BAG_FLIGHT_FLATTEN,
-} from '../../../equipment-layout';
+} from '../../../equipment-geometry';
 import { EQUIPMENT_ART } from '../../../equipment-art';
+import { clamp01 } from '../../../math';
 import type { Vector } from '../../input/InputActions';
+import { overHoleOpening } from '../../../board-geometry';
+
 export interface PrecisionBag {
   id: string;
   owner: string;
@@ -26,7 +29,7 @@ export interface PrecisionFlight {
 }
 export const precisionTarget = () => placement('cornhole', 0).anchor;
 export function flightPosition(f: PrecisionFlight) {
-  const t = Math.max(0, Math.min(1, f.age / f.duration));
+  const t = clamp01(f.age / f.duration);
   return {
     x: f.origin.x + (f.target.x - f.origin.x) * t,
     y:
@@ -53,21 +56,11 @@ function onBoard(p: Vector) {
   }
   return inside;
 }
-/**
- * The drawn hole opening's half-extents in stage px at depth scale 1. This is
- * the same ellipse as HOLE_HALF in cornhole/ReleasedBagPhysics.ts, kept as a
- * copy so Play does not import the Watch physics; a test asserts they match.
- */
-export const HOLE_HALF = { x: 20, y: 8.3 };
 /** Is the point over the drawn hole opening (an ellipse around the target)? */
 function overHole(p: Vector) {
   const t = precisionTarget(),
     s = boardDepthScale(0);
-  return (
-    ((p.x - t.x) / (HOLE_HALF.x * s)) ** 2 +
-      ((p.y - t.y) / (HOLE_HALF.y * s)) ** 2 <
-    1
-  );
+  return overHoleOpening(p, t, s);
 }
 export function bagPoints(p: Vector) {
   return overHole(p)

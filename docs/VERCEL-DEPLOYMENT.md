@@ -105,7 +105,8 @@ dependencies. Reports and screenshots go to ignored `work/qa/production/`.
 
 September 16, 2026: deployment preparation based on integrated project commit
 `407c2df3825770e59f67429db4d8b1f7f10f18d5`. The pre-existing generated change in
-`docs/test-results.json` is preserved separately from this work.
+`docs/test-results.json` is preserved separately from this work (test reports
+now go to the ignored `work/qa/test-results.json`).
 
 - TypeScript and all 170,734 simulation/animation checks passed. The full
   browser suite passed 140 tests; its opt-in pixel-baseline case was skipped.

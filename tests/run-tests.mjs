@@ -1,71 +1,8 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import assert from 'node:assert/strict';
-import ts from 'typescript';
 import { createHash } from 'node:crypto';
-fs.mkdirSync('.test-build', { recursive: true });
-// The reviewed motion defaults are the same JSON inputs used by normal matches.
-for (const id of ['doug', 'dan']) {
-  const folder = '.test-build/engine/performance/profiles';
-  fs.mkdirSync(folder, { recursive: true });
-  fs.writeFileSync(
-    `${folder}/${id}.mjs`,
-    'export default ' +
-      fs.readFileSync(
-        `lib/arena/engine/performance/profiles/${id}.json`,
-        'utf8',
-      ) +
-      ';',
-  );
-}
-fs.writeFileSync(
-  '.test-build/motion-catalog.mjs',
-  'export default ' +
-    fs.readFileSync('lib/arena/motion-catalog.json', 'utf8') +
-    ';',
-);
-fs.writeFileSync(
-  '.test-build/puppet-assets.mjs',
-  'export default ' +
-    fs.readFileSync('lib/arena/puppet-assets.json', 'utf8') +
-    ';',
-);
-// Preserve relative module identities (the catalog is intentionally mutable).
-function transpileDirectory(dir, relative = '') {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const rel = path.join(relative, entry.name),
-      file = path.join(dir, entry.name),
-      dest = path.join('.test-build', rel.replace(/\.ts$/, '.mjs'));
-    if (entry.isDirectory()) {
-      transpileDirectory(file, rel);
-      continue;
-    }
-    if (!entry.name.endsWith('.ts')) continue;
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    const result = ts
-      .transpileModule(fs.readFileSync(file, 'utf8'), {
-        compilerOptions: {
-          target: ts.ScriptTarget.ES2022,
-          module: ts.ModuleKind.ES2022,
-        },
-      })
-      .outputText.replace(
-        /from (['"])(\.[^'"]+)\1/g,
-        (_, q, url) =>
-          'from ' +
-          q +
-          url.replace(/\.json$/, '.mjs') +
-          (url.endsWith('.json') ? '' : '.mjs') +
-          q,
-      )
-      .replace(
-        /import (['"])(\.[^'"]+)\1/g,
-        (_, q, url) => 'import ' + q + url + '.mjs' + q,
-      );
-    fs.writeFileSync(dest, result);
-  }
-}
-transpileDirectory('lib/arena');
+import { buildTestModules } from './support/build.mjs';
+buildTestModules();
 const m = await import('../.test-build/model.mjs'),
   s = await import('../.test-build/simulation.mjs'),
   p = await import('../.test-build/persistence.mjs'),
@@ -253,7 +190,6 @@ check(() => assert.equal(repo.load().policy.id, win7));
 await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 8 });
 await repo.updatePolicy({ ...m.DEFAULT_POLICY, win: 7 });
 check(() => assert.equal(repo.load().policy.id, win7));
-check(() => assert.equal(p.MAX_ALLOWANCE, 4));
 await assert.rejects(
   repo.updatePolicy({ ...m.DEFAULT_POLICY, allowance: 5 }),
   /at most 4/,
@@ -630,7 +566,6 @@ check(() =>
 check(() => assert.ok(a.validateAsset({ cardId: '' }).errors.length > 5));
 const adapters = await import('../.test-build/adapters.mjs');
 const services = adapters.createDemoServices(new MemoryStorage());
-check(() => assert.equal(services.authority, 'local-demo'));
 check(() =>
   assert.ok(
     a
@@ -649,7 +584,7 @@ check(() =>
   ),
 );
 for (const card of m.CARDS) {
-  const asset = await services.characters.get(card.id);
+  const asset = a.manifest(card.id, card.asset, card.family);
   check(() => assert.deepEqual(a.validateAsset(asset).errors, []));
   fs.mkdirSync('docs/import-examples', { recursive: true });
   fs.writeFileSync(
@@ -665,12 +600,16 @@ for (const card of m.CARDS) {
 }
 const owned = await services.ownership.list('user-doug');
 check(() => assert.equal(owned.length, 2));
-const allowed = await services.ownership.verify(
-  'user-dan',
-  owned[0].id,
-  owned[0].cardId,
+check(() => assert.ok(owned.every((c) => c.userId === 'user-doug')));
+const danOwned = await services.ownership.list('user-dan');
+check(() => assert.ok(danOwned.length > 0));
+check(() => assert.ok(!danOwned.some((c) => c.userId === 'user-doug')));
+await assert.rejects(
+  services.identity.select('nobody'),
+  /Unknown demo identity/,
 );
-check(() => assert.equal(allowed, false));
+const selectedUser = await services.identity.select('user-dan');
+check(() => assert.equal(selectedUser.id, 'user-dan'));
 const paper = await import('../.test-build/paper.mjs');
 for (const card of m.CARDS)
   for (const sport of m.SPORTS) {
@@ -703,7 +642,10 @@ check(() => assert.deepEqual(snap.attempts[0].release, snapPoint));
 snapshotSetup.characterAssets[0].frameScale = 1;
 check(() => assert.equal(snap.setup.characterAssets[0].frameScale, 0.55));
 check(() => assert.deepEqual(s.validateRecording(snap), []));
-const visual = await import('../.test-build/equipment-layout.mjs'),
+const visual = {
+    ...(await import('../.test-build/equipment-geometry.mjs')),
+    ...(await import('../.test-build/equipment-layout.mjs')),
+  },
   art = await import('../.test-build/equipment-art.mjs');
 const nearBoard = visual.placement('cornhole', 0),
   farBoard = visual.placement('cornhole', 1);
@@ -1129,5 +1071,6 @@ const report = {
   storage:
     'Atomic envelope and journal recovery; idempotency; historical policy; ownership; replay; exhibitions; corrections; full-store recovery and exhibition pruning verified',
 };
-fs.writeFileSync('docs/test-results.json', JSON.stringify(report, null, 2));
+fs.mkdirSync('work/qa', { recursive: true });
+fs.writeFileSync('work/qa/test-results.json', JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

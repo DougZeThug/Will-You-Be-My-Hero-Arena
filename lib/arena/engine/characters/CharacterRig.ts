@@ -2,6 +2,7 @@ import type * as Phaser from 'phaser';
 import type { PuppetPose } from '../../puppet-motion';
 import type { XY } from '../events/ArenaEvent';
 import type { ReleaseFrame } from '../events/ArenaEvent';
+import type { Attempt, MotionPersonality } from '../../model';
 import type { LoadedCharacter } from '../scenes/CharacterAssetLoader';
 import type { CharacterProfile } from './CharacterProfile';
 import type { CharacterPerformanceController } from '../performance/CharacterPerformanceController';
@@ -46,12 +47,31 @@ export interface CharacterRig {
   /** Horizontal draw width during a view turn (1 = open, 0 = edge-on). */
   setViewWidth?(width: number): void;
   readonly backend?: string;
+  /** Legacy rig family, for rigs that declare no `backend`: the connected
+   * paper mesh or the installed pose-pack frames. */
+  readonly family?: 'paper' | 'frames';
+  /** The rig has authored timelines (see AuthoredCharacterRig). */
+  readonly authored?: boolean;
+  /** Sockets the rig can answer; absent means all of them. */
+  readonly sockets?: readonly SocketName[];
   /** The rig already draws itself at the court lane depth (feet, shadow,
    * sockets), so the controller must not scale its root by it again. */
   readonly laneDepthApplied?: boolean;
   readonly performance?: CharacterPerformanceController;
   readonly heldObjectLayer?: Phaser.GameObjects.Container;
   debugInfo?(): Record<string, unknown>;
+  /** The rig draws its own ground shadow; hides it when the presentation
+   * draws one instead. */
+  hideShadow?(): void;
+  /** The rig plays a whole throw from the attempt itself (pose-pack frames). */
+  perform?(
+    a: Attempt,
+    time: number,
+    personality: MotionPersonality,
+    reduced: boolean,
+  ): void;
+  /** Where that rig puts the release, in unscaled world space. */
+  releasePoint?(a: Attempt): XY;
   apply(pose: PuppetPose, clip?: string, progress?: number): void;
   socket(name: SocketName): XY;
   socketTransform?(name: SocketName): XY & { angle: number };
@@ -60,6 +80,7 @@ export interface CharacterRig {
 /** Authored timelines expose semantic markers and deterministic socket sampling.
  * The host owns the implementation; the engine never imports an editor runtime. */
 export interface AuthoredCharacterRig extends CharacterRig {
+  readonly authored: true;
   readonly continuousThrow?: boolean;
   applyBlend?(
     from: string,
@@ -74,12 +95,7 @@ export interface AuthoredCharacterRig extends CharacterRig {
   releaseMotion?(clip: string): ReleaseFrame;
 }
 export function isAuthoredRig(rig: CharacterRig): rig is AuthoredCharacterRig {
-  const authored = rig as Partial<AuthoredCharacterRig>;
-  return (
-    typeof authored.duration === 'function' &&
-    typeof authored.marker === 'function' &&
-    typeof authored.sampleSocket === 'function'
-  );
+  return rig.authored === true;
 }
 /** Per-game injection avoids global rig registrations leaking between Lab runs. */
 export interface CharacterRigProvider {

@@ -2,10 +2,10 @@ import {
   createWeightedMesh,
   at,
   blend,
-  smooth,
   type Influence,
 } from '../authoring/weighted-mesh';
-import type { Vec } from '../authoring/skeleton';
+import { smoothRange as smooth } from '../../../lib/arena/math';
+import type { Vec } from './skeleton';
 import { anatomy, type Person } from './anatomy';
 export type Rect = [number, number, number, number];
 /** Source atlas stays intact. Each layer owns a cropped UV region, registered

@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { resolvePersonality } from '../../personality';
 import { project } from '../../simulation';
-import type { Attempt, Clip, MotionPersonality, Sport } from '../../model';
+import { laneZ } from '../../board-geometry';
+import type { Attempt, MotionPersonality } from '../../model';
 import { animation } from '../animation/AnimationRegistry';
 import {
   sampleClip,
@@ -9,10 +10,8 @@ import {
   actionPose,
   ritualDuration,
 } from '../animation/AnimationController';
-import { scoreTime, clamp01 } from '../../match-timeline';
-import { PaperCharacterRig } from './PaperCharacterRig';
-import { FrameCharacterRig } from './FrameCharacterRig';
-import { SpineCharacterRig } from './SpineCharacterRig';
+import { scoreTime } from '../../match-timeline';
+import { clamp01 } from '../../math';
 import { characterProfile } from './CharacterRegistry';
 import {
   isAuthoredRig,
@@ -20,7 +19,7 @@ import {
   type SocketName,
   type CharacterRigProvider,
 } from './CharacterRig';
-import type { LoadedCharacter } from '../scenes/BootScene';
+import type { LoadedCharacter } from '../scenes/CharacterAssetLoader';
 import type { DirectedAction } from '../core/BattlePlan';
 import type { CharacterProfile } from './CharacterProfile';
 import { puppetJoints } from '../../puppet-geometry';
@@ -29,7 +28,7 @@ import { mixPuppet, type PuppetPose } from '../../puppet-motion';
 import { handFrame } from '../../hand-geometry';
 import { sportRelease } from '../animation/SportMechanics';
 import type { ReleaseFrame } from '../events/ArenaEvent';
-import { smooth } from '../../match-timeline';
+import { smooth } from '../../math';
 import { squashScale } from '../motion/SquashStretch';
 export class CharacterController {
   readonly rig: CharacterRig;
@@ -51,7 +50,7 @@ export class CharacterController {
     profile?: CharacterProfile,
     provider?: CharacterRigProvider,
   ) {
-    this.base = project({ x: 1, y: 0, z: actor * 3.5 });
+    this.base = project({ x: 1, y: 0, z: laneZ(actor) });
     this.profile =
       profile ?? characterProfile(loaded.asset.cardId, loaded.asset);
     this.personality = resolvePersonality(loaded.asset, loaded.asset.cardId);
@@ -113,7 +112,7 @@ export class CharacterController {
     legacy = this.personality,
     idleBefore?: string,
   ) {
-    if (this.rig instanceof FrameCharacterRig) {
+    if (this.rig.perform) {
       this.renderedAnimation = {
         clip: 'frame:' + a.sport,
         progress: clamp01((time - a.start) / (a.end - a.start)),
@@ -127,8 +126,6 @@ export class CharacterController {
       d,
       time,
       this.profile,
-      legacy,
-      this.releaseLocal(a, d),
       reduced,
       idleBefore,
     );
@@ -214,11 +211,8 @@ export class CharacterController {
     this.observe(pose, clip, progress);
     this.rig.apply(pose);
   }
-  releaseLocal(a: Attempt, d: DirectedAction) {
-    return sportRelease(a.sport, d.shot);
-  }
   releaseWorld(a: Attempt, d: DirectedAction): ReleaseFrame {
-    const desired = this.releaseLocal(a, d);
+    const desired = sportRelease(a.sport, d.shot);
     // Local hand offsets grow from the foot base, so scale them with the root.
     const at = (x: number, y: number) => ({
       x: this.base.x + x * this.depth,
@@ -226,8 +220,8 @@ export class CharacterController {
     });
     // The released object starts at the figure's own depth, matching hold().
     const scale = this.depth;
-    if (this.rig instanceof FrameCharacterRig) {
-      const r = project(a.release);
+    if (this.rig.releasePoint) {
+      const r = this.rig.releasePoint(a);
       return this.depth === 1
         ? { ...r, scale }
         : { ...at(r.x - this.base.x, r.y - this.base.y), scale };
@@ -249,8 +243,6 @@ export class CharacterController {
           d,
           a.releaseAt,
           this.profile,
-          this.personality,
-          desired,
         ),
         hand = handFrame(
           puppetJoints(pose, this.loaded.puppet).rightArm,
@@ -275,7 +267,7 @@ export class CharacterController {
     this.renderedAnimation = {
       clip,
       progress,
-      pose: this.rig instanceof PaperCharacterRig ? { ...pose } : null,
+      pose: this.rig.family === 'paper' ? { ...pose } : null,
     };
   }
   debugSnapshot() {
@@ -283,8 +275,7 @@ export class CharacterController {
     const root = this.rig.root,
       matrix = root.getWorldTransformMatrix();
     const socket = (name: SocketName) => {
-      if (this.rig instanceof FrameCharacterRig && name !== 'throwingHand')
-        return null;
+      if (this.rig.sockets && !this.rig.sockets.includes(name)) return null;
       try {
         const local = this.rig.socket(name),
           world = matrix.transformPoint(local.x, local.y);
@@ -299,11 +290,7 @@ export class CharacterController {
       name: this.profile.name,
       rig:
         this.rig.backend ??
-        (this.rig instanceof PaperCharacterRig
-          ? 'connected-paper'
-          : this.rig instanceof SpineCharacterRig
-            ? 'spine'
-            : 'frame-pack'),
+        (this.rig.family === 'paper' ? 'connected-paper' : 'frame-pack'),
       rigDetails: this.rig.debugInfo?.() ?? null,
       root: {
         x: root.x,

@@ -3,9 +3,9 @@ export async function testReferenceThrow({ check }) {
   const { AttachmentManager } =
     await import('../.test-build/engine/equipment/AttachmentManager.mjs');
   const { sampleRoot } =
-    await import('../.test-build/engine/motion/RootCurve.mjs');
+    await import('../.test-build/lab/human-motion/motion/RootCurve.mjs');
   const { advanceBag, bagContact } =
-    await import('../.test-build/engine/events/cornhole/ScreenBagDynamics.mjs');
+    await import('../.test-build/lab/human-motion/events/ScreenBagDynamics.mjs');
   for (const dt of [1 / 60, 1 / 120, 1 / 144]) {
     const a = new AttachmentManager();
     a.attach('bag');

@@ -19,7 +19,7 @@ export const GESTURES:AnimationClip[]=[
  gesture('hold_follow','celebration',['airmail','focused','clutch'],.95,.32,[k(.25,{handRX:95,handRY:-300,head:-8}),k(.68,{handRX:95,handRY:-300}),k(.82,{handRX:71,handRY:-236,head:-2})]),
  gesture('finger_guns','celebration',['humor','flashy','confident'],1.05,.65,[k(.20,{handRX:42,handRY:-213,handLX:-32,handLY:-204,body:-3}),k(.43,{handRX:126,handRY:-245,handLX:70,handLY:-227,head:-7}),k(.58,{handRX:114,handRY:-258,handLX:65,handLY:-240,body:-5}),k(.77,{handRX:107,handRY:-235,handLX:-27,handLY:-197})]),
  gesture('double_fist','celebration',['intense','clutch'],1.1,.75,[k(.20,{handLX:-33,handLY:-208,handRX:35,handRY:-212,hipY:-164}),k(.42,{handLX:-72,handLY:-305,handRX:74,handRY:-306,hipY:-176,head:-9}),k(.58,{handLX:-56,handLY:-277,handRX:58,handRY:-276}),k(.73,{handLX:-73,handLY:-307,handRX:77,handRY:-310,head:-5})]),
- gesture('jump_fist','celebration',['flashy','clutch','rare'],1.25,.9,[k(.2,{hipY:-150,handRX:39,handRY:-195,head:5}),k(.4,{hipY:-198,footLY:-38,footRY:-39,handRX:85,handRY:-329,handLX:-85,handLY:-227,head:-7},'power2.out'),k(.62,{hipY:-154,footLY:-22,footRY:-22,handRX:94,handRY:-267},'power2.in'),k(.81,{hipY:-172,handRX:53,handRY:-224})],[{at:.64,name:'footstep'},{at:.64,name:'effect',value:'dust'}]),
+ gesture('jump_fist','celebration',['flashy','clutch','rare'],1.25,.9,[k(.2,{hipY:-150,handRX:39,handRY:-195,head:5}),k(.4,{hipY:-198,footLY:-38,footRY:-39,handRX:85,handRY:-329,handLX:-85,handLY:-227,head:-7},'power2.out'),k(.62,{hipY:-154,footLY:-22,footRY:-22,handRX:94,handRY:-267},'power2.in'),k(.81,{hipY:REST.hipY,handRX:53,handRY:-224})],[{at:.64,name:'footstep'},{at:.64,name:'effect',value:'dust'}]),
  gesture('head_shake','reaction',['focused','subtle','annoyed'],.85,.23,[k(.22,{head:11}),k(.39,{head:-8}),k(.56,{head:9}),k(.75,{head:3})]),
  gesture('inspect_hand','reaction',['focused','annoyed'],.85,.3,[k(.25,{handRX:44,handRY:-229,head:14}),k(.54,{handRX:57,handRY:-239,head:11}),k(.72,{handRX:86,handRY:-226,head:3})]),
  gesture('stare_board','reaction',['calm','subtle','disbelief'],.75,.12,[k(.23,{head:-6,body:-2}),k(.72,{head:-6,body:-2})]),
@@ -37,7 +37,7 @@ export const GESTURES:AnimationClip[]=[
 // Cartoon gait: the hips dip at each plant and rise through the passing pose
 // (bob), the torso leans into faster gaits, and runs float between steps.
 const gait=(id:string,stride:number,lift:number,duration:number,lean=0,bob=2,float=0):AnimationClip=>{
- const up=-172-bob-float,down=-172+bob;
+ const up=REST.hipY-bob-float,down=REST.hipY+bob;
  return gesture(id,'locomotion',['locomotion'],duration,.4,[
  k(.16,{footRX:41+stride,footRY:-22-lift,footLY:-22-float,hipX:stride*.18,hipY:up,handLX:-65,handLY:-166,handRX:42,handRY:-161,body:lean-2}),
  k(.34,{footRX:41+stride,footRY:-22,footLY:-22,hipX:stride*.42,hipY:down,footLX:-40+stride*.28,body:lean}),

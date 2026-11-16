@@ -1,7 +1,8 @@
 import { AnimationGraph } from '../motion/AnimationGraph';
 import { AttachmentManager } from '../equipment/AttachmentManager';
 import { performanceActions } from './Choreography';
-import { validatePerformanceProfile } from './PerformanceProfiles';
+import { OBSERVE_CLIPS, PERFORMANCE_CLIPS, RECOVER_AFTER } from './ClipNames';
+import { validatePerformanceProfile } from './ProfileValidation';
 import {
   permitsActionEntry,
   permitsPerformanceTransition,
@@ -18,7 +19,19 @@ import type {
   PerformanceObservation,
 } from './PerformanceTypes';
 
-export const PERFORMANCE_SUBSTEP = 1 / 120;
+const PERFORMANCE_SUBSTEP = 1 / 120;
+/** Seconds a throw waits for its result before recovering without a
+ * celebration. */
+const RESULT_TIMEOUT = 8;
+/** Event announced on entering a performance state (when it has one). */
+const ENTER_EVENTS: Partial<Record<PerformanceState, PerformanceEventName>> = {
+  anticipate: 'ANTICIPATION_STARTED',
+  windup: 'WINDUP_STARTED',
+  followThrough: 'FOLLOW_THROUGH_STARTED',
+  celebrate: 'CELEBRATION_STARTED',
+  reactPositive: 'REACTION_STARTED',
+  reactNegative: 'REACTION_STARTED',
+};
 /** Substep ending on the next absolute 1/120 s boundary of the performance
  * clock, so hand sampling (and the release velocity fitted from it) never
  * depends on how a caller partitions its advances: step(a) then step(b)
@@ -95,7 +108,7 @@ export class CharacterPerformanceController {
     runtime.evaluate(this.graph, 0, 0, undefined, false);
   }
   private idle() {
-    const idle = this.runtime.clips.get('idle');
+    const idle = this.runtime.clips.get(PERFORMANCE_CLIPS.idle);
     if (!idle) throw Error('Performance runtime needs an idle fallback');
     this.graph.request(idle, true);
   }
@@ -141,15 +154,8 @@ export class CharacterPerformanceController {
       throw Error(`Invalid performance transition ${this.state} → ${state}`);
     this.state = state;
     this.emit('STATE_CHANGED');
-    const event: Partial<Record<PerformanceState, PerformanceEventName>> = {
-      anticipate: 'ANTICIPATION_STARTED',
-      windup: 'WINDUP_STARTED',
-      followThrough: 'FOLLOW_THROUGH_STARTED',
-      celebrate: 'CELEBRATION_STARTED',
-      reactPositive: 'REACTION_STARTED',
-      reactNegative: 'REACTION_STARTED',
-    };
-    if (event[state]) this.emit(event[state]!);
+    const event = ENTER_EVENTS[state];
+    if (event) this.emit(event);
   }
   perform(name: string, request: PerformanceRequest = {}): number | null {
     if (this.destroyed) return null;
@@ -270,13 +276,7 @@ export class CharacterPerformanceController {
   /** Context only owns the existing base layer. The action layer retains every
    * committed throw, response and contact; readiness never queues behind this. */
   observe(context: PerformanceObservation) {
-    const id = {
-      rest: 'idle',
-      prepare: 'observePrepare',
-      flight: 'observeFlight',
-      acknowledge: 'observeAcknowledge',
-    }[context.mode];
-    const clip = this.runtime.clips.get(id);
+    const clip = this.runtime.clips.get(OBSERVE_CLIPS[context.mode]);
     if (!clip) return;
     if (
       this.observation?.mode !== context.mode ||
@@ -363,7 +363,9 @@ export class CharacterPerformanceController {
           if (until > 1e-9) dt = Math.min(dt, until);
         }
         if (segment.waitForResult) {
-          const until = a.result ? a.result.at - this.time : 8 - a.segmentTime;
+          const until = a.result
+            ? a.result.at - this.time
+            : RESULT_TIMEOUT - a.segmentTime;
           if (until > 1e-9) dt = Math.min(dt, until);
         }
       }
@@ -411,7 +413,7 @@ export class CharacterPerformanceController {
         }
         if (
           a &&
-          marker.clip === 'chestTap' &&
+          marker.clip === PERFORMANCE_CLIPS.chestTap &&
           marker.name.startsWith('chestTapContact')
         )
           this.emit('CELEBRATION_CONTACT');
@@ -434,7 +436,9 @@ export class CharacterPerformanceController {
         const response: PerformanceSegment[] = [
           {
             state: a.result.success ? 'reactPositive' : 'reactNegative',
-            clip: a.result.success ? 'positive' : 'negative',
+            clip: a.result.success
+              ? PERFORMANCE_CLIPS.positive
+              : PERFORMANCE_CLIPS.negative,
             interruptible: true,
           },
         ];
@@ -445,7 +449,7 @@ export class CharacterPerformanceController {
             interruptible: true,
           });
         a.segments.splice(a.index + 1, 0, ...response);
-      } else if (a.segmentTime < 8) return;
+      } else if (a.segmentTime < RESULT_TIMEOUT) return;
       else
         this.emit('VALIDATION_WARNING', {
           detail: 'Result timeout; recovering without a celebration',
@@ -457,14 +461,7 @@ export class CharacterPerformanceController {
     else {
       const next = a.segments[a.index];
       if (next.state === 'recover')
-        next.clip =
-          {
-            watch: 'recoverWatch',
-            positive: 'recoverPositive',
-            negative: 'recoverNegative',
-            nod: 'recoverRest',
-            chestTap: 'recoverRest',
-          }[s.clip] ?? next.clip;
+        next.clip = RECOVER_AFTER[s.clip] ?? next.clip;
       this.startSegment();
     }
   }

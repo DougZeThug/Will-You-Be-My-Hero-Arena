@@ -2,13 +2,13 @@ import * as Phaser from 'phaser';
 import type { ArenaCharacter } from './ArenaCharacter';
 import type { LoadedCharacter } from '../scenes/CharacterAssetLoader';
 import { createCharacterRig } from './createCharacterRig';
-import { PaperCharacterRig } from './PaperCharacterRig';
 import type { CharacterRig } from './CharacterRig';
 import type { CharacterRigProvider } from './CharacterRig';
-import { clamp } from '../input/InputActions';
+import { clamp, clamp01, smoothstep } from '../../math';
 import { mixPuppet } from '../../puppet-motion';
 import { squashOffset, squashScale } from '../motion/SquashStretch';
 import { presentedTime } from './PresentationClock';
+import { PERFORMANCE_CLIPS } from '../performance/ClipNames';
 import {
   chooseView,
   viewWidths,
@@ -77,15 +77,11 @@ export class CharacterPresentation {
     }
     if (this.rig.drive) {
       this.front = createCharacterRig(scene, loaded, character.profile, true);
-      if (this.front instanceof PaperCharacterRig)
-        this.front.shadow.setVisible(false);
+      this.front.hideShadow?.();
     }
-    if (this.rig instanceof PaperCharacterRig)
-      this.rig.shadow.setVisible(false);
+    this.rig.hideShadow?.();
     this.shadow = scene.add.ellipse(0, 0, 80, 10, 0x201a13, 0.26);
-    this.shadow.setVisible(
-      !('performance' in this.rig && this.rig.performance),
-    );
+    this.shadow.setVisible(!this.rig.performance);
     this.glow = scene.add.graphics();
     this.card = scene.add.container(0, 0, [
       this.glow,
@@ -95,13 +91,9 @@ export class CharacterPresentation {
       scene.add.image(0, -68, loaded.cardKey).setDisplaySize(86, 126),
     ]);
   }
-  /** Keep runtime-owned presentation effects aligned with the live setting. */
   setReduced(reduced: boolean) {
     this.reduced = reduced;
-    const runtime = this.rig.performance?.runtime as
-      | { reducedMotion?: boolean }
-      | undefined;
-    if (runtime && 'reducedMotion' in runtime) runtime.reducedMotion = reduced;
+    this.rig.performance?.runtime.setReducedMotion?.(reduced);
   }
   /** Cartoon beats from the simulation: stretch on takeoff, squash on
    * landing, recoil on a hit. Evaluated from the beat times, so it is
@@ -135,7 +127,7 @@ export class CharacterPresentation {
   private shownFacing(time: number) {
     const facing = this.facing ?? 1,
       u = clamp((time - this.flipAt) / 0.1),
-      f = this.flipFrom + (facing - this.flipFrom) * u * u * (3 - 2 * u);
+      f = this.flipFrom + (facing - this.flipFrom) * smoothstep(u);
     return u >= 1
       ? facing
       : Math.sign(f || facing) * Math.max(0.04, Math.abs(f));
@@ -184,7 +176,7 @@ export class CharacterPresentation {
     const c = this.character,
       b = presentedBody(c, alpha),
       u = clamp((time - this.index * 0.2) / 1.05),
-      ease = u * u * (3 - 2 * u),
+      ease = smoothstep(u),
       offset = (1 - ease) * -55,
       lift = Math.sin(ease * Math.PI) * 26,
       q =
@@ -304,7 +296,9 @@ export class CharacterPresentation {
     if (!performance) return;
     const c = this.character,
       timeline = c.animation.timeline;
-    const underhand = performance.runtime.clips.get('underhand');
+    const underhand = performance.runtime.clips.get(
+      PERFORMANCE_CLIPS.underhand,
+    );
     const marker = (name: string) =>
       underhand?.markers.find((m) => m.name === name)?.at;
     const releaseAt = marker('equipmentRelease') ?? 0,
@@ -357,12 +351,12 @@ export class CharacterPresentation {
     if (
       this.performanceAction !== null &&
       !performance.released &&
-      performance.segmentClip === 'underhand'
+      performance.segmentClip === PERFORMANCE_CLIPS.underhand
     ) {
       const t = performance.segmentTime;
       if (this.liveRelease === null)
         // Charging: ease into a held top of the backswing.
-        target = Math.max(0, Math.min(1, (peakAt + 0.05 - t) / 0.2));
+        target = clamp01((peakAt + 0.05 - t) / 0.2);
       else {
         const remaining = releaseAt - t,
           left = this.liveRelease - timeline.time;
@@ -413,8 +407,7 @@ export class CharacterPresentation {
   }
   get backend() {
     return (
-      this.rig.backend ??
-      (this.rig instanceof PaperCharacterRig ? 'paper' : 'frames')
+      this.rig.backend ?? (this.rig.family === 'paper' ? 'paper' : 'frames')
     );
   }
   debugInfo() {

@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { CARDS, type AssetManifest } from '@/lib/arena/model';
 import { cardImageUrl } from '@/lib/arena/character-registry';
 import {
@@ -12,10 +12,15 @@ import {
   bindingsFor,
   invalidBinding,
   keyConflict,
+  isKeyboardDevice,
+  keyboardLayoutOf,
   validateBindings,
   type Bindings,
 } from '@/lib/arena/engine/input/InputBindings';
-import { visibleAction } from '@/lib/arena/engine/controllers/EventActionMap';
+import {
+  visibleAction,
+  visibleActions,
+} from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
@@ -25,9 +30,7 @@ const BINDINGS_KEY = 'wybmh-input-bindings-v2',
   LEGACY_BINDINGS_KEY = 'wybmh-input-bindings-v1';
 type SavedBindings = Partial<Record<string, Bindings>>;
 const remappable = (device: string) =>
-  device === 'keyboard' ||
-  device === 'keyboard2' ||
-  device.startsWith('gamepad:');
+  isKeyboardDevice(device) || device.startsWith('gamepad:');
 function readSavedBindings(): SavedBindings {
   const saved: SavedBindings = {};
   if (typeof localStorage === 'undefined') return saved;
@@ -62,7 +65,7 @@ function readSavedBindings(): SavedBindings {
   return saved;
 }
 const deviceBindings = (device: string, saved = readSavedBindings()) =>
-  saved[device] ?? bindingsFor(device === 'keyboard2' ? 1 : 0);
+  saved[device] ?? bindingsFor(keyboardLayoutOf(device));
 const slot = (i: number, saved?: SavedBindings): PlayerSlot => {
   const device = i === 0 ? 'keyboard' : 'ai';
   return {
@@ -91,8 +94,6 @@ const INPUT_NAMES: Record<string, string> = {
   celebrate: 'celebrate',
   pause: 'pause',
 };
-const isKeyboard = (device: string) =>
-  device === 'keyboard' || device === 'keyboard2';
 export default function PlayableArena({
   imports,
   reduced,
@@ -105,7 +106,16 @@ export default function PlayableArena({
       const saved = readSavedBindings();
       return [slot(0, saved), slot(1, saved)];
     }),
-    [movement, setMovement] = useState('lanes'),
+    // Per-event setup choices (EventPresentation.option), by option key.
+    [choices, setChoices] = useState<Record<string, string>>(() =>
+      Object.fromEntries(
+        playableEvents().flatMap((e) =>
+          e.presentation.option
+            ? [[e.presentation.option.key, e.presentation.option.initial]]
+            : [],
+        ),
+      ),
+    ),
     [active, setActive] = useState<LiveConfig | null>(null),
     [error, setError] = useState(''),
     [remapNotice, setRemapNotice] = useState<{
@@ -119,6 +129,10 @@ export default function PlayableArena({
     setError('');
     setPlayers((p) => p.map((s, j) => (i === j ? { ...s, ...patch } : s)));
   };
+  const controlMap = useMemo(
+    () => playableEvent(event).create().registerControls(),
+    [event],
+  );
   const actionLabel = (intent: string) =>
     intent === 'move'
       ? 'movement'
@@ -126,10 +140,7 @@ export default function PlayableArena({
         ? 'aiming'
         : intent === 'moveAxes' || intent === 'aimAxes'
           ? `the ${intent === 'moveAxes' ? 'move' : 'aim'} stick axis`
-          : (visibleAction(
-              playableEvent(event).create().registerControls().actions,
-              intent,
-            )?.label ??
+          : (visibleAction(controlMap.actions, intent)?.label ??
             INPUT_NAMES[intent] ??
             intent);
   const bindKey = (i: number, intent: Intent, code: string) => {
@@ -138,12 +149,12 @@ export default function PlayableArena({
     const p = players[i],
       slots = players
         .map((s, index) => ({ s, index }))
-        .filter(({ s, index }) => index === i || isKeyboard(s.device)),
+        .filter(({ s, index }) => index === i || isKeyboardDevice(s.device)),
       found = keyConflict(
         code,
         intent,
         slots.map(({ s }) => ({
-          layout: s.device === 'keyboard2' ? 1 : 0,
+          layout: keyboardLayoutOf(s.device),
           keys: s.bindings.keys,
         })),
         slots.findIndex(({ index }) => index === i),
@@ -184,10 +195,10 @@ export default function PlayableArena({
     // the per-key check, so the keyboard players are checked together here.
     const keyboards = players
         .map((s, index) => ({ s, index }))
-        .filter(({ s }) => isKeyboard(s.device)),
+        .filter(({ s }) => isKeyboardDevice(s.device)),
       clash = bindingsConflict(
         keyboards.map(({ s }) => ({
-          layout: s.device === 'keyboard2' ? 1 : 0,
+          layout: keyboardLayoutOf(s.device),
           keys: s.bindings.keys,
         })),
       );
@@ -224,7 +235,7 @@ export default function PlayableArena({
         asset: imports.find((a) => a.cardId === p.cardId),
       })),
       seed: crypto.randomUUID(),
-      options: { movement },
+      options: { ...choices },
     });
   };
   if (active)
@@ -238,13 +249,7 @@ export default function PlayableArena({
       />
     );
   const current = playableEvent(event),
-    map = current.create().registerControls(),
-    controls = map.actions.filter(
-      (a, i, all) =>
-        !a.hidden &&
-        !['move', 'aim'].includes(a.intent) &&
-        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
-    );
+    controls = visibleActions(controlMap);
   return (
     <section className="playable-setup">
       <div className="live-toolbar">
@@ -344,18 +349,25 @@ export default function PlayableArena({
           </button>
         </div>
       )}
-      {event === 'running' && (
-        <label className="movement-choice">
-          Course controls
+      {current.presentation.option && (
+        <label className={current.presentation.option.className}>
+          {current.presentation.option.label}
           <select
-            value={movement}
+            value={choices[current.presentation.option.key]}
             onChange={(e) => {
+              const option = current.presentation.option!;
               setError('');
-              setMovement(e.target.value);
+              setChoices((c) => ({
+                ...c,
+                [option.key]: option.parse(e.target.value),
+              }));
             }}
           >
-            <option value="lanes">Auto forward / change lanes</option>
-            <option value="free">Free steering / control acceleration</option>
+            {current.presentation.option.choices.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </label>
       )}
@@ -454,7 +466,7 @@ export default function PlayableArena({
                   onClick={() => {
                     setRemapNotice(null);
                     change(i, {
-                      bindings: bindingsFor(p.device === 'keyboard2' ? 1 : 0),
+                      bindings: bindingsFor(keyboardLayoutOf(p.device)),
                     });
                   }}
                 >

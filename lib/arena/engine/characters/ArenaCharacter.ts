@@ -10,8 +10,12 @@ import type { Vector } from '../input/InputActions';
 import { AnimationComponent } from './components/AnimationComponent';
 import { PersonalityComponent } from './components/PersonalityComponent';
 import { CharacterStats } from './components/CharacterStats';
-import { AbilityComponent } from './components/AbilityComponent';
+import {
+  AbilityComponent,
+  defaultAbilities,
+} from './components/AbilityComponent';
 import type { ClipMarker } from '../animation/AnimationEvents';
+import type { CharacterSubstate } from './CharacterStates';
 /** Contact of a precision (cornhole) throw: hole, board or miss. */
 export type ThrowContact = 'hole' | 'board' | 'miss';
 export interface CharacterComponent {
@@ -27,7 +31,7 @@ export class ArenaCharacter implements ControllableEntity {
   stamina = 100;
   score = 0;
   state: EntityState = 'idle';
-  substate = 'ready';
+  substate: CharacterSubstate = 'ready';
   moveIntent: Vector = { x: 0, y: 0 };
   aimIntent: Vector = { x: 0, y: 0 };
   animation: AnimationComponent;
@@ -59,11 +63,7 @@ export class ArenaCharacter implements ControllableEntity {
     this.personality = new PersonalityComponent(profile, random);
     this.stats = new CharacterStats(profile);
     this.abilities = new AbilityComponent(
-      profile.gameplay?.abilities ?? [
-        'precisionMode',
-        'burstSprint',
-        'powerStrike',
-      ],
+      profile.gameplay?.abilities ?? defaultAbilities(),
     );
     this.animation.idle = this.personality.choose('idle');
   }
@@ -173,9 +173,6 @@ export class ArenaCharacter implements ControllableEntity {
   }
   setPresentedHand(provider?: () => { x: number; y: number }) {
     this.presentedHand = provider;
-  }
-  getState() {
-    return this.state;
   }
   controlState() {
     return this.substate;

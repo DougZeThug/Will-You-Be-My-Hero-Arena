@@ -1,7 +1,6 @@
 import type * as Phaser from 'phaser';
 import type { ArenaCue } from '../core/LiveTypes';
-import { ImpactEffects } from './ImpactEffects';
-/** Seconds each live effect cue stays on screen. */
+import { CONTACT_GOLD, CONTACT_MISS, ImpactEffects } from './ImpactEffects';
 const LIFE: Record<string, number> = {
   hit: 0.42,
   block: 0.3,
@@ -59,7 +58,7 @@ export class EffectsManager {
         this.impact.star(c.x, c.y - 10, u, 0.7, 1500);
         this.impact.puff(c.x, c.y + 6, u * 1.2, 0.5, 1299);
       } else if (c.name === 'impact' || c.name === 'miss') {
-        this.impact.burst(c.x, c.y, u * 1.3, c.name === 'miss' ? 0xe79959 : 0xffce25, 1, 1301);
+        this.impact.burst(c.x, c.y, u * 1.3, c.name === 'miss' ? CONTACT_MISS : CONTACT_GOLD, 1, 1301);
         this.impact.puff(c.x, c.y + 6, u, 0.5, 1299);
       } else this.impact.burst(c.x, c.y, u, 0xffd025, 1, 1500);
     }

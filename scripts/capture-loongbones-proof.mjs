@@ -1,16 +1,12 @@
-import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { browserLaunchOptions } from './qa-server.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 const editorExport = process.argv.includes('--editor-export');
 const directory = editorExport
   ? 'work/qa/loongbones-editor-export'
   : 'work/qa/loongbones-proof';
 await fs.mkdir(directory, { recursive: true });
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage({
     viewport: { width: 1440, height: 1200 },

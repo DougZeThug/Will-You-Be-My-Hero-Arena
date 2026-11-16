@@ -1,6 +1,7 @@
 import type {Choreography} from '../../puppet-motion';
-export type AnimationCategory='idle'|'locomotion'|'entrance'|'ritual'|'throw'|'celebration'|'reaction'|'interaction';
-export type MarkerName=import('./AnimationEvents').AnimationMarker|'bagFlip'|'catch';
+export const ANIMATION_CATEGORIES=['idle','locomotion','entrance','ritual','throw','celebration','reaction','interaction'] as const;
+export type AnimationCategory=(typeof ANIMATION_CATEGORIES)[number];
+export type MarkerName=import('./AnimationEvents').GameplayMarkerName|'bagFlip'|'catch';
 export interface AnimationMarker {at:number;name:MarkerName;value?:string}
 export interface AnimationClip {
  id:string;category:AnimationCategory;tags:string[];duration:number;weight:number;

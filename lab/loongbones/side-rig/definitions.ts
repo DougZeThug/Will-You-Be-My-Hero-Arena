@@ -1,11 +1,12 @@
 import { danDefinition, dougDefinition } from '../arena/definitions';
 import type { WeightedRigDefinition } from '../arena/RigDefinition';
 import manifest from '../assets/cornhole-side-v3/provenance.json';
+import { sideReferenceScale, sideSourceOrigin } from './anatomy';
 export const sideDefinitions: WeightedRigDefinition[] = [
   danDefinition,
   dougDefinition,
 ].map((old) => {
-  const id = old.id as 'dan' | 'doug',
+  const id = old.id,
     info = manifest[id],
     hashes: Record<string, string> = info.assetsSha256;
   return {
@@ -14,8 +15,8 @@ export const sideDefinitions: WeightedRigDefinition[] = [
     armature: `${id}_side_v3`,
     path: '/loongbones/assets/cornhole-side-v3/',
     source: `/loongbones/assets/cornhole-side-v3/${id}_tex.png`,
-    sourceOrigin: { x: 510, y: id === 'dan' ? 1227 : 1210 },
-    scale: 371 / (id === 'dan' ? 1215 : 1191),
+    sourceOrigin: sideSourceOrigin(id),
+    scale: sideReferenceScale(id),
     layeredSource: true,
     gripAngleScale: 1,
     hashes: info.assetsSha256,

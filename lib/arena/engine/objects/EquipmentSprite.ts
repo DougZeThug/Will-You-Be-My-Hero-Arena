@@ -16,8 +16,9 @@ export function equipmentSprite(
   if (p.name === 'board') {
     // Fit the quieter finish to the existing board's source-pixel coordinate system.
     // The measured printed hole lands on the unchanged scoring anchor.
-    const sx = BOARD_FINISH.canonicalWidth / BOARD_FINISH.width,
-      sy = BOARD_FINISH.canonicalHeight / BOARD_FINISH.height;
+    // The canonical board drawing is EQUIPMENT_ART.board (2206 x 713 source px).
+    const sx = EQUIPMENT_ART.board.width / BOARD_FINISH.width,
+      sy = EQUIPMENT_ART.board.height / BOARD_FINISH.height;
     sprite
       .setScale(p.scale * sx, p.scale * sy)
       .setPosition(

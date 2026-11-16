@@ -1,20 +1,18 @@
 import fs from 'node:fs/promises';
-import { createHash } from 'node:crypto';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
+import { sha256 } from './lib/hash.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 const directory = 'lab/loongbones/assets/cornhole-motion-v2';
 const sources = {
   dan: ['dan-editor-r2', 'dan-arena-restored_ske.json', 'dan-editor-r2_tex'],
   doug: ['doug-weighted-v1', 'doug_ske.json', 'doug_tex'],
 };
-const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+const hash = sha256;
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
-  await page.goto('http://127.0.0.1:3010/loongbones/');
+  await page.goto(
+    `${process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010'}/loongbones/`,
+  );
   await fs.mkdir(directory, { recursive: true });
   const manifests = {};
   for (const [character, [folder, skeleton, texture]] of Object.entries(

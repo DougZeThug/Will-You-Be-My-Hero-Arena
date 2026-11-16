@@ -55,7 +55,7 @@ All equipment now stands on a shared lane baseline: 622 for the foreground and 4
 
 The entrance takes 2.65 seconds, with players staggered 0.74 seconds apart. Card impact, charge, clipped emergence, landing and pose settling follow the playback clock. Setup-dialog exit and asset readiness gate playback, so the first entrance is visible. Scores resolve within about 2.3 seconds; complete turns allow up to 3.7 seconds for natural reactions. Waiting idles use 16% amplitude. At the release instant, the drawing is fully visible at its registered hand and the projectile starts there immediately.
 
-`personality.ts` resolves and validates combinations. `match-timeline.ts` owns cadence and ordered phases. `summon-motion.ts` handles portals, `pose-motion.ts` handles character actions, and `grounding.ts` locates soles and card anchors. PixiJS performs the masks, pose blends, tint and transformations. GSAP now interpolates the articulated joint tracks; pose-motion remains the compatibility renderer for older eight-image packs.
+`personality.ts` resolves and validates combinations. `match-timeline.ts` owns cadence and ordered phases. `summon-motion.ts` handles portals, `pose-motion.ts` handles character actions, and `grounding.ts` locates soles and card anchors. Phaser performs the masks, pose blends, tint and transformations. GSAP now interpolates the articulated joint tracks; pose-motion remains the compatibility renderer for older eight-image packs.
 
 Personality is cosmetic. It never changes accuracy, targets, physics samples, scoring, rarity or awards. New matches snapshot the complete nested profile; existing recordings are not rewritten. Reduced motion removes travel, shaking, hops, tilt and scale changes while keeping readable states and poses.
 

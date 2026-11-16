@@ -1,10 +1,11 @@
 import {animationEase} from './animation-easing';
 
-import {type MotionPersonality,type Attempt} from './model';
+import {type MotionPersonality,type Attempt,type Sport} from './model';
 
 import {personalityMoves} from './personality';
 
-import {attemptBeats,clamp01,smooth} from './match-timeline';
+import {attemptBeats} from './match-timeline';
+import {clamp01,smooth} from './math';
 
 
 
@@ -157,6 +158,15 @@ function glidePose(a:PuppetPose,b:PuppetPose,velocity:PuppetPose,duration:number
  for(const k of Object.keys(REST) as (keyof PuppetPose)[])result[k]=(2*t3-3*t2+1)*a[k]+(-2*t3+3*t2)*b[k]+(arriving?t3-t2:t3-2*t2+t)*velocity[k]*duration;
  return result;
 }
+// Per-sport throw form for the puppet: wind-up overrides on top of the
+// personality's, whether the character's authored wind-up applies, and where the
+// off hand sits at release.
+const SPORT_PUPPET:Record<Sport,{wind?:Partial<PuppetPose>;authoredWindup:boolean;offHand:(release:{x:number;y:number})=>{x:number;y:number}}>={
+ cornhole:{authoredWindup:true,offHand:()=>({x:-75,y:-207})},
+ pong:{authoredWindup:true,offHand:()=>({x:-75,y:-207})},
+ football:{wind:{handRX:29,handRY:-309,handLX:-91,handLY:-241,body:-9},authoredWindup:false,offHand:()=>({x:-75,y:-207})},
+ basketball:{wind:{handRX:30,handRY:-324,handLX:9,handLY:-314,hipY:-156,head:-7},authoredWindup:false,offHand:release=>({x:release.x-21,y:release.y+11})},
+};
 export function puppetThrow(a:Attempt,time:number,p:MotionPersonality,release:{x:number;y:number},reduced=false,authored?:CharacterChoreography):PuppetPose{
 
  const b=attemptBeats(a),style=personalityMoves(p).throw,idle=puppetIdle(p,time,true,reduced,authored);
@@ -165,15 +175,16 @@ export function puppetThrow(a:Attempt,time:number,p:MotionPersonality,release:{x
 
  let wind={...REST,...winds[style]};
 
- if(a.sport==='football')wind={...wind,handRX:29,handRY:-309,handLX:-91,handLY:-241,body:-9};
+ const form=SPORT_PUPPET[a.sport],offHand=form.offHand(release);
 
- if(a.sport==='basketball')wind={...wind,handRX:30,handRY:-324,handLX:9,handLY:-314,hipY:-156,head:-7};
+ if(form.wind)wind={...wind,...form.wind};
 
- if(authored?.windup&&a.sport!=='basketball'&&a.sport!=='football')wind=sampleChoreography('',1,authored.windup);
 
- const released={...REST,handRX:release.x,handRY:release.y,handLX:a.sport==='basketball'?release.x-21:-75,handLY:a.sport==='basketball'?release.y+11:-207,body:0,head:-6,hipY:REST.hipY};
+ if(authored?.windup&&form.authoredWindup)wind=sampleChoreography('',1,authored.windup);
 
- if(time<b.throw){let u=clamp01((time-b.anticipation)/(b.throw-b.anticipation));if(authored?.windup&&a.sport!=='basketball'&&a.sport!=='football')return sampleChoreography('',u,authored.windup);if(style==='hesitate')u=u<.5?smooth(u/.5)*.75:.75+.25*smooth((u-.72)/.28);else u=smooth(u);return mixPuppet(REST,wind,u);}
+ const released={...REST,handRX:release.x,handRY:release.y,handLX:offHand.x,handLY:offHand.y,body:0,head:-6,hipY:REST.hipY};
+
+ if(time<b.throw){let u=clamp01((time-b.anticipation)/(b.throw-b.anticipation));if(authored?.windup&&form.authoredWindup)return sampleChoreography('',u,authored.windup);if(style==='hesitate')u=u<.5?smooth(u/.5)*.75:.75+.25*smooth((u-.72)/.28);else u=smooth(u);return mixPuppet(REST,wind,u);}
 
  const follow={...released,handRX:release.x+12,handRY:release.y+16,body:4,head:-3,hipX:4},velocity={...REST};
  for(const k of Object.keys(REST) as (keyof PuppetPose)[])velocity[k]=2*(follow[k]-released[k])/.18;

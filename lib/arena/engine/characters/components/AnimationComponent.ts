@@ -1,3 +1,4 @@
+import { smoothstep } from '../../../math';
 import { REST, mixPuppet, type PuppetPose } from '../../../puppet-motion';
 import { handFrame } from '../../../hand-geometry';
 import { puppetJoints, type PuppetAsset } from '../../../puppet-geometry';
@@ -5,9 +6,10 @@ import {
   ActionTimeline,
   type ClipMarker,
 } from '../../animation/AnimationEvents';
-import { semanticClip, REQUIRED_CLIP_MARKERS } from '../../animation/LiveClips';
+import { semanticClip, resolveGameplayClip } from '../../animation/LiveClips';
 import { splineMotion } from '../../animation/SplineMotion';
 import { blendLayer } from '../../animation/LayerMixer';
+import { throwDurationScale } from './AbilityComponent';
 import type { CharacterProfile } from '../CharacterProfile';
 /** Ground speed (px/s) at which each gait clip plays at its authored cadence. */
 const GAIT_SPEEDS: Record<string, number> = {
@@ -35,22 +37,14 @@ export class AnimationComponent {
     private geometry?: PuppetAsset,
   ) {}
   resolve(id: string) {
-    const alias = this.profile.gameplay?.animations?.[id] ?? id;
     try {
-      const clip = semanticClip(alias);
+      const { clip, rejected } = resolveGameplayClip(this.profile, id);
       // Defense in depth: a `gameplay.animations` alias that replaces a
       // clip requiring a specific marker (cornhole's throw clips wait for
       // `release`) with a markerless clip would wedge the event relying on
       // it. Fall back to the canonical clip so the engine keeps
       // progressing; `validateProfile` reports the bad alias at install.
-      const required = REQUIRED_CLIP_MARKERS[id];
-      if (
-        required &&
-        alias !== id &&
-        !required.every((name) => clip.markers.some((m) => m.name === name))
-      )
-        return semanticClip(id);
-      return clip;
+      return clip && !rejected ? clip : semanticClip(id);
     } catch {
       return semanticClip(id);
     }
@@ -71,9 +65,8 @@ export class AnimationComponent {
     this.blendTime = 0.12;
     duration ??=
       clip.duration *
-      (clip.category === 'throw' &&
-      this.profile.gameplay?.abilities?.includes('quickRelease')
-        ? 0.9
+      (clip.category === 'throw'
+        ? throwDurationScale(this.profile.gameplay?.abilities)
         : 1);
     this.timeline.start(
       clip.id,
@@ -93,7 +86,7 @@ export class AnimationComponent {
     this.blend = 0;
     this.blendTime = 0.16;
   }
-  sample(time: number, _speed = this.speed): PuppetPose {
+  sample(time: number): PuppetPose {
     const clip = this.timeline.clip
       ? this.resolve(this.timeline.clip)
       : this.resolve(this.locomotion || this.idle);
@@ -122,7 +115,7 @@ export class AnimationComponent {
       ? mixPuppet(
           this.from,
           pose,
-          this.blend * this.blend * (3 - 2 * this.blend),
+          smoothstep(this.blend),
         )
       : pose;
   }
@@ -151,7 +144,7 @@ export class AnimationComponent {
     }
     this.blend = Math.min(1, this.blend + dt / this.blendTime);
     this.timeline.update(dt, emit);
-    this.pose = this.sample(time, speed);
+    this.pose = this.sample(time);
   }
   handAt(time: number) {
     const pose = this.sample(time);

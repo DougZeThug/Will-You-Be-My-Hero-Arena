@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 export async function testPerformanceTimeline({ check }) {
   const { PerformanceTimeline } =
-    await import('../.test-build/engine/motion/PerformanceTimeline.mjs');
+    await import('../.test-build/lab/human-motion/motion/PerformanceTimeline.mjs');
   const { GestureMemory, performancePersonalities } =
     await import('../.test-build/engine/characters/PerformancePersonality.mjs');
   const { PropPerformance } =
-    await import('../.test-build/engine/equipment/PropPerformance.mjs');
+    await import('../.test-build/lab/human-motion/PropPerformance.mjs');
   let complete = false,
     transition = false,
     starts = 0;

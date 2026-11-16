@@ -4,10 +4,11 @@ import {
   placement,
   surfacePoint,
   equipmentDepthScale,
-  EQUIPMENT_GROUND,
-} from '../../equipment-layout';
+} from '../../equipment-geometry';
+import { SPORT_STAGE, EQUIPMENT_GROUND } from '../../sport-stage';
 import { EQUIPMENT_ART as ART } from '../../equipment-art';
 import { cupPosition } from '../../simulation';
+import { laneZ } from '../../board-geometry';
 import { equipmentSprite } from './EquipmentSprite';
 export class Equipment {
   private objects: Phaser.GameObjects.GameObject[] = [];
@@ -23,17 +24,15 @@ export class Equipment {
     this.front = [];
     for (let actor = 1; actor >= 0; actor--) {
       const p = placement(sport, actor),
+        stage = SPORT_STAGE[sport],
         art = ART[p.name],
         ground = p.y + EQUIPMENT_GROUND[p.name] * p.scale;
       const shadow = this.scene.add
         .ellipse(
           p.x + art.width * p.scale * 0.5,
           ground - 3,
-          Math.min(
-            sport === 'cornhole' ? 330 : 240,
-            art.width * p.scale * 0.88,
-          ),
-          sport === 'cornhole' ? 16 : 24,
+          Math.min(stage.shadow.maxWidth, art.width * p.scale * 0.88),
+          stage.shadow.height,
           0x141a15,
           0.25,
         )
@@ -42,12 +41,10 @@ export class Equipment {
       // request the complete source when reconstructing equipment after a score.
       const sprite = equipmentSprite(this.scene, p, 11);
       this.objects.push(shadow, sprite);
-      if (sport === 'football')
-        for (const [text, dx, dy] of [
-          ['3', 0, 0],
-          ['2', -ART.target.outer.x * 0.32, -ART.target.outer.y * 0.32],
-          ['1', ART.target.outer.x * 0.58, ART.target.outer.y * 0.58],
-        ] as [string, number, number][]) {
+      if (stage.scoreLabels)
+        for (const { text, ring } of stage.scoreLabels) {
+          const dx = ring * ART.target.outer.x,
+            dy = ring * ART.target.outer.y;
           const label = this.scene.add
             .text(p.anchor.x + dx * p.scale, p.anchor.y + dy * p.scale, text, {
               fontFamily: 'Impact',
@@ -60,27 +57,29 @@ export class Equipment {
             .setDepth(12);
           this.objects.push(label);
         }
-      if (sport === 'pong') {
-        const removed =
-          contacts.filter((a) => a.actor === actor).at(-1)?.removedCups ?? [];
-        for (const { id, pos } of Array.from({ length: 6 }, (_, id) => ({
-          id,
-          pos: surfacePoint('pong', actor, cupPosition(id, actor * 3.5)),
-        })).sort((a, b) => a.pos.y - b.pos.y)) {
+      if (stage.cups) {
+        const cups = stage.cups,
+          removed =
+            contacts.filter((a) => a.actor === actor).at(-1)?.removedCups ?? [];
+        for (const { id, pos } of Array.from(
+          { length: cups.count },
+          (_, id) => ({
+            id,
+            pos: surfacePoint(sport, actor, cupPosition(id, laneZ(actor))),
+          }),
+        ).sort((a, b) => a.pos.y - b.pos.y)) {
           if (removed.includes(id)) continue;
           const cup = this.scene.add
-            .image(
-              pos.x,
-              pos.y,
-              'equipment:' + (actor ? 'cup-orange' : 'cup-yellow'),
-            )
-            .setOrigin(0.5, actor ? 66 / 422 : 64 / 407)
+            .image(pos.x, pos.y, 'equipment:' + cups.textures[actor ? 1 : 0])
+            .setOrigin(0.5, cups.originY[actor ? 1 : 0])
             .setDepth(12);
-          cup.setScale((32 * equipmentDepthScale(sport, actor)) / cup.width);
+          cup.setScale(
+            (cups.width * equipmentDepthScale(sport, actor)) / cup.width,
+          );
           this.objects.push(cup);
         }
       }
-      if (sport === 'basketball') {
+      if (stage.frontNet) {
         const b = ART.hoop.front,
           texture = this.scene.textures.get('equipment:hoop');
         if (!texture.has('front'))
@@ -104,7 +103,8 @@ export class Equipment {
   occlude(a: Attempt | undefined, time: number) {
     this.front.forEach((n) => n.setVisible(false));
     if (
-      a?.sport === 'basketball' &&
+      a &&
+      SPORT_STAGE[a.sport].frontNet &&
       time >= a.contactAt - 0.03 &&
       time < a.contactAt + 0.65
     )

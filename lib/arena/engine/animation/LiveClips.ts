@@ -306,7 +306,7 @@ clip('running.stumble', 'reaction', 0.75, [
     1,
     {
       body: 0,
-      hipY: -172,
+      hipY: REST.hipY,
       handLX: -53,
       handLY: -142,
       handRX: 55,
@@ -332,7 +332,7 @@ clip('running.slide', 'locomotion', 0.62, [
   [
     1,
     {
-      hipY: -172,
+      hipY: REST.hipY,
       body: 0,
       footRX: 41,
       footLX: -40,
@@ -386,16 +386,45 @@ export const REQUIRED_CLIP_MARKERS: Partial<Record<string, string[]>> = {
   'combat.grapple': ['hitboxOn'],
   'combat.heavy': ['hitboxOn'],
 };
+const SEMANTIC_ALIASES: Record<string, string> = {
+  'locomotion.walk': 'walk',
+  'locomotion.run': 'run',
+  'locomotion.sprint': 'sprint',
+  'locomotion.idle': 'idle_breathe',
+  'combat.heavy': 'combat.cross',
+  'reaction.success': 'fist_pump',
+  'reaction.failure': 'head_shake',
+  'celebration.chestTap': 'chest_tap',
+};
 export function semanticClip(id: string): AnimationClip {
-  const aliases: Record<string, string> = {
-    'locomotion.walk': 'walk',
-    'locomotion.run': 'run',
-    'locomotion.sprint': 'sprint',
-    'locomotion.idle': 'idle_breathe',
-    'combat.heavy': 'combat.cross',
-    'reaction.success': 'fist_pump',
-    'reaction.failure': 'head_shake',
-    'celebration.chestTap': 'chest_tap',
+  return animation(SEMANTIC_ALIASES[id] ?? id);
+}
+/**
+ * The clip a profile's `gameplay.animations` alias selects for a semantic id,
+ * and whether it is rejected for lacking a marker `REQUIRED_CLIP_MARKERS` asks
+ * of that id. `clip` is null when the alias names no registered clip (the
+ * caller decides: the runtime falls back to the canonical clip, install-time
+ * validation leaves unknown targets to that fallback). `lookup` resolves the
+ * alias to a clip; it throws for an unknown one.
+ */
+export function resolveGameplayClip(
+  profile: { gameplay?: { animations?: Record<string, string> } },
+  id: string,
+  lookup: (id: string) => AnimationClip = semanticClip,
+): { clip: AnimationClip | null; rejected: boolean } {
+  const alias = profile.gameplay?.animations?.[id] ?? id;
+  let clip: AnimationClip;
+  try {
+    clip = lookup(alias);
+  } catch {
+    return { clip: null, rejected: false };
+  }
+  const required = REQUIRED_CLIP_MARKERS[id];
+  return {
+    clip,
+    rejected:
+      !!required &&
+      alias !== id &&
+      !required.every((name) => clip.markers.some((m) => m.name === name)),
   };
-  return animation(aliases[id] ?? id);
 }

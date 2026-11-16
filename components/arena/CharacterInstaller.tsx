@@ -5,9 +5,9 @@ import {Button} from '@/components/ui/button';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {PACK_LIMIT,validateCharacterPack,type CharacterPack} from '@/lib/arena/character-pack';
 import {verifyPackImages,installCharacterPack,packConflict} from '@/lib/arena/character-store';
-import {POSE_NAMES} from '@/lib/arena/paper';
+import {POSE_NAMES,type PaperPose} from '@/lib/arena/paper';
 
-const names:Record<string,string>={ready:'Ready', 'underarm-backswing':'Backswing','underarm-release':'Release','football-cocked':'Football','basketball-shot':'Basketball',celebrate:'Celebrate'};
+const names:Record<PaperPose,string>={ready:'Ready', 'underarm-backswing':'Backswing','underarm-release':'Release','football-cocked':'Football','basketball-shot':'Basketball',celebrate:'Celebrate'};
 export default function CharacterInstaller({onInstalled}:{onInstalled:(id:string)=>void}){
  const [open,setOpen]=useState(false),[pack,setPack]=useState<CharacterPack|null>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[error,setError]=useState('');
  const input=useRef<HTMLInputElement>(null),request=useRef(0);

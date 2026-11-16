@@ -1,7 +1,7 @@
+import { smooth } from './math';
 import type { JointPoint } from './puppet-geometry';
 
 type Arm = { root: JointPoint; joint: JointPoint; end: JointPoint };
-const smooth = (v: number) => { const t = Math.max(0, Math.min(1, v)); return t * t * (3 - 2 * t); };
 
 /** A separate wrist inside the existing continuous illustration. Angle is a
  * local bend, not a rotation of the sleeve. The hand socket follows this same

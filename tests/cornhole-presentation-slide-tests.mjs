@@ -4,15 +4,9 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-/** Watch cornhole presentation: a board or hole bag touches down at
- * `presentationTouch` and slides to the immutable target (a board bag's centre
- * never crosses the drawn hole; it rides over drawn bags with a bounded lift);
- * a shortened slide stops early instead of creeping; a pushed bag is shoved
- * when the thrown bag reaches it, at its speed, and never snaps back; a hole
- * bag passes the target still moving, glides onto the drawn hole and drops
- * through it; the ring marks contactAt and the puff first impact. Misses,
- * direct shots and the constant-acceleration path stay frame-identical to the
- * legacy fixture. */
+/** Watch cornhole presentation: a bag slides from `presentationTouch` to the
+ * immutable target, never snapping back; misses, direct shots and the legacy
+ * path stay frame-identical to the fixture. */
 export async function testCornholePresentationSlide({ check }) {
   const {
       releasedBag,
@@ -33,7 +27,7 @@ export async function testCornholePresentationSlide({ check }) {
     { firstImpactTime, surfaceTravelSeconds, presentationShot } =
       await import('../.test-build/engine/events/cornhole/CornholePresentationTiming.mjs'),
     { surfacePoint, placement, boardDepthScale } =
-      await import('../.test-build/equipment-layout.mjs'),
+      await import('../.test-build/equipment-geometry.mjs'),
     { boardValue } =
       await import('../.test-build/engine/events/cornhole/CornholeBoard.mjs');
   const fixture = JSON.parse(

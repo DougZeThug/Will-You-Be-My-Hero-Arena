@@ -4,7 +4,6 @@ import {doug} from './profiles/doug';
 import {dan} from './profiles/dan';
 import {resolvePersonality,personalityMoves} from '../../personality';
 const profiles=new Map<string,CharacterProfile>([[doug.id,doug],[dan.id,dan]]);
-export function registerProfile(profile:CharacterProfile){profiles.set(profile.id,structuredClone(profile));}
 export function characterProfile(id:string,asset?:AssetManifest):CharacterProfile{
  if(asset?.performance)return structuredClone(asset.performance);
  const known=profiles.get(id);if(known)return structuredClone(known);

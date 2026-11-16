@@ -1,8 +1,10 @@
 import {type AssetManifest,type Attempt,type Sport,type MotionPersonality,type V3} from './model';
 import {FRAME_SCALE,releasePose,type PaperPose} from './paper';
-import {attemptBeats,smooth,clamp01,releaseLead,flightDuration,attemptLength,personalityTiming,TIMING} from './match-timeline';
+import {attemptBeats,flightDuration,personalityTiming,TIMING} from './match-timeline';
+import {smooth,clamp01} from './math';
 import {personalityMoves,motionStyle,DEFAULT_PERSONALITY} from './personality';
-import {contactScore,cupPosition,releasePosition,trajectory} from './simulation';
+import {SPORT_STAGE} from './sport-stage';
+import {contactScore,releasePosition,trajectory} from './simulation';
 
 export interface PaperMotion {from:PaperPose;to:PaperPose;mix:number;x:number;y:number;rotation:number;scale:number}
 export const stillPose=(frame:PaperPose='ready'):PaperMotion=>({from:frame,to:frame,mix:1,x:0,y:0,rotation:0,scale:1});
@@ -56,7 +58,7 @@ export function reactionMotion(personality:MotionPersonality,success:boolean,ela
 
 export function throwMotion(a:Attempt,time:number,reduced=false):PaperMotion {
  const personality=a.personality??DEFAULT_PERSONALITY,p=motionStyle(personality),style=personalityMoves(personality).throw,e=personality.energy,b=attemptBeats(a),idle=idleMotion(personality,time,true,reduced);
- const release=releasePose(a.sport),windup:PaperPose=a.sport==='basketball'?'basketball-shot':a.sport==='football'?'football-cocked':'underarm-backswing';
+ const release=releasePose(a.sport),windup:PaperPose=SPORT_STAGE[a.sport].paperPose.windup;
  let pose=stillPose();
  if(time<b.anticipation)return withIdle(pose,idle,1-smooth((time-a.start)/(b.anticipation-a.start)));
  if(time<b.throw){const u=clamp01((time-b.anticipation)/(b.throw-b.anticipation)),weight=style==='hesitate'?(u<.45?smooth(u/.45)*.65:u<.68?.65:.65+.35*smooth((u-.68)/.32)):smooth(u);pose=poseBlend('ready',windup,u/.34);pose.x=-p.lean*weight*e;pose.rotation=-p.angle*weight*e;pose.scale=1-.012*weight*e;if(style==='offbeat')pose.rotation+=Math.sin(u*Math.PI*2)*.014*e;if(style==='pendulum')pose.x+=Math.sin(u*Math.PI*2)*4*e;if(style==='drive')pose.scale-=.014*Math.sin(u*Math.PI)*e;if(style==='whip')pose.rotation-=.02*Math.sin(u*Math.PI)*e;}
@@ -90,7 +92,7 @@ export function motionSocket(asset:AssetManifest,pose:PaperMotion){
 
 export function previewAttempt(sport:Sport,personality:MotionPersonality,asset='dan',prepared?:AssetManifest):Attempt {
  const timing=personalityTiming(sport,personality),contact=timing.lead+flightDuration(sport),duration=flightDuration(sport);
- const targetId=sport==='pong'?0:undefined,target:V3=sport==='cornhole'?{x:9.0,y:0.16+(9.0-8)/1.9*0.34,z:0}:sport==='football'?{x:8.8,y:2.7,z:0}:sport==='pong'?cupPosition(0,0):{x:8.8,y:2.9,z:0};
+ const stage=SPORT_STAGE[sport],targetId=stage.cups?0:undefined,target:V3={x:stage.previewTarget.x,y:stage.previewTarget.y,z:0};
  // Anchor the flight at the release-pose hand socket, exactly as live attempts do.
  const release:V3=releasePosition(asset,sport,0,prepared),outcome=contactScore(sport,target,0,targetId),path=trajectory(release,target,duration,outcome.contact);
  return {id:'preview',index:0,round:0,actor:0,sport,personality,start:0,releaseAt:timing.lead,contactAt:contact,scoreAt:contact+TIMING.landing,end:timing.length,release,velocity:path.velocity,duration,target,trajectory:path.path,contact:outcome.contact,score:1,scoreAfter:[1,0],targetId,removedCups:[],boardState:[],modifiers:[],commentary:'',special:false};

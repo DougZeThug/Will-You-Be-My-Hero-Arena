@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 
 export async function testPersonalities({check,setup,m,s,a}){
  const p=await import('../.test-build/personality.mjs'),motion=await import('../.test-build/pose-motion.mjs'),summon=await import('../.test-build/summon-motion.mjs'),timeline=await import('../.test-build/match-timeline.mjs');
- const grounding=await import('../.test-build/grounding.mjs'),equipment=await import('../.test-build/equipment-layout.mjs'),art=await import('../.test-build/equipment-art.mjs');
+ const grounding=await import('../.test-build/grounding.mjs'),equipment=await import('../.test-build/equipment-geometry.mjs'),art=await import('../.test-build/equipment-art.mjs'),stage=await import('../.test-build/sport-stage.mjs');
  const pixels=new Uint8ClampedArray(80*100*4);for(let y=80;y<94;y++)for(let x=10;x<26;x++)pixels[(y*80+x)*4+3]=255;for(let y=85;y<100;y++)for(let x=53;x<73;x++)pixels[(y*80+x)*4+3]=255;
  const feet=grounding.footContacts(80,100,pixels,[40,100],.6);
  check(()=>assert.deepEqual(feet.map(f=>f.y),[-3.5999999999999996,0],'Sole contacts preserve the two actual foot heights in a stance'));
  check(()=>assert.ok(feet[0].x<0&&feet[1].x>0,'Contact shadows sit under each foot, not just the image midpoint'));
  const card0=grounding.cardPresentation({x:225,y:610}),card1=grounding.cardPresentation({x:417.5,y:477});
  check(()=>assert.deepEqual([card0.x-225,card0.y-610,card0.scale],[card1.x-417.5,card1.y-477,card1.scale],'Both cards have the same presentation offset'));
- for(const sport of m.SPORTS){const near=equipment.placement(sport,0),far=equipment.placement(sport,1);for(const [actor,item] of [[0,near],[1,far]]){const shape=art.EQUIPMENT_ART[item.name],ground=item.y+equipment.EQUIPMENT_GROUND[item.name]*item.scale;check(()=>assert.ok(Math.abs(ground-(622-actor*133))<1e-8,'Equipment stands on its lane floor'));}check(()=>assert.ok(far.scale<near.scale*.8,'The rear lane reads smaller for every sport'));}
+ for(const sport of m.SPORTS){const near=equipment.placement(sport,0),far=equipment.placement(sport,1);for(const [actor,item] of [[0,near],[1,far]]){const shape=art.EQUIPMENT_ART[item.name],ground=item.y+stage.EQUIPMENT_GROUND[item.name]*item.scale;check(()=>assert.ok(Math.abs(ground-(622-actor*133))<1e-8,'Equipment stands on its lane floor'));}check(()=>assert.ok(far.scale<near.scale*.8,'The rear lane reads smaller for every sport'));}
  const profiles=p.PERSONALITY_PRESETS.slice(0,4).map((preset,i)=>({preset,energy:1,tempo:1,seed:11+i}));
  for(const action of ['idle','entrance','celebrate','frustration','victory']){
   const traces=profiles.map(profile=>JSON.stringify(Array.from({length:12},(_,i)=>{const t=i*.09+.015;return action==='idle'?motion.idleMotion(profile,t):action==='entrance'?summon.summonState(t,0,profile):action==='victory'?motion.victoryMotion(profile,t,t):motion.reactionMotion(profile,action==='celebrate',t,1.2,t);} )));

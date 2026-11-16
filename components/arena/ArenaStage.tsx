@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ArenaOptions } from '@/lib/arena/engine/core/ArenaOptions';
 import type { ArenaGame } from '@/lib/arena/engine/core/ArenaGame';
-export type StageProps = ArenaOptions;
+import { loadRigProvider } from './rig-provider';
+type StageProps = ArenaOptions;
 export default function ArenaStage(props: StageProps) {
   const effectiveSport = props.recording?.setup.sport ?? props.sport;
   // The cornhole performance rig plays recorded Watch contests and the idle
@@ -46,9 +47,7 @@ export default function ArenaStage(props: StageProps) {
     void import('@/lib/arena/engine/core/ArenaGame')
       .then(async ({ ArenaGame }) => {
         const characterRigs = usePerformance
-            ? await (
-                await import('../../lab/performance/provider')
-              ).performanceMatchProvider()
+            ? await loadRigProvider({ mode: 'watch', sport: effectiveSport })
             : latest.current.characterRigs;
         if (disposed || !host.current) return;
         runtime.current = new ArenaGame(host.current, {

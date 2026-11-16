@@ -1,10 +1,10 @@
 import * as Phaser from 'phaser';
-import type { LoadedCharacter } from '../../lib/arena/engine/scenes/BootScene';
+import type { LoadedCharacter } from '../../lib/arena/engine/scenes/CharacterAssetLoader';
 import { prepareCharacterTextures } from '../../lib/arena/engine/scenes/CharacterAssetLoader';
 import {
   PARENTS,
   balanceEstimate,
-} from '../../lib/arena/engine/characters/anatomy/AnatomyPlan';
+} from '../anatomy/AnatomyPlan';
 import { DAN_SOURCE, DAN_FITTED_POSE } from './dan-registration';
 
 /** Static reference-source view, not an authored skeletal animation rig.

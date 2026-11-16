@@ -117,6 +117,9 @@ export interface CharacterAnimationRuntime {
     scale?: number;
     flatten?: number;
   };
+  /** Presentation-only: disables squash & stretch (reduced motion). Runtimes
+   * without presentation effects omit it. */
+  setReducedMotion?(reduced: boolean): void;
   reset(): void;
   destroy(): void;
 }

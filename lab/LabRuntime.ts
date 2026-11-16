@@ -2,13 +2,14 @@ import type * as Phaser from 'phaser';
 import { ArenaGame } from '../lib/arena/engine/core/ArenaGame';
 import { LiveArenaGame } from '../lib/arena/engine/core/LiveArenaGame';
 import { ArenaScene } from '../lib/arena/engine/scenes/ArenaScene';
-import { FrameTelemetry } from '../lib/arena/engine/core/FrameTelemetry';
+import { FrameTelemetry } from './FrameTelemetry';
 import { PlaybackClock } from '../lib/arena/clock';
 import { matchState } from '../lib/arena/match-timeline';
 import type { Intent } from '../lib/arena/engine/input/InputActions';
 import type { PadSnapshot } from '../lib/arena/engine/input/GamepadDevice';
 import { GamepadDevice } from '../lib/arena/engine/input/GamepadDevice';
 import { KeyboardDevice } from '../lib/arena/engine/input/KeyboardDevice';
+import { keyboardLayoutOf } from '../lib/arena/engine/input/InputBindings';
 import { characterTimeline } from './character-timeline';
 import {
   SCENARIOS,
@@ -29,7 +30,6 @@ const INTENTS = new Set(
     ' ',
   ),
 );
-/** The only browser API lives in this standalone dev entry. No production globals. */
 export class LabRuntime {
   readonly version = 1;
   ready = false;
@@ -185,7 +185,6 @@ export class LabRuntime {
     this.telemetry = undefined;
     this.clock?.stop();
     this.recorded?.destroy();
-    this.clock?.stop();
     this.live?.destroy();
     this.actor?.destroy();
     // Phaser defers destruction to the next step, including when its RAF is stopped.
@@ -438,7 +437,7 @@ export class LabRuntime {
             : new KeyboardDevice(
                 player.device,
                 player.bindings,
-                player.device === 'keyboard2' ? 1 : 0,
+                keyboardLayoutOf(player.device),
                 this.host,
               ),
         );

@@ -1,12 +1,12 @@
 import * as Phaser from 'phaser';
 import type { CharacterController } from '../lib/arena/engine/characters/CharacterController';
-import { DAN_ANATOMY } from '../lib/arena/engine/characters/anatomy/dan';
+import { DAN_ANATOMY } from './anatomy/dan';
 import {
   PARENTS,
   balanceEstimate,
   validateAnatomyPlan,
-  type Point,
-} from '../lib/arena/engine/characters/anatomy/AnatomyPlan';
+} from './anatomy/AnatomyPlan';
+import type { Vec2 } from '../lib/arena/engine/motion/MotionTypes';
 import {
   DEFAULT_RIG_QA,
   currentRigLandmarks,
@@ -129,9 +129,10 @@ export class RigInspector {
       court ? this.sourceCourt!.base.y : 625,
     );
     for (const object of root.list) {
-      if (object instanceof Phaser.GameObjects.Mesh)
-        object.setTint(options.silhouette ? 0 : 0xfff2df);
-      if (object instanceof Phaser.GameObjects.Image)
+      if (
+        object instanceof Phaser.GameObjects.Mesh ||
+        object instanceof Phaser.GameObjects.Image
+      )
         object.setTint(options.silhouette ? 0 : 0xfff2df);
     }
     this.graphics.clear();
@@ -153,7 +154,7 @@ export class RigInspector {
       );
       if (options.overlay) {
         const pose = state.sourceFit.pose;
-        const world = (p: Point) => ({
+        const world = (p: Vec2) => ({
           x:
             this.source!.root.x +
             p.x * displayedScale * (options.mirror ? -1 : 1),
@@ -192,16 +193,16 @@ export class RigInspector {
         ? 'Actual production mesh and evaluated joints.\n\nOrange = one torso transform.\nGreen = limb chain.\nRed = registered palm/socket.\nBlue cross = requested solver target.\n\nNo independent clavicles, spine, pelvis rotation or wrists.\n\nFloor is y = 0. Ankle dots sit above the soles.\n\nThis diagnoses the existing rig; it does not correct it.'
         : `${options.view === 'setup-plan' ? 'Setup: separated for weighting.' : 'Idle target: image-left support leg.'}\n\nDraft skeleton only. Artwork has NOT been fitted. No IK solver or Spine export is active here.\n\nGold = estimated mass projection. This is an illustration proxy, not measured biomechanics.\n\n${state.plan!.validationErrors.length ? state.plan!.validationErrors.join('\n') : 'Landmark structure and balance checks pass.'}`,
     );
-    const world = (p: Point): Point => ({
+    const world = (p: Vec2): Vec2 => ({
       x: 640 + p.x * displayedScale * (options.mirror ? -1 : 1),
       y: 625 + p.y * displayedScale,
     });
-    const line = (a: Point, b: Point, color: number, width = 2) => {
+    const line = (a: Vec2, b: Vec2, color: number, width = 2) => {
       const p = world(a),
         q = world(b);
       this.graphics.lineStyle(width, color, 1).lineBetween(p.x, p.y, q.x, q.y);
     };
-    const dots = (joints: Record<string, Point>) => {
+    const dots = (joints: Record<string, Vec2>) => {
       let i = 0;
       for (const [name, point] of Object.entries(joints)) {
         const p = world(point),
@@ -257,7 +258,7 @@ export class RigInspector {
         [p.head, 44, 60],
         [p.chest, 66, 74],
         [p.pelvis, 52, 32],
-      ] as [Point, number, number][]) {
+      ] as [Vec2, number, number][]) {
         const position = world(center);
         this.graphics
           .fillStyle(0x528068, 0.08)
@@ -292,7 +293,7 @@ export class RigInspector {
         .strokeCircle(center.x, center.y, 8);
       dots(state.plan.pose);
     } else if (options.overlay && state.current) {
-      const joints = state.current.joints as Record<string, Point>;
+      const joints = state.current.joints as Record<string, Vec2>;
       for (const chain of state.current.chains)
         for (let i = 1; i < chain.length; i++)
           line(

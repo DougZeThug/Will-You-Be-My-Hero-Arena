@@ -4,22 +4,10 @@ import { manifest } from '../../assets';
 import { resolveCharacterImage } from '../../character-registry';
 import puppetAssets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
+import { isKeyPixel } from '../../key-colour';
 import { characterProfile } from '../characters/CharacterRegistry';
-import { spineBackend } from '../characters/SpineCharacterRig';
 import { ARENA_THEME, BOARD_FINISH } from '../presentation/ArenaTheme';
-export const EQUIPMENT_FILES = [
-  'board',
-  'hoop',
-  'target',
-  'table',
-  'bag-yellow',
-  'bag-teal',
-  'football',
-  'basketball',
-  'ping-pong',
-  'cup-yellow',
-  'cup-orange',
-];
+import { EQUIPMENT_ASSET_DIR, EQUIPMENT_FILES } from '../../sport-stage';
 export interface LoadedCharacter {
   asset: AssetManifest;
   puppet?: PuppetAsset;
@@ -31,9 +19,7 @@ export function queueArenaAssets(scene: Phaser.Scene) {
   for (const name of EQUIPMENT_FILES)
     scene.load.image(
       'equipment:' + name,
-      name === 'board'
-        ? BOARD_FINISH.url
-        : '/assets/equipment/' + name + '.png',
+      name === 'board' ? BOARD_FINISH.url : EQUIPMENT_ASSET_DIR + name + '.png',
     );
 }
 export function queueCharacter(
@@ -48,13 +34,10 @@ export function queueCharacter(
       (puppetAssets as unknown as Record<string, PuppetAsset>)[card.asset] ??
       asset.puppet,
     key = 'character:' + index,
-    cardKey = 'card:' + index,
-    profile = characterProfile(id, asset);
+    cardKey = 'card:' + index;
+  characterProfile(id, asset);
   scene.load.image(cardKey, resolveCharacterImage(asset.cardImage));
-  if (profile.rig && spineBackend())
-    spineBackend()!.preload(scene, key, profile.rig);
-  else if (puppet?.joined)
-    scene.load.image(key, resolveCharacterImage(puppet.url));
+  if (puppet?.joined) scene.load.image(key, resolveCharacterImage(puppet.url));
   else
     for (const [pose, frame] of Object.entries(asset.frames ?? {}))
       scene.load.image(
@@ -80,12 +63,7 @@ export function prepareCharacterTextures(
       const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height),
         d = pixels.data;
       for (let i = 0; i < d.length; i += 4)
-        if (
-          d[i] > 110 &&
-          d[i + 2] > 100 &&
-          d[i + 1] < Math.min(d[i], d[i + 2]) * 0.7
-        )
-          d[i + 3] = 0;
+        if (isKeyPixel(d[i], d[i + 1], d[i + 2])) d[i + 3] = 0;
       ctx.putImageData(pixels, 0, 0);
       scene.textures.remove(c.key);
       scene.textures.addCanvas(c.key, canvas);

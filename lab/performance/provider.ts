@@ -1,12 +1,11 @@
-import type {
-  CharacterRigProvider,
-  SocketName,
-} from '../../lib/arena/engine/characters/CharacterRig';
+import type { CharacterRigProvider } from '../../lib/arena/engine/characters/CharacterRig';
 import { CharacterPerformanceController } from '../../lib/arena/engine/performance/CharacterPerformanceController';
 import { performanceProfiles } from '../../lib/arena/engine/performance/PerformanceProfiles';
-import { boardDepthScale } from '../../lib/arena/equipment-layout';
+import { boardDepthScale } from '../../lib/arena/equipment-geometry';
 import { LoongBonesAdapter } from './LoongBonesAdapter';
 import { performanceDefinitions } from './definitions';
+import { SIDE_RIG_SOCKETS } from '../loongbones/arena/sideRigSockets';
+import { verifyAssetHash } from '../loongbones/arena/assetHash';
 import { queueReleaseHands } from './ReleaseHands';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
@@ -18,36 +17,18 @@ const files = {
   dan: { skeleton: danSkeleton, atlas: danAtlas, texture: danTexture },
   doug: { skeleton: dougSkeleton, atlas: dougAtlas, texture: dougTexture },
 };
-const sockets: Record<SocketName, string> = {
-  throwingHand: 'rightHand',
-  offHand: 'leftHand',
-  head: 'head',
-  chest: 'chest',
-  waist: 'pelvis',
-  footL: 'rightAnkle',
-  footR: 'leftAnkle',
-  effect: 'chest',
-};
 
-/** The existing per-game rig injection, using the same runtime/content as the Lab.
- * URL imports bundle the original hash-checked assets into the player build. */
+/** URL imports bundle the original hash-checked assets into the player build. */
 export async function performanceMatchProvider(): Promise<CharacterRigProvider> {
   await Promise.all(
     performanceDefinitions.flatMap((d) =>
       Object.entries(files[d.id as keyof typeof files]).map(
         async ([kind, url]) => {
-          const response = await fetch(url);
-          if (!response.ok) throw Error('Cannot load performance asset ' + url);
-          const digest = await crypto.subtle.digest(
-            'SHA-256',
-            await response.arrayBuffer(),
-          );
-          const actual = [...new Uint8Array(digest)]
-            .map((n) => n.toString(16).padStart(2, '0'))
-            .join('');
           const original = d[kind as 'skeleton' | 'atlas' | 'texture'];
-          if (actual !== d.hashes[original])
-            throw Error('Performance asset hash mismatch: ' + original);
+          await verifyAssetHash(url, d.hashes[original], {
+            load: 'Cannot load performance asset ' + url,
+            mismatch: 'Performance asset hash mismatch: ' + original,
+          });
         },
       ),
     ),
@@ -68,7 +49,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
       );
       if (!d) return undefined;
       const depth = boardDepthScale(placement.lane),
-        profile = performanceProfiles[d.id as 'dan' | 'doug'];
+        profile = performanceProfiles[d.id];
       const runtime = new LoongBonesAdapter(
         scene,
         {
@@ -90,7 +71,7 @@ export async function performanceMatchProvider(): Promise<CharacterRigProvider> 
           throw Error('Performance rig requires semantic action playback');
         },
         socket(name) {
-          const q = runtime.inspect().joints[sockets[name]];
+          const q = runtime.inspect().joints[SIDE_RIG_SOCKETS[name]];
           return runtime.root.getWorldTransformMatrix().applyInverse(q.x, q.y);
         },
         socketTransform(name) {

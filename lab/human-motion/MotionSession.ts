@@ -10,21 +10,20 @@ import type {
   InputFrame,
 } from '../../lib/arena/engine/input/InputActions';
 import { MotionActor } from './MotionActor';
-import { CharacterProximity } from '../../lib/arena/engine/movement/CharacterProximity';
+import { CharacterProximity } from './CharacterProximity';
 import type { NativeAnimator } from './NativeAnimator';
 import type { MotionEventModule } from './events/contracts';
 import { PrecisionProof } from './events/PrecisionProof';
 import { RunningProof } from './events/RunningProof';
 import { CombatProof } from './events/CombatProof';
-import { kineticRecipes } from '../../lib/arena/engine/motion/KineticChains';
-import { placement, boardDepthScale } from '../../lib/arena/equipment-layout';
+import { kineticRecipes } from './motion/KineticChains';
+import { proofConfig, type ProofEvent } from './ProofConfig';
 export const proofEvents = {
   cornhole: () => new PrecisionProof('cornhole'),
   basketball: () => new PrecisionProof('basketball'),
   running: () => new RunningProof(),
   fighting: () => new CombatProof(),
-};
-export type ProofEvent = keyof typeof proofEvents;
+} satisfies Record<ProofEvent, () => MotionEventModule>;
 export class MotionSession {
   readonly actors: MotionActor[];
   readonly event: MotionEventModule;
@@ -40,8 +39,11 @@ export class MotionSession {
   private accumulator = 0;
   private manualRemainder = 0;
   readonly proximity = new CharacterProximity();
+  /** Collision bodies. Only called once `actors` exists: the movement
+   * collision callback below runs from motor updates, never while the actors
+   * are being constructed. */
   bodies() {
-    return (this.actors ?? []).map((a) => ({
+    return this.actors.map((a) => ({
       id: a.id,
       position: { ...a.motor.position },
       radius: 49,
@@ -54,41 +56,11 @@ export class MotionSession {
     animators: NativeAnimator[],
   ) {
     this.event = proofEvents[scenario]();
-    const placements =
-      scenario === 'fighting'
-        ? [
-            { x: 470, y: 610 },
-            { x: 720, y: 610 },
-          ]
-        : scenario === 'running'
-          ? [
-              { x: 210, y: 610 },
-              { x: 280, y: 520 },
-            ]
-          : [
-              { x: 250, y: 610 },
-              // Match the projected throwing distance to the same depth scale
-              // as the rig, board and sampled hand velocity. The old far lane
-              // required invisible horizontal acceleration to reach its board.
-              {
-                x:
-                  placement(
-                    scenario === 'cornhole' ? 'cornhole' : 'basketball',
-                    1,
-                  ).anchor.x -
-                  (placement(
-                    scenario === 'cornhole' ? 'cornhole' : 'basketball',
-                    0,
-                  ).anchor.x -
-                    250) *
-                    boardDepthScale(1),
-                y: 478,
-              },
-            ];
+    const placements = proofConfig[scenario].placements();
     this.actors = animators.map(
       (animator, i) =>
         new MotionActor(
-          animator.definition.id as 'dan' | 'doug',
+          animator.definition.id,
           animator,
           placements[i],
           this.event,

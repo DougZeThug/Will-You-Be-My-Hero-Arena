@@ -3,10 +3,11 @@ import { motionSignatures } from '../../../lib/arena/engine/motion/CharacterMoti
 import { gestureHand } from '../../loongbones/side-rig/hand-surfaces';
 import type { Knot } from '../../loongbones/cornhole-motion/curves';
 import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 /** Semantic, equipment-independent gestures. Athletic clips never contain celebration logic. */
 export function addGestures(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   plants: MotionMarker[],
 ) {
   const energy = motionSignatures[id].gestureEnergy;

@@ -1,5 +1,9 @@
 import { IntentTracker } from '../input/IntentTracker';
-import type { InputFrame, Intent, InputSignal } from '../input/InputActions';
+import {
+  INPUT_THRESHOLDS,
+  type InputFrame,
+  type Intent,
+} from '../input/InputActions';
 import type { ControllableEntity, ActionPayload } from './ControllableEntity';
 import {
   resolveAction,
@@ -26,7 +30,7 @@ export class PlayerController {
   update(frame: InputFrame, time: number) {
     const held = new Set(
       Object.entries(frame.values)
-        .filter(([, v]) => typeof v === 'number' && v > 0.2)
+        .filter(([, v]) => typeof v === 'number' && v > INPUT_THRESHOLDS.heldSet)
         .map(([k]) => k as Intent),
     );
     const signals = this.tracker.sample(frame, time);
@@ -37,7 +41,6 @@ export class PlayerController {
       }
       const context = {
         state: this.entity.controlState(),
-        canCancel: this.entity.canCancel(),
         held,
         facing: this.entity.getFacing(),
       };
@@ -61,7 +64,7 @@ export class PlayerController {
         this.buffer.push({
           command,
           payload,
-          expires: time + (definition?.buffer ?? this.map.bufferSeconds),
+          expires: time + (this.map.bufferSeconds),
         });
         this.buffer = this.buffer.slice(-4);
         this.buffered++;

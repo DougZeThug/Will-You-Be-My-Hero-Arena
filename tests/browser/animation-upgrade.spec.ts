@@ -1,6 +1,4 @@
 import { test, expect } from 'playwright/test';
-import type { MotionSession } from '../../lab/human-motion/MotionSession';
-type State = ReturnType<MotionSession['snapshot']>;
 const load = async (page: any, event: string, take: string, actor = 'doug') => {
   await page.goto(`/human-motion/?event=${event}&take=${take}&actor=${actor}`);
   await page.waitForFunction(() => window.__HERO_MOTION__?.getState().actors);

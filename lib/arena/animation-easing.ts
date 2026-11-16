@@ -1,6 +1,7 @@
+import {clamp01} from './math';
 // Game-time curve sampling. No DOM tweens, wall clocks, or mutable timelines.
 export function animationEase(name:string,t:number){
- t=Math.max(0,Math.min(1,t));
+ t=clamp01(t);
  if(name==='none'||name==='linear')return t;
  const [family,mode='out']=name.split('.');
  const power=family.startsWith('power')?Number(family.slice(5))+1:2;

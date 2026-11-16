@@ -7,6 +7,15 @@ interface SharedDrawCounter {
   available: boolean;
   release(): void;
 }
+/** RGBA source pixels of every texture; excludes driver overhead, mipmaps and
+ * render targets. */
+export function textureBytes(game: Phaser.Game) {
+  let bytes = 0;
+  for (const texture of Object.values(game.textures?.list ?? {}))
+    for (const source of texture.source)
+      bytes += source.width * source.height * 4;
+  return bytes;
+}
 const counters = new WeakMap<Phaser.Game, SharedDrawCounter>();
 
 /** One counter per WebGL game. The recorded HUD and a Lab observer may coexist

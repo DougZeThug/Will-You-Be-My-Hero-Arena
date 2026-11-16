@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { access, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
-import { chromium } from 'playwright';
-import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { qaServer } from './qa-server.mjs';
+import { launchBrowser } from './lib/browser.mjs';
+import { cliOption } from './lib/args.mjs';
 
 // Frame-exact motion evidence for every character path (Watch sports, Play
 // modes, cornhole performance). Each case is stepped one 60 Hz frame at a time
@@ -11,8 +12,7 @@ import { qaServer, browserLaunchOptions } from './qa-server.mjs';
 // per-case WebM (VP8, 1x), sampled frame strips and socket-based smoothness
 // metrics (acceleration spikes, dead-still holds, planted-foot slide).
 const args = process.argv.slice(2);
-const option = (name, fallback) =>
-  args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
+const option = (name, fallback) => cliOption(args, name, fallback);
 const label = option('--label', 'motion');
 assert.match(label, /^[a-z0-9-]+$/);
 const only = option('--cases', '')
@@ -234,7 +234,7 @@ try {
       identify: 'Arena Lab',
     }),
   );
-  browser = await chromium.launch({ ...browserLaunchOptions(), headless: true });
+  browser = await launchBrowser();
   const context = await browser.newContext({
     viewport: { width: 1000, height: 760 },
     deviceScaleFactor: 1,

@@ -1,3 +1,4 @@
+import { clamp01, smoothstep } from '../../math';
 /**
  * Which drawn angle of a character faces the camera.
  *
@@ -24,8 +25,8 @@ export const VIEW_TURN_SECONDS = 0.22;
  * so the two drawings are never on screen together.
  */
 export function viewWidths(frontness: number) {
-  const f = Math.max(0, Math.min(1, frontness)),
-    ease = (u: number) => u * u * (3 - 2 * u);
+  const f = clamp01(frontness),
+    ease = smoothstep;
   return {
     side: ease(Math.max(0, 1 - 2 * f)),
     front: ease(Math.max(0, 2 * f - 1)),

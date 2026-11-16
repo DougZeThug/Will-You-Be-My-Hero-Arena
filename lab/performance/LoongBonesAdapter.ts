@@ -6,18 +6,7 @@ import {
 import { NativeMesh } from '../loongbones/NativeMesh';
 import { dragonBones as db } from '../loongbones/vendor/dragonBones';
 import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
-import { validateExport } from '../loongbones/validate-export';
-import {
-  validateHumanRig,
-  SIDE_RIG_BONES,
-} from '../../lib/arena/engine/motion/HumanSkeleton';
-import { registerArmMaterial } from '../human-motion/ArmMaterialRegistration';
-import { repairFootMaterial } from '../human-motion/FootMaterialRepair';
-import { followShortsToThighs } from './LegMaterialRepair';
-import {
-  DOUG_ARM_MATERIAL_RECIPE,
-  readDougArmMaterialMarker,
-} from '../human-motion/ArmMaterialRecipe.mjs';
+import { SIDE_RIG_BONES } from '../../lib/arena/engine/motion/HumanSkeleton';
 import { RigIntegrityValidator } from '../../lib/arena/engine/motion/RigIntegrityValidator';
 import { NATIVE_LIMITS } from '../../lib/arena/engine/performance/NativeLimits';
 import { softReachDrop } from '../../lib/arena/engine/performance/KneeReach';
@@ -36,27 +25,17 @@ import type {
   CharacterAnimationRuntime,
   PerformanceProfile,
 } from '../../lib/arena/engine/performance/PerformanceTypes';
+import { PERFORMANCE_CLIPS as CLIP } from '../../lib/arena/engine/performance/ClipNames';
+import { PERFORMANCE_REVISION } from './compile';
+import { clamp01 } from '../../lib/arena/math';
+import type { assertInterchangeBudget } from '../loongbones/side-rig/limits';
 import {
-  compilePerformance,
-  installShippedPerformanceClips,
-  PERFORMANCE_REVISION,
-} from './compile';
-import { releaseHands } from './ReleaseHands';
-import { assertInterchangeBudget } from '../loongbones/side-rig/limits';
-import {
-  blendWristCut,
-  registerHandMaterial,
-  releaseHandMesh,
-} from './HandMaterialRegistration';
+  boneLocal,
+  measureRig,
+  prepareRigData,
+  segments,
+} from './RigMaterialSetup';
 
-const segments = [
-  ['upperArm', 'upper_arm_L', 'forearm_L'],
-  ['forearm', 'forearm_L', 'hand_L'],
-  ['rightThigh', 'thigh_L', 'shin_L'],
-  ['rightShin', 'shin_L', 'foot_L'],
-  ['leftThigh', 'thigh_R', 'shin_R'],
-  ['leftShin', 'shin_R', 'foot_R'],
-] as const;
 const limits = NATIVE_LIMITS;
 /** Forward far-arm rotation (degrees below zero) the painted strip supports. */
 const FAR_ARM_FORWARD = 1.5;
@@ -82,18 +61,13 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private meshes: NativeMesh[];
   private shadow: Phaser.GameObjects.Ellipse;
   private validator = new RigIntegrityValidator();
-  private setup = new Map<string, number>();
-  private widths = new Map<string, { indices: number[]; width: number }>();
-  private planted = new Map<string, Vec2>();
+  private setup: ReturnType<typeof measureRig>['setup'];
+  private widths: ReturnType<typeof measureRig>['widths'];
+  private planted: ReturnType<typeof measureRig>['planted'];
   /** Bind positions of the planted IK targets; a take's footwork moves them. */
-  private plantTargets = new Map<string, Vec2>();
-  private soleSamples: {
-    side: string;
-    mesh: NativeMesh;
-    index: number;
-    anchor: Vec2;
-  }[] = [];
-  private wristSamples: { mesh: NativeMesh; index: number }[] = [];
+  private plantTargets: ReturnType<typeof measureRig>['plantTargets'];
+  private soleSamples: ReturnType<typeof measureRig>['soleSamples'];
+  private wristSamples: ReturnType<typeof measureRig>['wristSamples'];
   private gaze = 0;
   private kneeDrop = 0;
   private squash = 0;
@@ -102,6 +76,9 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
   private trail: { t: number; x: number; y: number; revision: number }[] = [];
   /** Presentation-only: disables squash & stretch (reduced motion). */
   reducedMotion = false;
+  setReducedMotion(reduced: boolean) {
+    this.reducedMotion = reduced;
+  }
   private warnings = new Set<string>();
   private contactError = 0;
   private starts = 0;
@@ -123,100 +100,14 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     this.shadow = scene.add
       .ellipse(12, 0, 112, 10, 0x201a13, 0.24)
       .setScale(definition.courtDepthScale ?? 1);
-    const original = scene.cache.json.get(definition.key + '-skeleton');
-    validateExport(original);
-    const data = structuredClone(original),
-      arm = data.armature[0];
-    const validation = validateHumanRig(
-      arm.bone.map((b: { name: string }) => b.name),
-    );
-    if (!validation.valid)
-      throw Error(
-        'Missing semantic joints: ' +
-          validation.missing.map((m) => m.semantic).join(', '),
-      );
-    const correction = readDougArmMaterialMarker(arm);
-    if (correction) {
-      const armMesh = arm.skin[0].slot.find(
-        (slot: { name: string }) => slot.name === 'arm',
-      )?.display[0];
-      if (armMesh?.vertices?.length / 2 !== correction.correctedVertexCount)
-        throw Error('Doug arm material correction marker count mismatch');
-      this.correctedVertices = correction.correctedVertexCount;
-      this.armCorrectionRecipe = correction.recipe;
-    } else {
-      this.correctedVertices = registerArmMaterial(definition.id, arm);
-      this.armCorrectionRecipe = this.correctedVertices
-        ? DOUG_ARM_MATERIAL_RECIPE
-        : null;
-    }
-    // Runtime-only material repairs on this private copy: Play's whole-face
-    // shoe tips, and shorts legs that bend with the softly bent thighs.
-    this.repairedFootWeights = repairFootMaterial(definition.id, arm);
-    this.shortsFollowVertices = followShortsToThighs(definition.id, arm);
-    const library = compilePerformance(profile);
-    this.clips = library.clips;
-    installShippedPerformanceClips(arm, definition, library);
-    const art = releaseHands[definition.id as keyof typeof releaseHands];
-    arm.slot.push({ name: 'releaseHand', parent: 'root', color: { aM: 0 } });
-    arm.skin[0].slot.push({
-      name: 'releaseHand',
-      display: [releaseHandMesh(definition.id as 'dan' | 'doug')],
-    });
-    const wristSamples = registerHandMaterial(
-      definition.id as 'dan' | 'doug',
-      arm,
-    );
-    // The proximal hand drawing extends underneath the continuous forearm.
-    // Drawing that cut edge on top produces a visible cuff at the wrist.
-    const handSlots = arm.slot.filter((slot: { name: string }) =>
-      ['grip', 'open', 'relaxed', 'releaseHand'].includes(slot.name),
-    );
-    arm.slot = arm.slot.filter(
-      (slot: { name: string }) => !handSlots.includes(slot),
-    );
-    arm.slot.splice(
-      arm.slot.findIndex((slot: { name: string }) => slot.name === 'arm'),
-      0,
-      ...handSlots,
-    );
-    this.geometryBudget = assertInterchangeBudget(
-      arm.skin[0].slot.map(
-        (slot: { display: Parameters<typeof assertInterchangeBudget>[0] }) =>
-          slot.display[0],
-      ),
-    );
-    arm.bone.push(
-      {
-        name: 'performance_chest_contact',
-        parent: 'chest',
-        transform: { x: -32, y: 55 },
-      },
-      {
-        name: 'performance_chest_target',
-        parent: 'root',
-        transform: { x: 0, y: -300 },
-      },
-    );
-    arm.ik.push({
-      name: 'performance_chest_hand',
-      bone: 'forearm_L',
-      target: 'performance_chest_target',
-      chain: 1,
-      bendPositive: false,
-      weight: 0,
-    });
-    // Both knees face the rightward lane in this authored side view. The old
-    // far-leg branch bent backward as the pelvis lowered, closing the knees
-    // into a crossed silhouette. Keep the original ankle targets and lengths.
-    for (const contact of arm.ik)
-      if (contact.name === 'plant_R') contact.bendPositive = true;
-    for (const side of ['L', 'R']) {
-      const target = arm.bone.find(
-        (b: { name: string }) => b.name === 'foot_target_' + side,
-      );
-      target.transform.x *= profile.stanceWidth;
-    }
+    const prepared = prepareRigData(scene, definition, profile);
+    const { data, art } = prepared;
+    this.clips = prepared.library.clips;
+    this.correctedVertices = prepared.correctedVertices;
+    this.armCorrectionRecipe = prepared.armCorrectionRecipe;
+    this.repairedFootWeights = prepared.repairedFootWeights;
+    this.shortsFollowVertices = prepared.shortsFollowVertices;
+    this.geometryBudget = prepared.geometryBudget;
     this.factory = new NativeFactory(scene);
     const key = definition.key + '-performance';
     this.factory.parseDragonBonesData(data, key);
@@ -261,105 +152,22 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     this.actor.add(this.heldObjectLayer).sort('depth');
     for (const m of this.meshes) m.setTint(0xfff2df);
     this.actor.armature.advanceTime(0);
-    this.wristBlendVertices = blendWristCut(
-      this.meshes.find((mesh) => mesh.name === 'arm')!.vertices,
-      this.local('forearm_L'),
-      this.local('hand_L'),
+    const measured = measureRig(
+      scene,
+      this.bones,
+      this.meshes,
+      prepared.wristSamples,
     );
-    for (const sample of wristSamples) {
-      const mesh = this.meshes.find((m) => m.name === sample.name)!,
-        v = mesh.vertices[sample.index];
-      const texture = mesh.texture.getSourceImage() as HTMLImageElement;
-      if (
-        (scene.textures.getPixelAlpha(
-          Math.floor(v.u * texture.width),
-          Math.floor(v.v * texture.height),
-          mesh.texture.key,
-        ) ?? 0) > 128
-      )
-        this.wristSamples.push({ mesh, index: sample.index });
-    }
-    for (const name of ['grip', 'open', 'relaxed'])
-      if (!this.wristSamples.some((s) => s.mesh.name === name))
-        throw Error('Missing painted wrist samples: ' + name);
-    for (const [id, a, b] of segments) {
-      const m = this.bones.get(a)!.globalTransformMatrix,
-        n = this.bones.get(b)!.globalTransformMatrix;
-      const dx = n.tx - m.tx,
-        dy = n.ty - m.ty,
-        length = Math.hypot(dx, dy);
-      this.setup.set(id, length);
-      if (id === 'upperArm' || id === 'forearm') {
-        const mesh = this.meshes.find((m) => m.name === 'arm')!;
-        const candidates = mesh.vertices
-          .map((v, i) => ({
-            i,
-            along:
-              ((v.vx - m.tx) * dx + (v.vy - m.ty) * dy) / (length * length),
-            side: (-(v.vx - m.tx) * dy + (v.vy - m.ty) * dx) / length,
-          }))
-          .filter((v) => v.along > 0.48 && v.along < 0.62)
-          .sort((a, b) => a.side - b.side);
-        if (candidates.length < 2) throw Error('Missing arm width samples');
-        this.widths.set(id, {
-          indices: [candidates[0].i, candidates.at(-1)!.i],
-          width: candidates.at(-1)!.side - candidates[0].side,
-        });
-      }
-    }
-    for (const name of [
-      'foot_L',
-      'foot_R',
-      'heel_L',
-      'heel_R',
-      'toe_L',
-      'toe_R',
-    ]) {
-      const b = this.bones.get(name)!.globalTransformMatrix;
-      this.planted.set(name, { x: b.tx, y: b.ty });
-    }
-    for (const side of ['L', 'R'])
-      this.plantTargets.set(side, this.local('foot_target_' + side));
-    // Validate painted sole material as well as anatomical foot landmarks.
-    // Samples come from opaque atlas pixels close to each heel-to-toe contact.
-    const body = this.meshes.find((m) => m.name === 'body')!;
-    const texture = body.texture.getSourceImage() as HTMLImageElement;
-    for (const side of ['L', 'R']) {
-      const heel = this.planted.get('heel_' + side)!,
-        toe = this.planted.get('toe_' + side)!;
-      const dx = toe.x - heel.x,
-        dy = toe.y - heel.y,
-        length = Math.hypot(dx, dy);
-      for (const [index, v] of body.vertices.entries()) {
-        const along =
-          ((v.vx - heel.x) * dx + (v.vy - heel.y) * dy) / (length * length);
-        const distance =
-          Math.abs((v.vx - heel.x) * dy - (v.vy - heel.y) * dx) / length;
-        if (along < 0 || along > 1 || distance > 14) continue;
-        if (
-          (scene.textures.getPixelAlpha(
-            Math.floor(v.u * texture.width),
-            Math.floor(v.v * texture.height),
-            body.texture.key,
-          ) ?? 0) < 16
-        )
-          continue;
-        this.soleSamples.push({
-          side,
-          mesh: body,
-          index,
-          anchor: { x: v.vx, y: v.vy },
-        });
-      }
-      if (!this.soleSamples.some((s) => s.side === side))
-        throw Error('Missing painted sole samples: ' + side);
-    }
+    this.wristBlendVertices = measured.wristBlendVertices;
+    this.wristSamples = measured.wristSamples;
+    this.setup = measured.setup;
+    this.widths = measured.widths;
+    this.planted = measured.planted;
+    this.plantTargets = measured.plantTargets;
+    this.soleSamples = measured.soleSamples;
   }
   private local(name: string) {
-    const b = this.bones.get(name);
-    if (!b) throw Error('Missing attachment ' + name);
-    const m = b.globalTransformMatrix;
-    return { x: m.tx, y: m.ty };
+    return boneLocal(this.bones, name);
   }
   private world(name: string) {
     const p = this.local(name);
@@ -519,7 +327,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     const pulses: SquashPulse[] = [];
     const markerTime = (name: string) =>
       action?.clip.markers.find((m) => m.name === name)?.at;
-    if (action?.clip.id === 'underhand') {
+    if (action?.clip.id === CLIP.underhand) {
       const release = markerTime('equipmentRelease'),
         finish = markerTime('finish'),
         peak = markerTime('windupPeak');
@@ -529,13 +337,13 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
         pulses.push({ at: release - 0.03, amount: 0.055, settle: 0.3 });
       if (finish !== undefined)
         pulses.push({ at: finish - 0.06, amount: -0.05, settle: 0.34 });
-    } else if (action?.clip.id === 'chestTap') {
+    } else if (action?.clip.id === CLIP.chestTap) {
       for (const m of action.clip.markers)
         if (m.name.startsWith('chestTapContact'))
           pulses.push({ at: m.at, amount: -0.03, settle: 0.22 });
-    } else if (action?.clip.id === 'nod')
+    } else if (action?.clip.id === CLIP.nod)
       pulses.push({ at: action.clip.duration * 0.34, amount: -0.03, settle: 0.3 });
-    else if (action?.clip.id === 'negative')
+    else if (action?.clip.id === CLIP.negative)
       pulses.push({ at: action.clip.duration * 0.35, amount: -0.04, settle: 0.3 });
     this.squash =
       action && !this.reducedMotion ? squashOffset(pulses, action.time) : 0;
@@ -549,7 +357,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
     // shape in the hand and leaves it without a size jump.
     this.heldObjectLayer.setScale(1 / squash.x, 1 / squash.y);
     this.contactError = 0;
-    if (action?.clip.id === 'chestTap') {
+    if (action?.clip.id === CLIP.chestTap) {
       const influence = chestContactWeight(
         action.time,
         action.clip.markers
@@ -588,14 +396,14 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       (m) => m.name === 'equipmentRelease',
     )?.at;
     const exposure =
-      action?.clip.id === 'underhand' &&
+      action?.clip.id === CLIP.underhand &&
       releaseAt !== undefined &&
       action.time >= releaseAt - 0.07 &&
       action.time < releaseAt + 0.32
         ? 'releaseHand'
         : held
           ? 'grip'
-          : action?.clip.id === 'chestTap' &&
+          : action?.clip.id === CLIP.chestTap &&
               action.time > 0.2 &&
               action.time < 0.82
             ? 'open'
@@ -810,7 +618,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       finish = action?.clip.markers.find((m) => m.name === 'finish')?.at;
     if (
       !action ||
-      action.clip.id !== 'underhand' ||
+      action.clip.id !== CLIP.underhand ||
       peak === undefined ||
       finish === undefined ||
       this.reducedMotion ||
@@ -833,7 +641,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       span = b.t - a.t,
       speed = span > 0 ? Math.hypot(b.x - a.x, b.y - a.y) / span : 0;
     // Armature px/s; the swoosh appears only through the snap.
-    const strength = Math.max(0, Math.min(1, (speed - 1400) / 1800));
+    const strength = clamp01((speed - 1400) / 1800);
     if (strength <= 0) return;
     // Armature units: the rig is drawn at ~0.2x, so 70 is ~14 screen px.
     const sx = this.actor.scaleX,

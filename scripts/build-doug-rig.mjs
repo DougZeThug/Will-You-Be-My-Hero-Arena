@@ -1,16 +1,14 @@
 import fs from 'node:fs/promises';
-import { createHash } from 'node:crypto';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
+import { sha256File } from './lib/hash.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 const dir = 'lab/loongbones/assets/doug-weighted-v1',
   source = 'public/assets/doug/ready.png';
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
-  await page.goto('http://127.0.0.1:3010/loongbones/');
+  await page.goto(
+    `${process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010'}/loongbones/`,
+  );
   const data = await page.evaluate(async () => {
     const { buildDougRig } = await import('/loongbones/doug-rig/build.ts');
     return buildDougRig();
@@ -26,10 +24,7 @@ try {
       JSON.stringify(value, null, 2) + '\n',
     );
   await fs.copyFile(source, `${dir}/doug_tex.png`);
-  const hash = async (file) =>
-    createHash('sha256')
-      .update(await fs.readFile(file))
-      .digest('hex');
+  const hash = sha256File;
   const assetsSha256 = {};
   for (const file of ['doug_ske.json', 'doug_tex.json', 'doug_tex.png'])
     assetsSha256[file] = await hash(`${dir}/${file}`);

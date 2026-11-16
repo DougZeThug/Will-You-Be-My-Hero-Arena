@@ -1,10 +1,14 @@
 import { anatomy } from '../loongbones/side-rig/anatomy';
 import type { GraphState } from '../../lib/arena/engine/motion/AnimationGraph';
 import { dragonBones as db } from '../loongbones/vendor/dragonBones';
+import { setSlotAlpha, slotAlpha } from './NativeBridge';
 import type { LibraryBuilder } from './authoring/builder';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 
+/** Phaser texture key and atlas name of the hand sheet. */
+export const HAND_TEXTURE_KEY = 'arena-hands-v1';
 export const handAtlas = {
-  name: 'arena-hands-v1',
+  name: HAND_TEXTURE_KEY,
   width: 2172,
   height: 724,
   SubTexture: ['fist', 'support', 'chest'].map((name, i) => ({
@@ -29,7 +33,7 @@ const art = {
 };
 /** Wrist-crease pivots, opaque exposures, no finger deformation. These are
  * derived attachments; the original character atlas remains byte-identical. */
-export function addHandAttachments(id: 'dan' | 'doug', arm: any) {
+export function addHandAttachments(id: CharacterId, arm: any) {
   const rig = anatomy(id);
   const template = arm.skin[0].slot.find((s: any) => s.name === 'relaxed')
     .display[0];
@@ -182,11 +186,8 @@ export function applyHandExposure(
   for (const name of ['grip', 'open', 'relaxed', ...newHandSlots, 'farHand']) {
     const slot = arm.getSlot(name)!;
     const alpha = name === choice.near || name === choice.far ? 1 : 0;
-    if (slot._colorTransform.alphaMultiplier === alpha) continue;
-    const color = new db.ColorTransform();
-    color.copyFrom(slot._colorTransform);
-    color.alphaMultiplier = alpha;
-    slot._setColor(color);
+    if (slotAlpha(slot) === alpha) continue;
+    setSlotAlpha(slot, alpha);
     changed = true;
   }
   // Native pose evaluation already updated unchanged hands. Only flush an

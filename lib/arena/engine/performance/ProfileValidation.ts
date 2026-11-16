@@ -1,6 +1,7 @@
 import type { PerformanceProfile } from './PerformanceTypes';
+import { isCharacterId } from '../characters/CharacterIds';
 
-export const profileLimits: Record<
+const profileLimits: Record<
   Exclude<keyof PerformanceProfile, 'id' | 'celebration'>,
   [number, number]
 > = {
@@ -28,8 +29,7 @@ export function validatePerformanceProfile(input: unknown): PerformanceProfile {
   if (!input || typeof input !== 'object' || Array.isArray(input))
     throw Error('A character profile must be a JSON object');
   const source = input as Record<string, unknown>;
-  if (source.id !== 'doug' && source.id !== 'dan')
-    throw Error('Choose a Doug or Dan profile');
+  if (!isCharacterId(source.id)) throw Error('Choose a Doug or Dan profile');
   if (source.celebration !== 'chestTap' && source.celebration !== 'nod')
     throw Error('Unknown celebration');
   const result: Record<string, unknown> = {

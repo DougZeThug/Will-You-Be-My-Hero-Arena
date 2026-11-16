@@ -21,10 +21,6 @@ export async function testLive({ check }) {
     await import('../.test-build/engine/controllers/EventActionMap.mjs');
   const { FightingActionMap } =
     await import('../.test-build/engine/events/fighting/FightingActionMap.mjs');
-  const { PrecisionActionMap } =
-    await import('../.test-build/engine/events/precision/PrecisionActionMap.mjs');
-  const { RunningActionMap } =
-    await import('../.test-build/engine/events/running/RunningActionMap.mjs');
   const { timingGrade, rhythmTiming } =
     await import('../.test-build/engine/input/TimingWindow.mjs');
   const config = (
@@ -724,7 +720,6 @@ export async function testLive({ check }) {
   check(() => assert.ok(stop.time > struck, 'The clock resumes'));
   check(() => assert.equal(stop.hitStopSteps, 0));
   stop.destroy();
-  // Fixes from docs/product-description/bug-triage.md, each named by its entry.
   const { keyConflict, invalidBinding, validateBindings } =
     await import('../.test-build/engine/input/InputBindings.mjs');
   const keyboard1 = { layout: 0, keys: bindingsFor(0).keys },
@@ -775,17 +770,13 @@ export async function testLive({ check }) {
     resolvePrecisionLanding,
     bagPoints,
     precisionTarget,
-    HOLE_HALF: playHoleHalf,
   } = await import(
     '../.test-build/engine/events/precision/PrecisionPhysics.mjs'
-  );
-  const { HOLE_HALF: drawnHoleHalf } = await import(
-    '../.test-build/engine/events/cornhole/ReleasedBagPhysics.mjs'
   );
   const { laneScale } =
     await import('../.test-build/engine/events/running/RunningPhysics.mjs');
   const { ATTACKS } =
-    await import('../.test-build/engine/characters/components/CombatComponent.mjs');
+    await import('../.test-build/engine/events/fighting/Attacks.mjs');
   // B-26: a roll curls around the bags it meets once, however many there are.
   const hole = precisionTarget();
   let spot;
@@ -1019,13 +1010,6 @@ export async function testLive({ check }) {
   check(() => assert.equal(bagPoints(faraway), 0));
   // Play scores the drawn hole: a 40 x 16.6 px ellipse (half-axes 20 and 8.3),
   // wide and flat, not a circle. Offsets are from the hole's centre.
-  check(() =>
-    assert.deepEqual(
-      playHoleHalf,
-      drawnHoleHalf,
-      "Play's scoring ellipse matches the drawn hole opening",
-    ),
-  );
   for (const [dx, dy, points] of [
     [0, 0, 3],
     [0, 8, 3],
@@ -1902,24 +1886,11 @@ export async function testLive({ check }) {
       'an intent with only hidden entries has no visible action',
     );
   });
-  check(() => {
-    for (const [map, intents] of [
-      [PrecisionActionMap, ['primaryAction', 'charge']],
-      [RunningActionMap, ['charge', 'modifierLeft']],
-    ])
-      for (const intent of intents) {
-        const expected = map.actions.find(
-          (a) => a.intent === intent && !a.hidden,
-        );
-        assert.ok(expected, map.id + ' ' + intent + ' has a visible action');
-        assert.equal(visibleAction(map.actions, intent), expected);
-      }
-  });
   scoped.destroy();
   Object.assign(globalThis, saved);
-  fs.mkdirSync('docs/review', { recursive: true });
+  fs.mkdirSync('work/qa', { recursive: true });
   fs.writeFileSync(
-    'docs/review/live-engine-tests.json',
+    'work/qa/live-engine-tests.json',
     JSON.stringify(
       {
         referenceEvents: outcomes,

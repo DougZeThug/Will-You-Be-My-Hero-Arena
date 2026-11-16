@@ -1,16 +1,14 @@
 import fs from 'node:fs/promises';
-import { createHash } from 'node:crypto';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
+import { sha256 } from './lib/hash.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 const directory = 'lab/loongbones/assets/cornhole-side-v3';
-const hash = (b) => createHash('sha256').update(b).digest('hex');
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+const hash = sha256;
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
-  await page.goto('http://127.0.0.1:3010/loongbones/');
+  await page.goto(
+    `${process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010'}/loongbones/`,
+  );
   const manifest = {};
   for (const id of ['dan', 'doug']) {
     const data = await page.evaluate(

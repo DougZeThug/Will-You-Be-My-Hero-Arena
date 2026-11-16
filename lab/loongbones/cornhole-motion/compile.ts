@@ -1,4 +1,5 @@
 import { cornholeThrow, throwStyles } from './throws';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 const interpolate = (points: number[][], y: number) => {
   for (let i = 1; i < points.length; i++)
     if (y < points[i][0])
@@ -18,7 +19,7 @@ const interpolate = (points: number[][], y: number) => {
 /** Derived motion export. Source editor/foundation bytes remain untouched. */
 export function compileCornholeMotion(
   input: any,
-  character: 'dan' | 'doug',
+  character: CharacterId,
   skinPixel?: (u: number, v: number) => boolean,
 ) {
   const data = structuredClone(input),

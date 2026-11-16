@@ -2,6 +2,7 @@ import { VirtualDevice } from './InputDevice';
 import {
   KEYBOARD_AIM_KEYS,
   KEYBOARD_MOVE_KEYS,
+  layoutOf,
   type Bindings,
 } from './InputBindings';
 import type { Intent } from './InputActions';
@@ -15,8 +16,8 @@ export class KeyboardDevice extends VirtualDevice {
     scope: HTMLElement,
   ) {
     super(id, 'keyboard');
-    const move = KEYBOARD_MOVE_KEYS[player === 1 ? 1 : 0],
-      aim = KEYBOARD_AIM_KEYS[player === 1 ? 1 : 0];
+    const move = KEYBOARD_MOVE_KEYS[layoutOf(player)],
+      aim = KEYBOARD_AIM_KEYS[layoutOf(player)];
     const allowed = new Set([...move, ...aim, ...Object.values(bindings.keys)]);
     const key = (e: KeyboardEvent, pressed: boolean) => {
       if (

@@ -1,17 +1,17 @@
 import assert from 'node:assert/strict';
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import path from 'node:path';
-import { chromium } from 'playwright';
-import { qaServer, browserLaunchOptions } from './qa-server.mjs';
+import { qaServer } from './qa-server.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 import { shippedPerformanceRevision } from './performance-revision.mjs';
 import { sourceFingerprint } from './source-fingerprint.mjs';
+import { sha256File } from './lib/hash.mjs';
+import { cliOption } from './lib/args.mjs';
 
 // One repeatable case, not an editor. All state is isolated from the user's saves.
 const args = process.argv.slice(2);
-const option = (name, fallback) =>
-  args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
+const option = (name, fallback) => cliOption(args, name, fallback);
 const label = option('--label', 'candidate');
 assert.match(label, /^[a-z0-9-]+$/);
 const directory = `work/qa/turn-polish/${label}`;
@@ -93,9 +93,7 @@ for (const file of [
   'lab/loongbones/assets/cornhole-side-v3/doug_tex.png',
   'docs/showcase-recording.json',
 ])
-  hashes[file] = createHash('sha256')
-    .update(await readFile(file))
-    .digest('hex');
+  hashes[file] = await sha256File(file);
 report.checkpoint = {
   head: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
   status: execFileSync('git', ['status', '--short'], { encoding: 'utf8' }),
@@ -614,10 +612,7 @@ try {
         identify: 'Will You Be My Hero?',
       }),
     );
-  browser = await chromium.launch({
-    ...browserLaunchOptions(),
-    headless: true,
-  });
+  browser = await launchBrowser();
   report.browser = {
     name: 'Chromium',
     version: browser.version(),

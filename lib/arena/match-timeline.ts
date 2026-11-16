@@ -1,3 +1,5 @@
+import { clamp01 } from './math';
+import { SPORT_STAGE } from './sport-stage';
 import {
   EVENTS,
   type Attempt,
@@ -13,7 +15,7 @@ import {
 } from './personality';
 import type { ShotStyle } from './engine/animation/AnimationTypes';
 import type { DirectedAction } from './engine/core/BattlePlan';
-import { firstImpactTime } from './engine/events/cornhole/CornholePresentationTiming';
+import { impactTime } from './engine/events/cornhole/CornholePresentationTiming';
 
 // Seconds on PlaybackClock, never wall-clock timers. Sampling is safe when
 // paused, slowed, resumed, or sought backwards through an immutable recording.
@@ -41,13 +43,8 @@ export type MatchPhase =
   | 'result'
   | 'reset'
   | 'complete';
-export const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-export const smooth = (n: number) => {
-  const t = clamp01(n);
-  return t * t * (3 - 2 * t);
-};
 export const flightDuration = (sport: Sport) =>
-  sport === 'football' ? 0.78 : sport === 'basketball' ? 1.38 : 1.25;
+  SPORT_STAGE[sport].flightSeconds;
 export const releaseLead = TIMING.ready + TIMING.anticipation + TIMING.throw;
 export function personalityTiming(
   sport: Sport,
@@ -105,8 +102,7 @@ export function attemptBeats(a: Attempt, shot?: ShotStyle) {
     throw: a.start + (lead * (p.ready + p.anticipation)) / total,
     release: a.releaseAt,
     bagFlight: a.releaseAt + TIMING.release,
-    boardTravel:
-      a.sport === 'cornhole' && shot ? firstImpactTime(a, shot) : a.contactAt,
+    boardTravel: impactTime(a, shot),
     landing: a.contactAt,
     result: scoreTime(a),
     reset: Math.max(scoreTime(a), a.end - p.reset),

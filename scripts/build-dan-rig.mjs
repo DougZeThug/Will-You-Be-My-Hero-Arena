@@ -1,14 +1,12 @@
 import fs from 'node:fs/promises';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
+import { launchBrowser } from './lib/browser.mjs';
 const directory = 'lab/loongbones/assets/dan-weighted-v1';
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
-  await page.goto('http://127.0.0.1:3010/loongbones/');
+  await page.goto(
+    `${process.env.ARENA_LAB_URL ?? 'http://127.0.0.1:3010'}/loongbones/`,
+  );
   const data = await page.evaluate(async () => {
     const { buildDanRig } = await import('/loongbones/dan-rig/build.ts');
     return buildDanRig();

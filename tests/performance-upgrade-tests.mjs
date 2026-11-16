@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 export async function testPerformanceUpgrade({ check }) {
   const { rolledAnkle, contactRoll } =
-    await import('../.test-build/engine/motion/FootContactRoll.mjs');
+    await import('../.test-build/lab/human-motion/motion/FootContactRoll.mjs');
   const { CombatIntentRhythm } =
-    await import('../.test-build/engine/motion/CombatIntentRhythm.mjs');
+    await import('../.test-build/lab/human-motion/motion/CombatIntentRhythm.mjs');
   // The visible support point must stay fixed while the ankle rolls in either facing.
   for (const facing of [-1, 1])
     for (const degrees of [-8, -4, 0, 6, 16, 24]) {

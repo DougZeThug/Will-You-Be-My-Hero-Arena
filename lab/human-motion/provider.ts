@@ -1,6 +1,9 @@
 import type { CharacterRigProvider } from '../../lib/arena/engine/characters/CharacterRig';
+import { verifyAssetHash } from '../loongbones/arena/assetHash';
 import { sideDefinitions } from '../loongbones/side-rig/definitions';
 import { PlayMotionRig, type PlayMotionEvent } from './PlayMotionRig';
+import { HAND_TEXTURE_KEY } from './HandAttachments';
+import { rearSourceKey } from './DirectionalSkin';
 import danSkeleton from '../loongbones/assets/cornhole-side-v3/dan_ske.json?url';
 import danAtlas from '../loongbones/assets/cornhole-side-v3/dan_tex.json?url';
 import danTexture from '../loongbones/assets/cornhole-side-v3/dan_tex.png?url';
@@ -29,33 +32,26 @@ export async function sideMotionProvider(
     sideDefinitions.flatMap((d) =>
       Object.entries(files[d.id as keyof typeof files]).map(
         async ([kind, url]) => {
-          const response = await fetch(url);
-          if (!response.ok) throw Error('Cannot load side rig asset ' + url);
-          const digest = await crypto.subtle.digest(
-            'SHA-256',
-            await response.arrayBuffer(),
-          );
-          const actual = [...new Uint8Array(digest)]
-            .map((n) => n.toString(16).padStart(2, '0'))
-            .join('');
           const original = d[kind as 'skeleton' | 'atlas' | 'texture'];
-          if (actual !== d.hashes[original])
-            throw Error('Side rig asset hash mismatch: ' + original);
+          await verifyAssetHash(url, d.hashes[original], {
+            load: 'Cannot load side rig asset ' + url,
+            mismatch: 'Side rig asset hash mismatch: ' + original,
+          });
         },
       ),
     ),
   );
   return {
     preload(scene) {
-      if (!scene.textures.exists('arena-hands-v1'))
-        scene.load.image('arena-hands-v1', handSheet);
+      if (!scene.textures.exists(HAND_TEXTURE_KEY))
+        scene.load.image(HAND_TEXTURE_KEY, handSheet);
       for (const d of sideDefinitions) {
         const id = d.id as keyof typeof files,
           urls = files[id];
         scene.load.json(d.key + '-skeleton', urls.skeleton);
         scene.load.json(d.key + '-atlas', urls.atlas);
         scene.load.image(d.key + '-texture', urls.texture);
-        scene.load.image(id + '-rear-source', rear[id]);
+        scene.load.image(rearSourceKey(id), rear[id]);
       }
     },
     create(scene, character, _profile, placement) {

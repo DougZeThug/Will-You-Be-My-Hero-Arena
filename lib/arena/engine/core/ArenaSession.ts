@@ -22,6 +22,7 @@ import assets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
 import { seeded } from './Random';
 import type { InputFrame, Intent } from '../input/InputActions';
+import { clamp01 } from '../../math';
 /** Identity of a presented object across fixed steps ('held' passes owners). */
 export const objectKey = (o: VisualObject) => o.id + ':' + (o.owner ?? '');
 export class ArenaSession {
@@ -164,7 +165,8 @@ export class ArenaSession {
     });
     this.event.onPause?.();
   }
-  private poll(player: string) {
+  /** This step's input frame: device plus touch overlay, neutral-gated. */
+  private readFrame(player: string) {
     const frame = this.input.poll(player, this.time),
       touch = this.touch.get(player)!;
     if (this.input.device(player) !== touch && frame.family !== 'ai') {
@@ -204,6 +206,10 @@ export class ArenaSession {
     if (!activeInput)
       frame.family = this.frames.get(player)?.family ?? frame.family;
     this.frames.set(player, frame);
+    return frame;
+  }
+  /** Pause key and controller disconnect. */
+  private handlePauseIntent(player: string, frame: InputFrame) {
     // A finished match stays on its result: the pause key and a controller
     // disconnect no longer pause it.
     const down = Number(frame.values.pause ?? 0) > 0.5,
@@ -213,6 +219,10 @@ export class ArenaSession {
     this.pauseDown.set(player, down);
     if (!frame.connected && !this.paused && !finished)
       this.pause(true, 'Controller disconnected. Reconnect it, then resume.');
+  }
+  private poll(player: string) {
+    const frame = this.readFrame(player);
+    this.handlePauseIntent(player, frame);
     return frame;
   }
   advance(delta: number) {
@@ -223,7 +233,6 @@ export class ArenaSession {
     this.accumulator += Math.min(0.1, Math.max(0, delta));
     while (this.accumulator >= 1 / 60 && !this.paused) {
       this.accumulator -= 1 / 60;
-      // Presentation interpolates from this step's starting state.
       for (const c of this.characters) c.capturePrevious();
       this.previousObjects = new Map(
         this.event.view().objects.map((o) => [objectKey(o), o]),
@@ -266,15 +275,15 @@ export class ArenaSession {
       this.event.update(1 / 60);
     }
   }
-  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
-   * characters and objects between their previous and current step so motion
-   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
   /** Remaining hit-stop steps (0 when the clock is running). */
   get hitStopSteps() {
     return this.stopSteps;
   }
+  /** Fraction of the next fixed step already elapsed (0–1). Rendering draws
+   * characters and objects between their previous and current step so motion
+   * is smooth at any refresh rate instead of advancing in 60 Hz jumps. */
   get alpha() {
-    return this.paused ? 1 : Math.max(0, Math.min(1, this.accumulator * 60));
+    return this.paused ? 1 : clamp01(this.accumulator * 60);
   }
   /** Object state at the start of the latest fixed step, keyed by objectKey. */
   previousObjects = new Map<string, VisualObject>();

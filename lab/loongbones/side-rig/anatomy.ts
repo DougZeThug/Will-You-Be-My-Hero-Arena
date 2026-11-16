@@ -1,12 +1,33 @@
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 import { buildSkeleton, type Joint, type Vec } from './skeleton';
-export type Person = 'dan' | 'doug';
+export type Person = CharacterId;
 const v = (x: number, y: number): Vec => ({ x, y });
-/** Landmarks are anatomical centers inside the new near-profile source.
+/** Arena standing height in px that both side-v3 exports are scaled to. */
+export const ARENA_STANDING_HEIGHT = 371;
+/** Width and height of the square side-v3 texture atlas, in px. */
+export const SIDE_ATLAS_SIZE = 1254;
+/** Crown-to-sole height of each side-v3 export in source px. */
+const SIDE_SOURCE_HEIGHT: Record<Person, number> = { dan: 1215, doug: 1191 };
+/** Rig scale of a side-v3 character at the Lab reference size. */
+export const sideReferenceScale = (id: Person) =>
+  ARENA_STANDING_HEIGHT / SIDE_SOURCE_HEIGHT[id];
+/** A rig scale relative to the Lab reference, for motor and stride fitting. */
+export const scaleToReference = (rigScale: number, id: Person) =>
+  rigScale / sideReferenceScale(id);
+/** Ratio of an actor's absolute scale to its definition's own scale. */
+export const displayScale = (
+  definition: { scale: number },
+  actorScale: number,
+) => actorScale / definition.scale;
+/** Source-pixel ground origin (root bone) of the side-v3 exports. */
+export const sideSourceOrigin = (id: Person): Vec =>
+  v(510, id === 'dan' ? 1227 : 1210);
+/** Landmarks are anatomical centers inside the near-profile source.
  * L is the NEAR anatomical right arm (legacy socket naming), not screen left.
  * Both toe vectors face the board; the opposite/left foot leads the stance. */
 export function anatomy(id: Person) {
   const dan = id === 'dan';
-  const origin = v(510, dan ? 1227 : 1210);
+  const origin = sideSourceOrigin(id);
   const shoulder = v(436, dan ? 315 : 300);
   const elbow = v(447, dan ? 465 : 464);
   const wrist = v(518, dan ? 645 : 646);

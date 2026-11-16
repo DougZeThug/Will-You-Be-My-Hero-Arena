@@ -1,12 +1,9 @@
 import * as Phaser from 'phaser';
 import { objectKey, type ArenaSession } from '../core/ArenaSession';
 import type { LiveOptions, VisualObject } from '../core/LiveTypes';
-import {
-  queueArenaAssets,
-  queueCharacter,
-  prepareCharacterTextures,
-  type LoadedCharacter,
-} from './CharacterAssetLoader';
+import type { LoadedCharacter } from './CharacterAssetLoader';
+import { CharacterBootScene } from './BootScene';
+import { addBackdrop, tagCharacterRuntime } from './stage';
 import {
   CharacterPresentation,
   presentedBody,
@@ -15,38 +12,25 @@ import { CameraManager } from '../camera/CameraManager';
 import { EffectsManager } from '../effects/EffectsManager';
 import {
   createVisualObject,
+  isProjectileVisual,
   type VisualPresentation,
 } from '../objects/VisualObjectRegistry';
 import { equipmentSprite } from '../objects/EquipmentSprite';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import type { ArenaEventStyle } from '../presentation/ArenaTheme';
-export class LiveBootScene extends Phaser.Scene {
-  private loaded: LoadedCharacter[] = [];
-  private failed = false;
+export class LiveBootScene extends CharacterBootScene {
   constructor(
     private session: ArenaSession,
     private options: LiveOptions,
   ) {
-    super('LiveBoot');
-  }
-  preload() {
-    this.load.on('loaderror', (file: Phaser.Loader.File) => {
-      this.failed = true;
-      this.options.onError(
-        'Could not load ' + file.key + '. Return to setup and retry.',
-      );
-    });
-    queueArenaAssets(this);
-    this.options.characterRigs?.preload(this);
-    this.loaded = this.session.config.players.map((p, i) =>
-      queueCharacter(this, p.cardId, i, p.asset),
-    );
-  }
-  create() {
-    if (this.failed) return;
-    prepareCharacterTextures(this, this.loaded);
-    this.scene.start('LiveArena', { characters: this.loaded });
+    super('LiveBoot', 'LiveArena', () => ({
+      characterRigs: this.options.characterRigs,
+      loadError: (key) =>
+        'Could not load ' + key + '. Return to setup and retry.',
+      onError: (message) => this.options.onError(message),
+      characters: this.session.config.players,
+    }));
   }
 }
 export class LiveArenaScene extends Phaser.Scene {
@@ -65,7 +49,6 @@ export class LiveArenaScene extends Phaser.Scene {
   ) {
     super('LiveArena');
   }
-  /** Applies Reduced motion to the running match without rebuilding it. */
   setReduced(reduced: boolean) {
     this.options.reduced = reduced;
     for (const actor of this.actors) actor.setReduced(reduced);
@@ -73,19 +56,7 @@ export class LiveArenaScene extends Phaser.Scene {
   create({ characters }: { characters: LoadedCharacter[] }) {
     try {
       const view = this.session.event.view();
-      for (let x = 0; x < view.worldWidth; x += 1280)
-        this.add
-          .image(x, 0, 'arena-background')
-          .setOrigin(0)
-          .setDisplaySize(1280, 720);
-      this.add.rectangle(
-        view.worldWidth / 2,
-        360,
-        view.worldWidth,
-        720,
-        0x8c5c29,
-        0.025,
-      );
+      addBackdrop(this, view.worldWidth);
       view.stage?.equipment?.forEach((p) => equipmentSprite(this, p, 530));
       if (view.stage?.lanes) {
         const lines = this.add.graphics().setDepth(5);
@@ -116,14 +87,13 @@ export class LiveArenaScene extends Phaser.Scene {
             this.options.reduced,
           ),
       );
-      const performanceRevision = this.actors
-        .map((actor) => actor.debugInfo()?.runtimeRevision)
-        .find((revision) => typeof revision === 'string');
-      if (typeof performanceRevision === 'string')
-        this.game.canvas.dataset.characterRuntime = performanceRevision;
-      this.game.canvas.dataset.characterBackends = this.actors
-        .map((actor) => actor.backend)
-        .join(',');
+      tagCharacterRuntime(
+        this.game.canvas,
+        this.actors
+          .map((actor) => actor.debugInfo()?.runtimeRevision)
+          .find((revision) => typeof revision === 'string'),
+        this.actors.map((actor) => actor.backend),
+      );
       this.unsubscribe = this.session.onCue((cue) => {
         this.effects.cue(cue);
         if (cue.kind === 'camera' && !this.options.reduced)
@@ -166,9 +136,8 @@ export class LiveArenaScene extends Phaser.Scene {
     );
     this.objects.forEach((o) => o.setVisible(false));
     view.objects.forEach((o) => {
-      const actor = this.actors[
-        this.session.characters.findIndex((c) => c.id === o.owner)
-      ];
+      const actor =
+        this.actors[this.session.characters.findIndex((c) => c.id === o.owner)];
       const held = o.id === 'held' && actor;
       // Flying objects are drawn between steps like the characters.
       const before = this.session.previousObjects.get(objectKey(o));
@@ -214,9 +183,7 @@ export class LiveArenaScene extends Phaser.Scene {
       event: this.session.config.event as ArenaEventStyle,
       time: this.session.time,
       protectedPoints: view.objects
-        .filter((o) =>
-          ['bag', 'basketball', 'football', 'ping-pong'].includes(o.kind),
-        )
+        .filter((o) => isProjectileVisual(o.kind))
         .map((o) => ({
           x: o.x,
           y: o.y,

@@ -1,5 +1,5 @@
 import provenance from '../assets/dan-editor-r2/provenance.json';
-
+import { verifyAssetHash } from '../arena/assetHash';
 const base = '/loongbones/assets/';
 export const danSamples = {
   authored: {
@@ -40,15 +40,10 @@ export async function verifyDanSample(sample: DanSample) {
     [provenance.derived.file]: provenance.derived.sha256,
   };
   for (const file of [s.skeleton, s.atlas, s.texture]) {
-    const response = await fetch(s.path + file);
-    if (!response.ok) throw Error(`Cannot load ${file}`);
-    const bytes = await response.arrayBuffer();
-    const digest = await crypto.subtle.digest('SHA-256', bytes);
-    const hash = [...new Uint8Array(digest)]
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-    if (hash !== hashes[file])
-      throw Error(`Dan fixture hash mismatch: ${file}`);
+    await verifyAssetHash(s.path + file, hashes[file], {
+      load: `Cannot load ${file}`,
+      mismatch: `Dan fixture hash mismatch: ${file}`,
+    });
   }
   return true;
 }

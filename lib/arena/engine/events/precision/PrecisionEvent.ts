@@ -3,24 +3,33 @@ import type {
   EventContext,
   LiveView,
 } from '../../core/LiveTypes';
+import type { PrecisionPhase } from '../../characters/CharacterStates';
 import type {
   ArenaCharacter,
   ThrowContact,
 } from '../../characters/ArenaCharacter';
 import type { ActionPayload } from '../../controllers/ControllableEntity';
 import type { ClipMarker } from '../../animation/AnimationEvents';
-import { clamp, type InputFrame } from '../../input/InputActions';
-import { placement, boardDepthScale } from '../../../equipment-layout';
+import { clamp } from '../../../math';
+import type { InputFrame } from '../../input/InputActions';
+import {
+  placement,
+  boardDepthScale,
+  BAG_REST_FLATTEN,
+} from '../../../equipment-geometry';
+import { HOLE_HALF } from '../../../board-geometry';
 import { timingGrade } from '../../input/TimingWindow';
 import { PrecisionActionMap } from './PrecisionActionMap';
-/** The four shots a player can select, with the names the controls use. */
-const SHOTS: Record<string, string> = Object.fromEntries(
-  PrecisionActionMap.actions
-    .filter((a) => a.command.startsWith('select.'))
-    .map((a) => [a.command.slice(7), a.label]),
-);
-/** The card rating that sets a shot's window, where it differs from the shot: a Hole runner is a slide shot. */
-const SKILL: Record<string, string> = { flat: 'slide' };
+import {
+  SHOTS,
+  BAGS_PER_PLAYER,
+  CLUTCH_AFTER_BAGS,
+  HOLE_POINTS,
+  BOARD_POINTS,
+  shotOfCommand,
+  type ShotId,
+} from './PrecisionConstants';
+import { SINGLE_SCREEN_WORLD_WIDTH } from '../StageConstants';
 /** Where each thrower stands: inside the throwing line, one depth row each. */
 const START_X = [215, 345, 280, 190];
 /** Landing drift per unit of power error outside the release window's blend (stage px). */
@@ -47,7 +56,6 @@ const MISS_X = 490,
    */
   THROW_TIMEOUT = 1.0;
 import {
-  HOLE_HALF,
   precisionTarget,
   flightPosition,
   resolvePrecisionLanding,
@@ -59,11 +67,11 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private ctx!: EventContext;
   private turn = 0;
   private throws = 0;
-  private state = 'entrance';
+  private state: PrecisionPhase = 'entrance';
   private phaseAt = 0;
   private chargeAt = 0;
   private throwAt = 0;
-  private shot = 'flat';
+  private shot: ShotId = 'flat';
   private aim = { x: 0, y: 0 };
   private flight?: PrecisionFlight;
   private bags: PrecisionBag[] = [];
@@ -104,15 +112,16 @@ export class PrecisionEvent implements PlayableArenaEvent {
   }
   private can(c: ArenaCharacter, a: string) {
     if (c !== this.active() || this.complete) return false;
-    if (a.startsWith('select.') || a === 'precision')
+    if (shotOfCommand(a) || a === 'precision')
       return ['aiming', 'charging'].includes(this.state);
     if (a === 'charge') return this.state === 'aiming';
     if (a === 'release') return this.state === 'charging';
     return false;
   }
   private action(c: ArenaCharacter, a: string, _p: ActionPayload) {
-    if (a.startsWith('select.')) {
-      this.shot = a.slice(7);
+    const selected = shotOfCommand(a);
+    if (selected) {
+      this.shot = selected;
       this.message =
         this.state === 'charging' ? this.chargeMessage() : this.aimMessage();
       return true;
@@ -143,13 +152,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
           .grade === 'perfect';
       this.state = c.substate = 'throwing';
       this.throwAt = this.ctx.time();
-      c.startAction(
-        this.shot === 'airmail'
-          ? 'throw.airmail.live'
-          : this.shot === 'roll'
-            ? 'throw.roll.live'
-            : 'throw.precision',
-      );
+      c.startAction(SHOTS[this.shot].clip);
       this.message = this.perfect
         ? 'Perfect release'
         : this.releasePower < this.ideal()
@@ -162,7 +165,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
     return false;
   }
   private shotName() {
-    return SHOTS[this.shot] ?? this.shot;
+    return SHOTS[this.shot].label;
   }
   private aimMessage() {
     return `${this.active().profile.name}: aim, hold charge, then release · Shot: ${this.shotName()}`;
@@ -178,9 +181,9 @@ export class PrecisionEvent implements PlayableArenaEvent {
     const c = this.active();
     return (
       0.02 +
-      c.stats.event('cornhole', SKILL[this.shot] ?? this.shot, 0.6) / 30 +
+      c.stats.event('cornhole', SHOTS[this.shot].skill, 0.6) / 30 +
       (c.abilities.enabled('precisionMode', this.ctx.time()) ? 0.015 : 0) +
-      (this.throws >= this.ctx.characters.length * 3 &&
+      (this.throws >= this.ctx.characters.length * CLUTCH_AFTER_BAGS &&
       c.abilities.has('clutchPerformer')
         ? 0.01
         : 0)
@@ -189,12 +192,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
   private power() {
     return clamp((this.ctx.time() - this.chargeAt) / 1.5, 0, 1.2);
   }
-  /** Fire the throw: compute the bag's flight and transition out of
-   * `throwing` into `flight`. Called either from `onCharacterEvent` when the
-   * character's throw clip emits its `release` ClipMarker, or from the
-   * `throwing` watchdog in `update()` when the marker is absent (e.g. a
-   * markerless `gameplay.animations` alias from a user pack), so a bad
-   * alias can never soft-lock the match. */
+  /** Fire the throw (from the `release` marker or the THROW_TIMEOUT watchdog). */
   private releaseBag(c: ArenaCharacter) {
     const target = precisionTarget(),
       error = this.releasePower - this.ideal(),
@@ -253,9 +251,9 @@ export class PrecisionEvent implements PlayableArenaEvent {
           (this.ctx.random() - 0.5) * spread,
       },
       age: 0,
-      duration: this.shot === 'airmail' ? 1.25 : 0.88,
-      arc: this.shot === 'airmail' ? 240 : this.shot === 'flat' ? 66 : 105,
-      spin: this.shot === 'roll' ? Math.PI * 4 : 0.6,
+      duration: SHOTS[this.shot].duration,
+      arc: SHOTS[this.shot].arc,
+      spin: SHOTS[this.shot].spin,
     };
     this.state = c.substate = 'flight';
     this.ctx.emit({ kind: 'audio', name: 'release', player: c.id });
@@ -274,12 +272,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
       time = this.ctx.time();
     if (this.state === 'entrance' && time - this.phaseAt > 1.45)
       this.nextPlayer();
-    // Defense in depth: the throw clip's `release` marker never fires if a
-    // `gameplay.animations` alias replaced it with a markerless clip (a
-    // documented extension point for user character packs). Once the clip
-    // has had time to play, synthesize the release so the bag flies and the
-    // turn resolves — mirroring the hard caps every sibling transient state
-    // already has, so a wedged throw can never soft-lock the match.
+    // Watchdog for a markerless throw clip; see THROW_TIMEOUT.
     if (this.state === 'throwing' && time - this.throwAt > THROW_TIMEOUT)
       this.releaseBag(c);
     if (['aiming', 'charging'].includes(this.state)) {
@@ -299,12 +292,16 @@ export class PrecisionEvent implements PlayableArenaEvent {
             .reduce((n, b) => n + b.points, 0);
         this.flight = undefined;
         const contact: ThrowContact =
-          bag.points === 3 ? 'hole' : bag.points === 1 ? 'board' : 'miss';
+          bag.points === HOLE_POINTS
+            ? 'hole'
+            : bag.points === BOARD_POINTS
+              ? 'board'
+              : 'miss';
         c.lastThrow = { contact };
         this.state = c.substate = 'result';
         this.phaseAt = time;
         this.throws++;
-        this.message = `${c.profile.name}: ${bag.points === 3 ? 'in the hole — three points' : bag.points === 1 ? 'on the board — one point' : 'off the board'}`;
+        this.message = `${c.profile.name}: ${bag.points === HOLE_POINTS ? 'in the hole — three points' : bag.points === BOARD_POINTS ? 'on the board — one point' : 'off the board'}`;
         c.react(
           c.personality.choose(
             bag.points ? 'celebration' : 'reaction',
@@ -313,22 +310,23 @@ export class PrecisionEvent implements PlayableArenaEvent {
         );
         this.ctx.emit({
           kind: 'audio',
-          name: bag.points === 3 ? 'hole' : 'boardImpact',
+          name: bag.points === HOLE_POINTS ? 'hole' : 'boardImpact',
           player: c.id,
         });
         this.ctx.emit({
           kind: 'effect',
-          name: bag.points === 3 ? 'hole' : bag.points ? 'impact' : 'miss',
+          name:
+            bag.points === HOLE_POINTS ? 'hole' : bag.points ? 'impact' : 'miss',
           x: bag.x,
           y: bag.y,
           intensity: 0.3,
         });
-        if (bag.points === 3)
+        if (bag.points === HOLE_POINTS)
           this.ctx.emit({ kind: 'camera', name: 'hole', intensity: 0.5 });
       }
     }
     if (this.state === 'result' && time - this.phaseAt > 1.2) {
-      if (this.throws >= this.ctx.characters.length * 4) {
+      if (this.throws >= this.ctx.characters.length * BAGS_PER_PLAYER) {
         this.complete = true;
         this.state = 'finished';
         this.finish();
@@ -348,10 +346,12 @@ export class PrecisionEvent implements PlayableArenaEvent {
     });
     // Start on the character's favourite of the shots the player can select,
     // so the default can always be chosen again.
-    this.shot =
-      Object.entries(this.active().profile.throwingStyle.tendencies)
-        .filter(([shot]) => shot in SHOTS)
-        .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))[0]?.[0] ?? 'flat';
+    const favourite = Object.entries(
+      this.active().profile.throwingStyle.tendencies,
+    )
+      .filter(([shot]) => shot in SHOTS)
+      .sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))[0]?.[0] as ShotId | undefined;
+    this.shot = favourite ?? 'flat';
     this.message = this.aimMessage();
   }
   ai(c: ArenaCharacter, time: number): InputFrame {
@@ -417,15 +417,14 @@ export class PrecisionEvent implements PlayableArenaEvent {
       scores: Object.fromEntries(
         this.ctx.characters.map((c) => [c.id, c.score]),
       ),
-      // Read-only presentation of resolved turns; charging/flight does not spend a displayed bag.
       attempts: Object.fromEntries(
         this.ctx.characters.map((player, index) => [
           player.id,
           {
-            total: 4,
+            total: BAGS_PER_PLAYER,
             remaining: Math.max(
               0,
-              4 -
+              BAGS_PER_PLAYER -
                 Math.floor(this.throws / this.ctx.characters.length) -
                 (index < this.throws % this.ctx.characters.length ? 1 : 0),
             ),
@@ -433,7 +432,7 @@ export class PrecisionEvent implements PlayableArenaEvent {
         ]),
       ),
       camera: 'static',
-      worldWidth: 1280,
+      worldWidth: SINGLE_SCREEN_WORLD_WIDTH,
       active: c.id,
       target: ['aiming', 'charging'].includes(this.state)
         ? { x: target.x + this.aim.x * 115, y: target.y + this.aim.y * 48 }
@@ -449,8 +448,8 @@ export class PrecisionEvent implements PlayableArenaEvent {
           : undefined,
       objects: [
         ...this.bags
-          .filter((b) => b.points === 1)
-          .map((b) => ({ ...b, flatten: 0.52, kind: 'bag' as const })),
+          .filter((b) => b.points === BOARD_POINTS)
+          .map((b) => ({ ...b, flatten: BAG_REST_FLATTEN, kind: 'bag' as const })),
         ...(this.flight
           ? [
               {

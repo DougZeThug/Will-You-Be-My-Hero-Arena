@@ -1,6 +1,6 @@
 import type { dragonBones as db } from '../loongbones/vendor/dragonBones';
 import { InertialChannel } from '../../lib/arena/engine/motion/DampedMotion';
-import { PERFORMANCE_BONES } from '../../lib/arena/engine/motion/OrganicMotion';
+import { PERFORMANCE_BONES } from './motion/OrganicMotion';
 
 /** Only additive offset residuals. Never rewrites animation time or touches weighted topology. */
 export class InertialPose {

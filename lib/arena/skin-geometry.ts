@@ -1,6 +1,5 @@
+import {clamp01 as clamp,smooth} from './math';
 import {type SkinPiece,type JointPoint} from './puppet-geometry';
-const clamp=(v:number)=>Math.max(0,Math.min(1,v));
-const smooth=(v:number)=>{v=clamp(v);return v*v*(3-2*v);};
 export function skinVertex(x:number,y:number,p:SkinPiece,a:JointPoint,b:JointPoint,c:JointPoint,foot=false,footAngle=0):JointPoint{
  const root=p.root!,joint=p.joint!,end=p.end!,upper=(y-root[1])/(joint[1]-root[1]),lower=(y-joint[1])/(end[1]-joint[1]);
  const dir=(u:JointPoint,v:JointPoint)=>{const d=Math.max(.0001,Math.hypot(v.x-u.x,v.y-u.y));return{x:(v.x-u.x)/d,y:(v.y-u.y)/d};};

@@ -1,5 +1,6 @@
 import {type PuppetPose,type CharacterChoreography} from './puppet-motion';
 import {softReachDrop} from './engine/performance/KneeReach';
+import {clamp01,smoothstep} from './math';
 export const PUPPET_PARTS=['head','torso','upperL','upperR','foreL','foreR','thighL','thighR','shinL','shinR','footL','footR'] as const;
 export type PuppetPart=typeof PUPPET_PARTS[number];
 export interface PuppetPiece {rect:[number,number,number,number];pivot:[number,number];span?:number}
@@ -14,7 +15,7 @@ const STANCE_BEND=3;
 export function joinedBodyPoint(skin:JoinedSkin,x:number,y:number):JointPoint{
  const p=skin.posture;if(!p)return{x,y};
  const shoulderWidth=Math.abs(skin.arms[x<0?0:1].root[0]-skin.hip[0])*skin.scale;
- const lateral=Math.min(1,Math.abs(x)/shoulderWidth),height=Math.max(0,Math.min(1,-y/65));
+ const lateral=Math.min(1,Math.abs(x)/shoulderWidth),height=clamp01(-y/65);
  const slope=lateral*lateral*(3-2*lateral)*height*height*(3-2*height);
  return{x:x*p.width,y:y*p.torsoHeight+p.shoulderDrop*slope};
 }
@@ -80,7 +81,7 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
    // Rotate the elbow plane through depth as the wrist rises. Its projected
    // bend passes smoothly through straight, without reversing either bone or
    // letting the elbow coincide with the palm at a pole-vector singularity.
-   const span=Math.max(Math.abs(asset.arm[0]-asset.arm[1])+.001,Math.min(reach-.001,d)),along=(asset.arm[0]**2-asset.arm[1]**2+span**2)/(2*span),height=Math.sqrt(Math.max(0,asset.arm[0]**2-along**2)),lift=Math.max(0,Math.min(1,-dy/45)),raised=lift*lift*(3-2*lift),bend=Math.tanh(dx/25)*(1-raised)+side*raised,ux=dx/Math.max(.001,d),uy=dy/Math.max(.001,d);
+   const span=Math.max(Math.abs(asset.arm[0]-asset.arm[1])+.001,Math.min(reach-.001,d)),along=(asset.arm[0]**2-asset.arm[1]**2+span**2)/(2*span),height=Math.sqrt(Math.max(0,asset.arm[0]**2-along**2)),lift=clamp01(-dy/45),raised=smoothstep(lift),bend=Math.tanh(dx/25)*(1-raised)+side*raised,ux=dx/Math.max(.001,d),uy=dy/Math.max(.001,d);
    // An elbow bending outward mostly travels back, away from the camera: draw
    // FRONT_ELBOW_WING of it sideways and foreshorten the rest. The full
    // sideways bend read as chicken wings whenever a hand came in front of
@@ -97,7 +98,7 @@ export function puppetJoints(p:PuppetPose,asset:Pick<PuppetAsset,'arm'|'leg'|'ve
   // A virtual depth component accounts for foreshortening; only x/y render.
   // The pole points down and slightly out, keeping elbows below raised hands.
   const z=65*(1-r)+30*Math.sin(r*Math.PI),length=Math.max(.001,Math.hypot(end.x-root.x,end.y-root.y,z)),ux=(end.x-root.x)/length,uy=(end.y-root.y)/length,uz=z/length;
-  const raised=Math.max(0,Math.min(1,-dy/65)),lift=raised*raised*(3-2*raised);
+  const raised=clamp01(-dy/65),lift=smoothstep(raised);
   const poleX=asset.joined?side*(.65+.35*lift):side*.65,poleY=asset.joined?1-.90*lift:1;
   const dot=poleX*ux+poleY*uy,px=poleX-dot*ux,py=poleY-dot*uy,pz=-dot*uz,pole=Math.max(.001,Math.hypot(px,py,pz));
   const along=(asset.arm[0]**2-asset.arm[1]**2+length**2)/(2*length),cross=Math.sqrt(Math.max(0,asset.arm[0]**2-along**2));

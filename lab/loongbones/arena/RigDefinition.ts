@@ -1,6 +1,7 @@
 import type { AnimationCategory } from '../../../lib/arena/engine/animation/AnimationTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 export interface WeightedRigDefinition {
-  id: string;
+  id: CharacterId;
   armature: string;
   key: string;
   path: string;

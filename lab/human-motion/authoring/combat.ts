@@ -6,10 +6,11 @@ import {
   type LibraryBuilder,
 } from './builder';
 import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 import { motionSignatures } from '../../../lib/arena/engine/motion/CharacterMotionSignature';
 export function addCombat(
   library: LibraryBuilder,
-  id: 'dan' | 'doug',
+  id: CharacterId,
   plants: MotionMarker[],
 ) {
   const { athletic } = library;

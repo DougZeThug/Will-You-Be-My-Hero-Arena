@@ -1,12 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { chromium } from 'playwright';
-import { browserLaunchOptions } from './qa-server.mjs';
-const browser = await chromium.launch({
-  ...browserLaunchOptions(),
-  headless: true,
-});
+import { launchBrowser } from './lib/browser.mjs';
+const browser = await launchBrowser();
 const report = [];
 try {
   const page = await browser.newPage();

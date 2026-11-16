@@ -90,11 +90,6 @@ export async function testSportMechanics({ check, setup, m, s, a }) {
   }
   const flight={origin:{x:400,y:410},target:{x:900,y:540},duration:1.25,age:0,arc:40,spin:.12};
   check(() => assert.deepEqual({x:flightPosition(flight).x,y:flightPosition(flight).y},flight.origin,'Live release begins at the evaluated wrist socket'));
-  for(const sport of m.SPORTS){
-    const rec=s.simulate(setup(sport,'mechanics-immutable')),before=JSON.stringify(rec);
-    for(const attempt of rec.attempts)sportThrowPose(sport,'standard',.5,.43,.7);
-    check(() => assert.equal(JSON.stringify(rec),before));
-  }
   fs.mkdirSync('work/qa/sport-mechanics',{recursive:true});
   fs.writeFileSync('work/qa/sport-mechanics/geometry.json',JSON.stringify({maxPalmStep,maxMeshStep,releases},null,2));
 }

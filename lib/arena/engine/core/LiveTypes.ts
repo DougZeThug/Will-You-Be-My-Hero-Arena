@@ -1,6 +1,6 @@
 import type { AssetManifest } from '../../model';
 import type { Bindings } from '../input/InputBindings';
-import type { Intent, InputFrame } from '../input/InputActions';
+import type { InputFrame } from '../input/InputActions';
 import type { ArenaCharacter } from '../characters/ArenaCharacter';
 import type { EventActionMap } from '../controllers/EventActionMap';
 import type { ClipMarker } from '../animation/AnimationEvents';
@@ -109,8 +109,3 @@ export interface LiveOptions {
   reduced: boolean;
   characterRigs?: CharacterRigProvider;
 }
-export type LiveInput = (
-  player: string,
-  intent: Intent,
-  value: number | { x: number; y: number },
-) => void;

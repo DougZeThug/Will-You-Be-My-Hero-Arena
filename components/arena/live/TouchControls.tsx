@@ -5,7 +5,11 @@ import type {
   Vector,
   DeviceFamily,
 } from '@/lib/arena/engine/input/InputActions';
-import type { EventActionMap } from '@/lib/arena/engine/controllers/EventActionMap';
+import {
+  chargeAction,
+  visibleActions,
+  type EventActionMap,
+} from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Bindings } from '@/lib/arena/engine/input/InputBindings';
 import { inputGlyph } from '@/lib/arena/engine/input/InputGlyphs';
 function Stick({
@@ -98,19 +102,15 @@ export default function TouchControls({
   const [held, setHeld] = useState<Record<string, boolean>>({});
   const sender = useRef(send);
   sender.current = send;
+  const charge = chargeAction(map),
+    chargeIntent = charge?.intent;
   useEffect(() => {
-    if (resetCharge) {
-      setHeld((p) => (p.charge ? { ...p, charge: false } : p));
-      sender.current('charge', 0);
+    if (resetCharge && chargeIntent) {
+      setHeld((p) => (p[chargeIntent] ? { ...p, [chargeIntent]: false } : p));
+      sender.current(chargeIntent, 0);
     }
-  }, [resetCharge]);
-  const actions = map.actions.filter(
-      (a, i, all) =>
-        !a.hidden &&
-        a.intent !== 'move' &&
-        a.intent !== 'aim' &&
-        all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
-    ),
+  }, [resetCharge, chargeIntent]);
+  const actions = visibleActions(map),
     // Moves that need a held modifier (the Brawl's grapple) get their own
     // button, which presses the modifier and the action together.
     chords = map.actions.filter(
@@ -126,12 +126,12 @@ export default function TouchControls({
       </div>
       <div className="live-action-buttons">
         {actions.map((a) => {
-          const toggle = a.intent === 'charge' || a.phase === 'held',
+          const toggle = a.intent === chargeIntent || a.phase === 'held',
             down = held[a.intent],
             // Charging is only possible on this player's own turn, and nothing
             // can be held before the match has loaded.
             unavailable =
-              !ready || (a.intent === 'charge' && resetCharge && !down);
+              !ready || (a.intent === chargeIntent && resetCharge && !down);
           return (
             <button
               key={a.intent}
@@ -151,8 +151,8 @@ export default function TouchControls({
               <kbd>{inputGlyph(a.intent, family, bindings, player)}</kbd>
               <span>
                 {down
-                  ? a.intent === 'charge' && map.id === 'cornhole'
-                    ? 'Release'
+                  ? charge && a.intent === chargeIntent
+                    ? charge.releaseLabel
                     : 'Stop ' + a.label.toLowerCase()
                   : a.label}
               </span>

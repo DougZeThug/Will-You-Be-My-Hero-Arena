@@ -2,17 +2,19 @@ import {
   CharacterMotor,
   type MovementCollision,
 } from '../../lib/arena/engine/movement/CharacterMotor';
-import { MotionPlanner } from '../../lib/arena/engine/motion/MotionPlanner';
-import { MotionAnalyzer } from '../../lib/arena/engine/motion/MotionAnalyzer';
-import { MotionContacts } from '../../lib/arena/engine/motion/MotionContacts';
-import { gaitSupport } from '../../lib/arena/engine/motion/StrideMatcher';
+import { MotionPlanner } from './motion/MotionPlanner';
+import { MotionAnalyzer } from './motion/MotionAnalyzer';
+import { MotionContacts } from './motion/MotionContacts';
 import {
-  motionProfiles,
-  type Vec2,
-} from '../../lib/arena/engine/motion/MotionTypes';
+  gaitStartEvents,
+  landingEvents,
+} from './motion/GaitEvents';
+import type { Vec2 } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
+import { motionProfiles } from '../../lib/arena/engine/motion/MotionProfiles';
 import { AttachmentManager } from '../../lib/arena/engine/equipment/AttachmentManager';
-import { PropPerformance } from '../../lib/arena/engine/equipment/PropPerformance';
-import { PerformanceTimeline } from '../../lib/arena/engine/motion/PerformanceTimeline';
+import { PropPerformance } from './PropPerformance';
+import { PerformanceTimeline } from './motion/PerformanceTimeline';
 import { performancePersonalities } from '../../lib/arena/engine/characters/PerformancePersonality';
 import { motionSignatures } from '../../lib/arena/engine/motion/CharacterMotionSignature';
 import type {
@@ -20,6 +22,7 @@ import type {
   ActionPayload,
   EntityState,
 } from '../../lib/arena/engine/controllers/ControllableEntity';
+import { scaleToReference } from '../loongbones/side-rig/anatomy';
 import type { NativeAnimator } from './NativeAnimator';
 export interface MotionMechanic {
   can(action: string, actor: MotionActor): boolean;
@@ -68,19 +71,18 @@ export class MotionActor implements ControllableEntity {
   private activeClip = '';
   private hitContactPending = false;
   constructor(
-    readonly id: 'dan' | 'doug',
+    readonly id: CharacterId,
     readonly animator: NativeAnimator,
     position: Vec2,
     readonly mechanic: MotionMechanic,
     collision: MovementCollision,
   ) {
     this.motor = new CharacterMotor(motionProfiles[id], position, collision);
-    this.motor.verticalScale =
-      animator.definition.scale / (371 / (id === 'dan' ? 1215 : 1191));
+    this.motor.verticalScale = scaleToReference(animator.definition.scale, id);
     this.planner = new MotionPlanner(
       animator.library.metadata,
       this.motor.profile,
-      animator.definition.scale / (371 / (id === 'dan' ? 1215 : 1191)),
+      scaleToReference(animator.definition.scale, id),
     );
     this.personality = new PerformanceTimeline(
       performancePersonalities[id],
@@ -96,7 +98,9 @@ export class MotionActor implements ControllableEntity {
       },
       id === 'doug' ? 7041 : 1702,
     );
-    this.animator.advance(this.planner, this.motor, 0, [], 0, this.aimIntent);
+    this.animator.advance(this.planner, this.motor, 0, [], 0, {
+      aim: this.aimIntent,
+    });
   }
   move(v: Vec2) {
     this.motor.move(v);
@@ -192,19 +196,14 @@ export class MotionActor implements ControllableEntity {
       );
     const gait = this.planner.graph.get('base');
     if (!active && gait?.clip.gait && oldGait !== gait.revision) {
-      const support = gaitSupport(
-        gait.time / gait.clip.duration,
-        gait.clip.gait.stance,
-      );
-      for (const foot of ['right', 'left'] as const)
-        events.push({
-          name: support.includes(foot) ? 'footPlant' : 'footRelease',
-          foot,
-          at: 0,
-          clip: gait.clip.id,
+      events.push(
+        ...gaitStartEvents(
+          gait,
+          gait.clip.gait.stance,
           time,
-          cycle: Math.floor(gait.time / gait.clip.duration),
-        });
+          Math.floor(gait.time / gait.clip.duration),
+        ),
+      );
     }
     // A resumed gait may already be past its release marker. Landing contacts
     // cannot remain fixed until that marker comes around in another cycle.
@@ -220,23 +219,7 @@ export class MotionActor implements ControllableEntity {
         })),
       );
     if (result.landed)
-      events.push(
-        {
-          name: 'land',
-          at: 0,
-          clip: active?.clip.id ?? 'airborne',
-          time,
-          cycle: 0,
-        },
-        ...(['left', 'right'] as const).map((foot) => ({
-          name: 'footPlant',
-          foot,
-          at: 0,
-          clip: 'land',
-          time,
-          cycle: 0,
-        })),
-      );
+      events.push(...landingEvents(time, active?.clip.id ?? 'airborne'));
     for (const event of events) {
       if (event.name === 'takeoff')
         this.motor.jump(active?.clip.id === 'shoot' ? 330 : 310);
@@ -261,10 +244,12 @@ export class MotionActor implements ControllableEntity {
       dt,
       events,
       time,
-      this.aimIntent,
-      active?.clip.id === 'shoot' && !!this.equipment.attached,
-      this.lookTarget,
-      this.contacts.compression,
+      {
+        aim: this.aimIntent,
+        twoHand: active?.clip.id === 'shoot' && !!this.equipment.attached,
+        target: this.lookTarget,
+        landingCompression: this.contacts.compression,
+      },
     );
     this.equipment.sampleAnchors(this.animator.anchors(), time);
     for (const event of events) {
@@ -272,7 +257,10 @@ export class MotionActor implements ControllableEntity {
         this.prop.toss(
           this.animator.hand(),
           0.3,
-          this.animator.definition.scale / (371 / 1191),
+          scaleToReference(
+            this.animator.definition.scale,
+            this.animator.definition.id,
+          ),
         );
       if (event.name === 'propCatch') this.prop.catch(this.animator.hand());
       if (event.name.startsWith('chestTapContact'))

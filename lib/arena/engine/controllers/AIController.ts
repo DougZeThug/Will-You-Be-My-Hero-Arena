@@ -10,6 +10,4 @@ export class AIController implements InputDevice {
   poll(time: number) {
     return this.decide(time);
   }
-  clear() {}
-  destroy() {}
 }

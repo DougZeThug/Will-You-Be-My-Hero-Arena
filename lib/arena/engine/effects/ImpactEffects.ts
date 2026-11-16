@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
-import {surfacePoint} from '../../equipment-layout';
+import {surfacePoint} from '../../equipment-geometry';
 import type {Attempt} from '../../model';
+/** Ring tints for a bag contact: scored (gold) and missed (orange). Watch and Play share them. */
+export const CONTACT_GOLD=0xffce25,CONTACT_MISS=0xe79959;
 /** Tiny reusable frame atlases (ring, cartoon dust puff, star burst), sampled
  * by game time rather than timer tweens, so seeks and replays are exact. */
 export class ImpactEffects {
@@ -35,7 +37,6 @@ export class ImpactEffects {
  begin(){this.used=0;this.sprites.forEach(s=>s.setVisible(false));}
  private sprite(key:string,frames:number,x:number,y:number,progress:number,depth:number,scale=1){if(progress<0||progress>=1)return null;let sprite=this.sprites[this.used++];if(!sprite){sprite=this.scene.add.image(0,0,key);this.sprites.push(sprite);}sprite.setTexture(key).setDepth(depth).setScale(scale).setPosition(x,y).setFrame(Math.min(frames-1,Math.floor(progress*frames))).clearTint().setVisible(true);return sprite;}
  burst(x:number,y:number,progress:number,color=0xffce25,scale=1,depth=65){this.sprite('impact-frames',12,x,y,progress,depth,scale)?.setTint(color);}
- /** Dust cloud where something lands or skids (feet, bag, ball). */
  puff(x:number,y:number,progress:number,scale=1,depth=64){this.sprite('impact-puff',12,x,y-8*scale,progress,depth,scale);}
  star(x:number,y:number,progress:number,scale=1,depth=66){this.sprite('impact-star',10,x,y,progress,depth,scale);}
  /** `holeAt`: when the bag drops in (star burst), if it scores a hole.
@@ -43,7 +44,7 @@ export class ImpactEffects {
   * target at contactAt); the ring stays at the target at contactAt. */
  contact(a:Attempt,time:number,reduced:boolean,holeAt?:number,touch?:{x:number;y:number},landAt?:number){
   if(reduced)return;const q=surfacePoint(a.sport,a.actor,a.target),u=time-a.contactAt;
-  this.burst(q.x,q.y,u/.38,a.score?0xffce25:0xe79959);
+  this.burst(q.x,q.y,u/.38,a.score?CONTACT_GOLD:CONTACT_MISS);
   // A small puff where the bag first lands, drawn under the bag (depth 60).
   if(a.sport==='cornhole'&&a.contact!=='miss'){const t=touch??(a.boardResolution?.touch?surfacePoint('cornhole',a.actor,a.boardResolution.touch):q);this.puff(t.x,t.y+6,(landAt===undefined?u:time-landAt)/.45,.5,59);}
   if(a.contact==='hole'&&holeAt!==undefined)this.star(q.x,q.y-10,(time-holeAt)/.55,.8);

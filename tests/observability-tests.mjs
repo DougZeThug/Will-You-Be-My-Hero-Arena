@@ -5,7 +5,7 @@ export async function testObservability({ check }) {
   const { RenderMetrics } =
     await import('../.test-build/engine/core/RenderMetrics.mjs');
   const { FrameTelemetry, summarizeTiming } =
-    await import('../.test-build/engine/core/FrameTelemetry.mjs');
+    await import('../.test-build/lab/FrameTelemetry.mjs');
   const { ArenaSession } =
     await import('../.test-build/engine/core/ArenaSession.mjs');
   const { bindingsFor } =

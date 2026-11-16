@@ -1,5 +1,6 @@
 import type { Recording } from '../../model';
 import { scoreTime, completionTime } from '../../match-timeline';
+import { SPORT_STAGE } from '../../sport-stage';
 import { characterProfile } from '../characters/CharacterRegistry';
 import {
   selectAnimation,
@@ -11,7 +12,7 @@ import type { AnimationContext, ShotStyle } from '../animation/AnimationTypes';
 import type { CharacterProfile } from '../characters/CharacterProfile';
 import type { BattlePlan, DirectorCue } from './BattlePlan';
 import { seeded } from './Random';
-import { firstImpactTime } from '../events/cornhole/CornholePresentationTiming';
+import { firstImpactTime, impactTime } from '../events/cornhole/CornholePresentationTiming';
 
 export const BASE_CONTEXT: AnimationContext = {
   scoreDifferential: 0,
@@ -135,8 +136,7 @@ export function directBattle(rec: Recording): BattlePlan {
       tempo: 0.95 + random() * 0.1,
       reactionDelay: 0.045 + random() * 0.055,
     };
-    const impactAt =
-      a.sport === 'cornhole' ? firstImpactTime(a, shot) : a.contactAt;
+    const impactAt = impactTime(a, shot);
     cues.push(
       {
         id: a.id + ':release',
@@ -149,7 +149,7 @@ export function directBattle(rec: Recording): BattlePlan {
         id: a.id + ':impact',
         time: impactAt,
         actor,
-        name: a.sport === 'cornhole' ? 'boardImpact' : 'impact',
+        name: SPORT_STAGE[a.sport].impactCue,
         value: a.contact,
         attemptId: a.id,
       },

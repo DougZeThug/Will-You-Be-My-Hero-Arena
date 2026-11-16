@@ -3,11 +3,13 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { sourceFingerprint } from './source-fingerprint.mjs';
 import {
+  auditPlayProvider,
   auditProvider,
   auditStageEntries,
 } from './check-performance-provider-dependencies.mjs';
 process.env.NODE_ENV = 'production';
 const { createBuilder } = await import('vite');
+// Internal vinext path: only valid for the exact vinext pin in package.json.
 const { runPrerender } = await import('vinext/internal/build/run-prerender');
 
 // Use the same build and export APIs as vinext's CLI, but allow native worker
@@ -18,6 +20,7 @@ const providerAudit = auditProvider();
 const providerViolations = [
   ...auditStageEntries(),
   ...providerAudit.violations,
+  ...auditPlayProvider().violations,
 ];
 if (providerViolations.length)
   throw Error(

@@ -1,18 +1,20 @@
 import * as Phaser from 'phaser';
 import { MotionScene } from './MotionScene';
-import { proofEvents, type ProofEvent } from './MotionSession';
-import { FrameTelemetry } from '../../lib/arena/engine/core/FrameTelemetry';
+import { proofEvents } from './MotionSession';
+import type { ProofEvent } from './ProofConfig';
+import { FrameTelemetry } from '../FrameTelemetry';
 import {
   importReference,
   retargetReference,
   retargetMotion,
-} from '../../lib/arena/engine/motion-tools/ReferenceMotion';
+} from './motion-tools/ReferenceMotion';
 import type { Intent } from '../../lib/arena/engine/input/InputActions';
 import { motionReview } from './MotionReview';
 import { installReviewTake } from './ReviewTake';
 import { referenceComparison } from './ReferenceComparison';
 import { defaultReference, referenceCatalog } from './ReferenceCatalog';
 import { workshopControls } from './WorkshopControls';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 const get = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const params = new URLSearchParams(location.search),
@@ -270,7 +272,7 @@ const api = Object.freeze({
     velocity?: boolean;
     collisions?: boolean;
     equipment?: boolean;
-    focus?: 'arena' | 'dan' | 'doug';
+    focus?: 'arena' | CharacterId;
   }) => {
     if (options.skeleton !== undefined) scene.overlay = options.skeleton;
     if (options.trails !== undefined) scene.trails = options.trails;

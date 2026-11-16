@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { sha256 } from './lib/hash.mjs';
 import {
   applyDougArmMaterial,
   DOUG_ARM_MATERIAL_MARKER,
   DOUG_ARM_MATERIAL_RECIPE,
-} from '../lab/human-motion/ArmMaterialRecipe.mjs';
+} from '../lab/rig-shared/ArmMaterialRecipe.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const ASSET_DIR = path.join(ROOT, 'lab/loongbones/assets/cornhole-side-v3');
@@ -27,7 +27,6 @@ const EXPECTED = {
   triangleIndexCount: 3660,
 };
 
-const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const readChecked = (file, expected, label) => {
   const bytes = fs.readFileSync(file);
   const actual = sha256(bytes);

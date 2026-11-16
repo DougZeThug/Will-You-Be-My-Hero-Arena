@@ -1,10 +1,10 @@
+import {smooth} from '../../math';
 import {joinedBodyPoint,type JoinedSkin,type JointPoint,type puppetJoints} from '../../puppet-geometry';
 import {type PuppetPose} from '../../puppet-motion';
 import {skinVertex} from '../../skin-geometry';
 import {deformHand,handFrame} from '../../hand-geometry';
 
 const NX=97,NY=65;
-const smooth=(t:number)=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
 type Bind={x:number;y:number;arm:number;weight:number;elbow:number;arc:number;cross:number};
 type Bone={x:number;y:number;dx:number;dy:number;length:number};
 const bone=(a:JointPoint,b:JointPoint):Bone=>{const length=Math.max(.001,Math.hypot(b.x-a.x,b.y-a.y));return{x:a.x,y:a.y,dx:(b.x-a.x)/length,dy:(b.y-a.y)/length,length};};
