@@ -1,6 +1,6 @@
 # Will You Be My Hero? Arena engine
 
-The React app still owns collections, ownership, setup, persistent results, UI and leaderboards. Phaser 3.90 owns the competition canvas, characters, attached equipment, projectile objects, effect sprites and camera. `ArenaStage.tsx` is now a small client-only bridge; Phaser never loads during server rendering. Pixi remains only in the older review/compatibility tooling, outside the active arena bundle. Game motion no longer uses GSAP.
+The React app still owns collections, ownership, setup, persistent results, UI and leaderboards. Phaser 3.90 owns the competition canvas, characters, attached equipment, projectile objects, effect sprites and camera. `ArenaStage.tsx` is now a small client-only bridge; Phaser never loads during server rendering. The former Pixi review page and the `pixi.js` dependency have been removed. Game motion no longer uses GSAP.
 
 ## Runtime boundaries
 
