@@ -1,6 +1,7 @@
 import type { Recording } from '../../model';
 import { cardById, userById } from '../../model';
 import { matchState } from '../../match-timeline';
+import { SPORT_STAGE } from '../../sport-stage';
 const shotNames: Record<string, string> = {
   flat: 'a flat hole-runner',
   airmail: 'an airmail',
@@ -34,14 +35,12 @@ export function matchNarration(rec: Recording, time: number) {
   if (state.phase === 'boardTravel')
     return name + ' watches the bag travel across the board.';
   if (state.phase === 'landing')
-    return a.sport === 'cornhole'
-      ? name + ' waits for the bag to settle.'
-      : name + ' watches the result.';
+    return name + ' ' + SPORT_STAGE[a.sport].narration.settling;
   if (time >= a.releaseAt)
     return (
       name +
       ' sends ' +
-      (a.sport === 'cornhole'
+      (SPORT_STAGE[a.sport].narration.sendsNamed
         ? (shotNames[d?.shot ?? ''] ?? 'the bag')
         : 'it') +
       '.'
@@ -49,6 +48,7 @@ export function matchNarration(rec: Recording, time: number) {
   return (
     name +
     ' lines up the next ' +
-    (a.sport === 'basketball' ? 'shot.' : 'throw.')
+    SPORT_STAGE[a.sport].narration.noun +
+    '.'
   );
 }

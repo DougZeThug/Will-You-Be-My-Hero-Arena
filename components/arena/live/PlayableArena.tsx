@@ -22,10 +22,6 @@ import {
   visibleActions,
 } from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
-import {
-  runningMovement,
-  type RunningMovement,
-} from '@/lib/arena/engine/events/running/RunningConstants';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
 // Remaps are remembered per device, so any player slot that picks a keyboard
@@ -110,7 +106,16 @@ export default function PlayableArena({
       const saved = readSavedBindings();
       return [slot(0, saved), slot(1, saved)];
     }),
-    [movement, setMovement] = useState<RunningMovement>('lanes'),
+    // Per-event setup choices (EventPresentation.option), by option key.
+    [choices, setChoices] = useState<Record<string, string>>(() =>
+      Object.fromEntries(
+        playableEvents().flatMap((e) =>
+          e.presentation.option
+            ? [[e.presentation.option.key, e.presentation.option.initial]]
+            : [],
+        ),
+      ),
+    ),
     [active, setActive] = useState<LiveConfig | null>(null),
     [error, setError] = useState(''),
     [remapNotice, setRemapNotice] = useState<{
@@ -230,7 +235,7 @@ export default function PlayableArena({
         asset: imports.find((a) => a.cardId === p.cardId),
       })),
       seed: crypto.randomUUID(),
-      options: { movement },
+      options: { ...choices },
     });
   };
   if (active)
@@ -344,18 +349,25 @@ export default function PlayableArena({
           </button>
         </div>
       )}
-      {event === 'running' && (
-        <label className="movement-choice">
-          Course controls
+      {current.presentation.option && (
+        <label className={current.presentation.option.className}>
+          {current.presentation.option.label}
           <select
-            value={movement}
+            value={choices[current.presentation.option.key]}
             onChange={(e) => {
+              const option = current.presentation.option!;
               setError('');
-              setMovement(runningMovement(e.target.value));
+              setChoices((c) => ({
+                ...c,
+                [option.key]: option.parse(e.target.value),
+              }));
             }}
           >
-            <option value="lanes">Auto forward / change lanes</option>
-            <option value="free">Free steering / control acceleration</option>
+            {current.presentation.option.choices.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </label>
       )}

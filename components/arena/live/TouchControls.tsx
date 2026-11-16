@@ -6,6 +6,7 @@ import type {
   DeviceFamily,
 } from '@/lib/arena/engine/input/InputActions';
 import {
+  chargeAction,
   visibleActions,
   type EventActionMap,
 } from '@/lib/arena/engine/controllers/EventActionMap';
@@ -101,12 +102,14 @@ export default function TouchControls({
   const [held, setHeld] = useState<Record<string, boolean>>({});
   const sender = useRef(send);
   sender.current = send;
+  const charge = chargeAction(map),
+    chargeIntent = charge?.intent;
   useEffect(() => {
-    if (resetCharge) {
-      setHeld((p) => (p.charge ? { ...p, charge: false } : p));
-      sender.current('charge', 0);
+    if (resetCharge && chargeIntent) {
+      setHeld((p) => (p[chargeIntent] ? { ...p, [chargeIntent]: false } : p));
+      sender.current(chargeIntent, 0);
     }
-  }, [resetCharge]);
+  }, [resetCharge, chargeIntent]);
   const actions = visibleActions(map),
     // Moves that need a held modifier (the Brawl's grapple) get their own
     // button, which presses the modifier and the action together.
@@ -123,12 +126,12 @@ export default function TouchControls({
       </div>
       <div className="live-action-buttons">
         {actions.map((a) => {
-          const toggle = a.intent === 'charge' || a.phase === 'held',
+          const toggle = a.intent === chargeIntent || a.phase === 'held',
             down = held[a.intent],
             // Charging is only possible on this player's own turn, and nothing
             // can be held before the match has loaded.
             unavailable =
-              !ready || (a.intent === 'charge' && resetCharge && !down);
+              !ready || (a.intent === chargeIntent && resetCharge && !down);
           return (
             <button
               key={a.intent}
@@ -148,8 +151,8 @@ export default function TouchControls({
               <kbd>{inputGlyph(a.intent, family, bindings, player)}</kbd>
               <span>
                 {down
-                  ? a.intent === 'charge' && map.id === 'cornhole'
-                    ? 'Release'
+                  ? charge && a.intent === chargeIntent
+                    ? charge.releaseLabel
                     : 'Stop ' + a.label.toLowerCase()
                   : a.label}
               </span>

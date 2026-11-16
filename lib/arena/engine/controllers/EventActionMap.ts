@@ -58,6 +58,28 @@ export function visibleActions(map: EventActionMap) {
       all.findIndex((b) => b.intent === a.intent && !b.hidden) === i,
   );
 }
+// A hold-and-release intent: pressed in one set of states and released with
+// its own labelled action (cornhole's charge). Touch controls show it as a
+// toggle that reads `releaseLabel` while held, and it can only be held in the
+// union of the states of the two actions. Held-phase intents (sprint, block)
+// are not charge pairs; they have no 'pressed' visible action to release.
+export function chargeAction(map: EventActionMap) {
+  for (const press of map.actions) {
+    if (press.hidden || press.phase !== 'pressed') continue;
+    const release = map.actions.find(
+      (a) => a.intent === press.intent && a.phase === 'released',
+    );
+    if (!release) continue;
+    return {
+      intent: press.intent,
+      releaseLabel: release.label,
+      states:
+        press.states && release.states
+          ? [...press.states, ...release.states]
+          : undefined,
+    };
+  }
+}
 export class ComboRecognizer {
   private history: { intent: Intent; time: number }[] = [];
   push(signal: InputSignal, combos: ComboDefinition[] = []) {

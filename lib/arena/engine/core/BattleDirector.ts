@@ -1,5 +1,6 @@
 import type { Recording } from '../../model';
 import { scoreTime, completionTime } from '../../match-timeline';
+import { SPORT_STAGE } from '../../sport-stage';
 import { characterProfile } from '../characters/CharacterRegistry';
 import {
   selectAnimation,
@@ -148,7 +149,7 @@ export function directBattle(rec: Recording): BattlePlan {
         id: a.id + ':impact',
         time: impactAt,
         actor,
-        name: a.sport === 'cornhole' ? 'boardImpact' : 'impact',
+        name: SPORT_STAGE[a.sport].impactCue,
         value: a.contact,
         attemptId: a.id,
       },

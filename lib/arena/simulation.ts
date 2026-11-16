@@ -1,6 +1,6 @@
 import {characterProfile} from './engine/characters/CharacterRegistry';
 import {weighted} from './engine/animation/AnimationSelector';
-import {BOARD,HOOP_TARGET_X,boardSurfaceY,laneZ} from './board-geometry';
+import {BOARD,boardSurfaceY,laneZ} from './board-geometry';
 import {seeded,seedHash} from './engine/core/Random';
 import type {ShotStyle} from './engine/animation/AnimationTypes';
 import {resolveBoard} from './engine/events/cornhole/CornholeBoard';
@@ -10,6 +10,7 @@ import {cardById,EVENTS,type Sport,type Setup,type Recording,type Attempt,type V
 import {paperSocket,releasePose} from './paper';
 import {TIMING,flightDuration,personalityTiming,matchState} from './match-timeline';
 import {resolvePersonality} from './personality';
+import {SPORT_STAGE} from './sport-stage';
 export const RULES_VERSION='phaser-arena-3.0.0';
 export const INTRO=TIMING.entrance;
 export function hash(text:string){return seedHash(text).toString(16).padStart(8,'0');}
@@ -19,11 +20,13 @@ export function project(p:V3){return {x:140+p.x*85+p.z*55,y:610-p.z*38-p.y*78};}
 export function releasePosition(asset:string,sport:Sport,actor:number,prepared?:AssetManifest):V3 {const f=prepared?.frames?.[releasePose(sport)],scale=prepared?.frameScale;const local=f&&scale?{x:(f.hand[0]-f.origin[0])*scale,y:(f.hand[1]-f.origin[1])*scale}:paperSocket(asset,releasePose(sport));return{x:1+local.x/85,y:-local.y/78,z:laneZ(actor)};}
 export function cupPosition(id:number,z:number):V3 {const row=id<1?0:id<3?1:2;const col=id-(row===0?0:row===1?1:3);return{x:8.4+row*.32,y:1.05,z:z+(col-row/2)*.32};}
 export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{contact:Attempt['contact'];score:number}{
- const dz=p.z-lane;
- if(sport==='cornhole'){if(Math.hypot(p.x-BOARD.holeX,dz)<=BOARD.holeRadius)return{contact:'hole',score:3};if(p.x>=BOARD.frontX&&p.x<=BOARD.backX&&Math.abs(dz)<=BOARD.laneHalfWidth)return{contact:'board',score:1};return{contact:'miss',score:0};}
- if(sport==='football'){const d=Math.hypot(p.y-2.0,dz);if(d<=.25)return{contact:'zone3',score:3};if(d<=.58)return{contact:'zone2',score:2};if(d<=1.05)return{contact:'zone1',score:1};return{contact:'miss',score:0};}
- if(sport==='pong'){const c=cupPosition(targetId??0,lane);const d=Math.hypot(p.x-c.x,p.z-c.z);return d<=.09?{contact:'cup',score:1}:d<=.16?{contact:'rim-out',score:0}:{contact:'miss',score:0};}
- const d=Math.hypot(p.x-HOOP_TARGET_X,dz);return d<=.20?{contact:'make',score:1}:d<=.44?{contact:'rim-out',score:0}:p.x>9.08?{contact:'backboard',score:0}:{contact:'airball',score:0};
+ const dz=p.z-lane,rule=SPORT_STAGE[sport].scoring;
+ if(rule.kind==='board'){if(Math.hypot(p.x-BOARD.holeX,dz)<=BOARD.holeRadius)return{contact:'hole',score:3};if(p.x>=BOARD.frontX&&p.x<=BOARD.backX&&Math.abs(dz)<=BOARD.laneHalfWidth)return{contact:'board',score:1};return{contact:'miss',score:0};}
+ let d:number;
+ if(rule.kind==='cup'){const c=cupPosition(targetId??0,lane);d=Math.hypot(p.x-c.x,p.z-c.z);}
+ else d=Math.hypot(p[rule.axis]-rule.at,dz);
+ for(const band of rule.bands)if(d<=band.within)return{contact:band.contact,score:band.score};
+ return{contact:rule.kind==='bands'&&rule.beyond&&p.x>rule.beyond.x?rule.beyond.contact:rule.otherwise,score:0};
 }
 export function trajectory(start:V3,target:V3,duration:number,contact:Attempt['contact']):{path:Point[];velocity:V3}{
  const slide=contact==='board'||contact==='hole',airDuration=duration-(slide?.28:0),touch={...target};
@@ -49,11 +52,11 @@ export function simulate(setup:Setup):Recording {
   const spread=variance*specialty*pressure*(1+(66-card.accuracy)/200);
   let target:V3={x:BOARD.holeX+normal(r)*.65*spread,y:0,z:lane+normal(r)*.36*spread};let targetId:number|undefined;
   if(sport==='cornhole'){target.y=target.x>=BOARD.frontX&&target.x<=BOARD.backX&&Math.abs(target.z-lane)<=BOARD.laneHalfWidth?boardSurfaceY(target.x):0;}
-  if(sport==='football')target={x:HOOP_TARGET_X,y:2+normal(r)*.60*spread,z:lane+normal(r)*.60*spread};
-  if(sport==='pong'){const open=[0,1,2,3,4,5].filter(c=>!removed[actor].includes(c));targetId=open[Math.floor(r()*open.length)];if(targetId===undefined)targetId=0;const c=cupPosition(targetId,lane);target={x:c.x+normal(r)*.10*spread,y:c.y,z:c.z+normal(r)*.10*spread};}
-  if(sport==='basketball')target={x:HOOP_TARGET_X+normal(r)*.26*spread,y:2.9,z:lane+normal(r)*.26*spread};
+  const aim=SPORT_STAGE[sport].aim;
+  if(aim?.kind==='wall'){const c=aim.centre;target={x:aim.jitter.includes('x')?c.x+normal(r)*aim.sigma*spread:c.x,y:aim.jitter.includes('y')?c.y+normal(r)*aim.sigma*spread:c.y,z:lane+normal(r)*aim.sigma*spread};}
+  if(aim?.kind==='cups'){const open=Array.from({length:SPORT_STAGE[sport].cups!.count},(_,c)=>c).filter(c=>!removed[actor].includes(c));targetId=open[Math.floor(r()*open.length)];if(targetId===undefined)targetId=0;const c=cupPosition(targetId,lane);target={x:c.x+normal(r)*aim.sigma*spread,y:c.y,z:c.z+normal(r)*aim.sigma*spread};}
   const outcome=contactScore(sport,target,lane,targetId);
-  if(sport==='pong'&&removed[actor].includes(targetId!)){outcome.contact='miss';outcome.score=0;}
+  if(aim?.kind==='cups'&&removed[actor].includes(targetId!)){outcome.contact='miss';outcome.score=0;}
   if(outcome.contact==='cup')removed[actor].push(targetId!);
   if(sport==='cornhole')boards[actor].push({position:{...target},score:outcome.score});
   scores[actor]=sport==='cornhole'?boards[actor].reduce((n,b)=>n+b.score,0):scores[actor]+outcome.score;

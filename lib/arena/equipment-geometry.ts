@@ -8,9 +8,10 @@ import { SPORT_STAGE, EQUIPMENT_GROUND, laneGroundY } from './sport-stage';
 export const BAG_FLIGHT_FLATTEN = SPORT_STAGE.cornhole.projectile.flatten;
 /** A bag lying on the board (and the pose a bag eases into on landing). */
 export const BAG_REST_FLATTEN = 0.52;
-export const boardDepthScale = (actor: number) => (actor === 1 ? 0.7 : 1);
 export const equipmentDepthScale = (sport: Sport, actor: number) =>
-  sport === 'cornhole' ? boardDepthScale(actor) : actor === 1 ? 0.78 : 1;
+  actor === 1 ? SPORT_STAGE[sport].backLaneScale : 1;
+export const boardDepthScale = (actor: number) =>
+  equipmentDepthScale('cornhole', actor);
 export function quadPoint(q: Quad, u: number, v: number): XY {
   return {
     x:

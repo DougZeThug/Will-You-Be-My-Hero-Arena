@@ -6,6 +6,7 @@ import type {
   LiveSnapshot,
 } from '@/lib/arena/engine/core/LiveTypes';
 import TouchControls from './TouchControls';
+import { chargeAction } from '@/lib/arena/engine/controllers/EventActionMap';
 import { inputGlyph } from '@/lib/arena/engine/input/InputGlyphs';
 import { playableEvent } from '@/lib/arena/engine/core/EventRegistry';
 import { loadRigProvider } from '../rig-provider';
@@ -35,6 +36,8 @@ export default function LiveStage({
   const [map] = useState(() =>
     playableEvent(config.event).create().registerControls(),
   );
+  const { presentation } = playableEvent(config.event),
+    charge = chargeAction(map);
   useEffect(() => {
     reducedMotion.current = reduced;
     game.current?.setReducedMotion(reduced);
@@ -114,24 +117,15 @@ export default function LiveStage({
             >
               <strong>{p.name}</strong>
               <span>
-                {config.event === 'fighting'
-                  ? `${Math.ceil(p.health)} HP`
-                  : config.event === 'running'
-                    ? `${p.score}%`
-                    : p.score + ' PTS'}
+                {presentation.scoreText(p)}
               </span>
               <progress
-                aria-label={
-                  p.name +
-                  (config.event === 'fighting' ? ' health' : ' stamina')
-                }
+                aria-label={p.name + presentation.meter.label}
                 max="100"
-                value={config.event === 'fighting' ? p.health : p.stamina}
+                value={p[presentation.meter.value]}
               />
               <small>
-                {config.event === 'fighting'
-                  ? `Energy ${Math.ceil(p.stamina)}`
-                  : 'Stamina ' + Math.ceil(p.stamina)}{' '}
+                {`${presentation.energyLabel} ${Math.ceil(p.stamina)}`}{' '}
                 · {p.family === 'ai' ? 'AI' : p.family}
               </small>
             </div>
@@ -225,11 +219,7 @@ export default function LiveStage({
                     keyboardLayoutOf(p.device),
                   )}{' '}
                   move ·{' '}
-                  {config.event === 'cornhole'
-                    ? 'Aim, hold charge, then release in green. On screen: tap charge, then release.'
-                    : config.event === 'running'
-                      ? 'Sprint, jump hurdles, slide under bars. On-screen sprint toggles.'
-                      : 'Move into range, attack, guard or dodge. Chain light, light, heavy.'}
+                  {presentation.help}
                 </span>
               </div>
               <TouchControls
@@ -243,8 +233,8 @@ export default function LiveStage({
                 }
                 player={keyboardLayoutOf(p.device)}
                 resetCharge={
-                  config.event === 'cornhole' &&
-                  !['charging', 'aiming'].includes(
+                  !!charge?.states &&
+                  !charge.states.includes(
                     snapshot?.players.find((s) => s.id === p.id)?.state ?? '',
                   )
                 }

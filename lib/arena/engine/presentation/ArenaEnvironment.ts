@@ -10,7 +10,37 @@ import {
   LANE_GUIDE_X,
   laneGroundY,
 } from '../../sport-stage';
+import type { Sport } from '../../model';
 import { STAGE_HEIGHT, STAGE_WIDTH } from '../events/StageConstants';
+// Painted court detail for the Play events, which are not recorded sports and
+// so have no SPORT_STAGE entry. Court-plane screen pixels.
+type EventCourt =
+  | {
+      kind: 'track';
+      lines: readonly number[];
+      dashes: { from: number; step: number; ys: readonly number[]; length: number };
+    }
+  | {
+      kind: 'ring';
+      x: number;
+      y: number;
+      outer: { width: number; height: number; alpha: number };
+      inner: { width: number; height: number; alpha: number };
+    };
+const EVENT_COURT: Partial<Record<ArenaEventStyle, EventCourt>> = {
+  running: {
+    kind: 'track',
+    lines: [490, 575, 655],
+    dashes: { from: 130, step: 230, ys: [536, 622], length: 24 },
+  },
+  fighting: {
+    kind: 'ring',
+    x: 640,
+    y: 590,
+    outer: { width: 740, height: 170, alpha: 0.19 },
+    inner: { width: 766, height: 182, alpha: 0.22 },
+  },
+};
 /** Sparse world-space paint and signage over baked light. No shaders, new clocks or physics. */
 export class ArenaEnvironment {
   private decor: Phaser.GameObjects.Container;
@@ -66,13 +96,16 @@ export class ArenaEnvironment {
     this.decor.add(g);
     const ink = EVENT_PRESENTATION[event].accent;
     g.lineStyle(2, ink, 0.23);
-    if (event === 'running') {
-      for (const y of [490, 575, 655]) g.lineBetween(0, y, this.width, y);
-      for (let x = 130; x < this.width; x += 230)
-        for (const y of [536, 622]) g.lineBetween(x, y, x + 24, y);
-    } else if (event === 'fighting') {
-      g.lineStyle(2, T.cream, 0.19).strokeEllipse(640, 590, 740, 170);
-      g.lineStyle(1, ink, 0.22).strokeEllipse(640, 590, 766, 182);
+    const eventCourt = EVENT_COURT[event];
+    if (eventCourt?.kind === 'track') {
+      for (const y of eventCourt.lines) g.lineBetween(0, y, this.width, y);
+      const d = eventCourt.dashes;
+      for (let x = d.from; x < this.width; x += d.step)
+        for (const y of d.ys) g.lineBetween(x, y, x + d.length, y);
+    } else if (eventCourt?.kind === 'ring') {
+      const { x, y, outer, inner } = eventCourt;
+      g.lineStyle(2, T.cream, outer.alpha).strokeEllipse(x, y, outer.width, outer.height);
+      g.lineStyle(1, ink, inner.alpha).strokeEllipse(x, y, inner.width, inner.height);
     } else {
       for (const lane of [0, 1]) {
         const y = laneGroundY(lane) - LANE_ACCENT_INSET,
@@ -86,7 +119,8 @@ export class ArenaEnvironment {
         for (let x = start + 90; x < end - 60; x += 95)
           g.lineBetween(x, y + 12, Math.min(x + 26, end), y + 12);
       }
-      const court = SPORT_STAGE[event].court;
+      // Every event without an EVENT_COURT entry is a recorded sport.
+      const court = SPORT_STAGE[event as Sport].court;
       if (court?.kind === 'ring')
         g.lineStyle(
           court.stroke.width,
