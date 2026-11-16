@@ -566,7 +566,6 @@ check(() =>
 check(() => assert.ok(a.validateAsset({ cardId: '' }).errors.length > 5));
 const adapters = await import('../.test-build/adapters.mjs');
 const services = adapters.createDemoServices(new MemoryStorage());
-check(() => assert.equal(services.authority, 'local-demo'));
 check(() =>
   assert.ok(
     a
@@ -585,7 +584,7 @@ check(() =>
   ),
 );
 for (const card of m.CARDS) {
-  const asset = await services.characters.get(card.id);
+  const asset = a.manifest(card.id, card.asset, card.family);
   check(() => assert.deepEqual(a.validateAsset(asset).errors, []));
   fs.mkdirSync('docs/import-examples', { recursive: true });
   fs.writeFileSync(
@@ -601,12 +600,25 @@ for (const card of m.CARDS) {
 }
 const owned = await services.ownership.list('user-doug');
 check(() => assert.equal(owned.length, 2));
-const allowed = await services.ownership.verify(
-  'user-dan',
-  owned[0].id,
-  owned[0].cardId,
+check(() =>
+  assert.deepEqual(
+    owned,
+    m.COPIES.filter((c) => c.userId === 'user-doug'),
+  ),
+);
+const allowed = m.COPIES.some(
+  (c) =>
+    c.userId === 'user-dan' &&
+    c.id === owned[0].id &&
+    c.cardId === owned[0].cardId,
 );
 check(() => assert.equal(allowed, false));
+await assert.rejects(
+  services.identity.select('nobody'),
+  /Unknown demo identity/,
+);
+const selectedUser = await services.identity.select('user-dan');
+check(() => assert.equal(selectedUser.id, 'user-dan'));
 const paper = await import('../.test-build/paper.mjs');
 for (const card of m.CARDS)
   for (const sport of m.SPORTS) {

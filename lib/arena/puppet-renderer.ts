@@ -3,6 +3,7 @@ import {type PuppetAsset,type PuppetPart,type JointPoint,PUPPET_PARTS,puppetJoin
 import {type PuppetPose} from './puppet-motion';
 import {resolveCharacterImage} from './character-registry';
 import {ContinuousPaper} from './continuous-paper';
+import {isKeyPixel} from './key-colour';
 
 export class PuppetRenderer {
  root=new Container();shadow=new Graphics();private waist?:Sprite;private skin?:ContinuousPaper;private pieces={} as Record<PuppetPart,Sprite>;private textures:Texture[]=[];private atlas:Texture;
@@ -15,7 +16,7 @@ export class PuppetRenderer {
   this.root.addChild(this.shadow,...['footL','footR','shinL','shinR','thighL','thighR'].map(p=>this.pieces[p as PuppetPart]),this.waist,...['upperL','foreL','torso','head','upperR','foreR'].map(p=>this.pieces[p as PuppetPart]));
  }
  static async load(asset:PuppetAsset){const source=await Assets.load<Texture>({alias:asset.url,src:resolveCharacterImage(asset.url)}),canvas=document.createElement('canvas');canvas.width=asset.width;canvas.height=asset.height;const ctx=canvas.getContext('2d',{willReadFrequently:true})!;ctx.drawImage(source.source.resource as CanvasImageSource,0,0,canvas.width,canvas.height);
-  if(asset.keyColor){const data=ctx.getImageData(0,0,canvas.width,canvas.height),rgba=data.data;for(let i=0;i<rgba.length;i+=4){const r=rgba[i],g=rgba[i+1],b=rgba[i+2];if(r>110&&b>100&&g<Math.min(r,b)*.70)rgba[i+3]=0;}ctx.putImageData(data,0,0);}
+  if(asset.keyColor){const data=ctx.getImageData(0,0,canvas.width,canvas.height),rgba=data.data;for(let i=0;i<rgba.length;i+=4){const r=rgba[i],g=rgba[i+1],b=rgba[i+2];if(isKeyPixel(r,g,b))rgba[i+3]=0;}ctx.putImageData(data,0,0);}
   return new PuppetRenderer(asset,Texture.from(canvas));
  }
  private placed(part:PuppetPart,point:JointPoint,size:[number,number],degrees=0){const s=this.pieces[part];s.position.set(point.x,point.y);s.width=size[0];s.height=size[1];s.rotation=degrees*Math.PI/180;}

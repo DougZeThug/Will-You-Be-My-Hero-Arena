@@ -4,6 +4,7 @@ import { manifest } from '../../assets';
 import { resolveCharacterImage } from '../../character-registry';
 import puppetAssets from '../../puppet-assets.json';
 import type { PuppetAsset } from '../../puppet-geometry';
+import { isKeyPixel } from '../../key-colour';
 import { characterProfile } from '../characters/CharacterRegistry';
 import { ARENA_THEME, BOARD_FINISH } from '../presentation/ArenaTheme';
 import { EQUIPMENT_ASSET_DIR, EQUIPMENT_FILES } from '../../sport-stage';
@@ -62,12 +63,7 @@ export function prepareCharacterTextures(
       const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height),
         d = pixels.data;
       for (let i = 0; i < d.length; i += 4)
-        if (
-          d[i] > 110 &&
-          d[i + 2] > 100 &&
-          d[i + 1] < Math.min(d[i], d[i + 2]) * 0.7
-        )
-          d[i + 3] = 0;
+        if (isKeyPixel(d[i], d[i + 1], d[i + 2])) d[i + 3] = 0;
       ctx.putImageData(pixels, 0, 0);
       scene.textures.remove(c.key);
       scene.textures.addCanvas(c.key, canvas);
