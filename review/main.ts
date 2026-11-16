@@ -1,5 +1,5 @@
 import {Application,Container,Graphics,Text} from 'pixi.js';
-import {PuppetRenderer} from '../lib/arena/puppet-renderer';
+import {PuppetRenderer} from './pixi/puppet-renderer';
 import assets from '../lib/arena/puppet-assets.json';
 import {manifest} from '../lib/arena/assets';
 import {puppetIdle,puppetEntrance,puppetReaction,puppetThrow} from '../lib/arena/puppet-motion';

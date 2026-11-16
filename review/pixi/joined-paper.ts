@@ -1,8 +1,8 @@
-import {smooth} from './math';
+import {smooth} from '../../lib/arena/math';
 import {MeshPlane,Rectangle,Texture} from 'pixi.js';
-import {joinedBodyPoint,type JoinedSkin,type JointPoint,type puppetJoints} from './puppet-geometry';
-import {type PuppetPose} from './puppet-motion';
-import {skinVertex} from './skin-geometry';
+import {joinedBodyPoint,type JoinedSkin,type JointPoint,type puppetJoints} from '../../lib/arena/puppet-geometry';
+import {type PuppetPose} from '../../lib/arena/puppet-motion';
+import {skinVertex} from '../../lib/arena/skin-geometry';
 
 const NX=97,NY=65;
 type Bind={x:number;y:number;arm:number;weight:number;elbow:number;arc:number;cross:number};
@@ -14,7 +14,7 @@ const local=(p:JointPoint,b:Bone):[number,number]=>[((p.x-b.x)*b.dx+(p.y-b.y)*b.
 /** One shared UV surface across chest, shoulders and sleeves. No shoulder caps
  * or overlapping cutout edges. Bind weights are computed once from the atlas. */
 export class JoinedPaper {
- readonly mesh:MeshPlane;private texture:Texture;private binds:Bind[]=[];private curves:import('./puppet-geometry').SkinPiece[]=[];
+ readonly mesh:MeshPlane;private texture:Texture;private binds:Bind[]=[];private curves:import('../../lib/arena/puppet-geometry').SkinPiece[]=[];
  constructor(readonly skin:JoinedSkin,atlas:Texture){
   this.texture=new Texture({source:atlas.source,frame:new Rectangle(...skin.rect)});
   this.mesh=new MeshPlane({texture:this.texture,verticesX:NX,verticesY:NY});this.mesh.tint=0xfff2df;

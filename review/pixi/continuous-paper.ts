@@ -1,9 +1,9 @@
 import {Container,Sprite,MeshPlane,Rectangle,Texture} from 'pixi.js';
-import {type PuppetAsset,type SkinPiece,puppetJoints} from './puppet-geometry';
-import {type PuppetPose} from './puppet-motion';
-import {skinVertex} from './skin-geometry';
+import {type PuppetAsset,type SkinPiece,puppetJoints} from '../../lib/arena/puppet-geometry';
+import {type PuppetPose} from '../../lib/arena/puppet-motion';
+import {skinVertex} from '../../lib/arena/skin-geometry';
 import {JoinedPaper} from './joined-paper';
-import {smooth} from './math';
+import {smooth} from '../../lib/arena/math';
 type Limb='armL'|'armR'|'legL'|'legR';
 const NX=9,NY=41;
 export class ContinuousPaper {

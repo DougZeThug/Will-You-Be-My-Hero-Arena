@@ -1,9 +1,9 @@
 import {Assets,Container,Graphics,Rectangle,Sprite,Texture} from 'pixi.js';
-import {type PuppetAsset,type PuppetPart,type JointPoint,PUPPET_PARTS,puppetJoints} from './puppet-geometry';
-import {type PuppetPose} from './puppet-motion';
-import {resolveCharacterImage} from './character-registry';
+import {type PuppetAsset,type PuppetPart,type JointPoint,PUPPET_PARTS,puppetJoints} from '../../lib/arena/puppet-geometry';
+import {type PuppetPose} from '../../lib/arena/puppet-motion';
+import {resolveCharacterImage} from '../../lib/arena/character-registry';
 import {ContinuousPaper} from './continuous-paper';
-import {isKeyPixel} from './key-colour';
+import {isKeyPixel} from '../../lib/arena/key-colour';
 
 export class PuppetRenderer {
  root=new Container();shadow=new Graphics();private waist?:Sprite;private skin?:ContinuousPaper;private pieces={} as Record<PuppetPart,Sprite>;private textures:Texture[]=[];private atlas:Texture;
