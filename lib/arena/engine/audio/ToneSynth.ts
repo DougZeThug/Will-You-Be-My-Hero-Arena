@@ -1,5 +1,5 @@
 /** One oscillator voice: pitch, optional glide, and a gain envelope. Times are seconds from the start. */
-export interface ToneSpec {
+interface ToneSpec {
   type: OscillatorType;
   frequency: number;
   /** Exponential pitch glide to `to` Hz, reaching it `after` seconds in. */

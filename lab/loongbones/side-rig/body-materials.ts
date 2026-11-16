@@ -1,4 +1,4 @@
-import type { CharacterId } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 /** Source-space ownership. These partitions only cut mesh topology; they do
  * not repaint pixels, change the source silhouette or move bind landmarks.
  * A vertex chosen by x alone made triangles stretch across the far arm and

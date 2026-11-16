@@ -1,5 +1,6 @@
 import { motionSignatures } from './CharacterMotionSignature';
-import type { CharacterId, MotionProfile } from './MotionTypes';
+import type { CharacterId } from '../characters/CharacterIds';
+import type { MotionProfile } from './MotionTypes';
 export const motionProfiles: Record<CharacterId, MotionProfile> = {
   dan: {
     signature: motionSignatures.dan,

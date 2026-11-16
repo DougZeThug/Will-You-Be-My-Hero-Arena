@@ -1,3 +1,5 @@
+import { clamp01 } from '../../../lib/arena/math';
+
 /** Sparse, monotone cubic tracks. Shared key velocities are preserved instead
  * of stopping at every key. Release is an event inside the forward swing. */
 export type Knot = readonly [frame: number, value: number];
@@ -14,7 +16,7 @@ export function sampleScalar(points: readonly Knot[], frame: number) {
     }
   const a = points[i],
     b = points[i + 1],
-    t = Math.max(0, Math.min(1, (frame - a[0]) / (b[0] - a[0]))),
+    t = clamp01((frame - a[0]) / (b[0] - a[0])),
     curve = track[i].curve as number[],
     u = 1 - t;
   const eased = 3 * u * u * t * curve[1] + 3 * u * t * t * curve[3] + t * t * t;

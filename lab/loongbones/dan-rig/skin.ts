@@ -1,11 +1,6 @@
 import { joints, origin, bonePose } from './anatomy';
-import {
-  at,
-  blend,
-  clamp,
-  smooth,
-  type Influence,
-} from '../authoring/weighted-mesh';
+import { at, blend, clamp, type Influence } from '../authoring/weighted-mesh';
+import { smoothRange as smooth } from '../../../lib/arena/math';
 /** Anatomical regions prevent nearby hand bones from capturing shirt/shorts.
  * The connected shoulder surface blends into the arm; cells bordering the
  * transparent arm/torso gap retain separate vertices so a hand cannot drag cloth. */

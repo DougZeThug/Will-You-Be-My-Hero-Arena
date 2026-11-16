@@ -13,6 +13,9 @@ export const BOARD = {
 /** Distance between the two players' lanes along z. */
 export const LANE_SPACING = 3.5;
 
+/** World x of the football target and the basketball hoop. */
+export const HOOP_TARGET_X = 8.8;
+
 /** Lane centre z for an actor. */
 export const laneZ = (actor: number) => actor * LANE_SPACING;
 

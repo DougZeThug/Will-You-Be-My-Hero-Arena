@@ -31,6 +31,7 @@ import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { releasedBagDepth } from '../events/cornhole/ReleasedBagPhysics';
 import { PreviewDirector } from './PreviewDirector';
 import { RecordedDirector } from './RecordedDirector';
+import { STAGE_WIDTH } from '../events/StageConstants';
 import type {
   ReleasedBagOptions,
   RenderDirector,
@@ -66,7 +67,7 @@ export class ArenaScene extends Phaser.Scene {
       const p = this.bridge.current,
         rec = p.recording;
       this.director = rec ? new BattleDirector(rec) : undefined;
-      addBackdrop(this, 1280);
+      addBackdrop(this, STAGE_WIDTH);
       this.floor = this.add.graphics().setDepth(5);
       this.hud = new ArenaHud(this);
       this.kit = new Equipment(this);

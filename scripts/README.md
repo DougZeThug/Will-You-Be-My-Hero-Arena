@@ -2,7 +2,7 @@
 
 Run from the repository root. `pnpm check:scripts` fails when a file here is not
 referenced from `package.json`, `.github`, another script, tests, lab, a README,
-agent config or a current doc (not `docs/review` or `docs/checkpoints`).
+agent config or a current doc (not this index, `docs/review` or `docs/checkpoints`).
 Removed one-off capture/review/build tooling stays in git history.
 
 Build, serve, test

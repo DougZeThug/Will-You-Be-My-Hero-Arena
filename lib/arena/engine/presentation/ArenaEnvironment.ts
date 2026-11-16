@@ -10,6 +10,7 @@ import {
   LANE_GUIDE_X,
   laneGroundY,
 } from '../../sport-stage';
+import { STAGE_HEIGHT, STAGE_WIDTH } from '../events/StageConstants';
 /** Sparse world-space paint and signage over baked light. No shaders, new clocks or physics. */
 export class ArenaEnvironment {
   private decor: Phaser.GameObjects.Container;
@@ -17,8 +18,8 @@ export class ArenaEnvironment {
   constructor(
     private scene: Phaser.Scene,
     event: ArenaEventStyle,
-    private height = 720,
-    private width = 1280,
+    private height = STAGE_HEIGHT,
+    private width = STAGE_WIDTH,
   ) {
     this.decor = scene.add.container(0, 0).setDepth(4);
     this.paint = scene.add.graphics();

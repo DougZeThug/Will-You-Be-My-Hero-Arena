@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
+import { STAGE_HEIGHT, STAGE_WIDTH } from '../events/StageConstants';
 
-export interface PhaserGameSetup {
+interface PhaserGameSetup {
   backgroundColor: string;
   fps: Phaser.Types.Core.FPSConfig;
   scene: Phaser.Types.Scenes.SceneType[];
@@ -18,8 +19,8 @@ export function createPhaserGame(
   return new Phaser.Game({
     type: Phaser.WEBGL,
     parent,
-    width: 1280,
-    height: 720,
+    width: STAGE_WIDTH,
+    height: STAGE_HEIGHT,
     backgroundColor,
     ...rest,
     antialias: true,

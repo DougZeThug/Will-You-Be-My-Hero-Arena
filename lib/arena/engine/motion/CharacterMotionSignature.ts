@@ -1,4 +1,4 @@
-import type { CharacterId } from './MotionTypes';
+import type { CharacterId } from '../characters/CharacterIds';
 /** Movement identity, independent of ability/score stats and shared across events. */
 export interface CharacterMotionSignature {
   rhythm: number;

@@ -3,9 +3,10 @@ import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 // Fails when a file under scripts/ is not referenced from package.json,
-// .github, another referenced script, tests, lab, READMEs, agent config or a
-// non-historical doc. docs/review and docs/checkpoints are historical
-// records and do not keep a script alive.
+// .github, another referenced script, tests, lab, other READMEs, agent config
+// or a non-historical doc. docs/review and docs/checkpoints are historical
+// records and scripts/README.md is a pure index of scripts; none of them keep
+// a script alive.
 const listed = execFileSync(
   'git',
   ['ls-files', '--cached', '--others', '--exclude-standard'],
@@ -24,7 +25,7 @@ const sources = listed.filter(
   (file) =>
     !binary.test(file) &&
     !historical(file) &&
-    !(file.startsWith('scripts/') && file !== 'scripts/README.md') &&
+    !file.startsWith('scripts/') &&
     statSync(file).size < 2_000_000,
 );
 const cache = new Map();

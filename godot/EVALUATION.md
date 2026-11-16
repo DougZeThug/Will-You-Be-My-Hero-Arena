@@ -46,7 +46,7 @@ under Node 22.22.2 (repo pins Node 24.x; pnpm printed an engine warning, nothing
 |---|---|
 | `pnpm install --frozen-lockfile` | ok, 14 s |
 | `pnpm typecheck` | pass, 13 s |
-| `pnpm test` | exit 0, **181,095 checks**, 36 s (the committed `docs/test-results.json` said 179,077, so it was stale by 2,018; the run rewrites that tracked file, hence the throwaway worktree) |
+| `pnpm test` | exit 0, **181,095 checks**, 36 s (the committed `docs/test-results.json` said 179,077, so it was stale by 2,018; `pnpm test` now writes `work/qa/test-results.json` instead, but still rewrites tracked `docs/import-examples/`, hence the throwaway worktree) |
 | `pnpm build` | exit 0, 28 s (Vite chunk and dynamic-import warnings only) |
 
 Regression floor for every later step: `pnpm test` reports **at least 181,095 checks**

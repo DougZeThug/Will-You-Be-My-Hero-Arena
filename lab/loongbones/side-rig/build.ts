@@ -1,6 +1,7 @@
 import { anatomy, type Person } from './anatomy';
 import { layer, bodyWeights, type Rect } from './mesh';
-import { at, blend, smooth } from '../authoring/weighted-mesh';
+import { at, blend } from '../authoring/weighted-mesh';
+import { smoothRange as smooth } from '../../../lib/arena/math';
 import { sideClips } from './clips';
 import type { Vec } from './skeleton';
 import { assertInterchangeBudget } from './limits';

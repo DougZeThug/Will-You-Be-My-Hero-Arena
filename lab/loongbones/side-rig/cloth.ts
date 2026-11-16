@@ -1,4 +1,4 @@
-import { smooth } from '../authoring/weighted-mesh';
+import { smoothRange as smooth } from '../../../lib/arena/math';
 import type { Vec } from './skeleton';
 
 /** Reuse the existing side-panel fabric for the body hidden under the sleeve.

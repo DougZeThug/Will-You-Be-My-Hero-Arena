@@ -12,7 +12,7 @@ import {
   type BoneTrack,
   type LibraryBuilder,
 } from './builder';
-import type { CharacterId } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 
 /** Host tuning for the measured gaits. The Lab proofs use the defaults.
  * `strideScale` lengthens every stride (foot sweep and travel metadata

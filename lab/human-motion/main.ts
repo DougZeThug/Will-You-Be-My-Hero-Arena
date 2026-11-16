@@ -14,7 +14,7 @@ import { installReviewTake } from './ReviewTake';
 import { referenceComparison } from './ReferenceComparison';
 import { defaultReference, referenceCatalog } from './ReferenceCatalog';
 import { workshopControls } from './WorkshopControls';
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 const get = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;
 const params = new URLSearchParams(location.search),

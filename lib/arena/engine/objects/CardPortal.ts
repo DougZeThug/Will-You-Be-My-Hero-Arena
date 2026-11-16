@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import {cardPresentation} from '../../grounding';
 import {summonState} from '../../summon-motion';
+import {clamp01} from '../../math';
 import type {MotionPersonality} from '../../model';
 import type {XY} from '../events/ArenaEvent';
 import {squashOffset} from '../motion/SquashStretch';
@@ -20,7 +21,7 @@ export class CardPortal {
   this.glow.clear().lineStyle(9,this.color,s.glow*.18).strokeRoundedRect(-72,-196,144,210,6).lineStyle(2,0xffefaf,s.glow*.8).strokeRect(-68,-192,136,202);
   // Cartoon hop: stretch on the way up, squash on touchdown, small rebound.
   const squash=reduced?0:squashOffset([{at:.62,amount:.09,settle:.42,frequency:1.6},{at:1.18,amount:-.15,settle:.38,frequency:4.2}],s.local);
-  return{x:p.x+(this.base.x-p.x)*s.x,y:this.base.y+s.y,alpha:s.alpha,scale:s.scale,progress:Math.max(0,Math.min(1,(s.local-.9)/.9)),impact:s.impact,squash};
+  return{x:p.x+(this.base.x-p.x)*s.x,y:this.base.y+s.y,alpha:s.alpha,scale:s.scale,progress:clamp01((s.local-.9)/.9),impact:s.impact,squash};
  }
  destroy(){this.root.destroy(true);}
 }

@@ -1,7 +1,7 @@
 /** States shared by every sport: before the event starts and after it ends. */
-export type CommonSubstate = 'ready' | 'finished';
+type CommonSubstate = 'ready' | 'finished';
 /** What a cornhole thrower is doing; the substate follows the event's phase. */
-export type PrecisionSubstate =
+type PrecisionSubstate =
   | 'waiting'
   | 'aiming'
   | 'charging'
@@ -9,14 +9,14 @@ export type PrecisionSubstate =
   | 'flight'
   | 'result';
 /** What a running-event runner is doing. */
-export type RunningSubstate =
+type RunningSubstate =
   | 'stumbling'
   | 'airborne'
   | 'sliding'
   | 'sprinting'
   | 'running';
 /** What a fighter is doing. */
-export type FightingSubstate =
+type FightingSubstate =
   | 'neutral'
   | 'blocking'
   | 'dodging'

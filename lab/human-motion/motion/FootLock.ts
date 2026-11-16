@@ -1,4 +1,5 @@
 import type { Vec2 } from '../../../lib/arena/engine/motion/MotionTypes';
+import { clamp01 } from '../../../lib/arena/math';
 export class FootLock {
   private contacts = new Map<
     string,
@@ -18,7 +19,7 @@ export class FootLock {
   }
   setInfluence(side: string, influence: number) {
     const c = this.contacts.get(side);
-    if (c) c.influence = Math.max(0, Math.min(1, influence));
+    if (c) c.influence = clamp01(influence);
   }
   clear() {
     this.contacts.clear();

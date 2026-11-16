@@ -5,7 +5,7 @@ import { verifyRig } from '../loongbones/arena/provider';
 import { performanceDefinitions } from './definitions';
 import './style.css';
 import { bindTuning } from './Tuning';
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 import { downloadJson } from '../../lib/arena/download';
 const element = <T = HTMLElement>(id: string) =>
   document.getElementById(id) as unknown as T;

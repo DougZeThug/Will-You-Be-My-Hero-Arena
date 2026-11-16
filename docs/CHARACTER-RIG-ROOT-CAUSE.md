@@ -2,7 +2,7 @@
 
 Status: source/code audit complete; anatomical landmarks are an authoring proposal. No claim of finished corrected artwork, a Spine rig, or a natural run cycle is made by this document.
 
-The inspected sources are Dan and Doug's `public/assets/*/puppet-v3.png`, their original `character.png` drawings, `puppet-assets.json`, `puppet-geometry.ts`, `JoinedSurface.ts`, `PaperCharacterRig.ts`, `AnimationComponent.ts`, `CharacterPresentation.ts`, and the optional `SpineCharacterRig.ts` boundary. The existing Arena Lab captures provide the actual rendered comparison.
+The inspected sources are Dan and Doug's `public/assets/*/puppet-v3.png`, their original `character.png` drawings, `puppet-assets.json`, `puppet-geometry.ts`, `JoinedSurface.ts`, `PaperCharacterRig.ts`, `AnimationComponent.ts`, `CharacterPresentation.ts`, and the optional `SpineCharacterRig.ts` boundary (since deleted). The existing Arena Lab captures provide the actual rendered comparison.
 
 ## Confirmed causes
 
@@ -26,7 +26,7 @@ Faces, hair, facial hair, clothing identity, logos, rendering style and the cour
 
 ## Reconstruction order
 
-1. Dan is the reference. Define source landmarks, a separate balanced setup, and an asymmetric idle. The proposal in `engine/characters/anatomy/dan.ts` puts arms under clavicles and hip sockets inside a pelvis; it labels its coordinate convention and support leg.
+1. Dan is the reference. Define source landmarks, a separate balanced setup, and an asymmetric idle. The proposal in `lab/anatomy/dan.ts` puts arms under clavicles and hip sockets inside a pelvis; it labels its coordinate convention and support leg.
 2. Review the bare skeleton and body masses first. The center line uses an explicitly approximate illustration-mass proxy; it is not a measurement of real human forces. Reject a pose outside its support interval.
 3. Fit existing illustration regions to those landmarks. Preserve head pixels and logo content. Author shoulder/waist overlap surfaces, independent wrists, relaxed/holding hands, and clothing influence masks. Do not simply apply another global shoulder drop.
 4. Build the Spine setup, weighted meshes and constraints from the fitted source. Keep gameplay idle in animation tracks. The two-bone arm/leg chains must use real joint pivots; IK targets belong outside the driven chain.

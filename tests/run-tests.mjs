@@ -600,19 +600,10 @@ for (const card of m.CARDS) {
 }
 const owned = await services.ownership.list('user-doug');
 check(() => assert.equal(owned.length, 2));
-check(() =>
-  assert.deepEqual(
-    owned,
-    m.COPIES.filter((c) => c.userId === 'user-doug'),
-  ),
-);
-const allowed = m.COPIES.some(
-  (c) =>
-    c.userId === 'user-dan' &&
-    c.id === owned[0].id &&
-    c.cardId === owned[0].cardId,
-);
-check(() => assert.equal(allowed, false));
+check(() => assert.ok(owned.every((c) => c.userId === 'user-doug')));
+const danOwned = await services.ownership.list('user-dan');
+check(() => assert.ok(danOwned.length > 0));
+check(() => assert.ok(!danOwned.some((c) => c.userId === 'user-doug')));
 await assert.rejects(
   services.identity.select('nobody'),
   /Unknown demo identity/,

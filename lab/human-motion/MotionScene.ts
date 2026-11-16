@@ -21,7 +21,7 @@ import {
   retargetReference,
   type ReferenceTrack,
 } from './motion-tools/ReferenceMotion';
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 export class MotionScene extends Phaser.Scene {
   session!: MotionSession;
   ready = false;

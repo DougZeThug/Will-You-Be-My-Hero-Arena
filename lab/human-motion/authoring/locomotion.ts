@@ -1,9 +1,7 @@
 import { addGaits, type GaitTuning } from './gait';
 import { translate, pulse, type LibraryBuilder } from './builder';
-import type {
-  MotionMarker,
-  CharacterId,
-} from '../../../lib/arena/engine/motion/MotionTypes';
+import type { MotionMarker } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 export function addLocomotion(
   library: LibraryBuilder,
   id: CharacterId,

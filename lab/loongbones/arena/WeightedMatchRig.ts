@@ -10,6 +10,7 @@ import { NativeMesh } from '../NativeMesh';
 import { validateExport } from '../validate-export';
 import type { WeightedRigDefinition } from './RigDefinition';
 import { dragonBones as db } from '../vendor/dragonBones';
+import { clamp01 } from '../../../lib/arena/math';
 
 type ExportClip = {
   name: string;
@@ -123,7 +124,7 @@ export class WeightedMatchRig implements AuthoredCharacterRig {
     throw Error(`${this.definition.id} ${id} has no ${name} marker`);
   }
   apply(_pose: PuppetPose, id = 'idle_breathe', progress = 0) {
-    progress = Math.max(0, Math.min(1, progress));
+    progress = clamp01(progress);
     if (!this.blending && id === this.requested && progress === this.progress)
       return;
     this.blending = false;

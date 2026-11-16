@@ -23,7 +23,7 @@ This is the integration and authoring plan following the [root-cause audit](CHAR
 2. **Setup:** balanced bind geometry with modest arm/leg separation, enough coverage to weight the joints, clean elbow/knee locations and external IK targets. Not a visible gameplay idle.
 3. **Idle animation:** character-specific asymmetric support and breathing. Dan's proposal favors image-left support; Doug needs a separate pose with a mechanically supported waist gesture. Never save both as one shared REST pose.
 
-Draft data is in `lib/arena/engine/characters/anatomy/`. It is **not imported by production**. Units are character-local pixels, positive Y downward, floor at zero, L/R by image side. Convert coordinate conventions explicitly at the Spine boundary. The projected mass calculation is a design approximation, not measured human biomechanics or a physics solver. Screen-space draft landmarks still need fixed bone-length/foreshortening decisions when authoring.
+Draft data is in `lab/anatomy/`. It is **not imported by production**. Units are character-local pixels, positive Y downward, floor at zero, L/R by image side. Convert coordinate conventions explicitly at the Spine boundary. The projected mass calculation is a design approximation, not measured human biomechanics or a physics solver. Screen-space draft landmarks still need fixed bone-length/foreshortening decisions when authoring.
 
 ## Source fitting requirements
 
@@ -52,7 +52,7 @@ Do not substitute a hand-written empty skeleton, a generic stick-figure demo or 
 
 Use the official `@esotericsoftware/spine-phaser-v3` package for this Phaser 3 project, matching Editor/export major.minor. Confirm Editor license/edition and available authored project before activation. See the [official integration guide](https://esotericsoftware.com/spine-phaser) and [Editor license](https://esotericsoftware.com/spine-editor-license).
 
-Replace the inactive sampling boundary only after a real export can be loaded and tested. The current `SpineCharacterRig.apply` clears every track for every sample; that behavior must not be reused for ordinary playback. Preserve persistent track entries and mixes during playback; use a separate silent deterministic seek path. Sampling a release socket must not disturb the displayed track, duplicate sound/release events, or advance physics.
+The former inactive Spine sampling boundary (`SpineCharacterRig`) has been deleted. Add a real one only after an export can be loaded and tested; the old boundary cleared every track for every sample, and that behavior must not be reused for ordinary playback. Preserve persistent track entries and mixes during playback; use a separate silent deterministic seek path. Sampling a release socket must not disturb the displayed track, duplicate sound/release events, or advance physics.
 
 Build the semantic animator behind the existing character controller: play/mix, base and upper-body layers, listeners, attach/detach and aim target. Event modules request semantic actions and never call Spine internals. Character profiles choose export overrides and personality pools. Do not duplicate controllers for AI, humans or sports.
 

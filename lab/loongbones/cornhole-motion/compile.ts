@@ -1,5 +1,5 @@
 import { cornholeThrow, throwStyles } from './throws';
-import type { CharacterId } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 const interpolate = (points: number[][], y: number) => {
   for (let i = 1; i < points.length; i++)
     if (y < points[i][0])

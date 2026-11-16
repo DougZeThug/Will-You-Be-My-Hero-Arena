@@ -101,7 +101,12 @@ export class GamepadDevice implements InputDevice {
           weakMagnitude: 0.22,
           startDelay: 0,
         })
+        // Rumble is best-effort: the promise rejects when the pad has no
+        // dual-rumble actuator or was unplugged mid-effect.
         .catch(() => {});
-    } catch {}
+    } catch {
+      // A browser without the vibration API (or a pad that throws on it) just
+      // gets no haptics.
+    }
   }
 }

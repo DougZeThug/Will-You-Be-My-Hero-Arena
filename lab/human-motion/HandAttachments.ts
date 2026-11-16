@@ -3,7 +3,7 @@ import type { GraphState } from '../../lib/arena/engine/motion/AnimationGraph';
 import { dragonBones as db } from '../loongbones/vendor/dragonBones';
 import { setSlotAlpha, slotAlpha } from './NativeBridge';
 import type { LibraryBuilder } from './authoring/builder';
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 
 /** Phaser texture key and atlas name of the hand sheet. */
 export const HAND_TEXTURE_KEY = 'arena-hands-v1';

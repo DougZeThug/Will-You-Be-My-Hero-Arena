@@ -1,4 +1,4 @@
-import type { CharacterId } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
 import { buildSkeleton, type Joint, type Vec } from './skeleton';
 export type Person = CharacterId;
 const v = (x: number, y: number): Vec => ({ x, y });

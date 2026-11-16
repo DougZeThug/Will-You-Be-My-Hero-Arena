@@ -1,7 +1,5 @@
-import type { CharacterId } from '../characters/CharacterIds';
 import type { CharacterMotionSignature } from './CharacterMotionSignature';
 export type Vec2 = { x: number; y: number };
-export type { CharacterId };
 export type MotionPhase =
   | 'settle'
   | 'anticipation'

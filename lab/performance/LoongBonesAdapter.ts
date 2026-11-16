@@ -27,6 +27,7 @@ import type {
 } from '../../lib/arena/engine/performance/PerformanceTypes';
 import { PERFORMANCE_CLIPS as CLIP } from '../../lib/arena/engine/performance/ClipNames';
 import { PERFORMANCE_REVISION } from './compile';
+import { clamp01 } from '../../lib/arena/math';
 import type { assertInterchangeBudget } from '../loongbones/side-rig/limits';
 import {
   boneLocal,
@@ -640,7 +641,7 @@ export class LoongBonesAdapter implements CharacterAnimationRuntime {
       span = b.t - a.t,
       speed = span > 0 ? Math.hypot(b.x - a.x, b.y - a.y) / span : 0;
     // Armature px/s; the swoosh appears only through the snap.
-    const strength = Math.max(0, Math.min(1, (speed - 1400) / 1800));
+    const strength = clamp01((speed - 1400) / 1800);
     if (strength <= 0) return;
     // Armature units: the rig is drawn at ~0.2x, so 70 is ~14 screen px.
     const sx = this.actor.scaleX,

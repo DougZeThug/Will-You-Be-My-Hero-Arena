@@ -5,12 +5,6 @@ import { SPORT_STAGE, EQUIPMENT_GROUND, laneGroundY } from './sport-stage';
 
 // Pure layout geometry intentionally has no simulation/timeline dependency.
 // Match timing imports surfacePoint while simulation imports match timing.
-export const PROJECTILE_WIDTH = {
-  cornhole: SPORT_STAGE.cornhole.projectile.width,
-  football: SPORT_STAGE.football.projectile.width,
-  basketball: SPORT_STAGE.basketball.projectile.width,
-  pong: SPORT_STAGE.pong.projectile.width,
-} as const;
 export const BAG_FLIGHT_FLATTEN = SPORT_STAGE.cornhole.projectile.flatten;
 /** A bag lying on the board (and the pose a bag eases into on landing). */
 export const BAG_REST_FLATTEN = 0.52;

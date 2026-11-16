@@ -1,7 +1,7 @@
 import type { Intent } from '../../input/InputActions';
 /** The four shots a player can select. */
 export type ShotId = 'flat' | 'slide' | 'roll' | 'airmail';
-export interface ShotDefinition {
+interface ShotDefinition {
   /** The action-map intent that selects the shot; its command is `select.<id>`. */
   intent: Extract<
     Intent,
@@ -60,7 +60,7 @@ export const SHOTS: Record<ShotId, ShotDefinition> = {
   },
 };
 export const SHOT_IDS = Object.keys(SHOTS) as ShotId[];
-export const SELECT_PREFIX = 'select.';
+const SELECT_PREFIX = 'select.';
 /** The action-map command that selects a shot. */
 export const selectCommand = (shot: ShotId) => SELECT_PREFIX + shot;
 /** The shot a `select.<id>` command picks, or undefined for any other command. */

@@ -2,9 +2,9 @@ import {
   createWeightedMesh,
   at,
   blend,
-  smooth,
   type Influence,
 } from '../authoring/weighted-mesh';
+import { smoothRange as smooth } from '../../../lib/arena/math';
 import type { Vec } from './skeleton';
 import { anatomy, type Person } from './anatomy';
 export type Rect = [number, number, number, number];

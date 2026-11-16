@@ -1,7 +1,6 @@
 import type { Joint, Vec } from '../side-rig/skeleton';
 import { clipMaterialCell } from './material-contour';
-import { clamp01 as clamp, smoothRange } from '../../../lib/arena/math';
-export const smooth = smoothRange;
+import { clamp01 as clamp } from '../../../lib/arena/math';
 export type Influence = Record<string, number>;
 export { clamp };
 export const at = (name: string): Influence => ({ [name]: 1 });

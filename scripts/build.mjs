@@ -3,6 +3,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { sourceFingerprint } from './source-fingerprint.mjs';
 import {
+  auditPlayProvider,
   auditProvider,
   auditStageEntries,
 } from './check-performance-provider-dependencies.mjs';
@@ -19,6 +20,7 @@ const providerAudit = auditProvider();
 const providerViolations = [
   ...auditStageEntries(),
   ...providerAudit.violations,
+  ...auditPlayProvider().violations,
 ];
 if (providerViolations.length)
   throw Error(

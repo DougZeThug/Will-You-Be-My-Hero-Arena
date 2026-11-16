@@ -1,3 +1,5 @@
+import { clamp01 } from '../../lib/arena/math';
+
 /** Arena-authored format fixture, NOT an editor-exported/finished character.
  * A single strip spans shoulder/elbow/wrist with blended weights and FFD. */
 const xs = [0, 40, 70, 80, 95, 125, 145, 163];
@@ -9,8 +11,8 @@ for (const y of [-13, 13])
   for (const x of xs) {
     vertices.push(x, y);
     uvs.push(x / 163, (y + 13) / 26);
-    const lower = Math.max(0, Math.min(1, (x - 50) / 55));
-    const hand = Math.max(0, Math.min(1, (x - 125) / 30));
+    const lower = clamp01((x - 50) / 55);
+    const hand = clamp01((x - 125) / 30);
     const w = [
       [1, (1 - lower) * (1 - hand)],
       [2, lower * (1 - hand)],

@@ -33,7 +33,7 @@ Re-verify these facts against `package.json`, `AGENTS.md` and
 - Phaser stack: scenes and `ArenaGame`/`LiveArenaGame`, game objects, texture
   and atlas handling, tweens/timelines, fixed-step vs render-step, camera
   (`CameraManager`, `CameraEffects`), WebGL/canvas performance, Vite bundling,
-  dynamic imports (cornhole performance provider is dynamically injected), and
+  dynamic imports (rig providers are dynamically injected through `components/arena/rig-provider.ts`, shared by `ArenaStage` and `LiveStage`), and
   the Lab/production split.
 - `godot/`: CharacterBody, Skeleton, AnimationPlayer/AnimationTree, physics,
   scenes, resources, signals, camera, input, rendering, imported assets,

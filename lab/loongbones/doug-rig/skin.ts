@@ -1,10 +1,10 @@
 import {
   at,
   blend,
-  smooth,
   createWeightedMesh,
   type Influence,
 } from '../authoring/weighted-mesh';
+import { clamp01, smoothRange as smooth } from '../../../lib/arena/math';
 import { origin, joints, bonePose } from './anatomy';
 const left = (y: number) => (y < 235 ? 58 : y < 285 ? 54 : 45);
 // Traced shirt/skin boundary, including the wristwatch and thumb. A constant
@@ -28,7 +28,7 @@ const right = (y: number) => {
     if (y < line[i][0]) {
       const [ya, xa] = line[i - 1],
         [yb, xb] = line[i];
-      return xa + (xb - xa) * Math.max(0, Math.min(1, (y - ya) / (yb - ya)));
+      return xa + (xb - xa) * clamp01((y - ya) / (yb - ya));
     }
   return line[line.length - 1][1];
 };

@@ -1,6 +1,6 @@
 import {characterProfile} from './engine/characters/CharacterRegistry';
 import {weighted} from './engine/animation/AnimationSelector';
-import {BOARD,boardSurfaceY,laneZ} from './board-geometry';
+import {BOARD,HOOP_TARGET_X,boardSurfaceY,laneZ} from './board-geometry';
 import {seeded,seedHash} from './engine/core/Random';
 import type {ShotStyle} from './engine/animation/AnimationTypes';
 import {resolveBoard} from './engine/events/cornhole/CornholeBoard';
@@ -23,7 +23,7 @@ export function contactScore(sport:Sport,p:V3,lane:number,targetId?:number):{con
  if(sport==='cornhole'){if(Math.hypot(p.x-BOARD.holeX,dz)<=BOARD.holeRadius)return{contact:'hole',score:3};if(p.x>=BOARD.frontX&&p.x<=BOARD.backX&&Math.abs(dz)<=BOARD.laneHalfWidth)return{contact:'board',score:1};return{contact:'miss',score:0};}
  if(sport==='football'){const d=Math.hypot(p.y-2.0,dz);if(d<=.25)return{contact:'zone3',score:3};if(d<=.58)return{contact:'zone2',score:2};if(d<=1.05)return{contact:'zone1',score:1};return{contact:'miss',score:0};}
  if(sport==='pong'){const c=cupPosition(targetId??0,lane);const d=Math.hypot(p.x-c.x,p.z-c.z);return d<=.09?{contact:'cup',score:1}:d<=.16?{contact:'rim-out',score:0}:{contact:'miss',score:0};}
- const d=Math.hypot(p.x-8.8,dz);return d<=.20?{contact:'make',score:1}:d<=.44?{contact:'rim-out',score:0}:p.x>9.08?{contact:'backboard',score:0}:{contact:'airball',score:0};
+ const d=Math.hypot(p.x-HOOP_TARGET_X,dz);return d<=.20?{contact:'make',score:1}:d<=.44?{contact:'rim-out',score:0}:p.x>9.08?{contact:'backboard',score:0}:{contact:'airball',score:0};
 }
 export function trajectory(start:V3,target:V3,duration:number,contact:Attempt['contact']):{path:Point[];velocity:V3}{
  const slide=contact==='board'||contact==='hole',airDuration=duration-(slide?.28:0),touch={...target};
@@ -49,9 +49,9 @@ export function simulate(setup:Setup):Recording {
   const spread=variance*specialty*pressure*(1+(66-card.accuracy)/200);
   let target:V3={x:BOARD.holeX+normal(r)*.65*spread,y:0,z:lane+normal(r)*.36*spread};let targetId:number|undefined;
   if(sport==='cornhole'){target.y=target.x>=BOARD.frontX&&target.x<=BOARD.backX&&Math.abs(target.z-lane)<=BOARD.laneHalfWidth?boardSurfaceY(target.x):0;}
-  if(sport==='football')target={x:8.8,y:2+normal(r)*.60*spread,z:lane+normal(r)*.60*spread};
+  if(sport==='football')target={x:HOOP_TARGET_X,y:2+normal(r)*.60*spread,z:lane+normal(r)*.60*spread};
   if(sport==='pong'){const open=[0,1,2,3,4,5].filter(c=>!removed[actor].includes(c));targetId=open[Math.floor(r()*open.length)];if(targetId===undefined)targetId=0;const c=cupPosition(targetId,lane);target={x:c.x+normal(r)*.10*spread,y:c.y,z:c.z+normal(r)*.10*spread};}
-  if(sport==='basketball')target={x:8.8+normal(r)*.26*spread,y:2.9,z:lane+normal(r)*.26*spread};
+  if(sport==='basketball')target={x:HOOP_TARGET_X+normal(r)*.26*spread,y:2.9,z:lane+normal(r)*.26*spread};
   const outcome=contactScore(sport,target,lane,targetId);
   if(sport==='pong'&&removed[actor].includes(targetId!)){outcome.contact='miss';outcome.score=0;}
   if(outcome.contact==='cup')removed[actor].push(targetId!);

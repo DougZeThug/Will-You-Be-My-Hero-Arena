@@ -1,6 +1,6 @@
 import { anatomy } from '../loongbones/side-rig/anatomy';
 import { registerLimbPoint } from '../../lib/arena/engine/motion/LimbRegistration';
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 
 /** The side-view source exposes only a narrow far-arm edge. It cannot unfold
  * into an overhead arm. Reuse the complete isolated arm drawing in its own

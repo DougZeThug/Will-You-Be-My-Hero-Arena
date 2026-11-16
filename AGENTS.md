@@ -12,8 +12,9 @@ test usage.
 
 For recorded-cornhole character performance, start with
 [`docs/ANIMATION-HANDOFF.md`](docs/ANIMATION-HANDOFF.md). The normal Watch entry
-is `components/arena/ArenaStage.tsx`; cornhole dynamically injects
-`lab/performance/provider.ts`, which composes
+is `components/arena/ArenaStage.tsx`; rig selection goes through
+`components/arena/rig-provider.ts` (shared with `LiveStage.tsx`), which
+dynamically injects, for cornhole, `lab/performance/provider.ts`, which composes
 `CharacterPerformanceController` with `lab/performance/LoongBonesAdapter.ts`
 and the side-view-v3 assets. The matching review surfaces are `/performance/`
 and the `cornhole-performance` Lab scenario. Use these paths for routine Dan or
@@ -162,7 +163,11 @@ intentional evidence under `docs/review/`.
 | Event rules | `lib/arena/engine/events/` |
 | Input/controllers | `lib/arena/engine/input/`, `lib/arena/engine/controllers/` |
 | Character systems | `lib/arena/engine/characters/` |
+| Per-sport stage data (equipment, lanes, decorations); add data here, not sport switches | `lib/arena/sport-stage.ts` |
+| Shared geometry and math | `lib/arena/board-geometry.ts`, `lib/arena/math.ts` |
+| Rig-shared Lab code, Play motion planner, anatomy plans | `lab/rig-shared/`, `lab/human-motion/motion/`, `lab/anatomy/` |
 | Lab scenarios | `lab/scenarios.ts`, `lab/LabRuntime.ts` |
-| Tests | `tests/`, `tests/browser/` |
+| Tests | `tests/`, `tests/browser/`; test, engine and live reports go to ignored `work/qa/` |
+| Scripts | `scripts/README.md` (index), `pnpm check:scripts` |
 | Repeatable workflows | `.agents/skills/` |
 | User-facing behaviour description | `docs/product-description/` (start at its `AGENTS.md`) |

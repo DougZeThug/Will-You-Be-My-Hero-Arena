@@ -9,8 +9,9 @@ import reference from '../../../motion-reference/cornhole/reference-throw.json';
 import type {
   MotionMarker,
   MotionPhase,
-  CharacterId,
 } from '../../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../../lib/arena/engine/characters/CharacterIds';
+import { clamp01 } from '../../../lib/arena/math';
 
 import {
   THROW_LANDMARKS,
@@ -84,7 +85,7 @@ export function addCornhole(
             (loose ? 0.96 : 0.8),
       );
     channels.upper_arm_L = sampled((f) => {
-      const progress = Math.max(0, Math.min(1, (f / tempo - 34) / 72));
+      const progress = clamp01((f / tempo - 34) / 72);
       return (
         measured('upperRight', f) * technique.sweep * signature.backswingSize -
         body(f) -

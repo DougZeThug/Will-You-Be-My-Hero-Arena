@@ -3,6 +3,7 @@ import type { ArenaBridge, ArenaOptions } from './ArenaOptions';
 import { BootScene } from '../scenes/BootScene';
 import { ArenaScene } from '../scenes/ArenaScene';
 import { createPhaserGame } from './createPhaserGame';
+import { STAGE_HEIGHT, STAGE_WIDTH } from '../events/StageConstants';
 export class ArenaGame {
   readonly game: Phaser.Game;
   private bridge: ArenaBridge;
@@ -21,7 +22,7 @@ export class ArenaGame {
         transparent: false,
         roundPixels: false,
         render: { powerPreference: 'high-performance' },
-        scale: { width: 1280, height: 720 },
+        scale: { width: STAGE_WIDTH, height: STAGE_HEIGHT },
       },
       scene: [new BootScene(this.bridge), new ArenaScene(this.bridge)],
       callbacks: {

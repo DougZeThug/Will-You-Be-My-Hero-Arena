@@ -7,7 +7,7 @@ investigate and advise. You do NOT modify files.
 
 First read AGENTS.md. Then locate the real implementation (do not assume):
 - Cornhole: lib/arena/engine/events/cornhole/ (CornholePhysics.ts,
-  ReleasedBagPhysics.ts, ScreenBagDynamics.ts, CornholeBoard.ts),
+  ReleasedBagPhysics.ts, CornholeBoard.ts), lab/human-motion/events/ScreenBagDynamics.ts,
   events/precision/ (PrecisionPhysics.ts for live Play), and
   lib/arena/simulation.ts for recorded Watch outcomes.
 - Basketball: lab/human-motion/BasketballFlight.ts and simulation.ts.

@@ -1,4 +1,4 @@
-import type { CharacterId } from '../../lib/arena/engine/motion/MotionTypes';
+import type { CharacterId } from '../../lib/arena/engine/characters/CharacterIds';
 import { SIDE_ATLAS_SIZE } from '../loongbones/side-rig/anatomy';
 interface WeightedMesh {
   vertices?: number[];

@@ -210,7 +210,10 @@ document
     const release = () => {
       try {
         lab.input('p0', button.dataset.intent!, 0);
-      } catch {}
+      } catch {
+        // Releasing is best-effort: input() throws once the scenario is no
+        // longer a live one with a human player, so there is nothing to release.
+      }
     };
     button.addEventListener('pointerup', release);
     button.addEventListener('pointercancel', release);
