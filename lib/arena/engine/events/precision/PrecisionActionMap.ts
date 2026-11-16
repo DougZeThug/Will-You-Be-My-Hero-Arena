@@ -1,24 +1,16 @@
 import type { EventActionMap } from '../../controllers/EventActionMap';
+import { SHOT_IDS, SHOTS, selectCommand } from './PrecisionConstants';
 export const PrecisionActionMap: EventActionMap = {
   id: 'cornhole',
   bufferSeconds: 0.14,
   actions: [
     { intent: 'move', phase: 'analog', command: 'move', label: 'Position' },
     { intent: 'aim', phase: 'analog', command: 'aim', label: 'Aim' },
-    ...(
-      [
-        'primaryAction',
-        'secondaryAction',
-        'tertiaryAction',
-        'specialAction',
-      ] as const
-    ).map((intent, i) => ({
-      intent,
+    ...SHOT_IDS.map((id) => ({
+      intent: SHOTS[id].intent,
       phase: 'pressed' as const,
-      command: ['select.flat', 'select.slide', 'select.roll', 'select.airmail'][
-        i
-      ],
-      label: ['Hole runner', 'Slide', 'Roll', 'Airmail'][i],
+      command: selectCommand(id),
+      label: SHOTS[id].label,
       states: ['aiming', 'charging'],
     })),
     {

@@ -4,15 +4,17 @@ import type {
   LiveView,
 } from '../../core/LiveTypes';
 import type { ArenaCharacter } from '../../characters/ArenaCharacter';
+import type { FightingPhase } from '../../characters/CharacterStates';
 import type { InputFrame } from '../../input/InputActions';
 import { FightingActionMap } from './FightingActionMap';
 import { CombatComponent } from '../../characters/components/CombatComponent';
 import { moveFighter, combatHits } from './CombatPhysics';
+import { SINGLE_SCREEN_WORLD_WIDTH } from '../StageConstants';
 const BODY_SPACING = 88;
 export class FightingEvent implements PlayableArenaEvent {
   id = 'fighting';
   private ctx!: EventContext;
-  private state = 'ready';
+  private state: FightingPhase = 'ready';
   private started = 0;
   /** The fight's own clock starts after the entrance; the 60 s limit counts from here. */
   private fightStarted = 0;
@@ -53,6 +55,14 @@ export class FightingEvent implements PlayableArenaEvent {
       c.startAction(c.personality.choose('entrance')),
     );
   }
+  /** The closest fighter still standing, or undefined when `c` is the last one. */
+  private nearestEnemy(c: ArenaCharacter) {
+    return this.ctx.characters
+      .filter((p) => p !== c && p.health > 0)
+      .sort(
+        (a, b) => Math.abs(a.body.x - c.body.x) - Math.abs(b.body.x - c.body.x),
+      )[0];
+  }
   update(dt: number) {
     const time = this.ctx.time();
     if (this.state === 'ready' && time - this.started > 1.5) {
@@ -63,12 +73,7 @@ export class FightingEvent implements PlayableArenaEvent {
     }
     if (this.state !== 'fighting') return;
     for (const c of this.ctx.characters) {
-      const enemy = this.ctx.characters
-        .filter((p) => p !== c && p.health > 0)
-        .sort(
-          (a, b) =>
-            Math.abs(a.body.x - c.body.x) - Math.abs(b.body.x - c.body.x),
-        )[0];
+      const enemy = this.nearestEnemy(c);
       if (enemy && !['attacking', 'dodging'].includes(c.substate))
         c.body.facing = enemy.body.x > c.body.x ? 1 : -1;
       if (c.state === 'celebrating' && !this.taunting.has(c.id))
@@ -155,11 +160,7 @@ export class FightingEvent implements PlayableArenaEvent {
     }
   }
   ai(c: ArenaCharacter, time: number): InputFrame {
-    const enemy = this.ctx.characters
-      .filter((p) => p !== c && p.health > 0)
-      .sort(
-        (a, b) => Math.abs(a.body.x - c.body.x) - Math.abs(b.body.x - c.body.x),
-      )[0];
+    const enemy = this.nearestEnemy(c);
     if (!enemy) return { values: {}, family: 'ai', connected: true };
     const distance = Math.abs(enemy.body.x - c.body.x),
       values: InputFrame['values'] = {
@@ -242,7 +243,7 @@ export class FightingEvent implements PlayableArenaEvent {
         this.ctx.characters.map((c) => [c.id, c.score]),
       ),
       camera: 'dual',
-      worldWidth: 1280,
+      worldWidth: SINGLE_SCREEN_WORLD_WIDTH,
       objects: [],
     };
   }

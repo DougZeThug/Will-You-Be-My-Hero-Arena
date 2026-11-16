@@ -1,8 +1,18 @@
 import type { ArenaCharacter } from '../../characters/ArenaCharacter';
 import {
   LANE_CHANGE_COOLDOWN,
+  LANE_CHANGE_THRESHOLD,
+  LANE_COUNT,
+  LANE_HALF_PITCH,
+  LANE_PITCH,
+  LANE_Y0,
+  FREE_STEER_Y_MIN,
+  FREE_STEER_Y_MAX,
+  FREE_STEER_SPEED,
   RUN_GRAVITY,
+  laneY,
   type RunnerMotion,
+  type RunningMovement,
 } from './RunningConstants';
 import { clamp } from '../../../math';
 export interface Obstacle {
@@ -16,7 +26,7 @@ export interface Obstacle {
 export const RUNNING_LENGTH = 2400;
 /** Lane depth: runners nearer the camera (larger y) are drawn larger. */
 export function laneScale(y: number) {
-  return 0.65 + ((y - 520) / 62) * 0.035;
+  return 0.65 + ((y - LANE_Y0) / LANE_PITCH) * 0.035;
 }
 /** How long a stumble lasts: the card's running recovery rating shortens it. */
 export function stumbleTime(c: ArenaCharacter) {
@@ -39,7 +49,7 @@ export function runPhysics(
   m: RunnerMotion,
   dt: number,
   time: number,
-  mode: string,
+  mode: RunningMovement,
 ) {
   const b = c.body;
   // A finished runner stops moving forward but still comes down from a jump
@@ -49,12 +59,20 @@ export function runPhysics(
   m.stumble = Math.max(0, m.stumble - dt);
   m.laneClock = Math.max(0, m.laneClock - dt);
   if (mode === 'lanes') {
-    if (Math.abs(c.moveIntent.y) > 0.5 && m.laneClock === 0) {
-      m.lane = clamp(m.lane + Math.sign(c.moveIntent.y), 0, 2);
+    if (
+      Math.abs(c.moveIntent.y) > LANE_CHANGE_THRESHOLD &&
+      m.laneClock === 0
+    ) {
+      m.lane = clamp(m.lane + Math.sign(c.moveIntent.y), 0, LANE_COUNT - 1);
       m.laneClock = LANE_CHANGE_COOLDOWN;
     }
-    b.y += (520 + m.lane * 62 - b.y) * Math.min(1, dt * 12);
-  } else b.y = clamp(b.y + c.moveIntent.y * 160 * dt, 515, 650);
+    b.y += (laneY(m.lane) - b.y) * Math.min(1, dt * 12);
+  } else
+    b.y = clamp(
+      b.y + c.moveIntent.y * FREE_STEER_SPEED * dt,
+      FREE_STEER_Y_MIN,
+      FREE_STEER_Y_MAX,
+    );
   // Depth follows the runner's position on the track, lane changes included.
   b.scale = laneScale(b.y);
   // Braking stops a sprint, and a sprint stops while a jump is still
@@ -114,10 +132,10 @@ export function runPhysics(
   return landed;
 }
 /**
- * Half of the 62px lane pitch: adjacent lanes' hit bands tile with no seam
- * (the strict `<` leaves only the exact midline unhit).
+ * Obstacle hits span LANE_HALF_PITCH either side of the obstacle: adjacent
+ * lanes' hit bands tile with no seam (the strict `<` leaves only the exact
+ * midline unhit).
  */
-const LANE_HALF_PITCH = 31;
 export function obstacleCollision(
   c: ArenaCharacter,
   o: Obstacle,

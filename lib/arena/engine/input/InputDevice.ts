@@ -16,8 +16,10 @@ export interface InputDevice {
   id: string;
   family: DeviceFamily;
   poll(time: number): InputFrame;
-  clear(): void;
-  destroy(): void;
+  /** Drop held and pending input. Absent means there is nothing to drop. */
+  clear?(): void;
+  /** Release listeners. Absent means there is nothing to release. */
+  destroy?(): void;
   haptic?(cue: HapticCue): void;
   /** Whether the device is present. Must be side-effect free (unlike poll,
    * which consumes one-shot input). An absent method means connected. */

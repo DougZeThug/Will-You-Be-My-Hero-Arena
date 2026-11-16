@@ -1,5 +1,10 @@
 import type { DeviceFamily, Intent } from './InputActions';
-import type { Bindings } from './InputBindings';
+import {
+  KEYBOARD_AIM_KEYS,
+  KEYBOARD_MOVE_KEYS,
+  layoutOf,
+  type Bindings,
+} from './InputBindings';
 const xbox = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'View', 'Menu'];
 const ps = [
   'Cross',
@@ -13,6 +18,19 @@ const ps = [
   'Share',
   'Options',
 ];
+/** The keyboard layout's movement keys as a label, in W A S D order (up, left, down, right). */
+const moveKeysGlyph = (layout: 0 | 1) => {
+  const [up, down, left, right] = KEYBOARD_MOVE_KEYS[layout];
+  return [up, left, down, right].map((k) => k.replace('Key', '')).join(' ');
+};
+/** The keyboard layout's aim keys as a label: arrows by name, a numpad as its digits (left, right, up, down). */
+const aimKeysGlyph = (layout: 0 | 1) => {
+  const [up, down, left, right] = KEYBOARD_AIM_KEYS[layout];
+  return [up, down, left, right].every((k) => k.startsWith('Arrow'))
+    ? 'Arrow keys'
+    : 'Numpad ' +
+        [left, right, up, down].map((k) => k.replace('Numpad', '')).join('/');
+};
 export function inputGlyph(
   intent: Intent,
   family: DeviceFamily,
@@ -28,15 +46,11 @@ export function inputGlyph(
   if (family === 'ai') return 'AI';
   if (intent === 'move')
     return family === 'keyboard'
-      ? player === 1
-        ? 'T F G H'
-        : 'W A S D'
+      ? moveKeysGlyph(layoutOf(player))
       : 'Left stick';
   if (intent === 'aim')
     return family === 'keyboard'
-      ? player === 1
-        ? 'Numpad 4/6/8/5'
-        : 'Arrow keys'
+      ? aimKeysGlyph(layoutOf(player))
       : 'Right stick';
   if (family === 'keyboard')
     return (b.keys[intent] ?? 'Unbound')

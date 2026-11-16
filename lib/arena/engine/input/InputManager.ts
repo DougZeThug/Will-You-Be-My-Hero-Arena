@@ -8,7 +8,7 @@ export class InputManager {
       )
     )
       throw Error('Each player needs their own input device.');
-    this.slots.get(player)?.destroy();
+    this.slots.get(player)?.destroy?.();
     this.slots.set(player, device);
   }
   device(player: string) {
@@ -33,10 +33,10 @@ export class InputManager {
     this.slots.get(player)?.haptic?.(cue);
   }
   clear() {
-    this.slots.forEach((d) => d.clear());
+    this.slots.forEach((d) => d.clear?.());
   }
   destroy() {
-    this.slots.forEach((d) => d.destroy());
+    this.slots.forEach((d) => d.destroy?.());
     this.slots.clear();
   }
 }

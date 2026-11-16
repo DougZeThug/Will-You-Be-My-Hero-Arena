@@ -1,4 +1,5 @@
 import {
+  INPUT_THRESHOLDS as T,
   type InputFrame,
   type InputSignal,
   type Intent,
@@ -21,10 +22,10 @@ export class IntentTracker {
     const values = { ...frame.values },
       move = values.move;
     if (move && typeof move !== 'number') {
-      values.up = move.y < -0.55 ? 1 : 0;
-      values.down = move.y > 0.55 ? 1 : 0;
-      values.left = move.x < -0.55 ? 1 : 0;
-      values.right = move.x > 0.55 ? 1 : 0;
+      values.up = move.y < -T.stickDirection ? 1 : 0;
+      values.down = move.y > T.stickDirection ? 1 : 0;
+      values.left = move.x < -T.stickDirection ? 1 : 0;
+      values.right = move.x > T.stickDirection ? 1 : 0;
     }
     const signals: InputSignal[] = [];
     for (const intent of new Set([
@@ -45,14 +46,14 @@ export class IntentTracker {
         continue;
       }
       const was = this.active.has(intent),
-        on = value > (was ? 0.1 : 0.2),
+        on = value > (was ? T.releaseOff : T.pressOn),
         held = time - (this.starts.get(intent) ?? time);
       if (on) this.active.add(intent);
       else this.active.delete(intent);
       if (on && !was) {
         this.starts.set(intent, time);
         signals.push({ intent, phase: 'pressed', value, at: time, held: 0 });
-        if (time - (this.lastPress.get(intent) ?? -99) < 0.26)
+        if (time - (this.lastPress.get(intent) ?? -99) < T.doubleTapSeconds)
           signals.push({
             intent,
             phase: 'doubleTapped',
@@ -61,13 +62,13 @@ export class IntentTracker {
             held: 0,
           });
         this.lastPress.set(intent, time);
-        this.repeat.set(intent, time + 0.36);
+        this.repeat.set(intent, time + T.repeatDelaySeconds);
       }
       if (on) {
         signals.push({ intent, phase: 'held', value, at: time, held });
         if (time >= (this.repeat.get(intent) ?? Infinity)) {
           signals.push({ intent, phase: 'repeated', value, at: time, held });
-          this.repeat.set(intent, time + 0.1);
+          this.repeat.set(intent, time + T.repeatIntervalSeconds);
         }
       }
       if (was && !on) {

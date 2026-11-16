@@ -1,4 +1,9 @@
-import type { InputSignal, Intent, InputPhase } from '../input/InputActions';
+import {
+  INPUT_THRESHOLDS,
+  type InputSignal,
+  type Intent,
+  type InputPhase,
+} from '../input/InputActions';
 export interface ControlContext {
   state: string;
   held: Set<Intent>;
@@ -57,7 +62,7 @@ export class ComboRecognizer {
   private history: { intent: Intent; time: number }[] = [];
   push(signal: InputSignal, combos: ComboDefinition[] = []) {
     if (signal.phase !== 'pressed') return;
-    this.history = this.history.filter((p) => signal.at - p.time < 1.2);
+    this.history = this.history.filter((p) => signal.at - p.time < INPUT_THRESHOLDS.comboHistorySeconds);
     this.history.push({ intent: signal.intent, time: signal.at });
     for (const combo of combos) {
       const h = this.history.slice(-combo.sequence.length);

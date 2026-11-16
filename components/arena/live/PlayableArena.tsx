@@ -22,6 +22,10 @@ import {
   visibleActions,
 } from '@/lib/arena/engine/controllers/EventActionMap';
 import type { Intent } from '@/lib/arena/engine/input/InputActions';
+import {
+  runningMovement,
+  type RunningMovement,
+} from '@/lib/arena/engine/events/running/RunningConstants';
 import type { LiveConfig, PlayerSlot } from '@/lib/arena/engine/core/LiveTypes';
 import LiveStage from './LiveStage';
 // Remaps are remembered per device, so any player slot that picks a keyboard
@@ -106,7 +110,7 @@ export default function PlayableArena({
       const saved = readSavedBindings();
       return [slot(0, saved), slot(1, saved)];
     }),
-    [movement, setMovement] = useState('lanes'),
+    [movement, setMovement] = useState<RunningMovement>('lanes'),
     [active, setActive] = useState<LiveConfig | null>(null),
     [error, setError] = useState(''),
     [remapNotice, setRemapNotice] = useState<{
@@ -347,7 +351,7 @@ export default function PlayableArena({
             value={movement}
             onChange={(e) => {
               setError('');
-              setMovement(e.target.value);
+              setMovement(runningMovement(e.target.value));
             }}
           >
             <option value="lanes">Auto forward / change lanes</option>

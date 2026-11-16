@@ -13,6 +13,21 @@ export interface PadSnapshot {
   axes: readonly number[];
   buttons: readonly { value: number; pressed: boolean }[];
 }
+/** Standard-mapping button indices of the d-pad, which adds to the left stick. */
+const DPAD = { up: 12, down: 13, left: 14, right: 15 } as const;
+/** The pad at `index`, or null when absent or the browser refuses (a restricted context throws). */
+function padAt(index: number): Gamepad | null {
+  try {
+    return navigator.getGamepads?.()[index] ?? null;
+  } catch {
+    return null;
+  }
+}
+type PadWithRumble = Gamepad & {
+  vibrationActuator?: {
+    playEffect: (kind: string, data: unknown) => Promise<unknown>;
+  };
+};
 export function mapGamepad(p: PadSnapshot | null, b: Bindings) {
   const family: DeviceFamily =
       p && /sony|dualshock|dualsense|playstation|054c/i.test(p.id)
@@ -42,14 +57,18 @@ export function mapGamepad(p: PadSnapshot | null, b: Bindings) {
     -1,
     Math.min(
       1,
-      v.x + (p.buttons[15]?.value ?? 0) - (p.buttons[14]?.value ?? 0),
+      v.x +
+        (p.buttons[DPAD.right]?.value ?? 0) -
+        (p.buttons[DPAD.left]?.value ?? 0),
     ),
   );
   v.y = Math.max(
     -1,
     Math.min(
       1,
-      v.y + (p.buttons[13]?.value ?? 0) - (p.buttons[12]?.value ?? 0),
+      v.y +
+        (p.buttons[DPAD.down]?.value ?? 0) -
+        (p.buttons[DPAD.up]?.value ?? 0),
     ),
   );
   return { values, family, connected: true };
@@ -64,30 +83,16 @@ export class GamepadDevice implements InputDevice {
     this.id = 'gamepad:' + index;
   }
   poll() {
-    let pad: Gamepad | null = null;
-    try {
-      pad = navigator.getGamepads?.()[this.index] ?? null;
-    } catch {}
-    const frame = mapGamepad(pad, this.bindings);
+    const frame = mapGamepad(padAt(this.index), this.bindings);
     this.family = frame.family;
     return frame;
   }
   connected() {
-    try {
-      return !!navigator.getGamepads?.()[this.index]?.connected;
-    } catch {
-      return false;
-    }
+    return !!padAt(this.index)?.connected;
   }
-  clear() {}
-  destroy() {}
   haptic(cue: HapticCue) {
     try {
-      const p = navigator.getGamepads?.()[this.index] as Gamepad & {
-        vibrationActuator?: {
-          playEffect: (kind: string, data: unknown) => Promise<unknown>;
-        };
-      };
+      const p = padAt(this.index) as PadWithRumble | null;
       const strong = ['heavyImpact', 'runningCrash', 'victory'].includes(cue);
       void p?.vibrationActuator
         ?.playEffect('dual-rumble', {

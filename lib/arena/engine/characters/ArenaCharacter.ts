@@ -15,6 +15,7 @@ import {
   defaultAbilities,
 } from './components/AbilityComponent';
 import type { ClipMarker } from '../animation/AnimationEvents';
+import type { CharacterSubstate } from './CharacterStates';
 /** Contact of a precision (cornhole) throw: hole, board or miss. */
 export type ThrowContact = 'hole' | 'board' | 'miss';
 export interface CharacterComponent {
@@ -30,7 +31,7 @@ export class ArenaCharacter implements ControllableEntity {
   stamina = 100;
   score = 0;
   state: EntityState = 'idle';
-  substate = 'ready';
+  substate: CharacterSubstate = 'ready';
   moveIntent: Vector = { x: 0, y: 0 };
   aimIntent: Vector = { x: 0, y: 0 };
   animation: AnimationComponent;

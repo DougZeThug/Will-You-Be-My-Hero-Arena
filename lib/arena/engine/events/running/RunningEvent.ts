@@ -4,6 +4,7 @@ import type {
   LiveView,
 } from '../../core/LiveTypes';
 import type { ArenaCharacter } from '../../characters/ArenaCharacter';
+import type { RunningPhase } from '../../characters/CharacterStates';
 import type { InputFrame } from '../../input/InputActions';
 import { RunningActionMap } from './RunningActionMap';
 import { RunningComponent } from '../../characters/components/RunningComponent';
@@ -16,11 +17,20 @@ import {
   RUNNING_LENGTH,
   type Obstacle,
 } from './RunningPhysics';
-import type { RunnerMotion } from './RunningConstants';
+import {
+  LANE_COUNT,
+  AI_BAR_LOOKAHEAD,
+  AI_HURDLE_LOOKAHEAD,
+  aiBurstDue,
+  laneLines,
+  laneY,
+  runningMovement,
+  type RunnerMotion,
+} from './RunningConstants';
 export class RunningEvent implements PlayableArenaEvent {
   id = 'running';
   private ctx!: EventContext;
-  private state = 'ready';
+  private state: RunningPhase = 'ready';
   private started = 0;
   private firstFinish = 0;
   private motions = new Map<string, RunnerMotion>();
@@ -36,8 +46,8 @@ export class RunningEvent implements PlayableArenaEvent {
   }
   createParticipants() {
     this.ctx.characters.forEach((c, i) => {
-      c.body.x = 170 - Math.floor(i / 3) * 95;
-      c.body.y = 520 + (i % 3) * 62;
+      c.body.x = 170 - Math.floor(i / LANE_COUNT) * 95;
+      c.body.y = laneY(i % LANE_COUNT);
       c.body.scale = laneScale(c.body.y);
       c.substate = 'ready';
       const m: RunnerMotion = {
@@ -46,7 +56,7 @@ export class RunningEvent implements PlayableArenaEvent {
         slide: 0,
         stumble: 0,
         finished: 0,
-        lane: i % 3,
+        lane: i % LANE_COUNT,
         laneClock: 0,
         hits: new Set(),
         startX: c.body.x,
@@ -62,12 +72,12 @@ export class RunningEvent implements PlayableArenaEvent {
       );
     });
     for (let row = 0; row < 7; row++)
-      for (let lane = 0; lane < 3; lane++)
+      for (let lane = 0; lane < LANE_COUNT; lane++)
         if ((row + lane) % 3 !== 2)
           this.obstacles.push({
             id: `obstacle-${row}-${lane}`,
             x: 490 + row * 245 + (lane % 2) * 50,
-            y: 520 + lane * 62,
+            y: laneY(lane),
             kind: (row + lane) % 4 === 0 ? 'bar' : 'hurdle',
             width: 36,
             height: 42,
@@ -92,7 +102,7 @@ export class RunningEvent implements PlayableArenaEvent {
     for (const c of this.ctx.characters) {
       const m = this.motions.get(c.id)!;
       if (
-        runPhysics(c, m, dt, time, String(this.ctx.options.movement ?? 'lanes'))
+        runPhysics(c, m, dt, time, runningMovement(this.ctx.options.movement))
       )
         this.ctx.emit({
           kind: 'effect',
@@ -156,7 +166,11 @@ export class RunningEvent implements PlayableArenaEvent {
         (o) =>
           o.x > c.body.x &&
           o.x - c.body.x <
-            Math.max(36, c.body.vx * (o.kind === 'bar' ? 0.3 : 0.5)) &&
+            Math.max(
+              36,
+              c.body.vx *
+                (o.kind === 'bar' ? AI_BAR_LOOKAHEAD : AI_HURDLE_LOOKAHEAD),
+            ) &&
           Math.abs(o.y - c.body.y) < 35,
       ),
       values: InputFrame['values'] = {
@@ -167,7 +181,7 @@ export class RunningEvent implements PlayableArenaEvent {
       if (obstacle.kind === 'bar') values.secondaryAction = 1;
       else values.primaryAction = 1;
     }
-    if (Math.floor(time) % 8 === 4) values.specialAction = 1;
+    if (aiBurstDue(time)) values.specialAction = 1;
     return { values, family: 'ai', connected: true };
   }
   onPause() {
@@ -211,7 +225,7 @@ export class RunningEvent implements PlayableArenaEvent {
   view(): LiveView {
     return {
       title: 'Clubhouse Dash',
-      stage: { lanes: [493, 555, 617, 679] },
+      stage: { lanes: laneLines() },
       phase: this.state,
       message: this.message,
       time: this.ctx.time(),

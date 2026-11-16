@@ -42,6 +42,10 @@ export const SECOND_KEYS: Bindings['keys'] = {
   celebrate: 'NumpadDecimal',
   pause: 'Backspace',
 };
+/** Keyboard layout index for a player slot: 1 for the second player, else 0. */
+export function layoutOf(player: number): 0 | 1 {
+  return player === 1 ? 1 : 0;
+}
 /** Is this device id one of the two keyboard layouts (not a gamepad, touch or AI)? */
 export function isKeyboardDevice(device: string): boolean {
   return device === 'keyboard' || device === 'keyboard2';
@@ -58,7 +62,7 @@ export function bindingsFor(
     ...DEFAULT_BINDINGS,
     ...saved,
     keys: {
-      ...(player === 1 ? SECOND_KEYS : DEFAULT_BINDINGS.keys),
+      ...(layoutOf(player) === 1 ? SECOND_KEYS : DEFAULT_BINDINGS.keys),
       ...saved?.keys,
     },
     buttons: { ...DEFAULT_BINDINGS.buttons, ...saved?.buttons },
@@ -126,20 +130,25 @@ export function bindingsConflict(
     }
   return undefined;
 }
+const KEY_CODE = /^[A-Za-z][A-Za-z0-9]{0,25}$/;
+const BUTTON_MAX = 31;
+const AXIS_MAX = 15;
+const validKey = (v: unknown) => typeof v === 'string' && KEY_CODE.test(v);
+const validIndex = (v: unknown, max: number) =>
+  Number.isInteger(v) && (v as number) >= 0 && (v as number) <= max;
 /** The first binding that is not a usable key, button or axis, or undefined when all are. */
 export function invalidBinding(
   b: Bindings,
 ): Intent | 'moveAxes' | 'aimAxes' | undefined {
   for (const [intent, v] of Object.entries(b.keys))
-    if (typeof v !== 'string' || !/^[A-Za-z][A-Za-z0-9]{0,25}$/.test(v))
-      return intent as Intent;
+    if (!validKey(v)) return intent as Intent;
   for (const [intent, v] of Object.entries(b.buttons))
-    if (!Number.isInteger(v) || v! < 0 || v! > 31) return intent as Intent;
+    if (!validIndex(v, BUTTON_MAX)) return intent as Intent;
   for (const axis of ['moveAxes', 'aimAxes'] as const)
-    if (b[axis].some((v) => !Number.isInteger(v) || v < 0 || v > 15))
-      return axis;
+    if ([...b[axis]].some((v) => !validIndex(v, AXIS_MAX))) return axis;
   return undefined;
 }
+/** Is `b` a well-formed bindings object whose every key, button and axis is usable? */
 export function validateBindings(b: Bindings) {
   if (
     !b ||
@@ -154,15 +163,5 @@ export function validateBindings(b: Bindings) {
     b.aimAxes.length !== 2
   )
     return false;
-  return (
-    Object.values(b.keys).every(
-      (v) => typeof v === 'string' && /^[A-Za-z][A-Za-z0-9]{0,25}$/.test(v),
-    ) &&
-    Object.values(b.buttons).every(
-      (v) => Number.isInteger(v) && v! >= 0 && v! <= 31,
-    ) &&
-    [...b.moveAxes, ...b.aimAxes].every(
-      (v) => Number.isInteger(v) && v >= 0 && v <= 15,
-    )
-  );
+  return invalidBinding(b) === undefined;
 }
