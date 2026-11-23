@@ -792,17 +792,15 @@ function bind(): void {
         send({ type: 'move', x: g.x, z: g.z });
       }),
   );
-  document
-    .querySelectorAll<HTMLButtonElement>('[data-turn]')
-    .forEach(
-      (b) =>
-        (b.onclick = () =>
-          send({
-            type: 'turnTo',
-            view: b.dataset.turn as ViewName,
-            camYaw: cam.yaw,
-          })),
-    );
+  document.querySelectorAll<HTMLButtonElement>('[data-turn]').forEach(
+    (b) =>
+      (b.onclick = () =>
+        send({
+          type: 'turnTo',
+          view: b.dataset.turn as ViewName,
+          camYaw: cam.yaw,
+        })),
+  );
   document
     .querySelectorAll<HTMLButtonElement>('[data-rot]')
     .forEach((b) => (b.onclick = () => rotateBy(Number(b.dataset.rot))));

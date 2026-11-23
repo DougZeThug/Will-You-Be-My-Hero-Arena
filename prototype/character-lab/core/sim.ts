@@ -1275,11 +1275,11 @@ class CharacterSim implements Sim {
       const trunk = P.spine + P.chestLen;
       const stand = this.pelvisStand();
       const low = clamp01((stand - tgt.y) / stand - 0.15);
-      const cMax = 0.58 * this.legLen * low;
+      const cMax = 0.68 * this.legLen * low;
       const want = 0.86 * this.armLen;
       const lat = side * P.shoulderWidth * 0.5;
       const dAt = (lam: number): number => {
-        const lean = 1.05 * lam;
+        const lean = 1.35 * lam;
         const back = 0.66 * P.spine * Math.sin(lean);
         const fwdOff = trunk * Math.sin(lean) - back;
         const sx = this.root.x + (hx / hd) * fwdOff + rB.x * lat;
@@ -1298,7 +1298,7 @@ class CharacterSim implements Sim {
         }
         lam = hi;
       }
-      ffLean = 1.05 * lam;
+      ffLean = 1.35 * lam;
       ffCrouch = cMax * lam;
     }
     if (live) {
@@ -1319,7 +1319,7 @@ class CharacterSim implements Sim {
         idleBounce -
         this.dip.x,
       -0.03,
-      0.66 * this.legLen,
+      0.72 * this.legLen,
     );
 
     // ---- 9. trunk springs ------------------------------------------------------
@@ -1395,7 +1395,7 @@ class CharacterSim implements Sim {
     if (live) {
       this.pitchS.step(pitchTarget, st.timing.settleFreq * brace, zeta, dt);
       this.leanRoll.step(rollTarget, st.timing.settleFreq * brace, zeta, dt);
-      limit(this.pitchS, -0.7, 1.35);
+      limit(this.pitchS, -0.7, 1.5);
       limit(this.leanRoll, -0.7, 0.7);
     }
     const pitch = this.pitchS.x;
@@ -2212,8 +2212,8 @@ class CharacterSim implements Sim {
           Math.abs(this.facing - this.yawBase.x) < 0.4
         ) {
           t.phase = 'extend';
-          if (this.reachS.x <= 1e-9) this.reachTarget = { ...target };
-          else this.reachTarget = { ...target };
+          t.n = 0;
+          this.reachTarget = { ...target };
           const from = this.arms[this.hand].palm;
           const T =
             st.timing.reachTime *
