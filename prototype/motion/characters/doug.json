@@ -1,0 +1,20 @@
+{
+  "id": "doug",
+  "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+  "overlays": [
+    {
+      "image": "lab/loongbones/assets/cornhole-side-v3/doug_limbs-source.png",
+      "rect": [
+        840,
+        0,
+        414,
+        1254
+      ]
+    }
+  ],
+  "landmarks": "lab/loongbones/assets/cornhole-side-v3/doug_authoring.json",
+  "hints": {
+    "nearSide": "L",
+    "handScale": 0.79
+  }
+}

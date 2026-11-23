@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cut-out rig torture sheet</title>
+    <style>
+      body { margin: 0; background: #2b3138; color: #e8e8e8; font: 13px/1.4 system-ui, sans-serif; }
+      header { padding: 8px 12px; }
+      a { color: #9fd0ff; margin-right: 12px; }
+      canvas { display: block; }
+      #report { white-space: pre-wrap; padding: 0 12px 8px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="?c=doug">doug</a><a href="?c=dan">dan</a>
+      <span>?c=&lt;id&gt; &amp;s=&lt;scale&gt; &amp;bones=1 &amp;flip=1</span>
+    </header>
+    <div id="report">Loading…</div>
+    <canvas id="sheet"></canvas>
+    <canvas id="bind"></canvas>
+    <script type="module" src="./torture.ts"></script>
+  </body>
+</html>

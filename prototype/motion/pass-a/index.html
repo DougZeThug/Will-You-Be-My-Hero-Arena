@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Arena · motion prototype · Pass A (retimed shipped rig)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #0a100c;
+        color: #e9dfc4;
+        font: 13px/1.4 system-ui, sans-serif;
+      }
+      #arena {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 964px;
+        height: 542px;
+        overflow: hidden;
+      }
+      #arena canvas {
+        display: block;
+        width: 964px !important;
+        height: 542px !important;
+        margin: 0 !important;
+      }
+      #status {
+        position: absolute;
+        left: 8px;
+        top: 550px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="arena"></div>
+    <div id="status">Pass A · loading…</div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
