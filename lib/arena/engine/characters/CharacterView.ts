@@ -22,13 +22,16 @@ export const VIEW_TURN_SECONDS = 0.22;
  * Horizontal draw widths of each view during a turn, from the frontness
  * (0 = side, 1 = front). The outgoing view closes to edge-on in the first
  * half and the incoming view opens in the second, like a card turning over,
- * so the two drawings are never on screen together.
+ * so the two drawings are never on screen together. Widths follow the
+ * projected width of a turning card, |cos(pi * e)| of the eased progress e:
+ * the turn starts and settles gently but passes edge-on quickly, instead of
+ * lingering as a sliver (under 5% wide for well under one 60 Hz frame).
  */
 export function viewWidths(frontness: number) {
-  const f = clamp01(frontness),
-    ease = smoothstep;
+  const e = smoothstep(clamp01(frontness)),
+    width = Math.cos(Math.PI * e);
   return {
-    side: ease(Math.max(0, 1 - 2 * f)),
-    front: ease(Math.max(0, 2 * f - 1)),
+    side: e < 0.5 ? Math.max(0, width) : 0,
+    front: e > 0.5 ? Math.max(0, -width) : 0,
   };
 }

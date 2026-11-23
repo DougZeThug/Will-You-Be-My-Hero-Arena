@@ -102,7 +102,7 @@ A replay of a contest that has already been revealed commits nothing. It never w
 
 The points are signed: "+3", "+1", "+0", or "−1" for a cornhole bag that lowered its thrower's score. A card that is no longer installed is named **Unknown card**. Before the first landing it reads "The first attempt has not landed yet." Its **Export immutable recording** link downloads the whole recording as JSON, including attempts not yet shown. Playback keeps running behind the dialog.
 
-**Sound.** The speaker button at the bottom right of the stage, just above the bottom bar, labelled "Enable sound" or "Mute sound", turns Watch sound on or off. It starts off. The footer's **Sound on/off** mirrors it. See [sound](../cross-cutting/sound.md).
+**Sound.** The speaker button at the bottom right of the stage, just above the bottom bar (just under the stage at 600 px wide and below), labelled "Enable sound" or "Mute sound", turns Watch sound on or off. It starts off. The footer's **Sound on/off** mirrors it. See [sound](../cross-cutting/sound.md).
 
 **Clean spectator view.** The button beside it hides the rest of the page and lets the stage take the page's full width:
 - the header and tabs
@@ -146,7 +146,7 @@ The finale keeps animating for about 2.6 seconds after completion, unless the vi
 | Event and action combinations | The sport sets the units, the number of attempts and what the stage shows ([the four sports](the-four-sports.md)). | Not applicable: a recording's sport is fixed. |
 | Contest kind | Counted entry: the page's hidden scoreboard says **COUNTED ENTRY**, and the visible side station's note reads "Points post once. Replay as often as you like." Exhibition: **EXHIBITION / NO POINTS**. A replay of a revealed recording looks the same as its first showing, but never writes a position or hides its points. | Not applicable. |
 | Character card | Each card's personality sets its entrance, rituals, timing and reactions, so recordings with different cards run for different lengths. | Not applicable. |
-| Presentation settings | Reduced motion removes contact effects and camera punch and shake, and calms the characters' clips. Lower graphics quality removes the same effects and rebuilds the stage. Sound starts off. The clean spectator view hides the side station's controls and keeps only a pause button on the stage. | Toggling Reduced motion applies at once. Toggling Lower graphics quality rebuilds the stage, and playback carries on from the same moment once it is ready. Sound and the clean view toggle at once. |
+| Presentation settings | Reduced motion turns contact effects into still marks, removes camera punch and shake, and calms the characters' clips. Lower graphics quality does the same to the effects and rebuilds the stage. Sound starts off. The clean spectator view hides the side station's controls and keeps only a pause button on the stage. | Toggling Reduced motion applies at once. Toggling Lower graphics quality rebuilds the stage, and playback carries on from the same moment once it is ready. Sound and the clean view toggle at once. |
 | Screen size and orientation | The stage rescales, keeping the court's 16:9 shape. The page's own scoreboard stays hidden on narrow screens too. | Rescales at once; playback is not interrupted. |
 | Saved state | A resumed contest opens paused at its saved second. | Another tab writing the save does not interrupt playback, and does not rebuild the stage unless the two cards' mappings changed. |
 

@@ -26,7 +26,7 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 | Footer | **House rules**, **History** | **Sound on/off** is text, not a control. |
 | Dialogs | Their own controls, then the × (named "Close") | Focus is trapped inside until the dialog closes. |
 | Setup dialog | Mode tabs (one stop; the arrow keys move between them), **Your demo user**, **Opponent**, card buttons, **Your strategy**, **Tie rule**, checkboxes, **Start showdown** (**Start anyway** while a counted entry is waiting) | Pickers open a list on Enter, Space or the arrow keys. Card buttons are named "Select {card name}" and report pressed. |
-| Play setup | Event buttons, each slot's **Character** and **Controls** lists, **Add player** and **Remove player** (Cornhole and Clubhouse Dash only), **Start {event}**, **Controls and remapping** and, for each keyboard or controller player, its key fields and **Restore default controls** | Native lists; see [Play setup](../play/play-setup.md). |
+| Play setup | Event buttons, each slot's **Character** cards (one Tab stop, a native radio group; arrows move the pick) and **Controls** list, **Add player** and **Remove player** (Cornhole and Clubhouse Dash only), **Start {event}**, **Controls and remapping** and, for each keyboard or controller player, its key fields and **Restore default controls** | Native radios and lists; see [Play setup](../play/play-setup.md). |
 | Live match | **Pause game**, **Sound on**, **Back to setup**, the stage, **Resume game** on the pause overlay, then each person's **Move** pad, **Aim** pad and action buttons | See [stage focus](#focus-handling) below. |
 
 **On-screen controls by keyboard** ([touch controls](../play/touch-controls.md)). A focused **Move** or **Aim** pad takes the arrow keys: each arrow pushes it fully one way, there are no diagonals, and letting go of any key re-centres it. Action buttons work with Enter or Space, and are disabled until the match has loaded. A held action is a toggle that reports pressed, and its label changes to **Release** or "Stop {action}". After any action button is used, focus jumps to the stage; a pad reached with Tab keeps focus. Pressing a pad with the pointer does not take focus, so it stays on the stage.
@@ -77,7 +77,7 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 
 - **Watch.** The court itself: where bags lie on a board, which cups are left, and where a ball hit the wall. The commentary names what each attempt hit, but not positions. Also visual only: the yellow underline marking the card now throwing, the court's nameplates, pips and status lines, and the camera moves. The bottom bar's **PAUSED** and **HEAT CHECK / COSMETIC** are text a screen reader can reach, but they are not announced.
 - **Play.**
-  - The **Release timing** meter, its green window and marker, and the reticle. The caption announces "Release in the green window · Shot: {shot}" and the grade afterwards, but nothing says where the marker is ([the cornhole throw](../play/cornhole.md)).
+  - The **Release timing** meter, its teal window and marker, and the reticle. The caption announces "Release in the teal window · Shot: {shot}" and the grade afterwards, but nothing says where the marker is ([the cornhole throw](../play/cornhole.md)).
   - Positions, obstacles and distances in the Dash and the Brawl.
   - Whose turn it is in cornhole, which the nameplates' status lines show. The active tile's highlight in the score strip is clipped out of sight with the strip.
 - **Sound.** Watch and Play play only short synthesized tones. Nothing is spoken ([sound](sound.md)).
@@ -96,17 +96,17 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
   - which card is throwing
   - whether a contact burst means a score (yellow) or not (orange)
   - which beer-pong rack is whose (yellow or orange)
-- **The focus rings.** The Watch and menu ring, and the Play stage's ring, use the darker teal, about 4:1 against the page background. Play's own buttons still use the lighter teal, about 2.6:1, below the usual 3:1 for focus indicators.
+- **The focus rings.** The Watch and menu ring, the Play stage's ring and Play's own buttons all use the darker teal, about 4:1 against the page background, above the usual 3:1 for focus indicators.
 - **Target sizes.**
 
   | Target | Size |
   |---|---|
-  | The gear | 44 px (34 × 36 px at 600 px and below) |
+  | The gear | 44 px at every width |
   | Play's toolbar buttons | 44 px tall |
-  | Playback buttons | 39 px at every width |
+  | Playback buttons | 44 px at every width; on narrow side panels they wrap onto a second row |
   | Play's on-screen action buttons | at least 82 × 55 px |
   | Play's pads | 82 px round (76 px at 720 px wide and below) |
-  | The stage's sound and clean-view buttons | 31 px at every width |
+  | The stage's sound and clean-view buttons | 44 px at every width |
   | The × on a dialog | 28 px |
   | The footer's **House rules** and **History**, and **House rules** under the stage | 12 px text with no padding, well under 24 px tall |
 
@@ -205,12 +205,12 @@ When playback is complete, the narration announces the winner. The pause, speed 
 - **Short lines are lost.** The contact line ("…watches the result.") lasts 0.16 s at 1× and is usually replaced before it is read. At **2×**, several lines per attempt can be skipped.
 - **The scoreboard is never announced.** A screen-reader user hears each result, but must read the scoreboard to learn the running score.
 - **The locked opponent card** in a counted setup is still a button, reported as pressed, that does nothing.
-- **Play setup's lists** are labelled **Character** and **Controls** in every slot. The player number sits beside them, not in their names.
+- **Play setup's card group and list** are named **Character** and **Controls** in every slot. The player number sits beside them, not in their names.
 - **Arrow keys on a pad.** Arrow keys on a focused **Aim** pad do not reach the stage, so they cannot be confused with keyboard 1's aim keys.
 
 ## Open questions and verification
 
-- Read from `Game.tsx`, `Panels.tsx`, `SetupDialog.tsx`, `Controls.tsx`, `components/ui/dialog.tsx` and Base UI's dialog focus manager, `PlayableArena.tsx`, `LiveStage.tsx`, `TouchControls.tsx`, `LiveArenaGame.ts`, `KeyboardDevice.ts`, `ArenaGame.ts`, `app/globals.css`, `app/live-arena.css` and `public/assets/arena-interface.css`, which loads last and overrides several sizes. No screen reader, keyboard-only pass or contrast tool has been run on the production page.
+- Read from `Game.tsx`, `Panels.tsx`, `SetupDialog.tsx`, `Controls.tsx`, `components/ui/dialog.tsx` and Base UI's dialog focus manager, `PlayableArena.tsx`, `LiveStage.tsx`, `TouchControls.tsx`, `LiveArenaGame.ts`, `KeyboardDevice.ts`, `ArenaGame.ts`, `app/globals.css`, `app/live-arena.css` and `app/arena-interface.css`, which loads last and overrides several sizes. No screen reader, keyboard-only pass or contrast tool has been run on the production page.
 - **Fixed: Shift+Tab rebinds a key (B-34).** Tab and Shift+Tab now move focus and never bind. A modifier is bound only when it is released with no other key pressed after it.
 - **Fixed: Space on page buttons (B-24).** The keyboard player's device used to cancel the release of every bound key anywhere on the page, so Space did nothing on a focused button during a match. It now cancels only a release whose press it took.
 - **Fixed: "Live score" (B-36).** The scoreboard is now a named region. The Play stage's label is still on a plain focusable box, and the canvas labels on canvases; whether screen readers read those names has not been checked.
@@ -218,5 +218,6 @@ When playback is complete, the narration announces the winner. The pause, speed 
 - **Where focus lands** after **Set up showdown** or **Next showdown** removes the focused control has not been checked in any browser.
 - **The narration behind a dialog.** Hiding the page behind a modal dialog is taken from Base UI's modal behaviour. Whether announcements are really suppressed has not been heard.
 - **Target and text sizes** are read from the stylesheets, not measured.
+- **Not re-verified at a newer commit:** the 44 px targets, the teal focus ring contrast and the Play character radio group were changed in the 2026-11-23 polish pass and are described from the code; the commit below predates them.
 
 Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

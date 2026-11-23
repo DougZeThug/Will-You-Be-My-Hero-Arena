@@ -10,6 +10,7 @@ import { EQUIPMENT_ART as ART } from '../../equipment-art';
 import { cupPosition } from '../../simulation';
 import { laneZ } from '../../board-geometry';
 import { equipmentSprite } from './EquipmentSprite';
+import { ARENA_THEME } from '../presentation/ArenaTheme';
 export class Equipment {
   private objects: Phaser.GameObjects.GameObject[] = [];
   private front: Phaser.GameObjects.Image[] = [];
@@ -47,7 +48,7 @@ export class Equipment {
             dy = ring * ART.target.outer.y;
           const label = this.scene.add
             .text(p.anchor.x + dx * p.scale, p.anchor.y + dy * p.scale, text, {
-              fontFamily: 'Impact',
+              fontFamily: ARENA_THEME.font,
               fontSize: '22px',
               color: '#fff4d5',
               stroke: '#161a16',

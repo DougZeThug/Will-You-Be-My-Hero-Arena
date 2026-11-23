@@ -406,11 +406,11 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Resume banner.** **Saved at N seconds. Your result is waiting.** for a counted entry, or **Exhibition saved at N seconds.** for an exhibition ("1 second" is singular), with a **Resume contest** button. It shows in the lobby while there is a waiting contest, but not in the clean spectator view. If the waiting recording uses a character that is no longer installed, it adds "This recording uses a character that is no longer installed." and **Resume contest** is disabled.
 
-**Scoreboard.** The page's own Watch score box, a region named "Live score". It shows each card's revealed score and attempts done out of total (regulation attempts until an extra pair begins), the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. A second stylesheet, `public/assets/arena-interface.css`, shrinks it to a one-pixel box at every width, so only screen readers get it. The visible score is on the *nameplates*.
+**Scoreboard.** The page's own Watch score box, a region named "Live score". It shows each card's revealed score and attempts done out of total (regulation attempts until an extra pair begins), the active thrower, and **COUNTED ENTRY** or **EXHIBITION / NO POINTS**. A third stylesheet, `app/arena-interface.css`, shrinks it to a one-pixel box at every width, so only screen readers get it. The visible score is on the *nameplates*.
 
-**Nameplate.** A label drawn by the stage in each top corner of the court, in Watch and in Play. It shows a character's first name, score (or health in the Brawl), pips for attempts left, and a status line such as **4 BAGS LEFT · WAITING**, **READY** or the current phase.
+**Nameplate.** A printed placard drawn by the stage in each top corner of the court, in Watch and in Play: square, ink with a cream edge and an orange offset shadow, tilted slightly. It shows a character's first name, score (or health in the Brawl), pips for attempts left, and a status line such as **4 BAGS LEFT · WAITING**, **READY** or the current phase.
 
-**Sign.** The hanging board the stage draws at the top centre of the court, in Watch and Play. It shows the event's name, and under it the phase: **CHOOSE A MATCHUP** in the lobby, **CARDS TO COURT** during the entrances, or a Play phase such as "AIMING · PRACTICE".
+**Sign.** The hanging board the stage draws at the top centre of the court, in Watch and Play, printed like the nameplates. It shows the event's name, and under it the phase: **CHOOSE A MATCHUP** in the lobby, **CARDS TO COURT** during the entrances, or a Play phase such as "AIMING · PRACTICE".
 
 **Narration.** One line of plain-language commentary that updates during Watch playback and during a Play match. It is announced to screen readers as it changes.
 
@@ -420,11 +420,11 @@ There is no backend, account or sync. The header says **LOCAL DEMO**. See [this 
 
 **Error box.** A red message under the Watch stage, used for Watch errors and save failures. Its button depends on the error: after a stage failure (an asset load failure or a graphics loss) it is **Reload the arena**, which rebuilds the stage; otherwise it is **Dismiss**. Neither changes **Lower graphics quality**. It stays visible in the clean spectator view.
 
-**Score strip.** The page's row of Play player tiles, for screen readers only: `public/assets/arena-interface.css` shrinks it to a one-pixel box. Sighted players see the same facts on the *nameplates*. Each tile has a name, a score, one bar, and the device family, such as "· AI". The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
+**Score strip.** The page's row of Play player tiles, for screen readers only: `app/arena-interface.css` shrinks it to a one-pixel box. Sighted players see the same facts on the *nameplates*. Each tile has a name, a score, one bar, and the device family, such as "· AI". The score is **PTS** in cornhole, a percentage of the course in the Dash, and **HP** in the Brawl. The bar is stamina in cornhole and the Dash, and health in the Brawl.
 
 **Caption.** The line under the Play stage. (The line under the Watch stage is the *floor caption*.) It shows the event's current message and **Ns · Practice / no club points**.
 
-**Release timing meter.** The cornhole charge meter, drawn by the stage at its bottom left, labelled **RELEASE TIMING**. It has a gold fill, a cream marker and a teal release window, and shows only while charging. The page also has its own copy labelled **Release in green**, which is visually hidden and read only by screen readers.
+**Release timing meter.** The cornhole charge meter, drawn by the stage at its bottom left, labelled **RELEASE TIMING**. It has a gold fill, a cream marker and a teal release window, and shows only while charging. The page also has its own copy labelled **Release in the teal window**, which is visually hidden and read only by screen readers.
 
 **Played.** The Standings column counting a user's revealed counted entries, whether won, drawn or lost. Exhibitions never count.
 

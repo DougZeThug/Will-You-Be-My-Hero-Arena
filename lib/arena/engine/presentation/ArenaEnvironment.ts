@@ -44,7 +44,6 @@ const EVENT_COURT: Partial<Record<ArenaEventStyle, EventCourt>> = {
 /** Sparse world-space paint and signage over baked light. No shaders, new clocks or physics. */
 export class ArenaEnvironment {
   private decor: Phaser.GameObjects.Container;
-  private paint: Phaser.GameObjects.Graphics;
   constructor(
     private scene: Phaser.Scene,
     event: ArenaEventStyle,
@@ -52,41 +51,34 @@ export class ArenaEnvironment {
     private width = STAGE_WIDTH,
   ) {
     this.decor = scene.add.container(0, 0).setDepth(4);
-    this.paint = scene.add.graphics();
-    this.decor.add(this.paint);
-    const text = (
-      x: number,
-      y: number,
-      value: string,
-      size: number,
-      alpha: number,
-    ) => {
-      const t = scene.add
-        .text(x, y, value, {
-          fontFamily: T.font,
-          fontSize: size + 'px',
-          color: '#f2dab0',
-          align: 'center',
-        })
-        .setOrigin(0.5)
-        .setAlpha(alpha);
-      this.decor.add(t);
-      return t;
-    };
-    text(650, height * 0.9, 'HERO  /  ARENA', 47, 0.1)
-      .setScale(1, 0.4)
-      .setAngle(-2);
-    text(670, height * 0.93, 'BACKYARD SPORTS CLUB', 15, 0.13)
-      .setScale(1, 0.52)
-      .setAngle(-2);
-    for (const [x, label] of [
-      [530, 'PLAY WELL.  BE GOOD.'],
-      [935, 'SAME CREW.  HIGHER STAKES.'],
+    // Fence placards: opaque printed boards (cream face, ink edge and text,
+    // hard ink shadow), each pinned slightly askew. The old faint ground
+    // watermark is gone; the background art keeps its own.
+    for (const [x, label, tilt] of [
+      [530, 'PLAY WELL.  BE GOOD.', -1.5],
+      [935, 'SAME CREW.  HIGHER STAKES.', 1.2],
     ] as const) {
-      this.paint
-        .fillStyle(T.ink, 0.8)
-        .fillRect(x - 102, height * 0.51, 204, height * 0.057);
-      text(x, height * 0.539, label, 13, 0.78);
+      const w = 204,
+        h = Math.round(height * 0.057),
+        board = scene.add.container(x, height * 0.51 + h / 2).setAngle(tilt),
+        face = scene.add
+          .graphics()
+          .fillStyle(T.ink, 1)
+          .fillRect(-w / 2 + 3, -h / 2 + 3, w, h)
+          .fillStyle(T.cream, 1)
+          .fillRect(-w / 2, -h / 2, w, h)
+          .lineStyle(2, T.ink, 1)
+          .strokeRect(-w / 2 + 1, -h / 2 + 1, w - 2, h - 2),
+        words = scene.add
+          .text(0, 1, label, {
+            fontFamily: T.font,
+            fontSize: '14px',
+            color: '#121615',
+            align: 'center',
+          })
+          .setOrigin(0.5);
+      board.add([face, words]);
+      this.decor.add(board);
     }
     this.draw(event);
   }

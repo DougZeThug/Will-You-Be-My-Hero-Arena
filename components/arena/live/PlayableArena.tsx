@@ -283,25 +283,30 @@ export default function PlayableArena({
       <div className="live-player-grid">
         {players.map((p, i) => (
           <div className="live-player-slot" key={p.id}>
-            <img
-              src={cardImageUrl(p.cardId)}
-              alt={CARDS.find((c) => c.id === p.cardId)?.name + ' card'}
-            />
             <div>
               <strong>PLAYER {i + 1}</strong>
-              <label>
-                Character
-                <select
-                  value={p.cardId}
-                  onChange={(e) => change(i, { cardId: e.target.value })}
-                >
-                  {CARDS.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <fieldset className="fighter-pick">
+                <legend>Character</legend>
+                {CARDS.map((c) => (
+                  // Native radios: one tab stop per player, arrows move the
+                  // choice; the card itself is the visible control.
+                  <label
+                    key={c.id}
+                    className={c.id === p.cardId ? 'chosen' : ''}
+                  >
+                    <input
+                      type="radio"
+                      className="sr-only"
+                      name={p.id + '-character'}
+                      value={c.id}
+                      checked={c.id === p.cardId}
+                      onChange={() => change(i, { cardId: c.id })}
+                    />
+                    <img src={cardImageUrl(c.id)} alt="" />
+                    <span>{c.name}</span>
+                  </label>
+                ))}
+              </fieldset>
               <label>
                 Controls
                 <select

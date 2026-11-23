@@ -178,7 +178,7 @@ export default function LiveStage({
                 }}
               />
             </div>
-            <small>Release in green</small>
+            <small>Release in the teal window</small>
           </div>
         )}
       </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './live-arena.css';
+// Loaded last: the printed-palette overrides shared with the Lab workshop.
+import './arena-interface.css';
 
 export const metadata: Metadata = {
   title: 'Will You Be My Hero? — Arena',
@@ -16,9 +18,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="stylesheet" href="/assets/arena-interface.css" />
-      </head>
       <body className="antialiased">{children}</body>
     </html>
   );

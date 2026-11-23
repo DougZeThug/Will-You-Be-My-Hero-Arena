@@ -44,7 +44,7 @@ The camera looks across the court from the side. The card listed **THROWS FIRST*
 
 A cornhole contest between Dan's card and an installed card therefore shows one character in profile and one facing the camera. Watch never turns a character between the two views.
 
-**The nameplates and sign.** The court draws its own labels; the page's own scoreboard is hidden, and only screen readers get it ([the stage](../foundations/stage.md#scaling)). A nameplate in each top corner (first card gold on the left, second teal on the right) shows the card's first name, its score, one pip per remaining attempt, and a status line such as "3 BAGS LEFT · BAG FLIGHT". A hanging sign in the middle shows the sport's name and the phase, such as "ROUND 2 · PAUSED". Both disappear for a moment while a ball or bag passes behind them.
+**The nameplates and sign.** The court draws its own labels; the page's own scoreboard is hidden, and only screen readers get it ([the stage](../foundations/stage.md#scaling)). A nameplate in each top corner (first card gold on the left, second teal on the right) shows the card's first name, its score, one pip per remaining attempt, and a status line such as "3 BAGS LEFT · IN THE AIR". When a demo user plays a card other than their own character, a small label after the card's name says whose pick it is, for example **DAN** followed by **DOUG'S PICK**. A hanging sign in the middle shows the sport's name and the phase, such as "ROUND 2 · LINING UP" or "ROUND 2 · PAUSED". Both disappear for a moment while a ball or bag passes behind them.
 
 ## The interaction, event by event
 
@@ -66,7 +66,7 @@ stateDiagram-v2
 
 An attempt starts the instant the previous one ends, or when the entrances end for the first attempt. There is no gap between attempts. At that instant:
 - **The nameplate** of the card now throwing brightens. The page's hidden scoreboard marks the same card for screen readers.
-- **The status line** reads **READY**, then **ANTICIPATION** and **THROW** as the card winds up.
+- **The status line** reads **READY**, then **LINING UP** and **WINDING UP** as the card winds up.
 - **The narration** reads "{first name} lines up the next throw.", or "…next shot." in basketball.
 
 Half the time or more, the card first performs a ritual from its personality, such as Dan's stare at the target or Doug's chest tap or hat adjustment. Doug does so more often than Dan. A ritual makes the wind-up longer.
@@ -79,29 +79,32 @@ The viewer cannot stop an attempt or change it. Pausing freezes the card mid-win
 
 The attempt commits, from the viewer's point of view, at the release: the bag or ball leaves the hand. The landing spot was fixed when the contest was locked; the release is only the moment the viewer can start to see it coming. At the release:
 - a short release tone plays if Watch sound is on
-- the status line reads **RELEASE**, then **BAG FLIGHT** in cornhole or **BALL FLIGHT** otherwise
+- the status line reads **LET IT GO**, then **IN THE AIR**
 - the narration reads "{first name} sends it.", or in cornhole names the shot: "Dan sends a blocker.", "Doug sends a flat hole-runner." (see [cornhole](#cornhole))
 
 ### While in flight
 
 The object flies the arc stored in the recording:
-- **Cornhole:** a bag that lands on the board touches down about 0.28 s before it stops, kicks up a small puff of dust where it lands (unless effects are calmed), and slides forward to its resting spot. A bag that lands close to its resting spot stops early instead of crawling. A board bag never slides across the hole's opening (it may pass over the rim); when its resting spot is over the opening, it lands there without sliding. A sliding bag rides up a little over any bag in its way and draws on top of it until it settles. A bag it pushes starts moving when the sliding bag reaches it and is usually shoved off at about the sliding bag's speed: slower for a very short shove and faster for a long one, because the shove always takes between 0.12 s and 0.34 s. A pushed bag that stays on the board rests where it ends up; one pushed off the board or into the hole fades out as it moves instead of resting at its end point. If the sliding bag never reaches a bag it pushes, that bag moves in the recorded window around contact instead (from 0.18 s before to 0.16 s after the thrown bag comes to rest). The status reads **BOARD TRAVEL** and the narration "{first name} watches the bag travel across the board." A bag that scores 3 slides on over the hole without stopping or sliding back and drops through it, behind any bag resting on the rim. An airmail or high arc drops straight in without sliding.
+- **Cornhole:** a bag that lands on the board touches down about 0.28 s before it stops, kicks up a small puff of dust where it lands (a still puff when effects are calmed), and slides forward to its resting spot. A bag that lands close to its resting spot stops early instead of crawling. A board bag never slides across the hole's opening (it may pass over the rim); when its resting spot is over the opening, it lands there without sliding. A sliding bag rides up a little over any bag in its way and draws on top of it until it settles. A bag it pushes starts moving when the sliding bag reaches it and is usually shoved off at about the sliding bag's speed: slower for a very short shove and faster for a long one, because the shove always takes between 0.12 s and 0.34 s. A pushed bag that stays on the board rests where it ends up; one pushed off the board or into the hole fades out as it moves instead of resting at its end point. If the sliding bag never reaches a bag it pushes, that bag moves in the recorded window around contact instead (from 0.18 s before to 0.16 s after the thrown bag comes to rest). The status reads **ON THE BOARD** and the narration "{first name} watches the bag travel across the board." A bag that scores 3 slides on over the hole without stopping or sliding back and drops through it, behind any bag resting on the rim. An airmail or high arc drops straight in without sliding.
 - **Football:** the ball spirals into the wall.
 - **Beer pong:** the ball drops toward one of the thrower's remaining cups.
 - **Basketball:** the ball rises and descends on the hoop. Near contact, the front of the net is drawn over it.
 
-At contact the status reads **LANDING**. The narration reads "{first name} waits for the bag to settle." in cornhole, and "{first name} watches the result." otherwise. This line lasts only 0.16 s at 1×. Unless effects are calmed, a ring bursts at the contact point, yellow if the attempt scored and orange if not. The camera also punches in slightly toward it; see [presentation settings](#modifiers).
+At contact the status reads **LANDING**. The narration reads "{first name} waits for the bag to settle." in cornhole, and "{first name} watches the result." otherwise. This line lasts only 0.16 s at 1×. Unless effects are calmed, a ring bursts at the contact point, yellow if the attempt scored and orange if not. With Reduced motion or Lower graphics quality on, the ring (and a hole's star) is shown instead as one still, unanimated mark for the same brief moment. The camera also punches in slightly toward it; see [presentation settings](#modifiers).
 
 ### Scoring and reaction
 
 The score appears 0.16 s after contact. At that moment:
-- **The nameplate** shows the card's new total and loses a pip. The page's hidden scoreboard's count goes up by one ("2/4 bags").
+- **The nameplate** shows the card's new total and loses a pip; when the attempt added points the new total gives a short pulse. The page's hidden scoreboard's count goes up by one ("2/4 bags").
+- **The callout.** When the attempt added points, a stamped callout appears over the target for about 1.3 s: the points and what scored, such as "+3 IN THE HOLE!", "+1 ON THE BOARD", "+3 BULLSEYE!", "+2 ON TARGET", "+1 IN THE CUP!" or "+1 BUCKET!". An attempt that adds nothing has no callout. Seeking or pausing shows the same callout at the same moment.
 - **The narration** shows the attempt's commentary (see [narration](#narration)).
 - **The sound.** With Watch sound on, a bright two-note tone plays if the attempt added points, and a low tone if not.
 
-The card then reacts: a celebration if the attempt added points, a disappointed gesture if not. The status reads **RESULT**, then **RESET**. When the reaction ends, the other card's attempt starts. After the last attempt, playback is complete.
+The card then reacts: a celebration if the attempt added points, a disappointed gesture if not. The status reads **SCORING**, then **NEXT UP**. When the reaction ends, the other card's attempt starts. After the last attempt, playback is complete.
 
-**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare.
+**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare. A stamped banner lands on the stage below the sign, naming the demo user who won as the result panel does ("DOUG WINS"), or "DRAW". When the winner played the other character's card, a smaller line under it says whose card it was ("PLAYING DAN'S CARD"), matching the nameplates.
+
+**The cards on the court.** After the entrances each card stays beside its character, then, over about half a second, steps back and fades out, so it no longer covers either character during the attempts. The side panel keeps showing both cards.
 
 **Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and the points, signed: "+3", "+1", "+0", or "−1" for a cornhole bag that lowered its thrower's score.
 
@@ -191,7 +194,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Event and action combinations | The sport sets the attempts, units, equipment, scoring, throw and narration wording. **Heat check** is exhibition-only. **Up to 3 extra equal pairs** can lengthen any sport. | Not applicable: a recording's sport and options are fixed at lock. |
 | Contest kind | Exhibitions and counted entries play every sport by the same rules. A counted entry's order and seed come from the schedule, and its opponent card is Doug. A replay shows exactly the same attempts. Play practice has no football, beer pong or basketball, and Play cornhole has different rules ([the cornhole throw](../play/cornhole.md)). | Not applicable. |
 | Character card | Traits shape the landings; personality shapes timing and acting; in cornhole the card sets the shot mix. Dan and Doug are drawn in profile in cornhole; installed cards face the camera in every sport. | Not applicable. |
-| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake and the contact bursts, dust puffs and star bursts. **Reduced motion** also removes the entrance dust and plays calmer clips ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration; the nameplates and sign stay, because the stage draws them. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
+| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake, and shows the contact rings, dust puffs and star bursts as one still frame each instead of animating them. It also shows the scoring callout and the final banner still, without the stamp-in, and the nameplate score does not pulse. **Reduced motion** also removes the entrance dust, steps the court cards back at once, and plays calmer clips that keep most of their acting ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration; the nameplates and sign stay, because the stage draws them. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
 | Screen size and orientation | The court scales as a whole, so every sport looks the same at any size. The page's scoreboard stays hidden at every width. | The court rescales; the attempt carries on. |
 | Saved state | No effect on how a sport is shown. A resumed contest reopens mid-attempt with the bags, cups and scores exactly as they were. | No effect. |
 
@@ -207,7 +210,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Forced finish | **Skip entrances** jumps to the first attempt's ready. **Skip to result** jumps past every remaining attempt and the finale. | **Skip to result** shows the final scores, boards and racks at once. |
 | Focus leaves the game | Hiding the browser tab stops the wind-up until it is visible again. Window blur has no effect. | The same, mid-flight. |
 | Reload, close, or back/forward cache | On a first viewing, the position is written. **Resume contest** reopens paused at that moment, mid-wind-up. A replay is not kept. | The same. The bags on the board and the missing cups are rebuilt from the recording. |
-| Settings or saved data change underneath | Toggling **Reduced motion** calms effects at once. **Reset demo** unloads the recording. | The same. |
+| Settings or saved data change underneath | Toggling **Reduced motion** calms effects at once: contact marks become still frames. **Reset demo** unloads the recording. | The same. |
 | Graphics or storage failure | A lost graphics context pauses mid-attempt; **Reload the arena** rebuilds the stage at the same second, still paused. If the cornhole side-view art fails its check, the cornhole stage does not open and the error box shows the reason, with **Reload the arena**. | The same, mid-flight. |
 | Input device changes | Not applicable. | Not applicable. |
 

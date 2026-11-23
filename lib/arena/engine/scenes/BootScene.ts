@@ -39,8 +39,27 @@ export abstract class CharacterBootScene extends Phaser.Scene {
   create() {
     if (this.failed) return;
     prepareCharacterTextures(this, this.loaded);
-    this.scene.start(this.nextKey, { characters: this.loaded });
+    // Phaser rasterises text once, so the display web font must be ready
+    // before the HUD creates its labels; a slow or missing font falls back.
+    void displayFontReady().then(() => {
+      if (this.sys.game && this.scene.isActive())
+        this.scene.start(this.nextKey, { characters: this.loaded });
+    });
   }
+}
+/** The self-hosted member of `ARENA_THEME.font` (see public/fonts/). */
+const DISPLAY_WEB_FONT = 'Anton';
+/** Resolves once the self-hosted display font has loaded, or after `timeoutMs`. */
+export function displayFontReady(timeoutMs = 1500): Promise<void> {
+  const fonts = typeof document === 'undefined' ? undefined : document.fonts;
+  if (!fonts?.load) return Promise.resolve();
+  return Promise.race([
+    fonts.load(`400 32px ${DISPLAY_WEB_FONT}`).then(
+      () => undefined,
+      () => undefined,
+    ),
+    new Promise<void>((resolve) => setTimeout(resolve, timeoutMs)),
+  ]);
 }
 export class BootScene extends CharacterBootScene {
   constructor(bridge: ArenaBridge) {

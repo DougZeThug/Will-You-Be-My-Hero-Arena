@@ -3,6 +3,7 @@ import { RenderMetrics, textureBytes } from '../core/RenderMetrics';
 import * as Phaser from 'phaser';
 import {
   cardById,
+  userById,
   type Attempt,
   type MotionPersonality,
   type Recording,
@@ -25,9 +26,15 @@ import { Equipment } from '../objects/Equipment';
 import { ImpactEffects } from '../effects/ImpactEffects';
 import { cameraEffects } from '../effects/CameraEffects';
 import { addBackdrop, tagCharacterRuntime } from './stage';
-import { SPORT_STAGE } from '../../sport-stage';
 import { ArenaHud } from '../presentation/ArenaHud';
+import { phaseLabel } from '../presentation/ArenaTheme';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
+import { ScoreCallout } from '../presentation/ScoreCallout';
+import {
+  finalStamp,
+  scoreMoment,
+  scorePulse,
+} from '../presentation/score-moments';
 import { releasedBagDepth } from '../events/cornhole/ReleasedBagPhysics';
 import { PreviewDirector } from './PreviewDirector';
 import { RecordedDirector } from './RecordedDirector';
@@ -38,6 +45,12 @@ import type {
   SceneContext,
   SceneFrame,
 } from './SceneContext';
+/** The club member who played seat `i`, when that is not the card's own
+ * character (e.g. Doug playing Dan's card); presentation only. */
+const cardOwner = (rec: Recording, i: number, character: string) => {
+  const user = userById(rec.setup.participants[i]?.userId)?.name;
+  return user && user !== character.split(' ')[0] ? user : undefined;
+};
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -55,6 +68,7 @@ export class ArenaScene extends Phaser.Scene {
   private lastReport = 0;
   private loaded = false;
   private hud!: ArenaHud;
+  private callout!: ScoreCallout;
   private environment?: ArenaEnvironment;
   private playback!: RenderDirector;
   private performanceTime: number | null = null;
@@ -72,6 +86,7 @@ export class ArenaScene extends Phaser.Scene {
       this.hud = new ArenaHud(this);
       this.kit = new Equipment(this);
       this.effects = new ImpactEffects(this);
+      this.callout = new ScoreCallout(this);
       this.characters = characters.map(
         (c, i) =>
           new CharacterController(
@@ -128,6 +143,7 @@ export class ArenaScene extends Phaser.Scene {
         this.projectiles.clear();
         this.kit.destroy();
         this.effects.destroy();
+        this.callout.destroy();
         this.cards.forEach((c) => c.destroy());
         this.characters.forEach((c) => c.destroy());
         this.playback.destroy();
@@ -212,6 +228,10 @@ export class ArenaScene extends Phaser.Scene {
       this.playback.character(c, i, time, frame);
     }
     this.playback.finish(time, frame);
+    // Score callout, score pulse and FINAL stamp: read from recording time only.
+    const still = p.reduced || p.low,
+      moment = rec ? scoreMoment(rec, time) : null,
+      final = rec ? finalStamp(rec, time) : null;
     if (rec)
       cameraEffects(
         this.cameras.main,
@@ -220,6 +240,7 @@ export class ArenaScene extends Phaser.Scene {
         direction,
         p.reduced || p.low,
       );
+    this.callout.update(moment, still);
     this.hud.update({
       event: p.sport,
       time,
@@ -239,10 +260,14 @@ export class ArenaScene extends Phaser.Scene {
           ? 'FINAL'
           : time < rec.introDuration
             ? 'CARDS TO COURT'
-            : `ROUND ${(active?.round ?? 0) + 1} · ${p.clock.paused ? 'PAUSED' : (status?.phase ?? 'READY')}`,
+            : `ROUND ${(active?.round ?? 0) + 1} · ${p.clock.paused ? 'PAUSED' : phaseLabel(status?.phase ?? 'ready')}`,
+      banner: final ?? undefined,
+      reduced: still,
       players: this.characters.map((c, i) => ({
         name: c.profile.name.split(' ')[0],
+        owner: rec ? cardOwner(rec, i, c.profile.name) : undefined,
         score: status?.scores[i] ?? 0,
+        pulse: scorePulse(moment, i, still),
         active: active?.actor === i,
         ...(rec
           ? {
@@ -257,14 +282,7 @@ export class ArenaScene extends Phaser.Scene {
           : status?.complete
             ? 'FINAL'
             : active?.actor === i
-              ? status?.phase === 'bagFlight'
-                ? SPORT_STAGE[p.sport].flightLabel
-                : status?.phase === 'boardTravel'
-                  ? 'BOARD TRAVEL'
-                  : (status?.phase ?? 'READY').replace(
-                      /([a-z])([A-Z])/g,
-                      '$1 $2',
-                    )
+              ? phaseLabel(status?.phase ?? 'ready')
               : 'WAITING',
       })),
     });

@@ -12,7 +12,7 @@ A *held action* is a toggle on screen: one tap turns it on and the button change
 
 ## The simple case
 
-Player 1 chose **Touch / on-screen** and started Cornhole. Under the stage they see **Doug**, the line "Move pad move · Aim, hold charge, then release in green. On screen: tap charge, then release.", two pads and seven buttons, each marked **Tap**.
+Player 1 chose **Touch / on-screen** and started Cornhole. Under the stage they see **Doug**, the line "Move pad move · Aim, hold charge, then release in the teal window. On screen: tap charge, then release.", two pads and seven buttons, each marked **Tap**.
 
 While **Opening the cards…** shows, and during the entrances, **Hold / release** is disabled, and tapping it does nothing. When their turn begins, it can be tapped. They press on the **Aim** pad and drag up and right. The knob follows their finger and the reticle over the board drifts that way. They lift their finger, the knob springs back, and the reticle stops. They tap **Hold / release**: it turns yellow and reads **Release**, and the charge meter appears. A second tap on **Release** throws, and the button reads **Hold / release** again, disabled until their next turn.
 
@@ -22,7 +22,7 @@ One control panel appears for each player who is not an **AI player**, in slot o
 
 | Event | Hint | Pads | Buttons, in order (toggles marked) |
 |---|---|---|---|
-| Cornhole | "Aim, hold charge, then release in green. On screen: tap charge, then release." | **Move**, **Aim** | **Hole runner**, **Slide**, **Roll**, **Airmail**, **Hold / release** (toggle), **Precision mode**, **Celebrate** |
+| Cornhole | "Aim, hold charge, then release in the teal window. On screen: tap charge, then release." | **Move**, **Aim** | **Hole runner**, **Slide**, **Roll**, **Airmail**, **Hold / release** (toggle), **Precision mode**, **Celebrate** |
 | Clubhouse Dash | "Sprint, jump hurdles, slide under bars. On-screen sprint toggles." | **Move** | **Sprint** (toggle), **Jump**, **Dodge**, **Slide**, **Burst sprint**, **Brake** (toggle), **Celebrate** |
 | Backyard Brawl | "Move into range, attack, guard or dodge. Chain light, light, heavy." | **Move** | **Light attack**, **Heavy attack**, **Dodge**, **Power strike**, **Block** (toggle), **Counter stance**, **Taunt**, **Grapple** |
 

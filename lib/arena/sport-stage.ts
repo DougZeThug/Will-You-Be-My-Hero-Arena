@@ -127,8 +127,6 @@ interface SportStage {
   shadow: { maxWidth: number; height: number };
   /** Seconds from release to contact on the Watch timeline (match-timeline). */
   flightSeconds: number;
-  /** HUD status text while the projectile is airborne. */
-  flightLabel: 'BAG FLIGHT' | 'BALL FLIGHT';
   /** Prepared paper-doll frames (paper.ts) for the wind-up and the release. */
   paperPose: { windup: PaperPose; release: PaperPose };
   /** Direction cue emitted at first contact (BattleDirector). */
@@ -209,7 +207,6 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     },
     shadow: { maxWidth: 330, height: 16 },
     flightSeconds: 1.25,
-    flightLabel: 'BAG FLIGHT',
     paperPose: { windup: 'underarm-backswing', release: 'underarm-release' },
     impactCue: 'boardImpact',
     backLaneScale: 0.7,
@@ -243,7 +240,6 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     },
     shadow: { maxWidth: 240, height: 24 },
     flightSeconds: 0.78,
-    flightLabel: 'BALL FLIGHT',
     paperPose: { windup: 'football-cocked', release: 'underarm-release' },
     impactCue: 'impact',
     backLaneScale: 0.78,
@@ -302,7 +298,6 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     projectile: { texture: 'basketball', width: 46, flatten: 1 },
     shadow: { maxWidth: 240, height: 24 },
     flightSeconds: 1.38,
-    flightLabel: 'BALL FLIGHT',
     paperPose: { windup: 'basketball-shot', release: 'basketball-shot' },
     impactCue: 'impact',
     backLaneScale: 0.78,
@@ -353,7 +348,6 @@ export const SPORT_STAGE: Record<Sport, SportStage> = {
     projectile: { texture: 'ping-pong', width: 20, flatten: 1 },
     shadow: { maxWidth: 240, height: 24 },
     flightSeconds: 1.25,
-    flightLabel: 'BALL FLIGHT',
     paperPose: { windup: 'underarm-backswing', release: 'underarm-release' },
     impactCue: 'impact',
     backLaneScale: 0.78,

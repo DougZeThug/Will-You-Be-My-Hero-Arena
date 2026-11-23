@@ -25,12 +25,17 @@ import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 /** World px per unit body scale of the Play puppet, so a side-view runner
  * stands exactly as tall as the puppet it replaces (both are 5'8"). */
 const PLAY_RIG_HEIGHT = 307;
+/** The live session's fixed simulation step; body velocities change only on it. */
+const SIM_STEP = 1 / 60;
 /** Play runs at 1.7-2.7 m/s in body terms. A real run at that speed covers
  * about 1.5 m per stride cycle, twice the Lab proof's short measured-cadence
  * strides, so the stride is doubled instead of stretching the legs to their
  * reach limit. The arms swing back past the hip (the proof kept both hands
  * ahead of the chest). */
 const PLAY_GAIT = { strideScale: 2, armBias: 14, armGain: 1.1 };
+/** A facing change (a cross-up) turns as a quick paper flip over this many
+ * seconds of presented time instead of mirroring in one frame. */
+const FLIP_SECONDS = 0.1;
 
 /**
  * Side-view (profile) character for Play, on the Human Motion native
@@ -69,7 +74,14 @@ export class PlayMotionRig implements CharacterRig {
   private contacts = new MotionContacts();
   private revision = -1;
   private airborneSpeed = 0;
+  /** Acceleration of the latest simulation step, held between steps. */
+  private acceleration = { x: 0, y: 0 };
+  private sinceVelocityChange = Infinity;
   private width = 1;
+  /** The facing being flipped to, where the flip started (signed width) and
+   * when; `drawn` is the signed facing currently drawn. */
+  private flip = { to: 0, from: 1, at: 0 };
+  private drawn = 1;
   private squash = { x: 1, y: 1 };
   /** Absolute scale of the native actor (source units → world px). */
   private actorScale = 0;
@@ -154,8 +166,15 @@ export class PlayMotionRig implements CharacterRig {
       planner.request('success', true);
   }
   drive(frame: RigDriveFrame) {
-    if (!this.animator) this.build(frame);
+    if (!this.animator) {
+      this.build(frame);
+      this.flip = { to: frame.facing, from: frame.facing, at: frame.time };
+    }
     this.squash = frame.squash;
+    // A new facing starts a paper flip from whatever is drawn now.
+    if (frame.facing !== this.flip.to)
+      this.flip = { to: frame.facing, from: this.drawn, at: frame.time };
+    this.drawn = this.flipFacing(frame.time);
     // Reduced motion can flip mid-match: re-read it every drive, not just at
     // build, so the organic/secondary layer follows the live setting.
     this.animator!.organicEnabled = !frame.reduced;
@@ -186,17 +205,35 @@ export class PlayMotionRig implements CharacterRig {
     if (!(frame.dt > 0)) return this.applyWidth();
     const dt = Math.min(0.1, frame.dt),
       wasGrounded = motor.grounded;
-    motor.acceleration = {
-      x: (frame.vx - motor.velocity.x) / dt,
-      y: (frame.vy - motor.velocity.y) / dt,
-    };
+    // Velocities come from fixed simulation steps, so differentiate per step,
+    // not per render frame: a frame with a new velocity measures the change
+    // over at least one step and frames between steps hold it, so lean does
+    // not spike and drop at refresh rates above 60 Hz. Once a whole step
+    // passes without a change the body is not accelerating. The expiry sits
+    // just under one step so the frame after the next step (at any refresh
+    // rate) is the first that may clear it; at 60 Hz every frame is a step,
+    // as before.
+    this.sinceVelocityChange += dt;
+    if (frame.vx !== motor.velocity.x || frame.vy !== motor.velocity.y) {
+      const span = Math.max(SIM_STEP, dt);
+      this.acceleration = {
+        x: (frame.vx - motor.velocity.x) / span,
+        y: (frame.vy - motor.velocity.y) / span,
+      };
+      this.sinceVelocityChange = 0;
+    } else if (this.sinceVelocityChange >= SIM_STEP * 0.99)
+      this.acceleration = { x: 0, y: 0 };
+    motor.acceleration = { ...this.acceleration };
     motor.velocity = { x: frame.vx, y: frame.vy };
     motor.position = { x: frame.x, y: frame.y };
     const falling = (motor.height - frame.z) / dt;
     motor.height = frame.z;
     motor.grounded = frame.z <= 0.5;
     if (!motor.grounded) this.airborneSpeed = Math.max(0, falling);
-    motor.facing = motor.facingTarget = frame.facing;
+    // The pose mirrors when the flip passes edge-on (its sign changes), so
+    // the drawing, garment view and foot locks change side together while
+    // the figure is a sliver, never as a one-frame swap.
+    motor.facing = motor.facingTarget = Math.sign(this.drawn);
     motor.turning = false;
     const oldGait = planner.graph.get('base')?.revision;
     planner.locomotion(motor);
@@ -239,6 +276,15 @@ export class PlayMotionRig implements CharacterRig {
     this.motor!.verticalScale = display;
     this.planner!.displayScale = display;
   }
+  /** Signed draw width of the facing flip: it eases from the old side
+   * through edge-on to the new one, never quite zero. */
+  private flipFacing(time: number) {
+    const { to, from, at } = this.flip,
+      u = Math.min(1, Math.max(0, (time - at) / FLIP_SECONDS));
+    if (u >= 1) return to;
+    const f = from + (to - from) * u * u * (3 - 2 * u);
+    return Math.sign(f || to) * Math.max(0.04, Math.abs(f));
+  }
   setViewWidth(width: number) {
     this.width = width;
     this.applyWidth();
@@ -250,7 +296,7 @@ export class PlayMotionRig implements CharacterRig {
     // Scales about the actor origin on the ground line, so feet stay down.
     this.animator.actor.scaleX =
       this.actorScale *
-      this.motor.facing *
+      this.drawn *
       this.squash.x *
       Math.max(0.001, this.width);
     this.animator.actor.scaleY = this.actorScale * this.squash.y;

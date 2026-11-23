@@ -15,10 +15,11 @@ This document owns the complete state and the replay that starts from it. Replay
 
 Demo user Doug, playing the Dan card, beats demo user Dan, playing the Doug card, 7–4 in a counted cornhole entry. As the last bag settles:
 - **The title** changes to **CORNHOLE / FINAL**, and the bottom bar reads **FINAL SCORE** and **FULL TIME**.
+- **The stage** stamps a **DOUG WINS** banner below the sign (**DRAW** for a draw), naming the demo user as the result panel does, with "PLAYING DAN'S CARD" under it when the winner played the other character's card.
 - **The narration** says "Doug takes it with Dan Weidensaul’s card."
-- **The result panel**, dark, slides in below the stage with:
+- **The result panel**, dark, appears below the stage, and the page scrolls just far enough to bring it on screen, with:
   - **COUNTED RESULT / POINTS POSTED**
-  - **DOUG WINS.**, with "with Dan Weidensaul’s card" under it
+  - **DOUG WINS.**, with "playing Dan Weidensaul’s card" under it
   - **7 — 4 Cornhole**
   - one column per demo user, for example "Doug **+3 PTS**", "9 total / Rank 1 (was 2)"
 - **The chip.** The club points chip above the stage now includes the new points.
@@ -42,7 +43,7 @@ stateDiagram-v2
 Playback becomes complete when the clock reaches the end of the last attempt. At that instant:
 - **The waiting contest is cleared.** If this was the contest's first viewing, the save stops listing it as waiting to resume. This is saved at once, whether the viewer watched to the end or pressed **Skip to result**.
 - **The contest's points are revealed** in the club points chip, Standings, member records and History, immediately. A replay's points were never hidden.
-- **The result panel appears**, and the playback buttons other than **Attempt history** disappear.
+- **The result panel appears**, and the playback buttons other than **Attempt history** disappear. The page scrolls the panel into view once, smoothly, or instantly with Reduced motion on; it does not scroll again while the same result stays on screen.
 - **The finale.** A winner's finale keeps animating for about 2.6 seconds unless the viewer skipped.
 
 The result panel shows:
@@ -50,9 +51,9 @@ The result panel shows:
 | Part | Counted entry | Exhibition |
 |---|---|---|
 | Eyebrow | **COUNTED RESULT / POINTS POSTED** | **EXHIBITION / NO LEADERBOARD POINTS** |
-| Headline | The winning demo user in capitals, for example **DOUG WINS.**, with a line under it naming the card they played in full: "with Dan Weidensaul’s card". A draw reads **HONORS SHARED.**, with no card line | The same |
+| Headline | The winning demo user in capitals, for example **DOUG WINS.**, with a line under it naming the card they played in full: "playing Dan Weidensaul’s card". A draw reads **HONORS SHARED.**, with no card line | The same |
 | Score | "{score} — {score} {event}", adding " / Unresolved draw after three extra pairs" when extra pairs ran out | The same |
-| Each user | Name, **+{points} PTS** from the policy the contest was locked under, "{total} total / Rank {n}", and "(was {n})" when the rank changed | Name, **+0 PTS**, "{total} total / Rank {n}" |
+| Each user | Name, **+{points} PTS** from the policy the contest was locked under, "{total} total / Rank {n}", and "(was {n})" when the rank changed | No per-user columns: one line, "Exhibition, no points posted" |
 
 The headline names the same demo user that the points go to. The card line says which card won. So when both users play the same card, for example counted Doug against Doug, the headline still says which user won.
 
@@ -81,7 +82,7 @@ During a replay, every control in [playback controls](playback-controls.md) work
 | --- | --- | --- |
 | Input device | Buttons only; no keyboard shortcuts. | No effect. |
 | Event and action combinations | The score line names the event. Units are not shown on the result panel. | Not applicable. |
-| Contest kind | See the table above. A counted entry shows the policy's points and the rank change. An exhibition shows **+0 PTS**. | A replay of either kind awards nothing new, and never hides the points. |
+| Contest kind | See the table above. A counted entry shows the policy's points and the rank change. An exhibition shows "Exhibition, no points posted" instead of per-user points. | A replay of either kind awards nothing new, and never hides the points. |
 | Character card | The headline names the winning user. The line under it names the winning card's full name. | Not applicable. |
 | Presentation settings | Reduced motion and lower graphics change the finale's effects only. In the clean spectator view the result panel stays visible under the full-window stage. | No effect on the result panel. |
 | Screen size and orientation | At 1150 px and below, the result panel's buttons move under the scores. | Reflows at once. |

@@ -60,9 +60,9 @@ The page's own text overlays on the stage cannot be seen at any width:
 - **In the lobby**, the "THE SAME CREW. HIGHER STAKES." label.
 - **During playback**, the "Live score" scoreboard.
 
-Only screen readers get them. What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)). The sound and clean-view buttons sit at the bottom right of the stage, just above the bottom bar. In the clean spectator view, a **Pause playback** or **Resume playback** button joins them while a recording is playing or paused.
+Only screen readers get them. What the viewer sees instead is the drawing's sign and nameplates ([playback controls](../watch/playback-controls.md)). The sound and clean-view buttons sit at the bottom right of the stage, just above the bottom bar; at 600 px wide and below they sit just under the stage instead, so they do not cover the near board. In the clean spectator view, a **Pause playback** or **Resume playback** button joins them while a recording is playing or paused.
 
-> Technical note: a second stylesheet, `public/assets/arena-interface.css`, loads after `app/globals.css`. It sets the stage box to `aspect-ratio: 16/9`, and shrinks the scoreboard and the lobby label to a one-pixel clipped box ("The accessible DOM scores remain; the shared Phaser HUD is the sole visual score"). The verification pass saw them hidden at desktop widths; the stylesheet hides them on narrow screens too. The same rule hides the Play stage's score strip and the page's **Release in green** meter; the Play stage draws its own nameplates and meter instead.
+> Technical note: a third stylesheet, `app/arena-interface.css`, is imported by `app/layout.tsx` after `app/globals.css` and `app/live-arena.css`. It sets the stage box to `aspect-ratio: 16/9`, and shrinks the scoreboard and the lobby label to a one-pixel clipped box ("The accessible DOM scores remain; the shared Phaser HUD is the sole visual score"). The verification pass saw them hidden at desktop widths; the stylesheet hides them on narrow screens too. The same rule hides the Play stage's score strip and the page's **Release in the teal window** meter; the Play stage draws its own nameplates and meter instead.
 
 ## Reduced motion and lower graphics quality
 
@@ -70,10 +70,10 @@ Both are checkboxes in [Arena settings](../club/arena-settings.md). They apply a
 
 | | Reduced motion | Lower graphics quality |
 |---|---|---|
-| Watch | No contact effects, camera punch or shake, and no burst or dust as the characters land from their entrances. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects and camera punch and shake are removed, as for Reduced motion; the entrance effects and character motion are unchanged. |
-| Play | Applies to the running match at once, without a restart. Camera punches and shakes are skipped, impact effects are not drawn at all, and squash and stretch is off. | No effect: Play ignores it. |
+| Watch | Contact rings, dust puffs and star bursts are shown as one still frame each for their usual brief moment instead of animating. No camera punch or shake, and no burst or dust as the characters land from their entrances. Character clips are played in their reduced form. | The stage is rebuilt. Contact effects become still frames and camera punch and shake are removed, as for Reduced motion; the entrance effects and character motion are unchanged. |
+| Play | Applies to the running match at once, without a restart. Camera punches and shakes are skipped, hit, block and bag-contact marks are drawn as one still frame each for their usual brief moment (footstep dust is not drawn), and squash and stretch is off. | No effect: Play ignores it. |
 | The collection | Previews use reduced clips. On a cornhole court, Dan's and Doug's plain idle is the performance idle whatever the setting; every other clip plays on the puppet, in its reduced form. | The preview stage is rebuilt. The preview has no contact or camera effects to tone down, so the rebuild is the only visible change. |
-| The page itself | Transitions are turned off, card hover lift is disabled, and spinners stop spinning. This follows the operating system's preference, not the checkbox. | No effect. |
+| The page itself | Transitions and CSS animations are turned off, so dialogs open without their fade-and-zoom, card hover lift is disabled, and spinners stop spinning. This follows both the operating system's preference and the checkbox. | No effect. |
 
 ## Graphics context loss and the error box
 
@@ -196,7 +196,7 @@ See [accessibility](../cross-cutting/accessibility.md).
 ## Open questions and verification
 
 - Read from `components/arena/ArenaStage.tsx`, `lib/arena/engine/core/ArenaGame.ts`, `LiveArenaGame.ts`, `lib/arena/engine/scenes/ArenaScene.ts`, `LiveArenaScene.ts`, `Game.tsx`, `SecondaryViews.tsx` and `app/globals.css`. The first verification pass (2026-09-24) partly checked loading, the 16:9 heights and the hidden overlays at 1440 px. It also found that the old **Restore arena** button toggled **Lower graphics quality** with nothing loaded; fixed in the current build. Graphics loss and narrow screens were not checked.
-- **The second stylesheet.** That `public/assets/arena-interface.css` overrides `app/globals.css` is inferred from the measured stage heights. The hidden overlays were checked only at 1440 px. What has not been seen is the bottom-right sound and clean-view buttons, the hidden scoreboard on narrow screens, the side station staying beside the stage down to 720 px, and the clean spectator view keeping 16:9 during a contest rather than filling the window's height.
+- **The second stylesheet.** That `app/arena-interface.css` overrides `app/globals.css` is inferred from the measured stage heights. The hidden overlays were checked only at 1440 px. What has not been seen is the bottom-right sound and clean-view buttons, the hidden scoreboard on narrow screens, the side station staying beside the stage down to 720 px, and the clean spectator view keeping 16:9 during a contest rather than filling the window's height.
 - **Graphics loss in Play.** The match now pauses (B-14). Whether the stage draws again once the browser gives the context back has not been tried; the code relies on the renderer rebuilding its own resources.
 - **Reload the arena.** It rebuilds the stage from scratch. Whether it can draw again while the browser is still withholding a graphics context has not been tried.
 - **Resume playback without reloading.** What happens if the player presses **Resume playback** after a Watch graphics loss, before **Reload the arena**, has not been tried.

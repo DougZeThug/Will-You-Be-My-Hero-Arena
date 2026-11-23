@@ -136,7 +136,7 @@ Nothing about the match is kept anywhere.
 | Sign and nameplates | Drawn inside the stage | A hanging sign with the event's title and phase, and a nameplate per player in the top corners |
 | Score strip | A 1-pixel box at the stage's top left, so only screen readers get it | One tile per player |
 | Overlays | Over the whole stage, dimming it | **Opening the cards…**, the error, or **PAUSED** |
-| **Release timing** meter | Drawn at the bottom left of the stage as **RELEASE TIMING**, cornhole only, while charging. The page's own copy, labelled **Release in green**, is clipped like the score strip | See [the cornhole throw](cornhole.md) |
+| **Release timing** meter | Drawn at the bottom left of the stage as **RELEASE TIMING**, cornhole only, while charging. The page's own copy, labelled **Release in the teal window**, is clipped like the score strip | See [the cornhole throw](cornhole.md) |
 | Caption | Under the stage | The event's message, and "Ns · Practice / no club points" |
 | Control panels | Under the caption, one per person | Name, move keys, a hint, and the [on-screen controls](touch-controls.md) |
 | Result | In place of the control panels | "{name} wins" or **Draw**, **Play again**, **Choose another event** |
@@ -160,7 +160,7 @@ Nothing about the match is kept anywhere.
 
 **Control panels.** There is one for each player who is not an AI player, in slot order. Each label reads the player's name, their move keys and the event's hint:
 - **Move keys:** "W A S D move", "T F G H move", "Left stick move" or "Move pad move", following the device family.
-- **Cornhole:** "Aim, hold charge, then release in green. On screen: tap charge, then release."
+- **Cornhole:** "Aim, hold charge, then release in the teal window. On screen: tap charge, then release."
 - **Clubhouse Dash:** "Sprint, jump hurdles, slide under bars. On-screen sprint toggles."
 - **Backyard Brawl:** "Move into range, attack, guard or dodge. Chain light, light, heavy."
 
@@ -245,6 +245,6 @@ See [accessibility](../cross-cutting/accessibility.md).
 - **Fixed: the finished match** (B-30). The caption's seconds stop at the finish, and nothing pauses a finished match any more, so **PAUSED** is never drawn over the result.
 - **Fixed: wording** (B-36). The result reads **Draw** instead of **Session complete**, the Dash hint names hurdles, pauses are announced, and the focus ring is darker.
 - **The back/forward cache.** Whether a match survives it, and whether it comes back paused, is untested.
-- **The score strip and the page's meter are not visible.** `public/assets/arena-interface.css` (lines 109–123), loaded by `app/layout.tsx`, clips `.live-score-strip` and `.shot-meter` to a 1-pixel box, with the comment "the shared Phaser HUD is the sole visual score". The verification pass's screenshots show no strip over the stage.
+- **The score strip and the page's meter are not visible.** `app/arena-interface.css`, imported last by `app/layout.tsx`, clips `.live-score-strip` and `.shot-meter` to a 1-pixel box, with the comment "the shared Phaser HUD is the sole visual score". The verification pass's screenshots show no strip over the stage.
 
 Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

@@ -1,6 +1,12 @@
 import type * as Phaser from 'phaser';
 import type { ArenaCue } from '../core/LiveTypes';
-import { CONTACT_GOLD, CONTACT_MISS, ImpactEffects } from './ImpactEffects';
+import { ARENA_THEME as T } from '../presentation/ArenaTheme';
+import {
+  CONTACT_GOLD,
+  CONTACT_MISS,
+  ImpactEffects,
+  still,
+} from './ImpactEffects';
 const LIFE: Record<string, number> = {
   hit: 0.42,
   block: 0.3,
@@ -41,16 +47,18 @@ export class EffectsManager {
     this.cues = this.cues.filter((c) => c.age < (LIFE[c.name] ?? 0.3));
     for (const c of this.cues) {
       c.age += dt;
-      if (reduced) continue;
-      const u = c.age / (LIFE[c.name] ?? 0.3),
+      // Reduced motion holds one settled frame for the effect's life; the
+      // footstep dust, pure decoration, is left out.
+      if (reduced && c.name === 'dust') continue;
+      const u = still(c.age / (LIFE[c.name] ?? 0.3), reduced),
         i = Math.min(1, c.intensity);
       // Ground effects sort with the characters (depth = ground y); hits and
       // blocks draw in front of both fighters.
       if (c.name === 'hit') {
         this.impact.star(c.x, c.y, u, 0.45 + 0.4 * i, 1500);
-        this.impact.burst(c.x, c.y, u * 1.2, 0xffd025, 1.2 + i, 1501);
+        this.impact.burst(c.x, c.y, u * 1.2, T.gold, 1.2 + i, 1501);
       } else if (c.name === 'block')
-        this.impact.burst(c.x, c.y, u, 0x18a1ad, 1.3, 1500);
+        this.impact.burst(c.x, c.y, u, T.teal, 1.3, 1500);
       else if (c.name === 'dust')
         this.impact.puff(c.x, c.y + 4, u, 0.7 + 0.8 * i, c.y + 24);
       // Bag contacts: the puff sits under the bag (depth 1300), the ring over it.
@@ -60,7 +68,7 @@ export class EffectsManager {
       } else if (c.name === 'impact' || c.name === 'miss') {
         this.impact.burst(c.x, c.y, u * 1.3, c.name === 'miss' ? CONTACT_MISS : CONTACT_GOLD, 1, 1301);
         this.impact.puff(c.x, c.y + 6, u, 0.5, 1299);
-      } else this.impact.burst(c.x, c.y, u, 0xffd025, 1, 1500);
+      } else this.impact.burst(c.x, c.y, u, T.gold, 1, 1500);
     }
   }
   destroy() {
