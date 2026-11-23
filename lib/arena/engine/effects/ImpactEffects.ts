@@ -3,6 +3,10 @@ import {surfacePoint} from '../../equipment-geometry';
 import type {Attempt} from '../../model';
 /** Ring tints for a bag contact: scored (gold) and missed (orange). Watch and Play share them. */
 export const CONTACT_GOLD=0xffce25,CONTACT_MISS=0xe79959;
+/** Reduced motion: while an effect would play, hold one settled frame (ring
+ * grown, star at full size) instead of animating it, so contacts stay readable. */
+export const STILL_FRAME=.34;
+export const still=(progress:number,reduced:boolean)=>reduced&&progress>=0&&progress<1?STILL_FRAME:progress;
 /** Tiny reusable frame atlases (ring, cartoon dust puff, star burst), sampled
  * by game time rather than timer tweens, so seeks and replays are exact. */
 export class ImpactEffects {
@@ -43,11 +47,11 @@ export class ImpactEffects {
   * `touch`/`landAt`: where and when a bag first lands (the puff; default the
   * target at contactAt); the ring stays at the target at contactAt. */
  contact(a:Attempt,time:number,reduced:boolean,holeAt?:number,touch?:{x:number;y:number},landAt?:number){
-  if(reduced)return;const q=surfacePoint(a.sport,a.actor,a.target),u=time-a.contactAt;
-  this.burst(q.x,q.y,u/.38,a.score?CONTACT_GOLD:CONTACT_MISS);
+  const q=surfacePoint(a.sport,a.actor,a.target),u=time-a.contactAt,s=(p:number)=>still(p,reduced);
+  this.burst(q.x,q.y,s(u/.38),a.score?CONTACT_GOLD:CONTACT_MISS);
   // A small puff where the bag first lands, drawn under the bag (depth 60).
-  if(a.sport==='cornhole'&&a.contact!=='miss'){const t=touch??(a.boardResolution?.touch?surfacePoint('cornhole',a.actor,a.boardResolution.touch):q);this.puff(t.x,t.y+6,(landAt===undefined?u:time-landAt)/.45,.5,59);}
-  if(a.contact==='hole'&&holeAt!==undefined)this.star(q.x,q.y-10,(time-holeAt)/.55,.8);
+  if(a.sport==='cornhole'&&a.contact!=='miss'){const t=touch??(a.boardResolution?.touch?surfacePoint('cornhole',a.actor,a.boardResolution.touch):q);this.puff(t.x,t.y+6,s((landAt===undefined?u:time-landAt)/.45),.5,59);}
+  if(a.contact==='hole'&&holeAt!==undefined)this.star(q.x,q.y-10,s((time-holeAt)/.55),.8);
  }
  destroy(){this.sprites.forEach(s=>s.destroy());}
 }

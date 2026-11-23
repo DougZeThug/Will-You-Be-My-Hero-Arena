@@ -3,6 +3,7 @@ import { RenderMetrics, textureBytes } from '../core/RenderMetrics';
 import * as Phaser from 'phaser';
 import {
   cardById,
+  userById,
   type Attempt,
   type MotionPersonality,
   type Recording,
@@ -25,8 +26,8 @@ import { Equipment } from '../objects/Equipment';
 import { ImpactEffects } from '../effects/ImpactEffects';
 import { cameraEffects } from '../effects/CameraEffects';
 import { addBackdrop, tagCharacterRuntime } from './stage';
-import { SPORT_STAGE } from '../../sport-stage';
 import { ArenaHud } from '../presentation/ArenaHud';
+import { phaseLabel } from '../presentation/ArenaTheme';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
 import { releasedBagDepth } from '../events/cornhole/ReleasedBagPhysics';
 import { PreviewDirector } from './PreviewDirector';
@@ -38,6 +39,12 @@ import type {
   SceneContext,
   SceneFrame,
 } from './SceneContext';
+/** The club member who played seat `i`, when that is not the card's own
+ * character (e.g. Doug playing Dan's card); presentation only. */
+const cardOwner = (rec: Recording, i: number, character: string) => {
+  const user = userById(rec.setup.participants[i]?.userId)?.name;
+  return user && user !== character.split(' ')[0] ? user : undefined;
+};
 export class ArenaScene extends Phaser.Scene {
   characters: CharacterController[] = [];
   private metrics!: RenderMetrics;
@@ -239,9 +246,10 @@ export class ArenaScene extends Phaser.Scene {
           ? 'FINAL'
           : time < rec.introDuration
             ? 'CARDS TO COURT'
-            : `ROUND ${(active?.round ?? 0) + 1} · ${p.clock.paused ? 'PAUSED' : (status?.phase ?? 'READY')}`,
+            : `ROUND ${(active?.round ?? 0) + 1} · ${p.clock.paused ? 'PAUSED' : phaseLabel(status?.phase ?? 'ready')}`,
       players: this.characters.map((c, i) => ({
         name: c.profile.name.split(' ')[0],
+        owner: rec ? cardOwner(rec, i, c.profile.name) : undefined,
         score: status?.scores[i] ?? 0,
         active: active?.actor === i,
         ...(rec
@@ -257,14 +265,7 @@ export class ArenaScene extends Phaser.Scene {
           : status?.complete
             ? 'FINAL'
             : active?.actor === i
-              ? status?.phase === 'bagFlight'
-                ? SPORT_STAGE[p.sport].flightLabel
-                : status?.phase === 'boardTravel'
-                  ? 'BOARD TRAVEL'
-                  : (status?.phase ?? 'READY').replace(
-                      /([a-z])([A-Z])/g,
-                      '$1 $2',
-                    )
+              ? phaseLabel(status?.phase ?? 'ready')
               : 'WAITING',
       })),
     });

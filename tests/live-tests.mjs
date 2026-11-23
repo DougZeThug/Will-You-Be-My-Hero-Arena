@@ -824,7 +824,7 @@ export async function testLive({ check }) {
   check(() => assert.match(shots.snapshot().message, /Shot: Slide/));
   shots.inject('p0', 'charge', 1);
   advance(shots, 0.3);
-  check(() => assert.match(shots.snapshot().message, /green window/));
+  check(() => assert.match(shots.snapshot().message, /teal window/));
   shots.pause(true);
   shots.pause(false);
   shots.inject('p0', 'charge', 0);

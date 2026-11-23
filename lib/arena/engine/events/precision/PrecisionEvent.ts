@@ -171,12 +171,12 @@ export class PrecisionEvent implements PlayableArenaEvent {
     return `${this.active().profile.name}: aim, hold charge, then release · Shot: ${this.shotName()}`;
   }
   private chargeMessage() {
-    return `Release in the green window · Shot: ${this.shotName()}`;
+    return `Release in the teal window · Shot: ${this.shotName()}`;
   }
   private ideal() {
     return 0.7 + (215 - this.active().body.x) / 1400;
   }
-  /** Half-width of the green band in power units: ±0.040 (±60 ms) for a 0.6 shot skill, ±0.050 at 0.9, plus precision mode and clutch. */
+  /** Half-width of the teal release band in power units: ±0.040 (±60 ms) for a 0.6 shot skill, ±0.050 at 0.9, plus precision mode and clutch. */
   private window() {
     const c = this.active();
     return (

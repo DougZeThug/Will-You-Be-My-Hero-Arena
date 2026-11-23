@@ -6,7 +6,7 @@
   margin: 28px 0 20px;
 }
 .live-toolbar h1 {
-  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-family: Impact, 'Anton', 'Arial Narrow', sans-serif;
   font-size: 42px;
   text-transform: uppercase;
   line-height: 1;
@@ -49,7 +49,7 @@
 }
 .playable-events strong {
   display: block;
-  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-family: Impact, 'Anton', 'Arial Narrow', sans-serif;
   text-transform: uppercase;
   font-size: 27px;
   margin-bottom: 6px;
@@ -203,7 +203,7 @@
   border-bottom: 4px solid #ffce25;
 }
 .live-score-strip strong {
-  font-family: Impact, sans-serif;
+  font-family: Impact, 'Anton', 'Arial Narrow', sans-serif;
   text-transform: uppercase;
   font-size: 19px;
 }
@@ -238,6 +238,8 @@
 .live-state-overlay strong {
   font:
     44px Impact,
+    'Anton',
+    'Arial Narrow',
     sans-serif;
 }
 .live-state-overlay button {
@@ -397,6 +399,8 @@
 .live-result h2 {
   font:
     32px Impact,
+    'Anton',
+    'Arial Narrow',
     sans-serif;
   text-transform: uppercase;
   flex: 1;
@@ -407,7 +411,7 @@
 }
 .live-match button:focus-visible,
 .playable-setup button:focus-visible {
-  outline: 3px solid #18a1ad;
+  outline: 3px solid var(--teal);
   outline-offset: 3px;
 }
 @media (max-width: 720px) {

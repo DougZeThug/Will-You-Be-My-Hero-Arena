@@ -40,7 +40,7 @@ const LARGE_PANEL: PlayerPanelLayout = {
   scoreBox: { dx: 241, dy: 8, w: 63, h: 69, radius: 4 },
   name: { dx: 19, dy: 25, size: 26, maxWidth: 205 },
   score: { dx: 278, dy: 38, size: 49, maxWidth: 55 },
-  status: { dx: 19, dy: 65, size: 11, maxWidth: 210 },
+  status: { dx: 19, dy: 65, size: 13, maxWidth: 218 },
   progress: { dx: 19, dy: 42, meterDy: 44 },
   dimInactiveName: true,
 };
@@ -51,9 +51,12 @@ const COMPACT_PANEL: PlayerPanelLayout = {
   strokeAlpha: 0.65,
   name: { dx: 15, dy: 13, size: 18, maxWidth: 215 },
   score: { dx: 278, dy: 22, size: 29 },
-  status: { dx: 15, dy: 33, size: 10, maxWidth: 220 },
+  status: { dx: 15, dy: 33, size: 13, maxWidth: 220 },
   dimInactiveName: false,
 };
+/** The "DOUG'S PICK" sub-label beside a card name. */
+const OWNER_SIZE = 13;
+const OWNER_GAP = 9;
 const layoutFor = (playerCount: number) =>
   playerCount > 2 ? COMPACT_PANEL : LARGE_PANEL;
 const panelOrigin = (layout: PlayerPanelLayout, i: number) => ({
@@ -71,6 +74,8 @@ export class ArenaHud {
   private phase: Phaser.GameObjects.Text;
   private players: {
     name: Phaser.GameObjects.Text;
+    /** Who played this card, when that is not the card's own character. */
+    owner: Phaser.GameObjects.Text;
     score: Phaser.GameObjects.Text;
     status: Phaser.GameObjects.Text;
   }[] = [];
@@ -106,13 +111,15 @@ export class ArenaHud {
       const x = PANEL_X[i % 2];
       this.players.push({
         name: text(x + 19, 49, 26),
+        owner: text(x + 19, 49, OWNER_SIZE, '#d0c4a9'),
         score: text(x + 278, 62, 49).setOrigin(0.5),
-        status: text(x + 19, 89, 12, '#c5d1cc'),
+        status: text(x + 19, 89, 13, '#c5d1cc'),
       });
-      this.players[i].status
-        .setFontFamily('Arial, sans-serif')
-        .setFontSize(11)
-        .setFontStyle('bold');
+      for (const label of [this.players[i].status, this.players[i].owner])
+        label
+          .setFontFamily('Arial, sans-serif')
+          .setFontSize(label === this.players[i].owner ? OWNER_SIZE : 13)
+          .setFontStyle('bold');
     }
     this.meter = scene.add.graphics();
     this.root.add(this.meter);
@@ -184,6 +191,7 @@ export class ArenaHud {
         const labels = this.players[i];
         for (const label of Object.values(labels))
           label.setVisible(!!p && this.visibility.players[i]);
+        labels.owner.setVisible(!!p?.owner && this.visibility.players[i]);
         if (!p || !this.visibility.players[i]) continue;
         const { shadow, scoreBox, progress } = layout;
         if (shadow)
@@ -221,8 +229,20 @@ export class ArenaHud {
           .setText(p.name.toUpperCase());
         if (layout.dimInactiveName)
           labels.name.setColor(p.active ? '#ffedc8' : '#d4d3c7');
+        // The player's sub-label follows the card name on the same line and
+        // keeps its size; a long card name gives up width instead.
+        labels.owner.setText(p.owner ? `${p.owner}'S PICK`.toUpperCase() : '');
+        const ownerWidth = p.owner ? labels.owner.width + OWNER_GAP : 0;
         labels.name.setScale(
-          Math.min(1, layout.name.maxWidth / Math.max(1, labels.name.width)),
+          Math.min(
+            1,
+            (layout.name.maxWidth - ownerWidth) /
+              Math.max(1, labels.name.width),
+          ),
+        );
+        labels.owner.setPosition(
+          labels.name.x + labels.name.displayWidth + OWNER_GAP,
+          labels.name.y + layout.name.size * 0.12,
         );
         labels.score
           .setPosition(x + layout.score.dx, y + layout.score.dy)

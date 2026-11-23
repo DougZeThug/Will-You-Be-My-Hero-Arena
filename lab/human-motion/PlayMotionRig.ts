@@ -25,6 +25,8 @@ import type { WeightedRigDefinition } from '../loongbones/arena/RigDefinition';
 /** World px per unit body scale of the Play puppet, so a side-view runner
  * stands exactly as tall as the puppet it replaces (both are 5'8"). */
 const PLAY_RIG_HEIGHT = 307;
+/** The live session's fixed simulation step; body velocities change only on it. */
+const SIM_STEP = 1 / 60;
 /** Play runs at 1.7-2.7 m/s in body terms. A real run at that speed covers
  * about 1.5 m per stride cycle, twice the Lab proof's short measured-cadence
  * strides, so the stride is doubled instead of stretching the legs to their
@@ -69,6 +71,9 @@ export class PlayMotionRig implements CharacterRig {
   private contacts = new MotionContacts();
   private revision = -1;
   private airborneSpeed = 0;
+  /** Acceleration of the latest simulation step, held between steps. */
+  private acceleration = { x: 0, y: 0 };
+  private sinceVelocityChange = Infinity;
   private width = 1;
   private squash = { x: 1, y: 1 };
   /** Absolute scale of the native actor (source units → world px). */
@@ -186,10 +191,23 @@ export class PlayMotionRig implements CharacterRig {
     if (!(frame.dt > 0)) return this.applyWidth();
     const dt = Math.min(0.1, frame.dt),
       wasGrounded = motor.grounded;
-    motor.acceleration = {
-      x: (frame.vx - motor.velocity.x) / dt,
-      y: (frame.vy - motor.velocity.y) / dt,
-    };
+    // Velocities come from fixed simulation steps, so differentiate per step,
+    // not per render frame: a frame with a new velocity measures the change
+    // over at least one step and frames between steps hold it, so lean does
+    // not spike and drop at refresh rates above 60 Hz. Once a whole step
+    // passes without a change the body is not accelerating. At 60 Hz every
+    // frame is a step, as before.
+    this.sinceVelocityChange += dt;
+    if (frame.vx !== motor.velocity.x || frame.vy !== motor.velocity.y) {
+      const span = Math.max(SIM_STEP, dt);
+      this.acceleration = {
+        x: (frame.vx - motor.velocity.x) / span,
+        y: (frame.vy - motor.velocity.y) / span,
+      };
+      this.sinceVelocityChange = 0;
+    } else if (this.sinceVelocityChange >= SIM_STEP * 0.75)
+      this.acceleration = { x: 0, y: 0 };
+    motor.acceleration = { ...this.acceleration };
     motor.velocity = { x: frame.vx, y: frame.vy };
     motor.position = { x: frame.x, y: frame.y };
     const falling = (motor.height - frame.z) / dt;

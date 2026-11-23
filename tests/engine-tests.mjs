@@ -60,4 +60,12 @@ export async function testEngine({check,setup,m,s,a}){
  const flat=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'flat',{x:350,y:400},.4),airmail=physics.sampleBag({releaseAt:0,duration:1.25,actor:0,contact:'hole',target:{x:9.2,y:.39,z:0}},'airmail',{x:350,y:400},.4);
  check(()=>assert.ok(airmail.y<flat.y-60,'Airmail has a substantially higher arc'));
  fs.mkdirSync('work/qa',{recursive:true});fs.writeFileSync('work/qa/engine-metrics.json',JSON.stringify({clips:registry.animations().length,authoredClips:registry.animations().filter(c=>c.motion&&!c.id.startsWith('legacy_')).length,distinctPlans:new Set(plans).size,sampledMatches:30,maxHandStepPer120Samples:maxStep,pushes,collects},null,2));
+ // HUD phase words are player-facing; unknown names still split at camel case.
+ const theme=await import('../.test-build/engine/presentation/ArenaTheme.mjs');
+ for(const [phase,label] of [['bagFlight','IN THE AIR'],['boardTravel','ON THE BOARD'],['anticipation','LINING UP'],['reset','NEXT UP'],['someNewPhase','SOME NEW PHASE']])check(()=>assert.equal(theme.phaseLabel(phase),label));
+ for(const phase of ['entrance','ready','anticipation','throw','release','bagFlight','boardTravel','landing','result','reset','complete'])check(()=>assert.ok(!/[a-z]/.test(theme.phaseLabel(phase)),phase+' has a player-facing label'));
+ // Reduced motion holds one effect frame instead of hiding or animating it.
+ const impact=await import('../.test-build/engine/effects/ImpactEffects.mjs');
+ check(()=>assert.equal(impact.still(.1,true),impact.still(.9,true)));
+ check(()=>assert.equal(impact.still(1.2,true),1.2));check(()=>assert.equal(impact.still(-.1,true),-.1));check(()=>assert.equal(impact.still(.6,false),.6));
 }

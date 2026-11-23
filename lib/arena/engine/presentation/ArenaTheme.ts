@@ -8,7 +8,8 @@ export const ARENA_THEME = {
   orange: 0xe58a4c,
   shadow: 0x211d20,
   warmTint: 0xfff2df,
-  font: 'Impact, Arial Narrow, sans-serif',
+  /** Matches the CSS display stack; Anton is self-hosted in public/fonts/. */
+  font: "Impact, 'Anton', 'Arial Narrow', sans-serif",
   background: '/assets/arena-sunset-v2.png',
 } as const;
 export const EVENT_PRESENTATION = {
@@ -41,7 +42,10 @@ export const EVENT_PRESENTATION = {
 } as const;
 export type ArenaEventStyle = keyof typeof EVENT_PRESENTATION;
 export interface PresentationPlayer {
+  /** The card's character, e.g. DAN. */
   name: string;
+  /** The club member who played the card, shown only when it is someone else. */
+  owner?: string;
   score: number;
   active?: boolean;
   status?: string;
@@ -68,3 +72,23 @@ export const BOARD_FINISH = {
   height: 725,
   hole: { x: 1744.4, y: 202.405 },
 } as const;
+/** Player-facing words for the Watch contest phases (`MatchPhase` in
+ * match-timeline.ts) that reach the HUD. Presentation only: the timeline and
+ * event rules keep their own phase names. */
+const PHASE_LABELS: Record<string, string> = {
+  entrance: 'CARDS TO COURT',
+  ready: 'READY',
+  anticipation: 'LINING UP',
+  throw: 'WINDING UP',
+  release: 'LET IT GO',
+  bagFlight: 'IN THE AIR',
+  boardTravel: 'ON THE BOARD',
+  landing: 'LANDING',
+  result: 'SCORING',
+  reset: 'NEXT UP',
+  complete: 'FINAL',
+};
+/** A HUD label for a phase name; unknown names are split at camel case. */
+export const phaseLabel = (phase: string) =>
+  PHASE_LABELS[phase] ??
+  phase.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase();

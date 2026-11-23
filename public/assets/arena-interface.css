@@ -7,7 +7,7 @@
   --arena-edge: #647274;
   --arena-radius: 6px;
   --arena-gap: 12px;
-  --arena-heading: Impact, 'Arial Narrow', sans-serif;
+  --arena-heading: Impact, 'Anton', 'Arial Narrow', sans-serif;
 }
 .club-shell {
   max-width: 1680px;
@@ -97,14 +97,14 @@
 .stage-controls button {
   border-color: #aaa892;
   border-radius: 3px;
-  width: 31px;
-  height: 31px;
+  width: 44px;
+  height: 44px;
   background: #111b20d9;
 }
 .stage-bottom {
   background: #111b20ed;
   padding: 7px 13px;
-  font-size: 9px;
+  font-size: 11px;
 }
 /* The accessible DOM scores remain; the shared Phaser HUD is the sole visual score. */
 .club-stage .scoreboard,
@@ -127,7 +127,7 @@
   border-radius: 6px;
   border: 1px solid #5b594b;
   box-shadow: 0 4px 10px #111b2018;
-  padding: 16px;
+  padding: 14px;
 }
 .station-heading > span:first-child {
   font-size: 22px;
@@ -146,10 +146,14 @@
 .watch-desk {
   border-color: #bdb28f;
 }
+.playback-controls {
+  flex-wrap: wrap;
+  gap: 3px;
+}
 .playback-controls button {
   border-radius: 4px;
-  width: 39px;
-  height: 39px;
+  width: 44px;
+  height: 44px;
 }
 .playback-controls button:hover {
   background: var(--arena-gold);
@@ -291,6 +295,22 @@
   }
   .motion-workshop header:first-of-type strong {
     font-size: 18px;
+  }
+}
+/* Narrow screens: the stage mute/clean-view buttons sit just below the canvas
+   instead of over the near board. */
+@media (max-width: 600px) {
+  .club-stage,
+  .club-stage.in-contest {
+    overflow: visible;
+    margin-bottom: 52px;
+  }
+  .club-stage .stage-top,
+  .club-stage.in-contest .stage-top {
+    top: calc(100% + 6px);
+    bottom: auto;
+    left: 0;
+    right: 0;
   }
 }
 @media (max-width: 720px) {

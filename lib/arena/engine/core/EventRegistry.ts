@@ -56,7 +56,7 @@ registerPlayableEvent({
     scoreText: (p) => p.score + ' PTS',
     meter: { label: ' stamina', value: 'stamina' },
     energyLabel: 'Stamina',
-    help: 'Aim, hold charge, then release in green. On screen: tap charge, then release.',
+    help: 'Aim, hold charge, then release in the teal window. On screen: tap charge, then release.',
   },
   create: () => new PrecisionEvent(),
 });

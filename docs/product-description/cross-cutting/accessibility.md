@@ -77,7 +77,7 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
 
 - **Watch.** The court itself: where bags lie on a board, which cups are left, and where a ball hit the wall. The commentary names what each attempt hit, but not positions. Also visual only: the yellow underline marking the card now throwing, the court's nameplates, pips and status lines, and the camera moves. The bottom bar's **PAUSED** and **HEAT CHECK / COSMETIC** are text a screen reader can reach, but they are not announced.
 - **Play.**
-  - The **Release timing** meter, its green window and marker, and the reticle. The caption announces "Release in the green window · Shot: {shot}" and the grade afterwards, but nothing says where the marker is ([the cornhole throw](../play/cornhole.md)).
+  - The **Release timing** meter, its teal window and marker, and the reticle. The caption announces "Release in the teal window · Shot: {shot}" and the grade afterwards, but nothing says where the marker is ([the cornhole throw](../play/cornhole.md)).
   - Positions, obstacles and distances in the Dash and the Brawl.
   - Whose turn it is in cornhole, which the nameplates' status lines show. The active tile's highlight in the score strip is clipped out of sight with the strip.
 - **Sound.** Watch and Play play only short synthesized tones. Nothing is spoken ([sound](sound.md)).
@@ -96,17 +96,17 @@ Watch has no keyboard shortcuts and no skip link. Space does not pause and the a
   - which card is throwing
   - whether a contact burst means a score (yellow) or not (orange)
   - which beer-pong rack is whose (yellow or orange)
-- **The focus rings.** The Watch and menu ring, and the Play stage's ring, use the darker teal, about 4:1 against the page background. Play's own buttons still use the lighter teal, about 2.6:1, below the usual 3:1 for focus indicators.
+- **The focus rings.** The Watch and menu ring, the Play stage's ring and Play's own buttons all use the darker teal, about 4:1 against the page background, above the usual 3:1 for focus indicators.
 - **Target sizes.**
 
   | Target | Size |
   |---|---|
-  | The gear | 44 px (34 × 36 px at 600 px and below) |
+  | The gear | 44 px at every width |
   | Play's toolbar buttons | 44 px tall |
-  | Playback buttons | 39 px at every width |
+  | Playback buttons | 44 px at every width; on narrow side panels they wrap onto a second row |
   | Play's on-screen action buttons | at least 82 × 55 px |
   | Play's pads | 82 px round (76 px at 720 px wide and below) |
-  | The stage's sound and clean-view buttons | 31 px at every width |
+  | The stage's sound and clean-view buttons | 44 px at every width |
   | The × on a dialog | 28 px |
   | The footer's **House rules** and **History**, and **House rules** under the stage | 12 px text with no padding, well under 24 px tall |
 

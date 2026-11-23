@@ -1,6 +1,11 @@
 import type * as Phaser from 'phaser';
 import type { ArenaCue } from '../core/LiveTypes';
-import { CONTACT_GOLD, CONTACT_MISS, ImpactEffects } from './ImpactEffects';
+import {
+  CONTACT_GOLD,
+  CONTACT_MISS,
+  ImpactEffects,
+  still,
+} from './ImpactEffects';
 const LIFE: Record<string, number> = {
   hit: 0.42,
   block: 0.3,
@@ -41,8 +46,10 @@ export class EffectsManager {
     this.cues = this.cues.filter((c) => c.age < (LIFE[c.name] ?? 0.3));
     for (const c of this.cues) {
       c.age += dt;
-      if (reduced) continue;
-      const u = c.age / (LIFE[c.name] ?? 0.3),
+      // Reduced motion holds one settled frame for the effect's life; the
+      // footstep dust, pure decoration, is left out.
+      if (reduced && c.name === 'dust') continue;
+      const u = still(c.age / (LIFE[c.name] ?? 0.3), reduced),
         i = Math.min(1, c.intensity);
       // Ground effects sort with the characters (depth = ground y); hits and
       // blocks draw in front of both fighters.

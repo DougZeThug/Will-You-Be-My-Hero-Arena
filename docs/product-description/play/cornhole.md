@@ -23,7 +23,7 @@ When the match opens, both cards walk on for about a second and a half (**Cards 
 
 Moving left or right shifts the thrower along the throwing line. The aim keys or stick move the reticle.
 
-The player presses and holds the charge button: Space on keyboard 1. The **RELEASE TIMING** meter appears at the bottom left of the stage, with a marker sliding right and a teal band that the caption calls the green window, and the character plays a short pre-throw ritual. The caption reads "Release in the green window · Shot: Hole runner". The player lets go while the marker is in the green. The caption reads **Perfect release**, the character throws, and a moment later the bag leaves the hand and arcs onto the board.
+The player presses and holds the charge button: Space on keyboard 1. The **RELEASE TIMING** meter appears at the bottom left of the stage, with a marker sliding right and a teal band that the caption calls the teal window, and the character plays a short pre-throw ritual. The caption reads "Release in the teal window · Shot: Hole runner". The player lets go while the marker is in the teal band. The caption reads **Perfect release**, the character throws, and a moment later the bag leaves the hand and arcs onto the board.
 
 When the bag lands, the result is announced ("Doug: on the board — one point") and the thrower reacts. The nameplates update. After a short pause the next player's turn begins with the reticle re-centred. When every player has thrown four bags, the caption reads **Final score**, and the result shows "{name} wins", or **Draw** on a tie. The result offers **Play again** and **Choose another event**.
 
@@ -80,7 +80,7 @@ The throw commits when the charge press is accepted. That is a key press, a trig
   - **The release window** is ±(0.02 + the card's skill with the selected shot ÷ 30; a **Hole runner** is a slide shot and uses the card's Slide skill), plus 0.015 in precision mode, plus 0.01 for a *clutch performer* on their last bag. Power rises 0.04 every 60 ms, so a 0.6 shot skill gives ±0.040 (about ±60 ms) and a 0.9 skill ±0.050 (±75 ms). The widest built-in window is Dan's Roll in precision mode on his clutch bag: ±0.074, about ±110 ms.
 
   At the starting spot a perfect release is about 1.05 seconds into the charge.
-- **The caption** reads "Release in the green window · Shot: {shot}". Their nameplate's status line reads **CHARGING**.
+- **The caption** reads "Release in the teal window · Shot: {shot}". Their nameplate's status line reads **CHARGING**.
 - **The character plays a pre-throw ritual** from its personality, such as a bag squeeze or a stare at the board.
 
 Committing fixes nothing else. Position, aim, shot and precision mode can all still change: see [while charging](#while-charging).

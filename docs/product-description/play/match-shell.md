@@ -136,7 +136,7 @@ Nothing about the match is kept anywhere.
 | Sign and nameplates | Drawn inside the stage | A hanging sign with the event's title and phase, and a nameplate per player in the top corners |
 | Score strip | A 1-pixel box at the stage's top left, so only screen readers get it | One tile per player |
 | Overlays | Over the whole stage, dimming it | **Opening the cards…**, the error, or **PAUSED** |
-| **Release timing** meter | Drawn at the bottom left of the stage as **RELEASE TIMING**, cornhole only, while charging. The page's own copy, labelled **Release in green**, is clipped like the score strip | See [the cornhole throw](cornhole.md) |
+| **Release timing** meter | Drawn at the bottom left of the stage as **RELEASE TIMING**, cornhole only, while charging. The page's own copy, labelled **Release in the teal window**, is clipped like the score strip | See [the cornhole throw](cornhole.md) |
 | Caption | Under the stage | The event's message, and "Ns · Practice / no club points" |
 | Control panels | Under the caption, one per person | Name, move keys, a hint, and the [on-screen controls](touch-controls.md) |
 | Result | In place of the control panels | "{name} wins" or **Draw**, **Play again**, **Choose another event** |

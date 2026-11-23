@@ -163,6 +163,22 @@ export async function testAnimationSmoothness({ check }) {
     lastSide = w.side;
     lastFront = w.front;
   }
+  // The paper flip passes edge-on quickly: sampled at 60 Hz across a turn,
+  // at any phase, no more than two consecutive frames are under 5% wide.
+  {
+    const { VIEW_TURN_SECONDS } =
+      await import('../.test-build/engine/characters/CharacterView.mjs');
+    for (let offset = 0; offset < 1; offset += 0.1) {
+      let thin = 0,
+        longest = 0;
+      for (let frame = 0; frame / 60 <= VIEW_TURN_SECONDS + 1 / 60; frame++) {
+        const w = viewWidths((frame + offset) / 60 / VIEW_TURN_SECONDS);
+        thin = Math.max(w.side, w.front) < 0.05 ? thin + 1 : 0;
+        longest = Math.max(longest, thin);
+      }
+      check(() => assert.ok(longest <= 2, `edge-on lasts ${longest} frames at offset ${offset.toFixed(1)}`));
+    }
+  }
 
   // Presented time never runs backward and holds through a hit-stop at any
   // refresh rate: alpha still rises between held steps on fast displays and
