@@ -85,6 +85,7 @@ export async function testEngine({check,setup,m,s,a}){
   const end=timeline.completionTime(rec),stamp=moments.finalStamp(rec,end+1);
   check(()=>assert.equal(moments.finalStamp(rec,end-.01),null));
   check(()=>assert.equal(stamp?.text,rec.winner===null?'DRAW':m.userById(rec.setup.participants[rec.winner].userId).name.toUpperCase()+' WINS'));
+  if(rec.winner!==null){const p=rec.setup.participants[rec.winner],user=m.userById(p.userId).name,ch=m.cardById(p.cardId).name.split(' ')[0];check(()=>assert.equal(stamp?.sub,ch===user?undefined:`PLAYING ${ch.toUpperCase()}'S CARD`));}
  }
  // Reduced motion keeps most of the acting (65% of the authored pose).
  check(()=>assert.equal(poses.REDUCED_ACTING,.65));

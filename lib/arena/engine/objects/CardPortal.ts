@@ -7,7 +7,7 @@ import type {XY} from '../events/ArenaEvent';
 import {squashOffset} from '../motion/SquashStretch';
 /** The court card after the entrance: scale and opacity relative to its
  * presentation size, and how far it slides back from its character. */
-export const RECEDE={seconds:.6,scale:.55,alpha:.45,dx:-26};
+export const RECEDE={seconds:.6,scale:.55,alpha:0,dx:-26};
 export class CardPortal {
  readonly root:Phaser.GameObjects.Container;private glow:Phaser.GameObjects.Graphics;
  constructor(scene:Phaser.Scene,key:string,readonly base:XY,private color:number){
@@ -16,8 +16,8 @@ export class CardPortal {
   this.root.add([this.glow,plate,face]);this.settle();
  }
  /** `since`: seconds after the entrance settled. Over RECEDE.seconds the card
-  * steps back (smaller, fainter, standing on the same ground spot) so it no
-  * longer competes with its character during play; a pure function of
+  * steps back and fades out (the side panel and nameplates keep the matchup)
+  * so it no longer competes with its character during play; a pure function of
   * recording time, so seeks match. Omitted (previews) keeps it full size.
   * Reduced motion steps straight back without the ease. */
  settle(pulse=0,since?:number,reduced=false){const p=cardPresentation(this.base),k=since===undefined?0:reduced?1:smooth(since/RECEDE.seconds);

@@ -1,6 +1,6 @@
 import { completionTime, scoreTime } from '../../match-timeline';
 import { surfacePoint } from '../../equipment-geometry';
-import { userById, type Attempt, type Recording } from '../../model';
+import { cardById, userById, type Attempt, type Recording } from '../../model';
 import { CONTACT_CALLOUT } from './ArenaTheme';
 
 /** How long a scoring callout stays on the court, and how long the
@@ -63,12 +63,17 @@ export function scorePulse(
 export function finalStamp(rec: Recording, time: number) {
   const at = completionTime(rec);
   if (time < at) return null;
-  const winner =
-    rec.winner === null
-      ? null
-      : userById(rec.setup.participants[rec.winner]?.userId)?.name;
+  const p = rec.winner === null ? undefined : rec.setup.participants[rec.winner];
+  const winner = p ? userById(p.userId)?.name : undefined;
+  // The nameplates name each card's character, so say whose card won when the
+  // winning player is not that character (e.g. Doug playing Dan's card).
+  const character = p ? cardById(p.cardId)?.name.split(' ')[0] : undefined;
   return {
     text: winner ? `${winner.toUpperCase()} WINS` : 'DRAW',
+    sub:
+      winner && character && character !== winner
+        ? `PLAYING ${character.toUpperCase()}'S CARD`
+        : undefined,
     age: time - at,
   };
 }

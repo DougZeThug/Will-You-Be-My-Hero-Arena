@@ -108,6 +108,7 @@ export class ArenaHud {
   private banner: Phaser.GameObjects.Container;
   private bannerFace: Phaser.GameObjects.Graphics;
   private bannerText: Phaser.GameObjects.Text;
+  private bannerSub: Phaser.GameObjects.Text;
   private stamp = '';
   private state?: PresentationState;
   private visibility = { header: true, players: [true, true, true, true] };
@@ -183,7 +184,10 @@ export class ArenaHud {
         strokeThickness: 6,
       })
       .setOrigin(0.5);
-    this.banner.add([this.bannerFace, this.bannerText]);
+    this.bannerSub = scene.add
+      .text(0, 0, '', { fontFamily: T.font, fontSize: '22px', color: '#121615' })
+      .setOrigin(0.5);
+    this.banner.add([this.bannerFace, this.bannerText, this.bannerSub]);
     this.root.add(this.banner);
   }
   update(state: PresentationState) {
@@ -221,7 +225,7 @@ export class ArenaHud {
       protectedPoints: undefined,
       visibility: this.visibility,
       action: undefined,
-      banner: state.banner?.text,
+      banner: state.banner && `${state.banner.text}|${state.banner.sub ?? ''}`,
       players: state.players.map((p) => ({
         ...p,
         pulse: undefined,
@@ -346,9 +350,14 @@ export class ArenaHud {
       }
       this.banner.setVisible(!!state.banner);
       if (state.banner) {
+        const sub = state.banner.sub ?? '';
         this.bannerText.setText(state.banner.text);
-        const w = this.bannerText.width + 56,
-          h = this.bannerText.height + 18;
+        this.bannerSub.setText(sub).setVisible(!!sub);
+        const subH = sub ? this.bannerSub.height + 2 : 0;
+        this.bannerText.setY(-subH / 2);
+        this.bannerSub.setY(this.bannerText.height / 2 - subH / 2 + 2);
+        const w = Math.max(this.bannerText.width, this.bannerSub.width) + 56,
+          h = this.bannerText.height + subH + 18;
         this.bannerFace
           .clear()
           .fillStyle(T.ink, 1)

@@ -66,7 +66,7 @@ export interface PresentationState {
   players: PresentationPlayer[];
   action?: { label: string; value: number; target?: number; window?: number };
   /** The stamped FINAL banner ("DOUG WINS"), `age` seconds after it lands. */
-  banner?: { text: string; age: number };
+  banner?: { text: string; sub?: string; age: number };
   /** Reduced motion: stamps appear without the scale-in. */
   reduced?: boolean;
 }

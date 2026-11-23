@@ -102,9 +102,9 @@ The score appears 0.16 s after contact. At that moment:
 
 The card then reacts: a celebration if the attempt added points, a disappointed gesture if not. The status reads **SCORING**, then **NEXT UP**. When the reaction ends, the other card's attempt starts. After the last attempt, playback is complete.
 
-**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare. A stamped banner lands on the stage below the sign, naming the demo user who won as the result panel does ("DOUG WINS"), or "DRAW".
+**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare. A stamped banner lands on the stage below the sign, naming the demo user who won as the result panel does ("DOUG WINS"), or "DRAW". When the winner played the other character's card, a smaller line under it says whose card it was ("PLAYING DAN'S CARD"), matching the nameplates.
 
-**The cards on the court.** After the entrances each card stays beside its character, then, over about half a second, steps back to a smaller, fainter card at the same spot, so it no longer covers the character during the attempts.
+**The cards on the court.** After the entrances each card stays beside its character, then, over about half a second, steps back and fades out, so it no longer covers either character during the attempts. The side panel keeps showing both cards.
 
 **Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and the points, signed: "+3", "+1", "+0", or "−1" for a cornhole bag that lowered its thrower's score.
 

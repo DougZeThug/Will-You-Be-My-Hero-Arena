@@ -15,7 +15,7 @@ This document owns the complete state and the replay that starts from it. Replay
 
 Demo user Doug, playing the Dan card, beats demo user Dan, playing the Doug card, 7–4 in a counted cornhole entry. As the last bag settles:
 - **The title** changes to **CORNHOLE / FINAL**, and the bottom bar reads **FINAL SCORE** and **FULL TIME**.
-- **The stage** stamps a **DOUG WINS** banner below the sign (**DRAW** for a draw), naming the demo user as the result panel does.
+- **The stage** stamps a **DOUG WINS** banner below the sign (**DRAW** for a draw), naming the demo user as the result panel does, with "PLAYING DAN'S CARD" under it when the winner played the other character's card.
 - **The narration** says "Doug takes it with Dan Weidensaul’s card."
 - **The result panel**, dark, appears below the stage, and the page scrolls just far enough to bring it on screen, with:
   - **COUNTED RESULT / POINTS POSTED**
