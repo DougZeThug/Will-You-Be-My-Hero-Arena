@@ -174,6 +174,16 @@ rotation is clockwise on screen. For a rig facing +x a hanging limb swings
 **forward** with a negative angle and the spine leans forward with a positive
 one; multiply by `meta.facing` as `torture.ts` does (`applyPose`).
 
+## Character Lab view rigs
+
+`build.mjs <id> --view side|sideRear|front|back|all` (see `prep/views.mjs`, `prep/front.mjs`)
+writes the Character Lab's per-view rigs to `prototype/character-lab/rigs/<id>/<view>/`
+plus `proportions.json` and `views.json`, from `prototype/character-lab/characters/<id>.json`.
+Without `--view` the command and its output are unchanged. `front` cuts a front parts
+sheet (`FRONT` in `prep/front.mjs` lists every tunable); `back` is a labelled stand-in
+built from the same parts. Details and the art checklist:
+`prototype/character-lab/SUBMISSION.md`.
+
 ## Known limits
 
 See the torture sheets. In short: the far arm has no sleeve; the throwing

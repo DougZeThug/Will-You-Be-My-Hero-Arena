@@ -1,5 +1,5 @@
 // Small deterministic math kit for the Character Lab animator. No Math.random.
-import type { Vec3 } from './types';
+import type { Basis, Vec3 } from './types';
 
 export const TAU = Math.PI * 2;
 export const DEG = Math.PI / 180;
@@ -49,8 +49,41 @@ export function wrap(a: number): number {
   if (r <= -Math.PI) r += TAU;
   return r;
 }
-export const fwd = (yaw: number): Vec3 => ({ x: Math.cos(yaw), y: 0, z: Math.sin(yaw) });
-export const rgt = (yaw: number): Vec3 => ({ x: -Math.sin(yaw), y: 0, z: Math.cos(yaw) });
+// INTERFACE.md: right-hand rule about +Y. Yaw 0 faces +X, +90 deg faces -Z, -90 deg faces +Z.
+export const fwd = (yaw: number): Vec3 => ({ x: Math.cos(yaw), y: 0, z: -Math.sin(yaw) });
+/** The character's anatomical right for a facing yaw (facing +X -> right is +Z). */
+export const rgt = (yaw: number): Vec3 => ({ x: Math.sin(yaw), y: 0, z: Math.cos(yaw) });
+/** Yaw whose facing is the ground direction (x, z). */
+export const yawOf = (x: number, z: number): number => Math.atan2(-z, x);
+
+/** Orthonormal basis with x along `x` and z as close to `zHint` as possible; y = z cross x. */
+export function mkBasis(x: Vec3, zHint: Vec3, fallback: Vec3 = { x: 0, y: 1, z: 0 }): Basis {
+  const bx = norm(x, { x: 1, y: 0, z: 0 });
+  let z = sub(zHint, mul(bx, dot(zHint, bx)));
+  if (len(z) < 1e-6) z = sub(fallback, mul(bx, dot(fallback, bx)));
+  if (len(z) < 1e-6) z = cross(bx, { x: 0, y: 0, z: 1 });
+  const bz = norm(z);
+  return { x: bx, y: cross(bz, bx), z: bz };
+}
+/** Expresses basis `b` in the frame of basis `a` (rows = a's axes). */
+export function relBasis(a: Basis, b: Basis): Basis {
+  const row = (v: Vec3): Vec3 => ({ x: dot(a.x, v), y: dot(a.y, v), z: dot(a.z, v) });
+  return { x: row(b.x), y: row(b.y), z: row(b.z) };
+}
+/** Inverse of relBasis: the world basis of something held at `rel` inside `a`. */
+export function applyBasis(a: Basis, rel: Basis): Basis {
+  const out = (v: Vec3): Vec3 => add(add(mul(a.x, v.x), mul(a.y, v.y)), mul(a.z, v.z));
+  return { x: out(rel.x), y: out(rel.y), z: out(rel.z) };
+}
+/** Rotates every axis of a basis about unit axis k by angle a. */
+export function rotateBasis(b: Basis, k: Vec3, a: number): Basis {
+  return { x: rotate(b.x, k, a), y: rotate(b.y, k, a), z: rotate(b.z, k, a) };
+}
+/** Angle (rad) of the rotation taking basis a to basis b. */
+export function basisAngle(a: Basis, b: Basis): number {
+  const tr = dot(a.x, b.x) + dot(a.y, b.y) + dot(a.z, b.z);
+  return Math.acos(clamp((tr - 1) / 2, -1, 1));
+}
 export const UP: Vec3 = { x: 0, y: 1, z: 0 };
 
 /** Rotate v about unit axis k by angle a (Rodrigues). */
@@ -76,9 +109,8 @@ export class Spring {
     this.x = x;
   }
   step(target: number, w: number, zeta: number, dt: number): number {
-    // Implicit Euler on velocity for stability.
-    const a = w * w * (target - this.x) - 2 * zeta * w * this.v;
-    this.v = (this.v + a * dt) / (1 + 2 * zeta * w * dt + w * w * dt * dt);
+    // Implicit Euler: stiffness and damping are both taken at the end of the step.
+    this.v = (this.v + w * w * (target - this.x) * dt) / (1 + 2 * zeta * w * dt + w * w * dt * dt);
     this.x += this.v * dt;
     return this.x;
   }

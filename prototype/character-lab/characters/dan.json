@@ -1,7 +1,9 @@
 {
   "id": "dan",
   "height": 1.73,
-  "side": { "config": "prototype/motion/characters/dan.json" },
+  "side": {
+    "config": "prototype/motion/characters/dan.json"
+  },
   "sideRear": {
     "config": "prototype/motion/characters/dan.json",
     "source": "lab/human-motion/assets/directional/dan-rear-source.png"
@@ -10,6 +12,12 @@
     "sheet": "public/assets/dan/puppet-v3.png",
     "landmarks": "lib/arena/puppet-assets.json",
     "landmarksKey": "dan",
-    "overrides": {}
+    "overrides": {
+      "headShift": [
+        0,
+        30
+      ]
+    },
+    "overridesNote": "headShift: Dan's trunk piece ends in an empty collar (no neck skin), so the head is seated 30 px lower than the automatic rule (hand-entered, judged by eye on the bind image)."
   }
 }

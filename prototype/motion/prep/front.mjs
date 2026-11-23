@@ -43,10 +43,11 @@ export const FRONT = {
   ankleBand: 0.1,
   shortsFollow: 0.92, // how far the hem follows its thigh
   shortsSideBlend: 14,
+  wristOverlap: 6, // arm and hand parts both keep this much past the wrist line
   neckOverlap: 10, // head joint this far below the top of the trunk's neck stub
   headOverlap: 0.94, // fallback head anchor (fraction of the head piece height)
   // Back stand-in.
-  backOutline: 4, // px of the original outline kept around a flat fill
+  backOutline: 6, // px of the original outline kept around a flat fill
   backNeckShare: 0.2, // bottom share of the head filled with neck skin
 };
 
@@ -421,15 +422,20 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
   }
 
   // ---- Spine joints from the side view's proportions, so both views agree.
-  const chest = [(arm.armL.shoulder[0] + arm.armR.shoulder[0]) / 2, (arm.armL.shoulder[1] + arm.armR.shoulder[1]) / 2],
-    k = (ground - chest[1]) / side.shoulderToGround, // figure px per side px
+  const shoulderMid = [(arm.armL.shoulder[0] + arm.armR.shoulder[0]) / 2, (arm.armL.shoulder[1] + arm.armR.shoulder[1]) / 2],
+    k = (ground - shoulderMid[1]) / side.shoulderToGround, // figure px per side px
     // Hip height from the side view (the leg pieces start above the joint).
     hipY = ground - k * side.pelvisToGround,
     pelvis = [(leg.legL.hip[0] + leg.legR.hip[0]) / 2, hipY],
     // The head sits on the drawn neck stub (the art decides the neck length).
     headJoint = [neckX + tx, tBox.y0 + ty + T.neckOverlap + (T.headShift?.[1] ?? 0)],
-    neckJoint = lerp(chest, headJoint, side.neckBase),
-    spineJoint = lerp(pelvis, chest, side.spine / (side.spine + side.chestLen));
+    // Spine joints divide pelvis..head in the side view's ratios, so the trunk
+    // drawing is stretched evenly when the two views disagree on neck length.
+    // (The drawn shoulder sockets stay where the art has them.)
+    total = side.spine + side.chestLen + side.neck,
+    spineJoint = lerp(pelvis, headJoint, side.spine / total),
+    chest = lerp(pelvis, headJoint, (side.spine + side.chestLen) / total),
+    neckJoint = lerp(chest, headJoint, side.neckBase);
   leg.legL.hip[1] = leg.legR.hip[1] = hipY;
   // ---- Head: sized from the side view's head height.
   const headBox = bounds(alphaMask(piece.head, 128), piece.head.width),
@@ -558,13 +564,31 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
       return Object.fromEntries(top.map(([key, v]) => [key, v / sum]));
     },
     identity = (x, y) => [x, y];
+  // The hand is its own part (same weights, so the bind drawing is unchanged)
+  // so the poser can swap in another hand drawing.
+  const splitAtWrist = (s, keepHand) => {
+    const image = blankImage(W, H),
+      source = A[s].image,
+      n = unit(sub(A[s].tip, A[s].wrist));
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++) {
+        const o = (y * W + x) * 4;
+        if (!source.data[o + 3]) continue;
+        const along = dot(sub([x, y], A[s].wrist), n);
+        if (keepHand ? along > -T.wristOverlap : along < T.wristOverlap)
+          for (let c = 0; c < 4; c++) image.data[o + c] = source.data[o + c];
+      }
+    return image;
+  };
   const parts = [
     { name: 'leg_R', image: L.R.image, place: identity, weights: legWeights('R') },
     { name: 'leg_L', image: L.L.image, place: identity, weights: legWeights('L') },
     { name: 'trunk', image: trunkImage, place: identity, weights: trunkWeights },
     { name: 'head', image: headImage, place: identity, weights: () => ({ head: 1 }) },
-    { name: 'arm_R', image: A.R.image, place: identity, weights: armWeights('R') },
-    { name: 'arm_L', image: A.L.image, place: identity, weights: armWeights('L') },
+    ...['R', 'L'].flatMap((s) => [
+      { name: `arm_${s}`, image: splitAtWrist(s, false), place: identity, weights: armWeights(s) },
+      { name: `hand_${s}`, image: splitAtWrist(s, true), place: identity, weights: armWeights(s) },
+    ]),
   ];
   const headTopY = bounds(alphaMask(headImage, 128), W).y0;
   return {
@@ -576,6 +600,19 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
     width: W,
     heightPx: ground - headTopY,
     tunables: T,
+    // Drawn wrist width (figure px), so a hand from another sheet can be sized to it.
+    wristWidth:
+      ['R', 'L'].reduce((n, side) => {
+        const across = unit(sub(A[side].tip, A[side].wrist)),
+          normal = [-across[1], across[0]];
+        let count = 0;
+        for (let t = -120; t <= 120; t++) {
+          const x = Math.round(A[side].wrist[0] + normal[0] * t),
+            y = Math.round(A[side].wrist[1] + normal[1] * t);
+          if (x >= 0 && y >= 0 && x < W && y < H && A[side].image.data[(y * W + x) * 4 + 3] > 128) count++;
+        }
+        return n + count;
+      }, 0) / 2,
     // Bind positions of the Character Lab joints, figure pixels.
     joints: {
       pelvis, spine: spineJoint, chest, neck: neckJoint, head: headJoint, headTop: [headJoint[0], headTopY],

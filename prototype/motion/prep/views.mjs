@@ -83,8 +83,41 @@ function buildSide(id, character, view, debug) {
     transform: splitHead,
     extraMeta: (cut) => {
       const landmarks = typeof config.landmarks === 'string' ? readJson(config.landmarks) : config.landmarks,
-        bodyTop = cut.bones[0].point[1] - (cut.bodyTop ?? 0);
-      return { lab: { view, generator: VIEW_GENERATOR, split: SPLIT, config: spec, bodyTopHint: bodyTop, landmarksUsed: typeof config.landmarks === 'string' ? config.landmarks : 'inline' } };
+        { p } = sideJoints(landmarks),
+        // Body top is not known here; the spine parameters only need pelvis..head.
+        reference = sideReference(landmarks, 0),
+        stops = [reference.pelvis, reference.spine, reference.chest, reference.neck, reference.head],
+        // Height on the sheet -> parameter along pelvis(0) spine(1) chest(2) neck(3) head(4).
+        param = (y) => {
+          for (let i = 0; i < 4; i++)
+            if (y >= stops[i + 1] || i === 3) return round(i + (stops[i] - y) / (stops[i] - stops[i + 1]), 4);
+          return 4;
+        };
+      // Wrist width of the hand drawings as placed on the figure (they point +x,
+      // so it is the opaque run of the column at the wrist), median of the three.
+      const widths = cut.parts
+        .filter((part) => part.group === 'hand')
+        .map((part, n) => {
+          const [wx] = landmarks.registration.wrists[n],
+            { width, height, data } = part.image;
+          let count = 0;
+          for (let y = 0; y < height; y++) if (data[(y * width + Math.round(wx) + 6) * 4 + 3] > 128) count++;
+          const a = part.place(0, 0),
+            b = part.place(0, 100);
+          return (count * Math.hypot(b[0] - a[0], b[1] - a[1])) / 100;
+        })
+        .sort((p, q) => p - q);
+      return {
+        lab: {
+          view,
+          generator: VIEW_GENERATOR,
+          split: SPLIT,
+          wristWidth: round(widths[widths.length >> 1] ?? 0, 1),
+          spine: Object.fromEntries(
+            ['pelvis', 'spine_lower', 'spine_mid', 'chest', 'neck'].map((name) => [name, [param(p(name)[1]), param(p(name, 'end')[1])]]),
+          ),
+        },
+      };
     },
   });
   if (debug) debugBind(id, view, result.rig, out);
@@ -138,6 +171,8 @@ function buildFront(id, character, view, debug) {
         lab: {
           view,
           generator: VIEW_GENERATOR,
+          spine: { pelvis: [0, 1], spine: [1, 2], chest: [2, 3], neck: [3, 4] },
+          wristWidth: round(cut.wristWidth, 1),
           joints: Object.fromEntries(
             Object.entries(cut.joints).map(([name, point]) => [
               name,
@@ -203,7 +238,8 @@ function writeProportions(id, character) {
       hipWidth: round(Math.abs(fj.hipL[0] - fj.hipR[0]) * fm),
       upperArm: round(length(`upper_arm_${near}`) * m),
       forearm: round(length(`forearm_${near}`) * m),
-      hand: round(Math.hypot(palm[0] - wrist[0], palm[1] - wrist[1]) * m),
+      // wrist -> fingertips; the palm centre (the drawn grip socket) is at half of it.
+      hand: round(2 * Math.hypot(palm[0] - wrist[0], palm[1] - wrist[1]) * m),
       thigh: round(both('thigh') * m),
       shin: round(both('shin') * m),
       footLen: round(footLen * m),
@@ -212,7 +248,7 @@ function writeProportions(id, character) {
       _extra: {
         neckBaseFraction: round((reference.chest - reference.neck) / (reference.chest - reference.head)),
         definitions:
-          'pelvisHeight + spine + chestLen + neck + headLen = height. spine = pelvis->spine joint, chestLen = spine->chest (shoulder line), neck = chest->head joint (skull base; the neck joint sits neckBaseFraction of the way up), headLen = head joint->crown. upperArm/forearm from the drawn throwing arm, hand = wrist->palm centre, thigh/shin = mean of both drawn legs, footLen = heel->toe, ankleHeight = ankle above the sole.',
+          'pelvisHeight + spine + chestLen + neck + headLen = height. spine = pelvis->spine joint, chestLen = spine->chest (shoulder line), neck = chest->head joint (skull base; on the drawing the neck base sits neckBaseFraction of the way up), headLen = head joint->crown. upperArm/forearm from the drawn throwing arm, hand = 2 x (wrist->drawn palm socket) so the palm centre is at half, thigh/shin = mean of both drawn legs, footLen = heel->toe, ankleHeight = ankle above the sole.',
         sources: { side: rig.meta.landmarks.path ?? 'inline', front: front.meta.landmarks.path },
         sidePxPerMetre: round(1 / m, 2),
         frontPxPerMetre: round(1 / fm, 2),

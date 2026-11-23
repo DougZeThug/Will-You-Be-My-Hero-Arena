@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
 const page = (name: string) => fileURLToPath(new URL(`./${name}`, import.meta.url));
-const pages = ['index.html', 'stick.html'].filter((name) => existsSync(page(name)));
+const pages = ['index.html', 'stick.html', 'viewtest.html'].filter((name) => existsSync(page(name)));
 
 export default defineConfig({
   root: fileURLToPath(new URL('./', import.meta.url)),
