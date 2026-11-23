@@ -31,8 +31,8 @@ export const danStyle: MotionStyle = {
     pelvisFollow: 16,
     settleFreq: 13,
     settleDamping: 0.85,
-    armFreq: 11,
-    armDamping: 0.75,
+    armFreq: 18,
+    armDamping: 0.85,
     reachTime: 0.42,
   },
   gait: {

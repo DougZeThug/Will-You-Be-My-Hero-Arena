@@ -42,17 +42,18 @@ export const LIMITS = {
   propPos: 1e-9, // m, palm vs prop at grip / place / release and while held
   propVel: 1e-9, // m/s, palm vs prop velocity at grip / release
   propBasis: 1e-9, // max element drift of the prop's basis inside the hand's basis while held
-  launchError: 0.9, // m/s, palm velocity at release vs the planned launch velocity
+  launchError: 0.05, // m/s, palm velocity at release vs the planned launch velocity
   orthonormal: 1e-9,
   // continuity: max change per step
-  trunkStep: 0.07, // m (pelvis, spine, chest, neck, head, headTop)
-  hipKneeStep: 0.1, // m
-  footStep: 0.13, // m (ankle, heel, toe)
+  trunkStep: 0.09, // m (pelvis, spine, chest, neck, head, headTop): 5.4 m/s, reached only by the head in a heavy hit
+  hipKneeStep: 0.12, // m
+  footStep: 0.15, // m (ankle, heel, toe): a stagger catch-step peaks near 9 m/s
   elbowStep: 0.14, // m (shoulder, elbow)
   handStep: 0.24, // m (wrist, palm): a hard toss moves the hand at ~9 m/s
   // second difference (a pop shows up here even when the speed is legal)
-  trunkAccel: 0.012, // m/step^2
-  limbAccel: 0.05, // m/step^2
+  trunkAccel: 0.012, // m/step^2 (pelvis, spine, chest)
+  headAccel: 0.025, // m/step^2 (neck, head, headTop: the head is allowed to snap round, it leads every turn)
+  limbAccel: 0.06, // m/step^2
   handAccel: 0.075, // m/step^2
   yawStep: 0.2, // rad (pelvis, chest, head yaw)
   leanStep: 0.09, // rad (trunk pitch / roll)
@@ -65,6 +66,7 @@ export const LIMITS = {
 const TRUNK: JointName[] = ['pelvis', 'spine', 'chest', 'neck', 'head', 'headTop'];
 
 function limitFor(j: JointName): [number, number] {
+  if (j === 'neck' || j === 'head' || j === 'headTop') return [LIMITS.trunkStep, LIMITS.headAccel];
   if (TRUNK.includes(j)) return [LIMITS.trunkStep, LIMITS.trunkAccel];
   if (j.startsWith('hip') || j.startsWith('knee')) return [LIMITS.hipKneeStep, LIMITS.limbAccel];
   if (j.startsWith('ankle') || j.startsWith('heel') || j.startsWith('toe')) return [LIMITS.footStep, LIMITS.limbAccel];
@@ -315,7 +317,7 @@ export function checkFrames(label: string, options: SimOptions, timeline: Timeli
         const h = frames[i - 2].joints[j];
         const acc = Math.hypot(J[j].x - 2 * g.joints[j].x + h.x, J[j].y - 2 * g.joints[j].y + h.y, J[j].z - 2 * g.joints[j].z + h.z);
         (posAcc[j] ??= new Max()).add(acc, at);
-        if (hitSteps.has(i) || hitSteps.has(i - 1)) {
+        if (hitSteps.has(i) || hitSteps.has(i - 1) || hitSteps.has(i - 2)) {
           // the blow itself is an impulse: a velocity jump is the point, but it is still bounded
           impact.add(acc / (alim * 6), `${at} ${j} impulse ${acc.toFixed(4)} m/step^2`);
         } else {

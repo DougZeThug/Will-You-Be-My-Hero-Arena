@@ -9,6 +9,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assembleRig, buildCharacter, writeRig } from './build.mjs';
+import { BODY, bodyCut } from './body.mjs';
 import { FRONT, frontCut } from './front.mjs';
 import { decodePng, encodePng } from './png.mjs';
 import { alphaMask, blankImage, compositeOver, cutout } from './raster.mjs';
@@ -149,7 +150,7 @@ function buildFront(id, character, view, debug) {
       spine: reference.pelvis - reference.spine,
       chestLen: reference.spine - reference.chest,
     },
-    cut = frontCut(decodePng(sheetFile), skin, side, spec.overrides ?? {}, view),
+    cut = frontCut(decodePng(sheetFile), skin, side, spec.overrides ?? {}, view === 'backStandIn' ? 'back' : 'front'),
     built = assembleRig(cut, {
       width: cut.width,
       heightPx: round(cut.heightPx, 2),
@@ -158,7 +159,7 @@ function buildFront(id, character, view, debug) {
         generator: VIEW_GENERATOR,
         derived: true,
         note:
-          view === 'back'
+          view === 'backStandIn'
             ? 'STAND-IN. The front parts with the trunk above the waist and the head flat-filled inside their own outlines. Not a drawn back view.'
             : 'Derived cut of the front parts sheet: sticker contour removed, parts scaled to one figure, joints from the sheet geometry and the side view proportions.',
         inputs: [{ path: spec.sheet, sha256: sha256(sheetFile) }],
@@ -173,6 +174,8 @@ function buildFront(id, character, view, debug) {
           generator: VIEW_GENERATOR,
           spine: { pelvis: [0, 1], spine: [1, 2], chest: [2, 3], neck: [3, 4] },
           wristWidth: round(cut.wristWidth, 1),
+          leftSign: 1,
+          canonicalAngle: 90,
           joints: Object.fromEntries(
             Object.entries(cut.joints).map(([name, point]) => [
               name,
@@ -188,12 +191,62 @@ function buildFront(id, character, view, debug) {
   return { rig: built.rig, notes: cut.notes, out };
 }
 
+/** `back` / `threeQuarterFront` from one whole-figure drawing (see body.mjs). */
+function buildBody(id, character, view, debug) {
+  const spec = character[view];
+  if (!spec) throw new Error(`${id}: no "${view}" entry in the character config`);
+  if (!existsSync(resolve(lab, 'rigs', id, 'proportions.json'))) {
+    buildSide(id, character, 'side', false);
+    buildFront(id, character, 'front', false);
+    writeProportions(id, character);
+  }
+  const file = readFileSync(resolve(repository, spec.source)),
+    proportions = JSON.parse(readFileSync(resolve(lab, 'rigs', id, 'proportions.json'), 'utf8')),
+    cut = bodyCut(decodePng(file), proportions, { view, landmarks: spec.landmarks, overrides: spec.overrides }),
+    built = assembleRig(cut, {
+      width: cut.width,
+      heightPx: round(cut.heightPx, 2),
+      meta: (placement) => {
+        const relative = (joints) =>
+          Object.fromEntries(Object.entries(joints).map(([name, point]) => [name, [round(point[0] - placement.sheetOrigin[0], 2), round(point[1] - placement.sheetOrigin[1], 2)]]));
+        return {
+          id,
+          generator: VIEW_GENERATOR,
+          derived: true,
+          note: 'Derived cut of one whole-figure drawing: sticker contour removed, arms / legs / head separated, hidden trunk under the arms flat-filled, new cut edges outlined. In a three-quarter drawing the far arm is the near arm drawing.',
+          inputs: [{ path: spec.source, sha256: sha256(file) }],
+          landmarks: { estimated: true, correctedByHand: spec.landmarks ?? {} },
+          hints: spec.overrides ?? {},
+          facing: view === 'threeQuarterFront' ? 1 : 0,
+          ...placement,
+          body: BODY,
+          notes: cut.notes,
+          lab: {
+            view,
+            generator: VIEW_GENERATOR,
+            spine: { pelvis: [0, 1], spine: [1, 2], chest: [2, 3], neck: [3, 4] },
+            wristWidth: round(cut.wristWidth, 1),
+            leftSign: cut.leftSign,
+            nearSide: cut.nearSide,
+            canonicalAngle: view === 'back' ? -90 : 45,
+            joints: relative(cut.joints),
+            estimatedJoints: relative(cut.estimated),
+          },
+        };
+      },
+    }),
+    out = resolve(lab, 'rigs', id, view);
+  writeRig(out, built);
+  if (debug) debugBind(id, view, built.rig, out, cut, 'views2');
+  return { rig: built.rig, notes: cut.notes, out };
+}
+
 /** Bind-pose composite of the cut parts, for eyeballing the assembly. */
-function debugBind(id, view, rig, out, cut) {
+function debugBind(id, view, rig, out, cut, set = 'views') {
   if (!cut) return;
-  const folder = resolve(repository, 'work/qa/character-lab/views/debug');
+  const folder = resolve(repository, `work/qa/character-lab/${set}/debug`);
   mkdirSync(folder, { recursive: true });
-  const bind = blankImage(cut.width, FRONT.canvas[1]);
+  const bind = blankImage(cut.width, cut.height ?? FRONT.canvas[1]);
   for (const part of cut.parts) compositeOver(bind, part.image);
   // Joint markers.
   for (const point of Object.values(cut.joints))
@@ -205,6 +258,30 @@ function debugBind(id, view, rig, out, cut) {
         bind.data.set(Math.abs(dx) === 3 || Math.abs(dy) === 3 ? [0, 0, 0, 255] : [0, 255, 255, 255], (y * bind.width + x) * 4);
       }
   writeFileSync(resolve(folder, `bind-${id}-${view}.png`), encodePng(bind));
+  if (cut.leftSign === undefined) return;
+  // Exploded view of the cut: every part moved apart so cut edges and fills show.
+  const pad = 160,
+    exploded = blankImage(cut.width + pad * 2, (cut.height ?? 0) + pad * 2),
+    shift = (name) => {
+      const sideOf = (s) => (s === 'L' ? cut.leftSign : -cut.leftSign);
+      if (name === 'head') return [0, -110];
+      if (name === 'trunk') return [0, 0];
+      const s = name.slice(-1);
+      if (name.startsWith('arm')) return [sideOf(s) * 130, 0];
+      if (name.startsWith('hand')) return [sideOf(s) * 130, 40];
+      return [sideOf(s) * 60, 110];
+    };
+  for (const part of cut.parts) {
+    const [dx, dy] = shift(part.name);
+    for (let y = 0; y < part.image.height; y++)
+      for (let x = 0; x < part.image.width; x++) {
+        const from = (y * part.image.width + x) * 4;
+        if (part.image.data[from + 3] < 128) continue;
+        const to = ((y + pad + dy) * exploded.width + x + pad + dx) * 4;
+        for (let c = 0; c < 4; c++) exploded.data[to + c] = part.image.data[from + c];
+      }
+  }
+  writeFileSync(resolve(folder, `exploded-${id}-${view}.png`), encodePng(exploded));
 }
 
 /** Proportions (metres) from the drawings' landmarks: lengths from the side
@@ -315,12 +392,16 @@ function writeViews(id, character) {
 
 export function buildView(id, view, { debug = false } = {}) {
   const character = readJson(`prototype/character-lab/characters/${id}.json`),
-    list = view === 'all' ? ['side', ...(character.sideRear ? ['sideRear'] : []), 'front', 'back'] : [view];
+    list =
+      view === 'all'
+        ? ['side', ...(character.sideRear ? ['sideRear'] : []), 'front', 'backStandIn', ...['back', 'threeQuarterFront'].filter((name) => character[name])]
+        : [view];
   for (const name of list) {
     const started = Date.now();
     let result;
     if (name === 'side' || name === 'sideRear') result = buildSide(id, character, name, debug);
-    else if (name === 'front' || name === 'back') result = buildFront(id, character, name, debug);
+    else if (name === 'front' || name === 'backStandIn' || (name === 'back' && !character.back)) result = buildFront(id, character, name === 'back' ? 'backStandIn' : name, debug);
+    else if (name === 'back' || name === 'threeQuarterFront') result = buildBody(id, character, name, debug);
     else throw new Error(`unknown view ${name}`);
     console.log(`${id} ${name}: ${result.rig.parts.length} parts, ${result.rig.parts.reduce((n, p) => n + p.xy.length / 2, 0)} vertices, atlas ${result.rig.atlas.width}x${result.rig.atlas.height}, height ${result.rig.meta.heightPx}px -> ${result.out} (${Date.now() - started} ms)`);
     for (const note of result.notes) console.log(`  ${note}`);

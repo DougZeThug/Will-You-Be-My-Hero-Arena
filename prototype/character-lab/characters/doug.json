@@ -1,7 +1,9 @@
 {
   "id": "doug",
   "height": 1.73,
-  "side": { "config": "prototype/motion/characters/doug.json" },
+  "side": {
+    "config": "prototype/motion/characters/doug.json"
+  },
   "sideRear": {
     "config": "prototype/motion/characters/doug.json",
     "source": "lab/human-motion/assets/directional/doug-rear-source.png"
@@ -11,5 +13,13 @@
     "landmarks": "lib/arena/puppet-assets.json",
     "landmarksKey": "doug",
     "overrides": {}
+  },
+  "back": {
+    "source": "prototype/character-lab/source-art/doug-back.png",
+    "landmarks": {}
+  },
+  "threeQuarterFront": {
+    "source": "prototype/character-lab/source-art/doug-three-quarter.png",
+    "landmarks": {}
   }
 }

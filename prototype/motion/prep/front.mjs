@@ -76,7 +76,7 @@ function crop(image, [x0, y0, w, h]) {
 }
 
 /** Keep only the largest connected opaque component (drops sheet dividers). */
-function largestComponent(image) {
+export function largestComponent(image) {
   const { width, height } = image,
     solid = alphaMask(image, 128),
     seen = new Uint8Array(width * height);
@@ -103,7 +103,7 @@ function largestComponent(image) {
 
 /** Remove a light "sticker" contour outside the drawing's dark outline.
  * Returns the measured contour width (0 when there is none). */
-function removeSticker(image) {
+export function removeSticker(image) {
   const { width, height, data } = image,
     background = new Uint8Array(width * height);
   // A one pixel transparent frame so the distance works at the crop border.
@@ -166,7 +166,7 @@ function removeSticker(image) {
 }
 
 /** Opaque runs [x0, x1] of each row. */
-function rowRuns(image, minRun = 4) {
+export function rowRuns(image, minRun = 4) {
   const { width, height, data } = image,
     rows = [];
   for (let y = 0; y < height; y++) {
@@ -185,15 +185,15 @@ function rowRuns(image, minRun = 4) {
   return rows;
 }
 /** First and last row that carry a real run (ignores specks). */
-function solidBox(rows) {
+export function solidBox(rows) {
   let y0 = 0,
     y1 = rows.length - 1;
   while (y0 < y1 && !rows[y0].length) y0++;
   while (y1 > y0 && !rows[y1].length) y1--;
   return { y0, y1 };
 }
-const extent = (runs) => (runs.length ? [runs[0][0], runs[runs.length - 1][1]] : null);
-const widthOf = (runs) => {
+export const extent = (runs) => (runs.length ? [runs[0][0], runs[runs.length - 1][1]] : null);
+export const widthOf = (runs) => {
   const e = extent(runs);
   return e ? e[1] - e[0] + 1 : 0;
 };
@@ -236,7 +236,7 @@ function placePiece(canvasSize, piece, scale, [px, py], [fx, fy]) {
   return out;
 }
 
-function medianOf(image, test) {
+export function medianOf(image, test) {
   const channels = [[], [], []],
     { width, height, data } = image;
   for (let y = 0; y < height; y++)
@@ -488,11 +488,28 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
     flatFill(headImage, () => true, (x, y) => (y > hb.y1 - hh * T.backNeckShare ? skinTone : hair));
     notes.push(`back stand-in: garment rgb ${garment}, hair rgb ${hair}, waist line y ${waistLine.toFixed(0)}`);
   }
+  // Anatomical names: the sheet's left part is the character's right.
+  return rigParts({
+    W, H,
+    A: { R: arm.armL, L: arm.armR },
+    L: { R: leg.legL, L: leg.legR },
+    pelvis, spineJoint, chest, neckJoint, headJoint, headTop, ground,
+    hem: hemRow + ty,
+    hipY,
+    figureCentre: centreX + tx,
+    trunkImage, headImage, T, notes,
+  });
+}
 
-  // ---- Bones. Anatomical names: the sheet's left part is the character's right.
-  const A = { R: arm.armL, L: arm.armR },
-    L = { R: leg.legL, L: leg.legR },
-    root = [pelvis[0], ground],
+/**
+ * Bones, sockets, skin weights and parts for a figure already separated into
+ * trunk / head / two arms / two legs on one canvas. Shared by the front parts
+ * sheet and the full-body cut (`body.mjs`). `A` and `L` are keyed by the
+ * ANATOMICAL side: A[s] = { image, shoulder, elbow, wrist, tip },
+ * L[s] = { image, hip, knee, ankle, heel, toe }.
+ */
+export function rigParts({ leftSign = 1, W, H, A, L, pelvis, spineJoint, chest, neckJoint, headJoint, headTop, ground, hem, hipY, figureCentre, trunkImage, headImage, T, notes }) {
+  const root = [pelvis[0], ground],
     bones = [],
     bone = (name, parent, point, end) => bones.push({ name, parent, point, end });
   bone('root', null, root);
@@ -540,8 +557,6 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
       const thigh = len(sub(L[s].knee, L[s].hip));
       return chain3([`thigh_${s}`, `shin_${s}`, `foot_${s}`], L[s].hip, L[s].knee, L[s].ankle, L[s].toe, T.kneeBand * thigh, T.ankleBand * thigh);
     },
-    hem = hemRow + ty,
-    figureCentre = centreX + tx,
     trunkWeights = (x, y) => {
       // y decreases up the spine.
       const a = smoothstep(-T.spineBand, T.spineBand, spineJoint[1] - y),
@@ -550,7 +565,7 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
         out = { pelvis: 1 - a, spine: a * (1 - b), chest: a * b * (1 - c), neck: a * b * c };
       if (y > hipY) {
         const follow = T.shortsFollow * smoothstep(hipY, hipY + 0.6 * (hem - hipY), y),
-          toL = smoothstep(-T.shortsSideBlend, T.shortsSideBlend, x - figureCentre);
+          toL = smoothstep(-T.shortsSideBlend, T.shortsSideBlend, (x - figureCentre) * leftSign);
         out.pelvis *= 1 - follow;
         out.thigh_L = follow * toL;
         out.thigh_R = follow * (1 - toL);
@@ -598,6 +613,7 @@ export function frontCut(sheet, skin, side, overrides = {}, mode = 'front') {
     notes,
     facing: 0,
     width: W,
+    height: H,
     heightPx: ground - headTopY,
     tunables: T,
     // Drawn wrist width (figure px), so a hand from another sheet can be sized to it.

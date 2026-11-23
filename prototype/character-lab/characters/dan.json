@@ -19,5 +19,13 @@
       ]
     },
     "overridesNote": "headShift: Dan's trunk piece ends in an empty collar (no neck skin), so the head is seated 30 px lower than the automatic rule (hand-entered, judged by eye on the bind image)."
+  },
+  "back": {
+    "source": "prototype/character-lab/source-art/dan-back.png",
+    "landmarks": {}
+  },
+  "threeQuarterFront": {
+    "source": "prototype/character-lab/source-art/dan-three-quarter.png",
+    "landmarks": {}
   }
 }
