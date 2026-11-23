@@ -162,6 +162,42 @@ export class NativeAnimator {
     `export function addPlayRunning() {}\n`,
   );
 
+  // --- lab/loongbones stubs. Main's polish passes added real imports from
+  // `../loongbones/side-rig/anatomy` (ARENA_STANDING_HEIGHT, displayScale) and
+  // `../loongbones/arena/sideRigSockets` (SIDE_RIG_SOCKETS) to PlayMotionRig.
+  // Those modules live in lab/, which the pure-Node harness does not
+  // transpile, so we stub the two surfaces PlayMotionRig actually reads, with
+  // their real exported values, so build()/drive() run verbatim. The
+  // `WeightedRigDefinition` import is `import type` and erased on transpile,
+  // so it needs no stub.
+  const anatomyStubUrl = pathToFileURL(
+    path.join(stubDir, 'anatomy.mjs'),
+  ).href;
+  writeFileSync(
+    path.join(stubDir, 'anatomy.mjs'),
+    `export const ARENA_STANDING_HEIGHT = 371;
+export const displayScale = (definition, actorScale) =>
+  actorScale / definition.scale;
+`,
+  );
+  const socketsStubUrl = pathToFileURL(
+    path.join(stubDir, 'sideRigSockets.mjs'),
+  ).href;
+  writeFileSync(
+    path.join(stubDir, 'sideRigSockets.mjs'),
+    `export const SIDE_RIG_SOCKETS = {
+  throwingHand: 'rightHand',
+  offHand: 'leftHand',
+  head: 'head',
+  chest: 'chest',
+  waist: 'pelvis',
+  footL: 'rightAnkle',
+  footR: 'leftAnkle',
+  effect: 'chest',
+};
+`,
+  );
+
   // --- ESM resolve hook: 'phaser' → stub; PlayMotionRig's './NativeAnimator'
   // and './authoring/play' → stubs; the rig's `../../lib/arena/...` imports →
   // the already-transpiled `.test-build/` tree. The NativeAnimator/authoring
@@ -176,6 +212,8 @@ import { pathToFileURL } from 'node:url';
 const phaserStubUrl = ${JSON.stringify(phaserStubUrl)};
 const animatorStubUrl = ${JSON.stringify(animatorStubUrl)};
 const authoringStubUrl = ${JSON.stringify(authoringStubUrl)};
+const anatomyStubUrl = ${JSON.stringify(anatomyStubUrl)};
+const socketsStubUrl = ${JSON.stringify(socketsStubUrl)};
 const playRigUrl = ${JSON.stringify(playRigUrl)};
 const repo = ${JSON.stringify(repo)};
 const UP = '../';
@@ -192,6 +230,16 @@ export async function resolve(specifier, context, nextResolve) {
       return { url: animatorStubUrl, shortCircuit: true };
     if (specifier === './authoring/play' || specifier === './authoring/play.mjs')
       return { url: authoringStubUrl, shortCircuit: true };
+    if (
+      specifier === '../loongbones/side-rig/anatomy' ||
+      specifier === '../loongbones/side-rig/anatomy.mjs'
+    )
+      return { url: anatomyStubUrl, shortCircuit: true };
+    if (
+      specifier === '../loongbones/arena/sideRigSockets' ||
+      specifier === '../loongbones/arena/sideRigSockets.mjs'
+    )
+      return { url: socketsStubUrl, shortCircuit: true };
   }
   const marker = '/lib/arena/';
   const idx = specifier.indexOf(marker);
