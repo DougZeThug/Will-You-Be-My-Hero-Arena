@@ -56,9 +56,9 @@ export interface Pose {
   legR?: LegPose;
   /** Bean bag held in this hand. */
   bag?: Side;
-  /** Shoulder joint offset, metres: [up, back]. */
-  shrugL?: [number, number];
-  shrugR?: [number, number];
+  /** Shoulder joint offset, metres: [up, back, inward (toward the spine; optional)]. */
+  shrugL?: [number, number, number?];
+  shrugR?: [number, number, number?];
   /** World heel targets (legs solved by IK; the pelvis drops if they are out of reach). `yaw` deg = the foot's facing, `lift` m. */
   feet?: Partial<Record<Side, { x: number; z: number; yaw?: number; lift?: number; pitch?: number }>>;
   /** World-locked feet: keep ankle/heel/toe where a yaw-0 stance puts them. */
@@ -106,7 +106,7 @@ export function buildFrame(p: Proportions, pose: Pose, step = 0): ViewFrame {
     // Arm.
     const a = rad(arm.forward ?? 0),
       shrug = (s === 'L' ? pose.shrugL : pose.shrugR) ?? [0, 0],
-      shoulder = add(add(add(J.chest, outward, p.shoulderWidth / 2), upC, shrug[0]), fc, -shrug[1]),
+      shoulder = add(add(add(J.chest, outward, p.shoulderWidth / 2 - (shrug[2] ?? 0)), upC, shrug[0]), fc, -shrug[1]),
       down = scale(upC, -1),
       upperDir = norm(mix(mix(down, fc, a), outward, rad(arm.out ?? 4))),
       bend = norm(mix(fc, upC, a)),
