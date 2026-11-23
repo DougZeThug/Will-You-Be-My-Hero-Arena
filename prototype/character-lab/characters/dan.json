@@ -1,0 +1,15 @@
+{
+  "id": "dan",
+  "height": 1.73,
+  "side": { "config": "prototype/motion/characters/dan.json" },
+  "sideRear": {
+    "config": "prototype/motion/characters/dan.json",
+    "source": "lab/human-motion/assets/directional/dan-rear-source.png"
+  },
+  "front": {
+    "sheet": "public/assets/dan/puppet-v3.png",
+    "landmarks": "lib/arena/puppet-assets.json",
+    "landmarksKey": "dan",
+    "overrides": {}
+  }
+}

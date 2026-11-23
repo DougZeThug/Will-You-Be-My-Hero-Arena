@@ -1,0 +1,27 @@
+{
+  "height": 1.73,
+  "pelvisHeight": 0.764,
+  "spine": 0.2745,
+  "chestLen": 0.2687,
+  "neck": 0.1409,
+  "headLen": 0.2818,
+  "shoulderWidth": 0.3905,
+  "hipWidth": 0.2028,
+  "upperArm": 0.2388,
+  "forearm": 0.2838,
+  "hand": 0.0616,
+  "thigh": 0.2467,
+  "shin": 0.3529,
+  "footLen": 0.2513,
+  "ankleHeight": 0.1358,
+  "_extra": {
+    "neckBaseFraction": 0.6804,
+    "definitions": "pelvisHeight + spine + chestLen + neck + headLen = height. spine = pelvis->spine joint, chestLen = spine->chest (shoulder line), neck = chest->head joint (skull base; the neck joint sits neckBaseFraction of the way up), headLen = head joint->crown. upperArm/forearm from the drawn throwing arm, hand = wrist->palm centre, thigh/shin = mean of both drawn legs, footLen = heel->toe, ankleHeight = ankle above the sole.",
+    "sources": {
+      "side": "lab/loongbones/assets/cornhole-side-v3/doug_authoring.json",
+      "front": "lib/arena/puppet-assets.json"
+    },
+    "sidePxPerMetre": 688.44,
+    "frontPxPerMetre": 716.05
+  }
+}

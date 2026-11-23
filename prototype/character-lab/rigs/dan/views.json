@@ -1,0 +1,48 @@
+{
+  "id": "dan",
+  "generator": "prototype/motion/prep/views@1",
+  "note": "Canonical angles are the block yaw relative to the camera: side 0 (faces screen right), front +90, back -90. The other half-circle is the mirror. See views/poser.ts for the selection rule.",
+  "views": {
+    "side": {
+      "rig": "side/rig.json",
+      "standIn": false,
+      "source": "lab/loongbones/assets/cornhole-side-v3/dan_source.png",
+      "note": "Drawn right profile, re-cut by the side pipeline."
+    },
+    "sideRear": {
+      "rig": "sideRear/rig.json",
+      "standIn": false,
+      "source": "lab/human-motion/assets/directional/dan-rear-source.png",
+      "note": "The same profile with the garment redrawn as seen from behind. Used for the left-facing (mirrored) profile so chest prints are never shown mirrored."
+    },
+    "front": {
+      "rig": "front/rig.json",
+      "standIn": false,
+      "source": "public/assets/dan/puppet-v3.png",
+      "note": "Drawn front parts sheet. The trunk, arms and legs are true front drawings; the HEAD on that sheet is a three-quarter-front head, so a dead-on front face is a stand-in.",
+      "headStandIn": {
+        "standIn": true,
+        "reason": "The only front-ish head is drawn three-quarter, looking to its left.",
+        "replaceWith": "A dead-on front head (hair/cap, both ears, neck stub) on the parts sheet."
+      }
+    },
+    "back": {
+      "rig": "back/rig.json",
+      "standIn": true,
+      "reason": "No back drawing exists. The tools reuse the front parts mirrored, with the shirt above the waist and the head flat-filled inside their own outlines.",
+      "replaceWith": "A back parts sheet in the same layout as the front one: trunk from behind (shirt back, shorts seat), back of the head, two arms and two legs seen from behind."
+    },
+    "threeQuarterFront": {
+      "rig": "front/rig.json",
+      "standIn": true,
+      "reason": "No three-quarter body drawing exists. The front parts are narrowed by the projection (shoulder and hip width follow the 3D skeleton); the head is the true three-quarter head.",
+      "replaceWith": "A three-quarter-front parts sheet (45 degrees): trunk, near and far arm, near and far leg."
+    },
+    "threeQuarterBack": {
+      "rig": "back/rig.json",
+      "standIn": true,
+      "reason": "No three-quarter-back drawing exists. The back stand-in narrowed by the projection.",
+      "replaceWith": "A three-quarter-back parts sheet (135 degrees), same layout."
+    }
+  }
+}

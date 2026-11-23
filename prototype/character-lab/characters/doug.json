@@ -1,0 +1,15 @@
+{
+  "id": "doug",
+  "height": 1.73,
+  "side": { "config": "prototype/motion/characters/doug.json" },
+  "sideRear": {
+    "config": "prototype/motion/characters/doug.json",
+    "source": "lab/human-motion/assets/directional/doug-rear-source.png"
+  },
+  "front": {
+    "sheet": "public/assets/doug/puppet-v3.png",
+    "landmarks": "lib/arena/puppet-assets.json",
+    "landmarksKey": "doug",
+    "overrides": {}
+  }
+}

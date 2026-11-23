@@ -1,4 +1,7 @@
-# Character Lab: shared contract (core <-> views)
+# Character Lab: shared contract (core <-> views) — DRAFT
+
+**Draft until the motion proves it.** The demo sequence decides what the renderer really
+needs; change this file when the sequence shows a field is missing or wrong.
 
 Isolated prototype. Nothing here is imported by the shipped game, and nothing here edits it.
 
@@ -9,8 +12,12 @@ Motion, turning, proportions and props live in 3D; the look stays the owner's dr
 ## Space and units
 - Right-handed, metres. `+Y` up, ground at `Y = 0`. World `+X` is screen-right and `+Z` is
   toward the viewer when the camera yaw is 0.
-- Angles in radians. Yaw is rotation about `+Y`; yaw 0 faces `+X`; positive yaw turns the
-  facing toward `+Z` (toward the camera at camera yaw 0).
+- Angles in radians. Yaw follows the right-hand rule about `+Y` (counter-clockwise seen
+  from above): `facing(yaw) = (cos yaw, 0, -sin yaw)`. Yaw 0 faces `+X`; yaw +90 deg faces
+  `-Z` (away from the viewer at camera yaw 0); yaw -90 deg faces `+Z` (toward the viewer).
+  `core/camera.ts` owns `facing()` and `viewAngle()`; a known-angle test pins them:
+  facing `+Z` with camYaw 0 is `front`, `+X` is `side` (facing screen-right), `-Z` is `back`,
+  `-X` is `side` mirrored; orbiting the camera by +a equals turning the character by -a.
 - Both pilot characters stand 1.73 m (5'8"). Fixed step: 1/60 s. No wall clock, no
   `Math.random` in `core/` (seeded noise only): the same inputs give the same frames.
 
@@ -29,9 +36,19 @@ interface Frame {
   joints: Record<JointName, Vec3>;       // world positions
   yaw: { pelvis: number; chest: number; head: number };   // world facing of each block
   lean: { pitch: number; roll: number }; // chest relative to vertical, for the trunk drawing
+  // Orientation, not only position: a joint triple gives a limb's bend plane but not its
+  // roll, and says nothing about which way a palm, a foot or a prop faces.
+  basis: Record<SegmentName, { x: Vec3; y: Vec3; z: Vec3 }>;  // world axes per segment:
+  //   x along the bone (parent -> child), z the segment's anatomical FRONT (kneecap, inner
+  //   elbow crease is -z, chest front, face), y = z cross x. Segments: pelvis, spine, chest,
+  //   head, upperArmL/R, forearmL/R, handL/R, thighL/R, shinL/R, footL/R.
+  //   handL/R: x = toward the fingers, z = palm normal (out of the palm).
   hands: { L: 'relaxed' | 'open' | 'grip'; R: 'relaxed' | 'open' | 'grip' };
   contacts: { footL: boolean; footR: boolean };  // planted (world-locked) this step
-  props: { id: string; pos: Vec3; vel: Vec3; angle: number; heldBy: 'L' | 'R' | null }[];
+  props: { id: string; pos: Vec3; vel: Vec3; heldBy: 'L' | 'R' | null;
+           basis: { x: Vec3; y: Vec3; z: Vec3 } }[];   // full orientation; when held it is
+  //   rigid in the hand's basis. A renderer may reduce it to one screen angle plus a
+  //   flatness for a first demo, but the data is complete.
   squash: number;                        // root-level only, 1 = rest
   phase: string;                         // debug label of what the animator is doing
 }
@@ -54,9 +71,11 @@ branches.
 ## Camera
 Orthographic, yaw `camYaw` about +Y (the lab's "viewing angle"), small fixed pitch.
 `project(p, cam) -> { x, y, depth }` lives in `core/camera.ts` and is the ONLY projection
-both halves use. View angle of a block = its world yaw relative to the camera:
-0 = facing camera-right (profile), +90 deg = facing the camera (front),
-180 = profile facing left, -90 = facing away (back).
+both halves use. `viewAngle(blockYaw, camYaw)` is the block's facing relative to the
+camera, defined by the known-angle test above (not by a sign rule in prose).
+Planted feet are world-locked, so their projected positions must not move when a block
+changes drawn view: view rigs are placed FROM the projected joints, never from their own
+layout.
 
 ## Views
 A view rig is a 2D cut-out drawn for one canonical angle: `front`, `side`, `back`,

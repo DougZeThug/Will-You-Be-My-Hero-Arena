@@ -125,9 +125,81 @@ function pack(meshes) {
   return { width: LAYOUT.atlasWidth, height: y + shelf + LAYOUT.gutter };
 }
 
-export function buildCharacter(id, { debug = false } = {}) {
+/** Mesh every part, pack the atlas and assemble rig.json. Shared by every
+ * view: `cut` is { bones, sockets, parts, facing } with sheet-sized part
+ * images; `meta` is merged over the common fields. */
+export function assembleRig(cut, { width, heightPx, meta }) {
+  const origin = cut.bones[0].point,
+    boneIndex = Object.fromEntries(cut.bones.map((bone, i) => [bone.name, i])),
+    meshes = cut.parts.map((part) => meshPart(part, boneIndex, origin)),
+    size = pack(meshes),
+    atlas = blankImage(size.width, size.height);
+  cut.parts.forEach((part, k) => {
+    const { x0, y0, width: w, height: h, atlasX, atlasY } = meshes[k].island;
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        const from = ((y0 + y) * width + x0 + x) * 4,
+          to = ((atlasY + y) * size.width + atlasX + x) * 4;
+        for (let c = 0; c < 4; c++) atlas.data[to + c] = part.image.data[from + c];
+      }
+  });
+  bleed(atlas, LAYOUT.bleed);
+  const rig = {
+    format: 'arena-cutout-rig',
+    version: 1,
+    meta: meta({ heightPx, sheetOrigin: origin }),
+    atlas: { image: 'atlas.png', width: size.width, height: size.height },
+    bones: cut.bones.map((bone) => ({
+      name: bone.name,
+      parent: bone.parent,
+      x: round(bone.point[0] - origin[0], 2),
+      y: round(bone.point[1] - origin[1], 2),
+      rotation: bone.end
+        ? round(Math.atan2(bone.end[1] - bone.point[1], bone.end[0] - bone.point[0]), 5)
+        : 0,
+      length: bone.end
+        ? round(Math.hypot(bone.end[0] - bone.point[0], bone.end[1] - bone.point[1]), 2)
+        : 0,
+    })),
+    sockets: cut.sockets.map((socket) => ({
+      name: socket.name,
+      bone: socket.bone,
+      x: round(socket.point[0] - origin[0], 2),
+      y: round(socket.point[1] - origin[1], 2),
+    })),
+    parts: cut.parts.map((part, k) => {
+      const mesh = meshes[k],
+        { x0, y0, atlasX, atlasY } = mesh.island;
+      return {
+        name: part.name,
+        visible: part.visible ?? true,
+        ...(part.group ? { group: part.group } : {}),
+        xy: mesh.xy,
+        uv: mesh.vertices.flatMap(([x, y]) => [
+          round((atlasX + x - x0) / size.width, 6),
+          round((atlasY + y - y0) / size.height, 6),
+        ]),
+        bones: mesh.indices,
+        weights: mesh.weights,
+        triangles: mesh.triangles,
+      };
+    }),
+  };
+  return { rig, atlas };
+}
+
+export function writeRig(out, { rig, atlas }) {
+  mkdirSync(out, { recursive: true });
+  writeFileSync(resolve(out, 'atlas.png'), encodePng(atlas));
+  writeFileSync(resolve(out, 'rig.json'), JSON.stringify(rig));
+}
+
+/** Side-profile re-cut. `options.config` replaces characters/<id>.json,
+ * `options.out` the output folder, `options.transform` post-processes the
+ * cut (the Character Lab splits the head off the trunk there). */
+export function buildCharacter(id, { debug = false, config: given, out: outDir, transform, extraMeta } = {}) {
   const configPath = resolve(motion, 'characters', `${id}.json`),
-    config = JSON.parse(readFileSync(configPath, 'utf8')),
+    config = given ?? JSON.parse(readFileSync(configPath, 'utf8')),
     { sheet, inputs } = loadSheet(config);
   let landmarks = config.landmarks,
     landmarksInfo = { inline: true };
@@ -136,27 +208,13 @@ export function buildCharacter(id, { debug = false } = {}) {
     landmarksInfo = { path: landmarks, sha256: sha256(file) };
     landmarks = JSON.parse(file.toString('utf8'));
   }
-  const cut = recut(sheet, landmarks, config.hints ?? {}),
-    origin = cut.bones[0].point,
-    boneIndex = Object.fromEntries(cut.bones.map((bone, i) => [bone.name, i])),
-    meshes = cut.parts.map((part) => meshPart(part, boneIndex, origin)),
-    size = pack(meshes),
-    atlas = blankImage(size.width, size.height);
-  cut.parts.forEach((part, k) => {
-    const { x0, y0, width, height, atlasX, atlasY } = meshes[k].island;
-    for (let y = 0; y < height; y++)
-      for (let x = 0; x < width; x++) {
-        const from = ((y0 + y) * sheet.width + x0 + x) * 4,
-          to = ((atlasY + y) * size.width + atlasX + x) * 4;
-        for (let c = 0; c < 4; c++) atlas.data[to + c] = part.image.data[from + c];
-      }
-  });
-  bleed(atlas, LAYOUT.bleed);
+  let cut = recut(sheet, landmarks, config.hints ?? {});
+  if (transform) cut = transform(cut, { sheet, landmarks, config });
   const bodyBox = bounds(cut.body, sheet.width),
-    rig = {
-      format: 'arena-cutout-rig',
-      version: 1,
-      meta: {
+    built = assembleRig(cut, {
+      width: sheet.width,
+      heightPx: cut.bones[0].point[1] - bodyBox.y0,
+      meta: (placement) => ({
         id,
         generator: GENERATOR,
         derived: true,
@@ -165,56 +223,19 @@ export function buildCharacter(id, { debug = false } = {}) {
         landmarks: landmarksInfo,
         hints: config.hints ?? {},
         facing: cut.facing,
-        heightPx: origin[1] - bodyBox.y0,
-        sheetOrigin: origin,
+        ...placement,
         // Sheet-pixel boxes used by the bind-pose comparison.
         bodyBox: [bodyBox.x0, bodyBox.y0, bodyBox.x1, bodyBox.y1],
         sleeveCutBox: cut.sleeveCutBox,
         recut: RECUT,
         layout: LAYOUT,
         notes: cut.notes,
-      },
-      atlas: { image: 'atlas.png', width: size.width, height: size.height },
-      bones: cut.bones.map((bone) => ({
-        name: bone.name,
-        parent: bone.parent,
-        x: round(bone.point[0] - origin[0], 2),
-        y: round(bone.point[1] - origin[1], 2),
-        rotation: bone.end
-          ? round(Math.atan2(bone.end[1] - bone.point[1], bone.end[0] - bone.point[0]), 5)
-          : 0,
-        length: bone.end
-          ? round(Math.hypot(bone.end[0] - bone.point[0], bone.end[1] - bone.point[1]), 2)
-          : 0,
-      })),
-      sockets: cut.sockets.map((socket) => ({
-        name: socket.name,
-        bone: socket.bone,
-        x: round(socket.point[0] - origin[0], 2),
-        y: round(socket.point[1] - origin[1], 2),
-      })),
-      parts: cut.parts.map((part, k) => {
-        const mesh = meshes[k],
-          { x0, y0, atlasX, atlasY } = mesh.island;
-        return {
-          name: part.name,
-          visible: part.visible ?? true,
-          ...(part.group ? { group: part.group } : {}),
-          xy: mesh.xy,
-          uv: mesh.vertices.flatMap(([x, y]) => [
-            round((atlasX + x - x0) / size.width, 6),
-            round((atlasY + y - y0) / size.height, 6),
-          ]),
-          bones: mesh.indices,
-          weights: mesh.weights,
-          triangles: mesh.triangles,
-        };
+        ...(extraMeta ? extraMeta(cut) : {}),
       }),
-    };
-  const out = resolve(motion, 'rigs', id);
-  mkdirSync(out, { recursive: true });
-  writeFileSync(resolve(out, 'atlas.png'), encodePng(atlas));
-  writeFileSync(resolve(out, 'rig.json'), JSON.stringify(rig));
+    }),
+    rig = built.rig;
+  const out = outDir ?? resolve(motion, 'rigs', id);
+  writeRig(out, built);
   if (debug) {
     const folder = resolve(repository, 'work/qa/reimagine/pass-b/debug', id);
     mkdirSync(folder, { recursive: true });
@@ -230,9 +251,19 @@ export function buildCharacter(id, { debug = false } = {}) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const ids = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
+  const argv = process.argv.slice(2),
+    viewAt = argv.indexOf('--view'),
+    view = viewAt >= 0 ? argv[viewAt + 1] : argv.find((arg) => arg.startsWith('--view='))?.slice(7),
+    ids = argv.filter((arg, i) => !arg.startsWith('--') && (viewAt < 0 || i !== viewAt + 1));
+  if (view) {
+    // Character Lab view rigs: prototype/character-lab/rigs/<id>/<view>/.
+    // (views.mjs imports this module, so no top-level await here.)
+    import('./views.mjs').then(({ buildView }) => {
+      for (const id of ids) buildView(id, view, { debug: argv.includes('--debug') });
+    });
+  } else {
   if (!ids.length) {
-    console.error('usage: node prototype/motion/prep/build.mjs <character id> [--debug]');
+    console.error('usage: node prototype/motion/prep/build.mjs <character id> [--debug] [--view side|sideRear|front|back|all]');
     process.exit(1);
   }
   for (const id of ids) {
@@ -241,4 +272,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.log(`${id}: ${rig.parts.length} parts, ${rig.parts.reduce((n, p) => n + p.xy.length / 2, 0)} vertices, atlas ${rig.atlas.width}x${rig.atlas.height} -> ${out} (${Date.now() - started} ms)`);
     for (const note of notes) console.log(`  ${note}`);
   }
+}
 }
