@@ -2,7 +2,7 @@
 
 ## Summary
 
-The cornhole throw is how a player sends one bag at the board in a Play Cornhole match. They pick a spot, aim, choose a *shot*, hold to charge, and let go while the marker is inside the green *release window*. A match has one to four players. Each player throws four bags, taking turns in slot order. Every bag scores for the player who threw it:
+The cornhole throw is how a player sends one bag at the board in a Play Cornhole match. They pick a spot, aim, choose a *shot*, hold to charge, and let go while the marker is inside the teal *release window*. A match has one to four players. Each player throws four bags, taking turns in slot order. Every bag scores for the player who threw it:
 - 3 in the hole
 - 1 on the board
 - 0 off it
@@ -75,7 +75,7 @@ A quick tap of the charge button is not a back-out; it commits a throw. The pres
 The throw commits when the charge press is accepted. That is a key press, a trigger pulled past 0.2, or the first tap on the on-screen **Hold / release** button. From that instant:
 
 - **Power starts rising** from zero at 1/1.5 per second. It reaches 1.0 after 1.5 seconds and stops at 1.2.
-- **The meter appears.** The **Release timing** meter appears with its marker at the left. The green band is centred on the *ideal power* and is as wide as the *release window*:
+- **The meter appears.** The **Release timing** meter appears with its marker at the left. The teal band is centred on the *ideal power* and is as wide as the *release window*:
   - **Ideal power** is 0.7 at the starting spot. It rises by about 0.04 at the far left of the line and falls by about 0.1 at the far right. Standing farther from the board needs a stronger throw.
   - **The release window** is ±(0.02 + the card's skill with the selected shot ÷ 30; a **Hole runner** is a slide shot and uses the card's Slide skill), plus 0.015 in precision mode, plus 0.01 for a *clutch performer* on their last bag. Power rises 0.04 every 60 ms, so a 0.6 shot skill gives ±0.040 (about ±60 ms) and a 0.9 skill ±0.050 (±75 ms). The widest built-in window is Dan's Roll in precision mode on his clutch bag: ±0.074, about ±110 ms.
 
@@ -89,10 +89,10 @@ Committing fixes nothing else. Position, aim, shot and precision mode can all st
 
 The marker slides right in real time. Every change the player makes applies live:
 
-- **Moving** the thrower moves the green band, because the ideal power depends on where the thrower stands at the instant of release.
+- **Moving** the thrower moves the teal band, because the ideal power depends on where the thrower stands at the instant of release.
 - **Aiming** still moves the reticle.
 - **Changing the shot** changes the window width, the arc, and which throwing animation will play. The caption names the new shot at once.
-- **Precision mode**, turned on now, widens the green band at once for three seconds.
+- **Precision mode**, turned on now, widens the teal band at once for three seconds.
 
 The charge ends in one of three ways:
 
@@ -153,7 +153,7 @@ Each turn starts on the character's favourite of these four shots, so the starti
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
 | Input device | **Keyboard 1** charges with Space, and **keyboard 2** with Enter. A **controller** charges with the right trigger (RT or R2). The trigger is analog, so a half pull counts once it passes 0.2 and releases below 0.1. **Touch** charges with a tap on **Hold / release**, which then reads **Release**. A second tap throws. The button can only be tapped during the player's own aiming or charging turn. An **AI player** charges 0.4 s after its turn starts, and lets go near the ideal, offset by a timing error drawn once per throw from the match's seed, on the same scale for every thrower, so a little under half of its releases are perfect and a card with a wider window gets more ([AI players](../cross-cutting/ai-players.md)). | The device cannot be changed during a match. Adding on-screen taps to a keyboard or controller merges the two: see [input device changes](#cancel-and-interrupt). |
-| Event and action combinations | **J/K/L/E** choose the shot, and the caption names it. **Right modifier** (left Ctrl, right Ctrl for keyboard 2, RB or R1) turns on precision mode while aiming or charging. It costs 15 stamina, lasts 3 s, and then has a 10 s cooldown; with less than 15 stamina it does nothing. The caption shows **Precision mode**. The **left modifier** (Shift, LB or L1) does nothing in cornhole. **Celebrate** (C) plays a celebration for any player at any time their character is not already mid-animation. J during the result pause does the same for the thrower. | The shot can still be changed; the latest choice before release wins. Precision mode can be turned on mid-charge, and the green band widens at once. It only narrows scatter if it is still active when the bag leaves the hand, 3 s after activation. Moving mid-charge moves the green band. |
+| Event and action combinations | **J/K/L/E** choose the shot, and the caption names it. **Right modifier** (left Ctrl, right Ctrl for keyboard 2, RB or R1) turns on precision mode while aiming or charging. It costs 15 stamina, lasts 3 s, and then has a 10 s cooldown; with less than 15 stamina it does nothing. The caption shows **Precision mode**. The **left modifier** (Shift, LB or L1) does nothing in cornhole. **Celebrate** (C) plays a celebration for any player at any time their character is not already mid-animation. J during the result pause does the same for the thrower. | The shot can still be changed; the latest choice before release wins. Precision mode can be turned on mid-charge, and the teal band widens at once. It only narrows scatter if it is still active when the bag leaves the hand, 3 s after activation. Moving mid-charge moves the teal band. |
 | Contest kind | Always Play practice. The caption shows **Practice / no club points**. Exhibition, counted entry and replay are Watch-only and do not apply. | Not applicable: practice cannot become anything else. |
 | Character card | The character's Play accuracy sets the scatter: Dan 0.76, Doug 0.68. It is not the card's printed **Accuracy** bar (Dan 64, Doug 68). Its shot skills set the window width (see [shots](#shots)). Its favourite of the four shots is the one each turn starts on. **Dan** is a clutch performer, so his window is 0.01 wider on his fourth bag. Both built-in cards have precision mode. An installed character without a connected rig cannot start a match: see [interactions](#interactions-with-other-systems). | Not applicable: cards are chosen in setup. |
 | Presentation settings | **Reduced motion** skips the camera punch on a hole, draws no impact effects at all, and turns off squash and stretch. **Lower graphics quality** has no effect in Play. The **clean spectator view** is Watch-only. Play's sound switch reads **Sound on** and starts off. Turned on, it plays a tone as the bag leaves the hand, a hole tone and a board-impact tone. | Toggling **Reduced motion** in Arena settings applies to the running match at once, mid-charge included: effects, the camera punch and squash follow the new setting, and nothing restarts. The sound switch takes effect on the next cue. |

@@ -209,8 +209,10 @@ export class PlayMotionRig implements CharacterRig {
     // not per render frame: a frame with a new velocity measures the change
     // over at least one step and frames between steps hold it, so lean does
     // not spike and drop at refresh rates above 60 Hz. Once a whole step
-    // passes without a change the body is not accelerating. At 60 Hz every
-    // frame is a step, as before.
+    // passes without a change the body is not accelerating. The expiry sits
+    // just under one step so the frame after the next step (at any refresh
+    // rate) is the first that may clear it; at 60 Hz every frame is a step,
+    // as before.
     this.sinceVelocityChange += dt;
     if (frame.vx !== motor.velocity.x || frame.vy !== motor.velocity.y) {
       const span = Math.max(SIM_STEP, dt);
@@ -219,7 +221,7 @@ export class PlayMotionRig implements CharacterRig {
         y: (frame.vy - motor.velocity.y) / span,
       };
       this.sinceVelocityChange = 0;
-    } else if (this.sinceVelocityChange >= SIM_STEP * 0.75)
+    } else if (this.sinceVelocityChange >= SIM_STEP * 0.99)
       this.acceleration = { x: 0, y: 0 };
     motor.acceleration = { ...this.acceleration };
     motor.velocity = { x: frame.vx, y: frame.vy };

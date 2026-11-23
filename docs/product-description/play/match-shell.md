@@ -160,7 +160,7 @@ Nothing about the match is kept anywhere.
 
 **Control panels.** There is one for each player who is not an AI player, in slot order. Each label reads the player's name, their move keys and the event's hint:
 - **Move keys:** "W A S D move", "T F G H move", "Left stick move" or "Move pad move", following the device family.
-- **Cornhole:** "Aim, hold charge, then release in green. On screen: tap charge, then release."
+- **Cornhole:** "Aim, hold charge, then release in the teal window. On screen: tap charge, then release."
 - **Clubhouse Dash:** "Sprint, jump hurdles, slide under bars. On-screen sprint toggles."
 - **Backyard Brawl:** "Move into range, attack, guard or dodge. Chain light, light, heavy."
 

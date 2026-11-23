@@ -218,5 +218,6 @@ When playback is complete, the narration announces the winner. The pause, speed 
 - **Where focus lands** after **Set up showdown** or **Next showdown** removes the focused control has not been checked in any browser.
 - **The narration behind a dialog.** Hiding the page behind a modal dialog is taken from Base UI's modal behaviour. Whether announcements are really suppressed has not been heard.
 - **Target and text sizes** are read from the stylesheets, not measured.
+- **Not re-verified at a newer commit:** the 44 px targets, the teal focus ring contrast and the Play character radio group were changed in the 2026-11-23 polish pass and are described from the code; the commit below predates them.
 
 Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`
