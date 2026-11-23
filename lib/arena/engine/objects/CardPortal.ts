@@ -1,10 +1,13 @@
 import * as Phaser from 'phaser';
 import {cardPresentation} from '../../grounding';
 import {summonState} from '../../summon-motion';
-import {clamp01} from '../../math';
+import {clamp01,smooth} from '../../math';
 import type {MotionPersonality} from '../../model';
 import type {XY} from '../events/ArenaEvent';
 import {squashOffset} from '../motion/SquashStretch';
+/** The court card after the entrance: scale and opacity relative to its
+ * presentation size, and how far it slides back from its character. */
+export const RECEDE={seconds:.6,scale:.55,alpha:.45,dx:-26};
 export class CardPortal {
  readonly root:Phaser.GameObjects.Container;private glow:Phaser.GameObjects.Graphics;
  constructor(scene:Phaser.Scene,key:string,readonly base:XY,private color:number){
@@ -12,7 +15,13 @@ export class CardPortal {
   const plate=scene.add.rectangle(0,-92,128,192,0xf3e6c7).setStrokeStyle(3,color),face=scene.add.image(-58,-178,key).setOrigin(0).setDisplaySize(116,164);
   this.root.add([this.glow,plate,face]);this.settle();
  }
- settle(pulse=0){const p=cardPresentation(this.base);this.root.setPosition(p.x,p.y).setScale(p.scale).setRotation(0).setAlpha(1);this.glow.clear();if(pulse>0)this.glow.lineStyle(3,this.color,pulse*.6).strokeRect(-69,-193,138,206);}
+ /** `since`: seconds after the entrance settled. Over RECEDE.seconds the card
+  * steps back (smaller, fainter, standing on the same ground spot) so it no
+  * longer competes with its character during play; a pure function of
+  * recording time, so seeks match. Omitted (previews) keeps it full size.
+  * Reduced motion steps straight back without the ease. */
+ settle(pulse=0,since?:number,reduced=false){const p=cardPresentation(this.base),k=since===undefined?0:reduced?1:smooth(since/RECEDE.seconds);
+  this.root.setPosition(p.x+RECEDE.dx*k,p.y).setScale(p.scale*(1-(1-RECEDE.scale)*k)).setRotation(0).setAlpha(1-(1-RECEDE.alpha)*k);this.glow.clear();if(pulse>0)this.glow.lineStyle(3,this.color,pulse*.6).strokeRect(-69,-193,138,206);}
  /** Limb clip progress is aligned so each entrance's landing-crouch key
   * (~0.25–0.3) meets the body's touchdown at local 1.18. */
  entrance(time:number,actor:number,personality:MotionPersonality,duration:number,reduced:boolean){

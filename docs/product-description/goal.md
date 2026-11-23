@@ -112,7 +112,7 @@ Do not describe code. Describe what the player sees and does. Technical detail g
   - Installed characters live in IndexedDB. They are not touched by **Reset demo**, and there is no uninstall.
   - If IndexedDB cannot open, the Arena save still loads and Watch works with the built-in cards. A notice under the header says installed characters are unavailable.
   - If the Arena save cannot be read, the save recovery box under the header offers **Export unreadable save** and **Reset demo…**, and **Set up showdown** stays disabled.
-- **What the viewer sees on the stage.** `public/assets/arena-interface.css` loads after `globals.css`. At every width it shrinks four things to one-pixel boxes that only screen readers get: the page's Watch "Live score" scoreboard, the lobby's stage label, Play's score strip, and Play's **Release in green** meter. Sighted players see what the stage draws instead:
+- **What the viewer sees on the stage.** `app/arena-interface.css`, imported by `app/layout.tsx` after `globals.css` and `live-arena.css`, loads last. At every width it shrinks four things to one-pixel boxes that only screen readers get: the page's Watch "Live score" scoreboard, the lobby's stage label, Play's score strip, and Play's **Release in the teal window** meter. Sighted players see what the stage draws instead:
   - the nameplates and sign
   - in cornhole, a **RELEASE TIMING** meter at the bottom left, with a teal window
 

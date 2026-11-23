@@ -95,13 +95,16 @@ At contact the status reads **LANDING**. The narration reads "{first name} waits
 ### Scoring and reaction
 
 The score appears 0.16 s after contact. At that moment:
-- **The nameplate** shows the card's new total and loses a pip. The page's hidden scoreboard's count goes up by one ("2/4 bags").
+- **The nameplate** shows the card's new total and loses a pip; when the attempt added points the new total gives a short pulse. The page's hidden scoreboard's count goes up by one ("2/4 bags").
+- **The callout.** When the attempt added points, a stamped callout appears over the target for about 1.3 s: the points and what scored, such as "+3 IN THE HOLE!", "+1 ON THE BOARD", "+3 BULLSEYE!", "+2 ON TARGET", "+1 IN THE CUP!" or "+1 BUCKET!". An attempt that adds nothing has no callout. Seeking or pausing shows the same callout at the same moment.
 - **The narration** shows the attempt's commentary (see [narration](#narration)).
 - **The sound.** With Watch sound on, a bright two-note tone plays if the attempt added points, and a low tone if not.
 
 The card then reacts: a celebration if the attempt added points, a disappointed gesture if not. The status reads **SCORING**, then **NEXT UP**. When the reaction ends, the other card's attempt starts. After the last attempt, playback is complete.
 
-**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare.
+**The finale.** The winner celebrates and a victory fanfare plays. The loser reacts. In a draw both cards react and there is no fanfare. A stamped banner lands on the stage below the sign, naming the demo user who won as the result panel does ("DOUG WINS"), or "DRAW".
+
+**The cards on the court.** After the entrances each card stays beside its character, then, over about half a second, steps back to a smaller, fainter card at the same spot, so it no longer covers the character during the attempts.
 
 **Attempt history** lists an attempt from the moment of contact, 0.16 s before the nameplate shows its score. Each entry shows what it hit: "hole", "board", "miss", "zone3", "zone2", "zone1", "cup", "rim out", "make", "backboard" or "airball". It also shows the commentary and the points, signed: "+3", "+1", "+0", or "−1" for a cornhole bag that lowered its thrower's score.
 
@@ -191,7 +194,7 @@ The card's personality sets its entrance, rituals, reactions and tempo, so the s
 | Event and action combinations | The sport sets the attempts, units, equipment, scoring, throw and narration wording. **Heat check** is exhibition-only. **Up to 3 extra equal pairs** can lengthen any sport. | Not applicable: a recording's sport and options are fixed at lock. |
 | Contest kind | Exhibitions and counted entries play every sport by the same rules. A counted entry's order and seed come from the schedule, and its opponent card is Doug. A replay shows exactly the same attempts. Play practice has no football, beer pong or basketball, and Play cornhole has different rules ([the cornhole throw](../play/cornhole.md)). | Not applicable. |
 | Character card | Traits shape the landings; personality shapes timing and acting; in cornhole the card sets the shot mix. Dan and Doug are drawn in profile in cornhole; installed cards face the camera in every sport. | Not applicable. |
-| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake, and shows the contact rings, dust puffs and star bursts as one still frame each instead of animating them. **Reduced motion** also removes the entrance dust and plays calmer clips ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration; the nameplates and sign stay, because the stage draws them. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
+| Presentation settings | **Reduced motion** or **Lower graphics quality** removes the camera punch and shake, and shows the contact rings, dust puffs and star bursts as one still frame each instead of animating them. It also shows the scoring callout and the final banner still, without the stamp-in, and the nameplate score does not pulse. **Reduced motion** also removes the entrance dust, steps the court cards back at once, and plays calmer clips that keep most of their acting ([the stage](../foundations/stage.md)). The **clean spectator view** hides the narration; the nameplates and sign stay, because the stage draws them. Watch sound starts off. | Each applies at once; **Lower graphics quality** rebuilds the stage and continues from the same moment. |
 | Screen size and orientation | The court scales as a whole, so every sport looks the same at any size. The page's scoreboard stays hidden at every width. | The court rescales; the attempt carries on. |
 | Saved state | No effect on how a sport is shown. A resumed contest reopens mid-attempt with the bags, cups and scores exactly as they were. | No effect. |
 

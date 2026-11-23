@@ -14,7 +14,7 @@ Nothing on this screen awards points or writes this browser's save. The only thi
 
 ## The simple case
 
-The player clicks **Play** in the header. **Cornhole** is selected. **PLAYER 1** is Doug Weidensaul on **Keyboard · WASD**, and **PLAYER 2** is Dan Weidensaul as an **AI player**. Each slot shows the chosen card's image beside its two lists.
+The player clicks **Play** in the header. **Cornhole** is selected. **PLAYER 1** is Doug Weidensaul on **Keyboard · WASD**, and **PLAYER 2** is Dan Weidensaul as an **AI player**. Each slot shows a row of cards to pick from and a **Controls** list.
 
 They leave everything as it is and press **Start Cornhole**. The setup disappears and the live match takes its place, with **Opening the cards…** over the stage while it loads. From here [the match shell](match-shell.md) and [the cornhole throw](cornhole.md) take over.
 
@@ -36,10 +36,9 @@ The selected card turns yellow with an orange underline. The **Start** button's 
 
 ## Player slots
 
-Each slot is headed **PLAYER 1** to **PLAYER 4** and has three things:
+Each slot is headed **PLAYER 1** to **PLAYER 4** and has two things:
 
-- **The card image**, tilted, with the text "{card name} card" for screen readers. It changes as soon as the card changes.
-- **Character.** Every card in this browser: **Dan Weidensaul**, **Doug Weidensaul**, then any *installed characters*. Any number of slots may pick the same card.
+- **Character.** A row of cards, one per card in this browser: **Dan Weidensaul**, **Doug Weidensaul**, then any *installed characters*, each card image with its name beneath. Click or tap a card to pick it. The picked card tilts, gets a yellow edge and an orange offset shadow; the others are dimmed. Any number of slots may pick the same card.
 - **Controls.** Eight choices:
   - **Keyboard · WASD**
   - **Keyboard · TFGH + numpad**
@@ -127,7 +126,7 @@ The match is owned by [the match shell](match-shell.md) and the event documents 
 
 | Modifier | Set at the start | Changed while committed |
 | --- | --- | --- |
-| Input device | The setup is used with a mouse, touch or the keyboard. Every control is a native button, list or field, reached with Tab. Game keys and controllers do nothing here. The **Controls** choice decides which slots get remapping fields (keyboards and controllers only) and which count towards the one-device-per-player check. | Not applicable: devices are fixed for the match. **Back to setup** is the way to change them. |
+| Input device | The setup is used with a mouse, touch or the keyboard. Every control is a native button, radio, list or field, reached with Tab; each slot's cards are one Tab stop, and the arrow keys move the pick. Game keys and controllers do nothing here. The **Controls** choice decides which slots get remapping fields (keyboards and controllers only) and which count towards the one-device-per-player check. | Not applicable: devices are fixed for the match. **Back to setup** is the way to change them. |
 | Event and action combinations | The event sets the player limits, whether **Add player**, **Remove player** and **Course controls** show, the **Start** label, and which actions the remapping section lists. Switching event keeps each remaining slot's card, device and bindings, and adds an AI slot if the new event needs more players. | Not applicable: the event is fixed for the match. |
 | Contest kind | Always Play practice, as **Direct play · no club points** says. Exhibition and counted entry are Watch-only. | Not applicable: practice cannot become anything else. |
 | Character card | Any card for any slot, including the same card twice. A card's traits make no difference to the setup. An installed character without a connected rig is not refused here; the match fails to open instead (see [interactions](#interactions-with-other-systems)). | Not applicable: cards are fixed for the match. |
@@ -169,14 +168,13 @@ After any interrupt before **Start**, the player is either still on the setup wi
 
 **Accessibility.**
 - The event cards are buttons that report whether they are pressed.
-- The **Character** and **Controls** lists are labelled.
-- Each card image is described as "{card name} card".
+- Each slot's cards are a radio group named **Character**; each radio is named by its card's name, and the arrow keys move the pick. The **Controls** list is labelled.
 - The error box is announced when it appears.
 - The page offers no Play-specific help beyond the hint text.
 
 See [accessibility](../cross-cutting/accessibility.md).
 
-**Installed characters.** Installed cards appear in every **Character** list once the character library has loaded, with their own card image. The setup does not check their rig. If the pack has no connected rig, the match shows an error instead of opening: "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." ([Install character](../collection/install-character.md)).
+**Installed characters.** Installed cards appear in every **Character** row once the character library has loaded, with their own card image. The setup does not check their rig. If the pack has no connected rig, the match shows an error instead of opening: "Error: {full card name} needs a connected character rig for direct play. Its existing poses remain available in Watch." ([Install character](../collection/install-character.md)).
 
 **Multiple tabs.** Each tab has its own setup. They share only the saved bindings. For each keyboard layout or controller, the last **Start** in any tab that used it wins; a **Start** leaves the other devices' saved bindings alone.
 

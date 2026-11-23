@@ -245,6 +245,6 @@ See [accessibility](../cross-cutting/accessibility.md).
 - **Fixed: the finished match** (B-30). The caption's seconds stop at the finish, and nothing pauses a finished match any more, so **PAUSED** is never drawn over the result.
 - **Fixed: wording** (B-36). The result reads **Draw** instead of **Session complete**, the Dash hint names hurdles, pauses are announced, and the focus ring is darker.
 - **The back/forward cache.** Whether a match survives it, and whether it comes back paused, is untested.
-- **The score strip and the page's meter are not visible.** `public/assets/arena-interface.css` (lines 109–123), loaded by `app/layout.tsx`, clips `.live-score-strip` and `.shot-meter` to a 1-pixel box, with the comment "the shared Phaser HUD is the sole visual score". The verification pass's screenshots show no strip over the stage.
+- **The score strip and the page's meter are not visible.** `app/arena-interface.css`, imported last by `app/layout.tsx`, clips `.live-score-strip` and `.shot-meter` to a 1-pixel box, with the comment "the shared Phaser HUD is the sole visual score". The verification pass's screenshots show no strip over the stage.
 
 Verified against Will-You-Be-My-Hero-Arena commit `364e3c1`

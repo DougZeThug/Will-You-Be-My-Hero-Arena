@@ -10,11 +10,15 @@ import {sportThrowPose} from './SportMechanics';
 /** Cartoon exaggeration for acting beats: body lean, head and hip dips read
  * from the back row. Hands (contacts, props) are left exactly as authored. */
 const EXAGGERATE:Partial<Record<string,number>>={celebration:1.35,reaction:1.3,ritual:1.15};
+/** Share of an acting pose kept under reduced motion. */
+export const REDUCED_ACTING=.65;
 export function sampleClip(id:string,progress:number,profile:CharacterProfile,reduced=false,loop=false){
  const clip=animation(id),pose=splineMotion(profile.overrides?.[id]??clip.motion,progress,loop,clip.duration);
  const gain=reduced?1:EXAGGERATE[clip.category]??1;
  if(gain!==1){pose.body=Math.max(-25,Math.min(25,pose.body*gain));pose.head=Math.max(-25,Math.min(25,pose.head*gain));pose.shrug*=gain;pose.hipY=REST.hipY+(pose.hipY-REST.hipY)*gain;}
- return reduced?mixPuppet(REST,pose,.2):pose;
+ // Reduced motion keeps most of the acting (65%): rituals and reactions stay
+ // readable while squash, smears and camera shake are removed elsewhere.
+ return reduced?mixPuppet(REST,pose,REDUCED_ACTING):pose;
 }
 export function idlePose(id:string,time:number,profile:CharacterProfile,waiting=false,reduced=false):PuppetPose{
  const clip=animation(id),phase=((time/clip.duration)%1+1)%1,pose=sampleClip(id,phase,profile,reduced,true);

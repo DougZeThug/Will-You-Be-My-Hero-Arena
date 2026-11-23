@@ -18,6 +18,10 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
         link: 'text-primary underline-offset-4 hover:underline',
+        // The printed call to action (orange, ink border, hard offset shadow).
+        // Its look lives in the `.primary-cta` rules of app/globals.css, which
+        // plain <button>s share; page context there adjusts size and width.
+        print: 'primary-cta',
       },
       size: {
         default:

@@ -1,4 +1,6 @@
 import * as Phaser from 'phaser';
+// The shared workshop styling; it lives with the app's stylesheets.
+import '../../app/arena-interface.css';
 import { MotionScene } from './MotionScene';
 import { proofEvents } from './MotionSession';
 import type { ProofEvent } from './ProofConfig';

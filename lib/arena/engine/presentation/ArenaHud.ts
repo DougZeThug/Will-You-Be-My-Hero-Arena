@@ -15,10 +15,9 @@ interface PlayerPanelLayout {
   /** Vertical distance between the first and second row of panels. */
   rowStep: number;
   height: number;
-  radius: number;
-  strokeAlpha: number;
-  shadow?: Offset & { alpha: number };
-  scoreBox?: Offset & { w: number; h: number; radius: number };
+  /** Hard offset of the printed orange shadow. */
+  shadow: number;
+  scoreBox?: Offset & { w: number; h: number };
   name: Offset & { size: number; maxWidth: number };
   score: Offset & { size: number; maxWidth?: number };
   status: Offset & { size: number; maxWidth: number };
@@ -34,10 +33,8 @@ const PANEL_W = 312;
 const LARGE_PANEL: PlayerPanelLayout = {
   rowStep: 0,
   height: 94,
-  radius: 7,
-  strokeAlpha: 0.8,
-  shadow: { dx: 3, dy: 3, alpha: 0.23 },
-  scoreBox: { dx: 241, dy: 8, w: 63, h: 69, radius: 4 },
+  shadow: 4,
+  scoreBox: { dx: 241, dy: 8, w: 63, h: 69 },
   name: { dx: 19, dy: 25, size: 26, maxWidth: 205 },
   score: { dx: 278, dy: 38, size: 49, maxWidth: 55 },
   status: { dx: 19, dy: 65, size: 13, maxWidth: 218 },
@@ -47,8 +44,7 @@ const LARGE_PANEL: PlayerPanelLayout = {
 const COMPACT_PANEL: PlayerPanelLayout = {
   rowStep: 49,
   height: 45,
-  radius: 4,
-  strokeAlpha: 0.65,
+  shadow: 3,
   name: { dx: 15, dy: 13, size: 18, maxWidth: 215 },
   score: { dx: 278, dy: 22, size: 29 },
   status: { dx: 15, dy: 33, size: 13, maxWidth: 220 },
@@ -57,30 +53,61 @@ const COMPACT_PANEL: PlayerPanelLayout = {
 /** The "DOUG'S PICK" sub-label beside a card name. */
 const OWNER_SIZE = 13;
 const OWNER_GAP = 9;
+/** Printed placards sit slightly askew, like cards pinned to the fence. */
+const TILT = Phaser.Math.DegToRad(1);
+const SIGN = { x: 475, y: 53, w: 330, h: 86 };
+const INK = '#121615';
 const layoutFor = (playerCount: number) =>
   playerCount > 2 ? COMPACT_PANEL : LARGE_PANEL;
 const panelOrigin = (layout: PlayerPanelLayout, i: number) => ({
   x: PANEL_X[i % 2],
   y: 24 + Math.floor(i / 2) * layout.rowStep,
 });
+/** A printed card: hard orange offset shadow, ink face, cream 2px edge. */
+const printedCard = (
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  shadow: number,
+) =>
+  g
+    .fillStyle(T.orange, 1)
+    .fillRect(x + shadow, y + shadow, w, h)
+    .fillStyle(T.ink, 1)
+    .fillRect(x, y, w, h)
+    .lineStyle(2, T.cream, 1)
+    .strokeRect(x + 1, y + 1, w - 2, h - 2);
 
 /** Compact, camera-independent canvas HUD shared by Watch, Play and the motion workshop.
  * Changes follow the authoritative sample time; seeking cannot fire timers or score awards.
  */
 export class ArenaHud {
   readonly root: Phaser.GameObjects.Container;
-  private panels: Phaser.GameObjects.Graphics;
+  /** The centre sign (event title and phase), tilted as a printed placard. */
+  private sign: Phaser.GameObjects.Container;
+  private signFace: Phaser.GameObjects.Graphics;
   private title: Phaser.GameObjects.Text;
   private phase: Phaser.GameObjects.Text;
   private players: {
+    /** The nameplate, centred on its panel so the tilt pivots in place. */
+    plate: Phaser.GameObjects.Container;
+    face: Phaser.GameObjects.Graphics;
     name: Phaser.GameObjects.Text;
     /** Who played this card, when that is not the card's own character. */
     owner: Phaser.GameObjects.Text;
     score: Phaser.GameObjects.Text;
+    /** The score's fitted scale before any pulse. */
+    scoreFit: number;
     status: Phaser.GameObjects.Text;
   }[] = [];
   private meter: Phaser.GameObjects.Graphics;
   private meterLabel: Phaser.GameObjects.Text;
+  /** The stamped FINAL banner. */
+  private banner: Phaser.GameObjects.Container;
+  private bannerFace: Phaser.GameObjects.Graphics;
+  private bannerText: Phaser.GameObjects.Text;
   private stamp = '';
   private state?: PresentationState;
   private visibility = { header: true, players: [true, true, true, true] };
@@ -89,41 +116,75 @@ export class ArenaHud {
     private height = 720,
   ) {
     this.root = scene.add.container(0, 0).setDepth(10000).setScrollFactor(0);
-    const text = (x: number, y: number, size: number, color = '#ffedc8') => {
+    const text = (
+      parent: Phaser.GameObjects.Container,
+      x: number,
+      y: number,
+      size: number,
+      color = '#ffedc8',
+    ) => {
       const t = scene.add
         .text(x, y, '', {
           fontFamily: T.font,
           fontSize: size + 'px',
           color,
-          stroke: '#111b20',
+          stroke: INK,
           strokeThickness: 1,
         })
         .setOrigin(0, 0.5);
-      this.root.add(t);
+      parent.add(t);
       return t;
     };
-    this.panels = scene.add.graphics();
-    this.root.add(this.panels);
-    this.title = text(640, 80, 35).setOrigin(0.5);
-    this.phase = text(640, 116, 13, '#d0c4a9').setOrigin(0.5);
-    this.phase.setFontFamily('Arial, sans-serif').setFontStyle('bold');
+    const label = (t: Phaser.GameObjects.Text, size: number) =>
+      t
+        .setFontFamily('Arial, sans-serif')
+        .setFontSize(size)
+        .setFontStyle('bold');
+    this.sign = scene.add
+      .container(SIGN.x + SIGN.w / 2, SIGN.y + SIGN.h / 2)
+      .setRotation(-TILT);
+    this.signFace = scene.add.graphics();
+    this.sign.add(this.signFace);
+    this.root.add(this.sign);
+    // Positions inside the sign are relative to its centre (640, 96).
+    this.title = text(this.sign, 0, -16, 35).setOrigin(0.5);
+    this.phase = label(text(this.sign, 0, 20, 13, '#e4d8bd'), 13).setOrigin(
+      0.5,
+    );
     for (let i = 0; i < 4; i++) {
-      const x = PANEL_X[i % 2];
+      const plate = scene.add.container(0, 0).setRotation(i % 2 ? TILT : -TILT),
+        face = scene.add.graphics();
+      plate.add(face);
+      this.root.add(plate);
       this.players.push({
-        name: text(x + 19, 49, 26),
-        owner: text(x + 19, 49, OWNER_SIZE, '#d0c4a9'),
-        score: text(x + 278, 62, 49).setOrigin(0.5),
-        status: text(x + 19, 89, 13, '#c5d1cc'),
+        plate,
+        face,
+        name: text(plate, 0, 0, 26),
+        owner: label(text(plate, 0, 0, OWNER_SIZE, '#e4d8bd'), OWNER_SIZE),
+        score: text(plate, 0, 0, 49).setOrigin(0.5),
+        scoreFit: 1,
+        status: label(text(plate, 0, 0, 13, '#e9dfc6'), 13),
       });
-      for (const label of [this.players[i].status, this.players[i].owner])
-        label
-          .setFontFamily('Arial, sans-serif')
-          .setFontSize(label === this.players[i].owner ? OWNER_SIZE : 13)
-          .setFontStyle('bold');
     }
     this.meter = scene.add.graphics();
     this.root.add(this.meter);
-    this.meterLabel = text(44, height - 74, 15);
+    this.meterLabel = text(this.root, 44, height - 74, 15);
+    this.banner = scene.add
+      .container(640, Math.round(height * 0.3))
+      .setRotation(Phaser.Math.DegToRad(-4))
+      .setVisible(false);
+    this.bannerFace = scene.add.graphics();
+    this.bannerText = scene.add
+      .text(0, 0, '', {
+        fontFamily: T.font,
+        fontSize: '64px',
+        color: '#fff6df',
+        stroke: INK,
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5);
+    this.banner.add([this.bannerFace, this.bannerText]);
+    this.root.add(this.banner);
   }
   update(state: PresentationState) {
     this.state = state;
@@ -143,7 +204,7 @@ export class ArenaHud {
           p.y - p.r < y + h,
       );
     this.visibility = {
-      header: clear(475, 53, 330, 86),
+      header: clear(SIGN.x, SIGN.y, SIGN.w, SIGN.h),
       players: this.players.map((_, i) => {
         const layout = layoutFor(state.players.length),
           { x, y } = panelOrigin(layout, i);
@@ -160,8 +221,10 @@ export class ArenaHud {
       protectedPoints: undefined,
       visibility: this.visibility,
       action: undefined,
+      banner: state.banner?.text,
       players: state.players.map((p) => ({
         ...p,
+        pulse: undefined,
         score: Math.ceil(p.score),
         meter:
           p.meter === undefined ? undefined : Math.round(p.meter * 100) / 100,
@@ -169,62 +232,47 @@ export class ArenaHud {
     });
     if (stamp !== this.stamp) {
       this.stamp = stamp;
-      this.panels.clear();
       const theme = EVENT_PRESENTATION[state.event];
       this.title.setText(theme.title);
       this.phase.setText(state.phase.toUpperCase());
-      this.title.setVisible(this.visibility.header);
-      this.phase.setVisible(this.visibility.header);
-      // Small nameplate lives inside the existing hanging sign.
-      if (this.visibility.header) {
-        this.panels.fillStyle(T.ink, 0.92).fillRoundedRect(475, 53, 330, 86, 3);
-        this.panels
-          .lineStyle(1, theme.accent, 0.65)
-          .lineBetween(500, 132, 780, 132);
-      }
+      this.sign.setVisible(this.visibility.header);
+      // Small printed placard inside the existing hanging sign.
+      this.signFace.clear();
+      printedCard(this.signFace, -SIGN.w / 2, -SIGN.h / 2, SIGN.w, SIGN.h, 4)
+        .lineStyle(1, theme.accent, 0.65)
+        .lineBetween(-140, 36, 140, 36);
       const layout = layoutFor(state.players.length);
       for (let i = 0; i < 4; i++) {
         const p = state.players[i],
           { x, y } = panelOrigin(layout, i),
           h = layout.height,
           color = i % 2 ? T.teal : T.gold;
-        const labels = this.players[i];
-        for (const label of Object.values(labels))
-          label.setVisible(!!p && this.visibility.players[i]);
-        labels.owner.setVisible(!!p?.owner && this.visibility.players[i]);
+        const labels = this.players[i],
+          // Panel-corner offsets inside the centred plate.
+          ox = -PANEL_W / 2,
+          oy = -h / 2;
+        labels.plate
+          .setPosition(x + PANEL_W / 2, y + h / 2)
+          .setVisible(!!p && this.visibility.players[i]);
+        labels.owner.setVisible(!!p?.owner);
+        labels.face.clear();
         if (!p || !this.visibility.players[i]) continue;
-        const { shadow, scoreBox, progress } = layout;
-        if (shadow)
-          this.panels
-            .fillStyle(0x000000, shadow.alpha)
-            .fillRoundedRect(
-              x + shadow.dx,
-              y + shadow.dy,
-              PANEL_W,
-              h,
-              layout.radius,
-            );
-        this.panels
-          .fillStyle(T.ink, 0.97)
-          .fillRoundedRect(x, y, PANEL_W, h, layout.radius);
-        this.panels
-          .lineStyle(1, color, layout.strokeAlpha)
-          .strokeRoundedRect(x, y, PANEL_W, h, layout.radius);
-        this.panels
+        const { scoreBox, progress } = layout;
+        printedCard(labels.face, ox, oy, PANEL_W, h, layout.shadow);
+        labels.face
           .fillStyle(color, p.active ? 1 : 0.4)
-          .fillRect(x + 1, y + 1, 4, h - 2);
+          .fillRect(ox + 3, oy + 3, 5, h - 6);
         if (scoreBox)
-          this.panels
-            .fillStyle(0x080f13, 1)
-            .fillRoundedRect(
-              x + scoreBox.dx,
-              y + scoreBox.dy,
+          labels.face
+            .fillStyle(0x080b0a, 1)
+            .fillRect(
+              ox + scoreBox.dx,
+              oy + scoreBox.dy,
               scoreBox.w,
               scoreBox.h,
-              scoreBox.radius,
             );
         labels.name
-          .setPosition(x + layout.name.dx, y + layout.name.dy)
+          .setPosition(ox + layout.name.dx, oy + layout.name.dy)
           .setFontSize(layout.name.size)
           .setText(p.name.toUpperCase());
         if (layout.dimInactiveName)
@@ -245,19 +293,18 @@ export class ArenaHud {
           labels.name.y + layout.name.size * 0.12,
         );
         labels.score
-          .setPosition(x + layout.score.dx, y + layout.score.dy)
+          .setPosition(ox + layout.score.dx, oy + layout.score.dy)
           .setFontSize(layout.score.size)
           .setText(String(Math.ceil(p.score)));
-        labels.score.setScale(
+        labels.scoreFit =
           layout.score.maxWidth === undefined
             ? 1
             : Math.min(
                 1,
                 layout.score.maxWidth / Math.max(1, labels.score.width),
-              ),
-        );
+              );
         labels.status
-          .setPosition(x + layout.status.dx, y + layout.status.dy)
+          .setPosition(ox + layout.status.dx, oy + layout.status.dy)
           .setFontSize(layout.status.size)
           .setText(
             (
@@ -277,32 +324,52 @@ export class ArenaHud {
         if (p.remaining !== undefined && p.total !== undefined) {
           const total = Math.min(12, Math.max(0, p.total));
           for (let n = 0; n < total; n++)
-            this.panels
+            labels.face
               .fillStyle(
-                n < p.remaining ? color : 0x405057,
-                n < p.remaining ? 1 : 0.55,
+                n < p.remaining ? color : 0x3d4440,
+                n < p.remaining ? 1 : 0.7,
               )
-              .fillRoundedRect(
-                x + progress.dx + n * 17,
-                y + progress.dy,
-                11,
-                8,
-                2,
-              );
+              .fillRect(ox + progress.dx + n * 17, oy + progress.dy, 11, 8);
         } else if (p.meter !== undefined) {
-          this.panels
-            .fillStyle(0x35434a)
-            .fillRect(x + progress.dx, y + progress.meterDy, 190, 4);
-          this.panels
+          labels.face
+            .fillStyle(0x3d4440)
+            .fillRect(ox + progress.dx, oy + progress.meterDy, 190, 4);
+          labels.face
             .fillStyle(color)
             .fillRect(
-              x + progress.dx,
-              y + progress.meterDy,
+              ox + progress.dx,
+              oy + progress.meterDy,
               190 * bounded(p.meter),
               4,
             );
         }
       }
+      this.banner.setVisible(!!state.banner);
+      if (state.banner) {
+        this.bannerText.setText(state.banner.text);
+        const w = this.bannerText.width + 56,
+          h = this.bannerText.height + 18;
+        this.bannerFace
+          .clear()
+          .fillStyle(T.ink, 1)
+          .fillRect(-w / 2 + 6, -h / 2 + 6, w, h)
+          .fillStyle(T.orange, 1)
+          .fillRect(-w / 2, -h / 2, w, h)
+          .lineStyle(3, T.ink, 1)
+          .strokeRect(-w / 2 + 1.5, -h / 2 + 1.5, w - 3, h - 3)
+          .lineStyle(2, T.cream, 1)
+          .strokeRect(-w / 2 + 7, -h / 2 + 7, w - 14, h - 14);
+      }
+    }
+    // Per-frame, from the sample time only: the landing score's pulse and the
+    // banner's stamp-in (both skip the scale under reduced motion).
+    for (const [i, labels] of this.players.entries())
+      labels.score.setScale(
+        labels.scoreFit * (1 + (state.players[i]?.pulse ?? 0)),
+      );
+    if (state.banner) {
+      const u = Math.min(1, Math.max(0, state.banner.age / 0.18));
+      this.banner.setScale(state.reduced ? 1 : 1 + 0.6 * (1 - u) ** 2);
     }
     this.meter.clear();
     this.meterLabel.setVisible(!!state.action);
@@ -311,23 +378,20 @@ export class ArenaHud {
         x = 24,
         y = this.height - 96;
       this.meterLabel.setText(a.label.toUpperCase());
-      this.meter.fillStyle(T.ink, 0.94).fillRoundedRect(x, y, 294, 74, 5);
-      this.meter.lineStyle(1, T.gold, 0.65).strokeRoundedRect(x, y, 294, 74, 5);
-      this.meter
-        .fillStyle(0x37434a)
-        .fillRoundedRect(x + 20, y + 39, 254, 13, 2);
+      printedCard(this.meter, x, y, 294, 74, 4);
+      this.meter.fillStyle(0x2c312e).fillRect(x + 20, y + 39, 254, 13);
       this.meter
         .fillStyle(T.gold)
-        .fillRoundedRect(x + 20, y + 39, 254 * bounded(a.value), 13, 2);
-      if (a.target !== undefined)
+        .fillRect(x + 20, y + 39, 254 * bounded(a.value), 13);
+      if (a.target !== undefined) {
+        const wx = x + 20 + 254 * bounded(a.target - (a.window ?? 0.04)),
+          ww = 254 * (a.window ?? 0.04) * 2;
         this.meter
-          .fillStyle(T.teal, 0.9)
-          .fillRect(
-            x + 20 + 254 * bounded(a.target - (a.window ?? 0.04)),
-            y + 36,
-            254 * (a.window ?? 0.04) * 2,
-            19,
-          );
+          .fillStyle(T.teal, 1)
+          .fillRect(wx, y + 36, ww, 19)
+          .lineStyle(1, T.cream, 0.9)
+          .strokeRect(wx, y + 36, ww, 19);
+      }
       this.meter
         .fillStyle(T.cream)
         .fillRect(x + 19 + 254 * bounded(a.value), y + 34, 3, 23);

@@ -47,7 +47,7 @@ export class RecordedDirector implements RenderDirector {
     if (p.sport === 'cornhole' && c.rig.performance) {
       if (time < rec.introDuration) {
         ctx.enter(c, time, c.personality, rec.introDuration, p.reduced);
-      } else ctx.cards[i].settle();
+      } else ctx.cards[i].settle(0, time - rec.introDuration, p.reduced);
       this.renderPerformance(c, rec, time);
       return;
     }
@@ -73,6 +73,8 @@ export class RecordedDirector implements RenderDirector {
         active?.actor === i && status?.phase === 'result'
           ? Math.sin(status.action!.progress * Math.PI)
           : 0,
+        time - rec.introDuration,
+        p.reduced,
       );
       if (status?.complete) {
         c.finale(

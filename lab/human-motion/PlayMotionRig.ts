@@ -33,6 +33,9 @@ const SIM_STEP = 1 / 60;
  * reach limit. The arms swing back past the hip (the proof kept both hands
  * ahead of the chest). */
 const PLAY_GAIT = { strideScale: 2, armBias: 14, armGain: 1.1 };
+/** A facing change (a cross-up) turns as a quick paper flip over this many
+ * seconds of presented time instead of mirroring in one frame. */
+const FLIP_SECONDS = 0.1;
 
 /**
  * Side-view (profile) character for Play, on the Human Motion native
@@ -75,6 +78,10 @@ export class PlayMotionRig implements CharacterRig {
   private acceleration = { x: 0, y: 0 };
   private sinceVelocityChange = Infinity;
   private width = 1;
+  /** The facing being flipped to, where the flip started (signed width) and
+   * when; `drawn` is the signed facing currently drawn. */
+  private flip = { to: 0, from: 1, at: 0 };
+  private drawn = 1;
   private squash = { x: 1, y: 1 };
   /** Absolute scale of the native actor (source units → world px). */
   private actorScale = 0;
@@ -159,8 +166,15 @@ export class PlayMotionRig implements CharacterRig {
       planner.request('success', true);
   }
   drive(frame: RigDriveFrame) {
-    if (!this.animator) this.build(frame);
+    if (!this.animator) {
+      this.build(frame);
+      this.flip = { to: frame.facing, from: frame.facing, at: frame.time };
+    }
     this.squash = frame.squash;
+    // A new facing starts a paper flip from whatever is drawn now.
+    if (frame.facing !== this.flip.to)
+      this.flip = { to: frame.facing, from: this.drawn, at: frame.time };
+    this.drawn = this.flipFacing(frame.time);
     // Reduced motion can flip mid-match: re-read it every drive, not just at
     // build, so the organic/secondary layer follows the live setting.
     this.animator!.organicEnabled = !frame.reduced;
@@ -214,7 +228,10 @@ export class PlayMotionRig implements CharacterRig {
     motor.height = frame.z;
     motor.grounded = frame.z <= 0.5;
     if (!motor.grounded) this.airborneSpeed = Math.max(0, falling);
-    motor.facing = motor.facingTarget = frame.facing;
+    // The pose mirrors when the flip passes edge-on (its sign changes), so
+    // the drawing, garment view and foot locks change side together while
+    // the figure is a sliver, never as a one-frame swap.
+    motor.facing = motor.facingTarget = Math.sign(this.drawn);
     motor.turning = false;
     const oldGait = planner.graph.get('base')?.revision;
     planner.locomotion(motor);
@@ -257,6 +274,15 @@ export class PlayMotionRig implements CharacterRig {
     this.motor!.verticalScale = display;
     this.planner!.displayScale = display;
   }
+  /** Signed draw width of the facing flip: it eases from the old side
+   * through edge-on to the new one, never quite zero. */
+  private flipFacing(time: number) {
+    const { to, from, at } = this.flip,
+      u = Math.min(1, Math.max(0, (time - at) / FLIP_SECONDS));
+    if (u >= 1) return to;
+    const f = from + (to - from) * u * u * (3 - 2 * u);
+    return Math.sign(f || to) * Math.max(0.04, Math.abs(f));
+  }
   setViewWidth(width: number) {
     this.width = width;
     this.applyWidth();
@@ -268,7 +294,7 @@ export class PlayMotionRig implements CharacterRig {
     // Scales about the actor origin on the ground line, so feet stay down.
     this.animator.actor.scaleX =
       this.actorScale *
-      this.motor.facing *
+      this.drawn *
       this.squash.x *
       Math.max(0.001, this.width);
     this.animator.actor.scaleY = this.actorScale * this.squash.y;

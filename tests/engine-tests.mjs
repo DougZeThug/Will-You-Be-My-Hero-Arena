@@ -68,4 +68,24 @@ export async function testEngine({check,setup,m,s,a}){
  const impact=await import('../.test-build/engine/effects/ImpactEffects.mjs');
  check(()=>assert.equal(impact.still(.1,true),impact.still(.9,true)));
  check(()=>assert.equal(impact.still(1.2,true),1.2));check(()=>assert.equal(impact.still(-.1,true),-.1));check(()=>assert.equal(impact.still(.6,false),.6));
+ // Score callouts, score pulse and the FINAL stamp are pure functions of recording time.
+ const moments=await import('../.test-build/engine/presentation/score-moments.mjs'),timeline=await import('../.test-build/match-timeline.mjs');
+ for(const sport of ['cornhole','football','pong','basketball'])for(let i=0;i<4;i++){
+  const rec=s.simulate(setup(sport,'moments-'+i));
+  for(const [j,a] of rec.attempts.entries()){
+   const at=timeline.scoreTime(a),delta=a.scoreAfter[a.actor]-(j?rec.attempts[j-1].scoreAfter[a.actor]:0),m0=moments.scoreMoment(rec,at+.2);
+   if(delta>0){
+    check(()=>assert.equal(m0?.delta,delta,sport+' callout carries the revealed points'));
+    check(()=>assert.ok(m0?.text.startsWith('+'+delta),m0?.text));
+    check(()=>assert.ok(moments.scorePulse(moments.scoreMoment(rec,at+.1),a.actor,false)>0,'score pulses when it lands'));
+    check(()=>assert.equal(moments.scorePulse(moments.scoreMoment(rec,at+.1),a.actor,true),0,'reduced motion keeps the score still'));
+    check(()=>assert.deepEqual(moments.scoreMoment(rec,at+.2),m0,'same time, same callout'));
+   }else check(()=>assert.equal(m0,null,'no callout for a scoreless attempt'));
+  }
+  const end=timeline.completionTime(rec),stamp=moments.finalStamp(rec,end+1);
+  check(()=>assert.equal(moments.finalStamp(rec,end-.01),null));
+  check(()=>assert.equal(stamp?.text,rec.winner===null?'DRAW':m.userById(rec.setup.participants[rec.winner].userId).name.toUpperCase()+' WINS'));
+ }
+ // Reduced motion keeps most of the acting (65% of the authored pose).
+ check(()=>assert.equal(poses.REDUCED_ACTING,.65));
 }

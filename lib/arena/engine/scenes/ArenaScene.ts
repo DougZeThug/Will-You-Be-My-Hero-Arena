@@ -29,6 +29,12 @@ import { addBackdrop, tagCharacterRuntime } from './stage';
 import { ArenaHud } from '../presentation/ArenaHud';
 import { phaseLabel } from '../presentation/ArenaTheme';
 import { ArenaEnvironment } from '../presentation/ArenaEnvironment';
+import { ScoreCallout } from '../presentation/ScoreCallout';
+import {
+  finalStamp,
+  scoreMoment,
+  scorePulse,
+} from '../presentation/score-moments';
 import { releasedBagDepth } from '../events/cornhole/ReleasedBagPhysics';
 import { PreviewDirector } from './PreviewDirector';
 import { RecordedDirector } from './RecordedDirector';
@@ -62,6 +68,7 @@ export class ArenaScene extends Phaser.Scene {
   private lastReport = 0;
   private loaded = false;
   private hud!: ArenaHud;
+  private callout!: ScoreCallout;
   private environment?: ArenaEnvironment;
   private playback!: RenderDirector;
   private performanceTime: number | null = null;
@@ -79,6 +86,7 @@ export class ArenaScene extends Phaser.Scene {
       this.hud = new ArenaHud(this);
       this.kit = new Equipment(this);
       this.effects = new ImpactEffects(this);
+      this.callout = new ScoreCallout(this);
       this.characters = characters.map(
         (c, i) =>
           new CharacterController(
@@ -135,6 +143,7 @@ export class ArenaScene extends Phaser.Scene {
         this.projectiles.clear();
         this.kit.destroy();
         this.effects.destroy();
+        this.callout.destroy();
         this.cards.forEach((c) => c.destroy());
         this.characters.forEach((c) => c.destroy());
         this.playback.destroy();
@@ -219,6 +228,10 @@ export class ArenaScene extends Phaser.Scene {
       this.playback.character(c, i, time, frame);
     }
     this.playback.finish(time, frame);
+    // Score callout, score pulse and FINAL stamp: read from recording time only.
+    const still = p.reduced || p.low,
+      moment = rec ? scoreMoment(rec, time) : null,
+      final = rec ? finalStamp(rec, time) : null;
     if (rec)
       cameraEffects(
         this.cameras.main,
@@ -227,6 +240,7 @@ export class ArenaScene extends Phaser.Scene {
         direction,
         p.reduced || p.low,
       );
+    this.callout.update(moment, still);
     this.hud.update({
       event: p.sport,
       time,
@@ -247,10 +261,13 @@ export class ArenaScene extends Phaser.Scene {
           : time < rec.introDuration
             ? 'CARDS TO COURT'
             : `ROUND ${(active?.round ?? 0) + 1} · ${p.clock.paused ? 'PAUSED' : phaseLabel(status?.phase ?? 'ready')}`,
+      banner: final ?? undefined,
+      reduced: still,
       players: this.characters.map((c, i) => ({
         name: c.profile.name.split(' ')[0],
         owner: rec ? cardOwner(rec, i, c.profile.name) : undefined,
         score: status?.scores[i] ?? 0,
+        pulse: scorePulse(moment, i, still),
         active: active?.actor === i,
         ...(rec
           ? {

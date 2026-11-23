@@ -1,11 +1,21 @@
-/* Arena presentation tokens: used by the player application and local workshops. */
+/* Arena presentation tokens: used by the player application and local
+   workshops. The colours are the printed palette of app/globals.css (ink,
+   yellow, orange, teal); docs/DESIGN.md describes the look. */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/anton-latin-400-normal.woff2) format('woff2');
+}
 :root {
-  --arena-ink: #111b20;
+  --arena-ink: #121615;
   --arena-cream: #ffedc8;
-  --arena-gold: #e7b75b;
-  --arena-teal: #398f9a;
+  --arena-gold: #ffca23;
+  --arena-orange: #f05a24;
+  --arena-teal: #117d87;
   --arena-edge: #647274;
-  --arena-radius: 6px;
+  --arena-radius: 2px;
   --arena-gap: 12px;
   --arena-heading: Impact, 'Anton', 'Arial Narrow', sans-serif;
 }
@@ -15,17 +25,10 @@
 }
 .club-header {
   height: 94px;
-  border-bottom-color: #26353b;
 }
 .club-header .brand > strong {
   font-size: 47px;
   letter-spacing: 0.3px;
-}
-.club-header nav button.active {
-  transform: none;
-  border-radius: 4px;
-  box-shadow: 0 3px 0 var(--arena-gold);
-  background: var(--arena-ink);
 }
 .lobby-title {
   padding: 21px 0 17px;
@@ -35,14 +38,15 @@
 }
 .event-dock {
   padding: 7px;
-  border-radius: 6px;
+  border-radius: 0;
   background: var(--arena-ink);
   color: var(--arena-cream);
   gap: 15px;
+  box-shadow: 4px 4px 0 var(--arena-orange);
 }
 .dock-label {
   padding-left: 9px;
-  color: #a7b4b4;
+  color: var(--arena-gold);
 }
 .event-buttons {
   gap: 5px;
@@ -50,18 +54,18 @@
   flex-wrap: wrap;
 }
 .event-buttons button {
-  border-color: #556164;
-  border-radius: 3px;
+  border-color: color-mix(in srgb, var(--arena-cream) 45%, transparent);
+  border-radius: 0;
   min-height: 43px;
   flex: 1;
   justify-content: center;
-  color: #c2cecc;
+  color: var(--arena-cream);
   white-space: nowrap;
 }
 .event-buttons button.selected {
   background: var(--arena-gold);
   color: var(--arena-ink);
-  box-shadow: none;
+  box-shadow: 3px 3px 0 var(--arena-orange);
   transform: none;
   border-color: var(--arena-gold);
 }
@@ -75,8 +79,8 @@
   min-height: 0;
   aspect-ratio: 16/9;
   border: 2px solid var(--arena-ink);
-  border-radius: 6px;
-  box-shadow: 0 5px 16px #111b2026;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 var(--arena-ink);
   background: var(--arena-ink);
 }
 .club-stage .pixi-host,
@@ -95,14 +99,15 @@
   display: none;
 }
 .stage-controls button {
-  border-color: #aaa892;
-  border-radius: 3px;
+  border-color: var(--arena-cream);
+  border-radius: 0;
   width: 44px;
   height: 44px;
-  background: #111b20d9;
+  background: color-mix(in srgb, var(--arena-ink) 85%, transparent);
+  box-shadow: 2px 2px 0 var(--arena-orange);
 }
 .stage-bottom {
-  background: #111b20ed;
+  background: color-mix(in srgb, var(--arena-ink) 93%, transparent);
   padding: 7px 13px;
   font-size: 11px;
 }
@@ -122,11 +127,8 @@
   padding: 0 !important;
   border: 0 !important;
 }
+/* The printed yellow station of globals.css, a little tighter. */
 .competitor-station {
-  background: #eee0b8;
-  border-radius: 6px;
-  border: 1px solid #5b594b;
-  box-shadow: 0 4px 10px #111b2018;
   padding: 14px;
 }
 .station-heading > span:first-child {
@@ -143,44 +145,38 @@
   font-size: 14px;
   min-height: 58px;
 }
-.watch-desk {
-  border-color: #bdb28f;
-}
 .playback-controls {
   flex-wrap: wrap;
   gap: 3px;
 }
 .playback-controls button {
-  border-radius: 4px;
+  border-radius: 0;
   width: 44px;
   height: 44px;
-}
-.playback-controls button:hover {
-  background: var(--arena-gold);
 }
 .entry-stamp {
   line-height: 1.5;
 }
 .live-stage-wrap {
   border: 2px solid var(--arena-ink);
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 5px 16px #111b2026;
+  box-shadow: 5px 5px 0 var(--arena-ink);
 }
 .live-caption {
   background: var(--arena-ink);
   color: var(--arena-cream);
-  border-radius: 0 0 5px 5px;
+  border-radius: 0;
   padding: 12px 16px;
 }
 .live-event-tabs button {
-  border-radius: 4px;
+  border-radius: 0;
 }
 .live-state-overlay {
-  background: #111b20bc;
+  background: color-mix(in srgb, var(--arena-ink) 74%, transparent);
 }
 .motion-workshop {
-  background: #111b20;
+  background: var(--arena-ink);
   color: var(--arena-cream);
 }
 .motion-workshop header {
