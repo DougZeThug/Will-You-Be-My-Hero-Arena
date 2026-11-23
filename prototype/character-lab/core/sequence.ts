@@ -36,7 +36,12 @@ class Builder {
     return this;
   }
   private endBeat(): void {
-    if (this.beatName && this.t > this.beatStart) this.beats.push({ name: this.beatName, from: this.beatStart, to: this.t });
+    if (this.beatName && this.t > this.beatStart)
+      this.beats.push({
+        name: this.beatName,
+        from: this.beatStart,
+        to: this.t,
+      });
   }
   at(cmd: Command, label: string): this {
     this.schedule.push({ step: this.t, cmd, label });
@@ -46,9 +51,18 @@ class Builder {
     this.t += steps;
     return this;
   }
-  done(name: string, start: { x: number; z: number; yaw: number }): SequenceInfo {
+  done(
+    name: string,
+    start: { x: number; z: number; yaw: number },
+  ): SequenceInfo {
     this.endBeat();
-    return { name, schedule: this.schedule, length: this.t, beats: this.beats, start };
+    return {
+      name,
+      schedule: this.schedule,
+      length: this.t,
+      beats: this.beats,
+      start,
+    };
   }
 }
 
@@ -58,7 +72,10 @@ function stage(camYaw: number) {
   const s = Math.sin(camYaw);
   return {
     /** World ground vector for (screen-right, toward-the-camera) amounts. */
-    dir: (right: number, toward: number) => ({ x: right * c + toward * s, z: -right * s + toward * c }),
+    dir: (right: number, toward: number) => ({
+      x: right * c + toward * s,
+      z: -right * s + toward * c,
+    }),
     turn: (view: ViewName): Command => ({ type: 'turnTo', view, camYaw }),
     yaw: (view: ViewName) => yawForViewAngle(VIEW_ANGLE[view], camYaw),
   };
@@ -74,19 +91,35 @@ export function proofSequence(camYaw = 0): SequenceInfo {
   const b = new Builder();
   const S = stage(camYaw);
   b.beat('idle, facing the camera').wait(36);
-  b.beat('turn in place: front -> side').at(S.turn('side'), 'turn to side').wait(44);
-  b.beat('turn in place: side -> back').at(S.turn('back'), 'turn to back').wait(48);
-  b.beat('walk screen-right').at({ type: 'move', ...S.dir(1, 0) }, 'walk screen-right').wait(84);
-  b.beat('PLANT and change direction').at({ type: 'move', ...S.dir(-1, 0) }, 'plant, go screen-left').wait(100);
+  b.beat('turn in place: front -> side')
+    .at(S.turn('side'), 'turn to side')
+    .wait(44);
+  b.beat('turn in place: side -> back')
+    .at(S.turn('back'), 'turn to back')
+    .wait(48);
+  b.beat('walk screen-right')
+    .at({ type: 'move', ...S.dir(1, 0) }, 'walk screen-right')
+    .wait(84);
+  b.beat('PLANT and change direction')
+    .at({ type: 'move', ...S.dir(-1, 0) }, 'plant, go screen-left')
+    .wait(100);
   b.beat('stop').at({ type: 'stop' }, 'stop').wait(48);
   b.beat('reach TOWARD THE CAMERA, grip')
-    .at({ type: 'placeProp', ...S.dir(0.22, 0.78), relative: true }, 'stand on the camera side, slightly to one side')
+    .at(
+      { type: 'placeProp', ...S.dir(0.22, 0.78), relative: true },
+      'stand on the camera side, slightly to one side',
+    )
     .wait(6)
     .at({ type: 'reach' }, 'reach toward the camera')
     .wait(120)
     .at({ type: 'grip' }, 'grip')
     .wait(50);
-  b.beat('release WHILE TURNING (toss)').at({ type: 'toss', power: 0.6, yaw: S.yaw('side') }, 'turn to screen-right and toss in one motion').wait(150);
+  b.beat('release WHILE TURNING (toss)')
+    .at(
+      { type: 'toss', power: 0.6, yaw: S.yaw('side') },
+      'turn to screen-right and toss in one motion',
+    )
+    .wait(150);
   b.beat('settle').wait(70);
   return b.done('proof', { x: 0, z: 0, yaw: S.yaw('front') });
 }
@@ -100,7 +133,11 @@ export function orbitSequence(camYaw = 0): SequenceInfo {
   const b = new Builder();
   const S = stage(camYaw);
   b.beat('idle (camera orbiting)').wait(100);
-  b.beat('walk (camera orbiting)').at({ type: 'move', ...S.dir(1, 0) }, 'walk').wait(110).at({ type: 'stop' }, 'stop').wait(40);
+  b.beat('walk (camera orbiting)')
+    .at({ type: 'move', ...S.dir(1, 0) }, 'walk')
+    .wait(110)
+    .at({ type: 'stop' }, 'stop')
+    .wait(40);
   b.beat('reach + grip (camera orbiting)')
     .at({ type: 'placeProp', ...S.dir(0.2, 0.75), relative: true }, 'stand')
     .at({ type: 'reach' }, 'reach')
@@ -120,28 +157,61 @@ export function testSequence(camYaw = 0): SequenceInfo {
   b.at({ type: 'placeProp', ...S.dir(1.7, 0.5) }, 'prop on its stand');
   b.beat('idle').wait(40);
   b.beat('turn: front').at(S.turn('front'), 'turn to front').wait(40);
-  b.beat('turn: three-quarter front').at(S.turn('threeQuarterFront'), 'turn to 3/4 front').wait(32);
+  b.beat('turn: three-quarter front')
+    .at(S.turn('threeQuarterFront'), 'turn to 3/4 front')
+    .wait(32);
   b.beat('turn: side').at(S.turn('side'), 'turn to side').wait(32);
-  b.beat('turn: three-quarter back').at(S.turn('threeQuarterBack'), 'turn to 3/4 back').wait(32);
+  b.beat('turn: three-quarter back')
+    .at(S.turn('threeQuarterBack'), 'turn to 3/4 back')
+    .wait(32);
   b.beat('turn: back').at(S.turn('back'), 'turn to back').wait(32);
-  b.beat('turn: round to side').at(S.turn('side'), 'turn round to side').wait(45);
-  b.beat('walk right').at({ type: 'move', ...S.dir(1, 0) }, 'walk screen-right').wait(70);
+  b.beat('turn: round to side')
+    .at(S.turn('side'), 'turn round to side')
+    .wait(45);
+  b.beat('walk right')
+    .at({ type: 'move', ...S.dir(1, 0) }, 'walk screen-right')
+    .wait(70);
   b.beat('stop').at({ type: 'stop' }, 'stop').wait(40);
-  b.beat('walk right again').at({ type: 'move', ...S.dir(1, 0) }, 'walk right').wait(34);
-  b.beat('REVERSE mid-stride').at({ type: 'move', ...S.dir(-1, 0) }, 'reverse to left').wait(95);
+  b.beat('walk right again')
+    .at({ type: 'move', ...S.dir(1, 0) }, 'walk right')
+    .wait(34);
+  b.beat('REVERSE mid-stride')
+    .at({ type: 'move', ...S.dir(-1, 0) }, 'reverse to left')
+    .wait(95);
   b.beat('stop after reverse').at({ type: 'stop' }, 'stop').wait(45);
-  b.beat('reach + grip').at({ type: 'reach' }, 'reach for the prop').wait(150).at({ type: 'grip' }, 'grip').wait(45);
-  b.beat('carry').at({ type: 'move', ...S.dir(-1, 0.25) }, 'carry it away').wait(60).at({ type: 'stop' }, 'stop').wait(35);
-  b.beat('place back').at({ type: 'place' }, 'place it back on the stand').wait(200);
+  b.beat('reach + grip')
+    .at({ type: 'reach' }, 'reach for the prop')
+    .wait(150)
+    .at({ type: 'grip' }, 'grip')
+    .wait(45);
+  b.beat('carry')
+    .at({ type: 'move', ...S.dir(-1, 0.25) }, 'carry it away')
+    .wait(60)
+    .at({ type: 'stop' }, 'stop')
+    .wait(35);
+  b.beat('place back')
+    .at({ type: 'place' }, 'place it back on the stand')
+    .wait(200);
   b.beat('reach + grip again').at({ type: 'grip' }, 'reach and grip').wait(110);
-  b.beat('toss').at(S.turn('side'), 'face the lane').wait(50).at({ type: 'toss', power: 0.7 }, 'underhand toss');
+  b.beat('toss')
+    .at(S.turn('side'), 'face the lane')
+    .wait(50)
+    .at({ type: 'toss', power: 0.7 }, 'underhand toss');
   // The light hit lands during the follow-through (interruption).
   b.wait(62);
-  b.beat('light hit from behind (during follow-through)').at({ type: 'hit', dirYaw: S.yaw('side'), strength: 'light' }, 'light hit from behind').wait(110);
+  b.beat('light hit from behind (during follow-through)')
+    .at(
+      { type: 'hit', dirYaw: S.yaw('side'), strength: 'light' },
+      'light hit from behind',
+    )
+    .wait(110);
   b.beat('heavy hit from the front while starting to walk')
     .at({ type: 'move', ...S.dir(1, 0) }, 'start walking')
     .wait(9)
-    .at({ type: 'hit', dirYaw: S.yaw('sideLeft'), strength: 'heavy' }, 'heavy hit from the front')
+    .at(
+      { type: 'hit', dirYaw: S.yaw('sideLeft'), strength: 'heavy' },
+      'heavy hit from the front',
+    )
     .wait(60)
     .at({ type: 'stop' }, 'stop')
     .wait(150);
@@ -164,17 +234,38 @@ export function interruptionSequence(camYaw = 0): SequenceInfo {
     .wait(22)
     .at({ type: 'move', ...S.dir(1, 0) }, 'reverse again mid-turn')
     .wait(60);
-  b.beat('reach during a stop').at({ type: 'stop' }, 'stop').wait(4).at({ type: 'reach' }, 'reach while still braking').wait(150);
-  b.beat('hit during a reach').at({ type: 'hit', dirYaw: S.yaw('back'), strength: 'light' }, 'light hit mid-reach').wait(40);
-  b.beat('move during recovery').at({ type: 'move', ...S.dir(0, 1) }, 'walk toward camera while recovering').wait(50);
+  b.beat('reach during a stop')
+    .at({ type: 'stop' }, 'stop')
+    .wait(4)
+    .at({ type: 'reach' }, 'reach while still braking')
+    .wait(150);
+  b.beat('hit during a reach')
+    .at(
+      { type: 'hit', dirYaw: S.yaw('back'), strength: 'light' },
+      'light hit mid-reach',
+    )
+    .wait(40);
+  b.beat('move during recovery')
+    .at({ type: 'move', ...S.dir(0, 1) }, 'walk toward camera while recovering')
+    .wait(50);
   b.beat('grip while walking').at({ type: 'grip' }, 'go and grip').wait(210);
-  b.beat('toss interrupted by move').at({ type: 'toss', power: 0.4 }, 'toss').wait(16).at({ type: 'move', ...S.dir(-1, -0.4) }, 'walk off mid wind-up').wait(60);
+  b.beat('toss interrupted by move')
+    .at({ type: 'toss', power: 0.4 }, 'toss')
+    .wait(16)
+    .at({ type: 'move', ...S.dir(-1, -0.4) }, 'walk off mid wind-up')
+    .wait(60);
   b.beat('toss on the move, heavy hit in the wind-up')
     .at({ type: 'toss', power: 1 }, 'toss (must stop first)')
     .wait(34)
-    .at({ type: 'hit', dirYaw: S.yaw('front'), strength: 'heavy' }, 'heavy hit: bag knocked loose')
+    .at(
+      { type: 'hit', dirYaw: S.yaw('front'), strength: 'heavy' },
+      'heavy hit: bag knocked loose',
+    )
     .wait(20)
-    .at({ type: 'hit', dirYaw: S.yaw('side'), strength: 'light' }, 'second hit during the stagger')
+    .at(
+      { type: 'hit', dirYaw: S.yaw('side'), strength: 'light' },
+      'second hit during the stagger',
+    )
     .wait(30)
     .at({ type: 'reach' }, 'reach for the bag on the ground while staggering')
     .wait(260);

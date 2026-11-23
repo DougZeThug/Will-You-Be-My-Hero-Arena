@@ -102,6 +102,12 @@ export class RigLayers {
           indexBuffer: gl.createBuffer()!,
           indexCount: part.triangles.length,
         };
+      // rig.json rounds weights to 4 decimals; renormalise so a blended vertex
+      // is not pulled toward the origin by the rounding (0.1 px at 800 px).
+      for (let v = 0; v < count; v++) {
+        const sum = mesh.weights[v * 4] + mesh.weights[v * 4 + 1] + mesh.weights[v * 4 + 2] + mesh.weights[v * 4 + 3];
+        if (sum > 0) for (let k = 0; k < 4; k++) mesh.weights[v * 4 + k] /= sum;
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
       gl.bufferData(gl.ARRAY_BUFFER, mesh.positions, gl.DYNAMIC_DRAW);
       gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);

@@ -47,7 +47,7 @@ function loadSheet(config) {
 }
 
 /** Regular grid mesh over the part's opaque pixels, in sheet coordinates. */
-function meshPart(part, boneIndex, origin) {
+function meshPart(part, boneIndex, origin, integerGrid = false) {
   const { width, height } = part.image,
     mask = alphaMask(part.image),
     box = bounds(mask, width),
@@ -57,8 +57,10 @@ function meshPart(part, boneIndex, origin) {
     y1 = Math.min(height, box.y1 + 1 + LAYOUT.pad),
     columns = Math.max(1, Math.ceil((x1 - x0) / LAYOUT.cell)),
     rows = Math.max(1, Math.ceil((y1 - y0) / LAYOUT.cell)),
-    xs = Array.from({ length: columns + 1 }, (_, i) => x0 + ((x1 - x0) * i) / columns),
-    ys = Array.from({ length: rows + 1 }, (_, i) => y0 + ((y1 - y0) * i) / rows),
+    // Whole-pixel vertices keep a 1:1 render texel-exact (rasterisers snap sub-pixel positions).
+    snap = integerGrid ? Math.round : (v) => v,
+    xs = Array.from({ length: columns + 1 }, (_, i) => snap(x0 + ((x1 - x0) * i) / columns)),
+    ys = Array.from({ length: rows + 1 }, (_, i) => snap(y0 + ((y1 - y0) * i) / rows)),
     wide = dilate(mask, width, height, 2),
     vertexOf = new Int32Array((columns + 1) * (rows + 1)).fill(-1),
     vertices = [],
@@ -128,10 +130,10 @@ function pack(meshes) {
 /** Mesh every part, pack the atlas and assemble rig.json. Shared by every
  * view: `cut` is { bones, sockets, parts, facing } with sheet-sized part
  * images; `meta` is merged over the common fields. */
-export function assembleRig(cut, { width, heightPx, meta }) {
+export function assembleRig(cut, { width, heightPx, meta, integerGrid = false }) {
   const origin = cut.bones[0].point,
     boneIndex = Object.fromEntries(cut.bones.map((bone, i) => [bone.name, i])),
-    meshes = cut.parts.map((part) => meshPart(part, boneIndex, origin)),
+    meshes = cut.parts.map((part) => meshPart(part, boneIndex, origin, integerGrid)),
     size = pack(meshes),
     atlas = blankImage(size.width, size.height);
   cut.parts.forEach((part, k) => {

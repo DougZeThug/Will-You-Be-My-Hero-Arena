@@ -8,7 +8,10 @@ registerHooks({
     try {
       return nextResolve(specifier, context);
     } catch (error) {
-      if (specifier.startsWith('.') && !/\.[cm]?[jt]s$|\.json$/.test(specifier)) {
+      if (
+        specifier.startsWith('.') &&
+        !/\.[cm]?[jt]s$|\.json$/.test(specifier)
+      ) {
         return nextResolve(`${specifier}.ts`, context);
       }
       throw error;

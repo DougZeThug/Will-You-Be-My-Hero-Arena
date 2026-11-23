@@ -4,27 +4,91 @@
     <meta charset="utf-8" />
     <title>Character Lab: core mannequin viewer</title>
     <style>
-      body { margin: 0; background: #1d1f24; color: #dfe3ea; font: 13px/1.35 system-ui, sans-serif; }
-      #wrap { display: flex; gap: 10px; padding: 8px; align-items: flex-start; }
-      canvas { background: #f1ead9; border-radius: 6px; display: block; }
-      #panel { width: 300px; }
-      fieldset { border: 1px solid #3a3f4a; border-radius: 6px; margin: 0 0 8px; padding: 6px 8px; }
-      legend { color: #9aa3b2; padding: 0 4px; }
-      button { background: #2e3440; color: #e8ecf3; border: 1px solid #4a5263; border-radius: 4px; padding: 3px 7px; margin: 2px 1px; cursor: pointer; font: inherit; }
-      button:hover { background: #3b4352; }
-      button.on { background: #5a7bd8; border-color: #7f9bea; }
-      input[type='range'] { width: 100%; }
-      select { background: #2e3440; color: #e8ecf3; border: 1px solid #4a5263; border-radius: 4px; font: inherit; }
-      #hud { white-space: pre; font: 11px/1.3 ui-monospace, monospace; color: #b9c2d0; }
-      .row { display: flex; align-items: center; gap: 6px; }
-      .row span { min-width: 64px; color: #9aa3b2; }
+      body {
+        margin: 0;
+        background: #1d1f24;
+        color: #dfe3ea;
+        font:
+          13px/1.35 system-ui,
+          sans-serif;
+      }
+      #wrap {
+        display: flex;
+        gap: 10px;
+        padding: 8px;
+        align-items: flex-start;
+      }
+      canvas {
+        background: #f1ead9;
+        border-radius: 6px;
+        display: block;
+      }
+      #panel {
+        width: 300px;
+      }
+      fieldset {
+        border: 1px solid #3a3f4a;
+        border-radius: 6px;
+        margin: 0 0 8px;
+        padding: 6px 8px;
+      }
+      legend {
+        color: #9aa3b2;
+        padding: 0 4px;
+      }
+      button {
+        background: #2e3440;
+        color: #e8ecf3;
+        border: 1px solid #4a5263;
+        border-radius: 4px;
+        padding: 3px 7px;
+        margin: 2px 1px;
+        cursor: pointer;
+        font: inherit;
+      }
+      button:hover {
+        background: #3b4352;
+      }
+      button.on {
+        background: #5a7bd8;
+        border-color: #7f9bea;
+      }
+      input[type='range'] {
+        width: 100%;
+      }
+      select {
+        background: #2e3440;
+        color: #e8ecf3;
+        border: 1px solid #4a5263;
+        border-radius: 4px;
+        font: inherit;
+      }
+      #hud {
+        white-space: pre;
+        font:
+          11px/1.3 ui-monospace,
+          monospace;
+        color: #b9c2d0;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .row span {
+        min-width: 64px;
+        color: #9aa3b2;
+      }
     </style>
   </head>
   <body>
     <div id="wrap">
       <div>
         <canvas id="view" width="1000" height="620"></canvas>
-        <div class="row" style="margin-top: 6px"><span>scrub</span><input id="scrub" type="range" min="0" max="0" value="0" /></div>
+        <div class="row" style="margin-top: 6px">
+          <span>scrub</span
+          ><input id="scrub" type="range" min="0" max="0" value="0" />
+        </div>
       </div>
       <div id="panel">
         <fieldset>
@@ -35,36 +99,65 @@
         </fieldset>
         <fieldset>
           <legend>camera</legend>
-          <div class="row"><span id="camLabel">yaw 0</span><input id="cam" type="range" min="-180" max="180" value="0" /></div>
-          <button data-cam="0">side</button><button data-cam="35">35</button><button data-cam="90">90</button><button data-cam="180">180</button>
+          <div class="row">
+            <span id="camLabel">yaw 0</span
+            ><input id="cam" type="range" min="-180" max="180" value="0" />
+          </div>
+          <button data-cam="0">side</button><button data-cam="35">35</button
+          ><button data-cam="90">90</button><button data-cam="180">180</button>
           <button id="orbit">orbit</button>
         </fieldset>
         <fieldset>
           <legend>commands (keys)</legend>
           <div>
-            <button data-move="-1,0">&larr; A</button><button data-move="1,0">&rarr; D</button><button data-move="0,-1">away W</button
-            ><button data-move="0,1">toward S</button><button data-cmd="stop">stop (space)</button>
+            <button data-move="-1,0">&larr; A</button
+            ><button data-move="1,0">&rarr; D</button
+            ><button data-move="0,-1">away W</button
+            ><button data-move="0,1">toward S</button
+            ><button data-cmd="stop">stop (space)</button>
           </div>
           <div>
             turn to:
-            <button data-turn="front">front</button><button data-turn="threeQuarterFront">3/4 F</button><button data-turn="side">side</button
-            ><button data-turn="threeQuarterBack">3/4 B</button><button data-turn="back">back</button><button data-turn="sideLeft">side L</button>
+            <button data-turn="front">front</button
+            ><button data-turn="threeQuarterFront">3/4 F</button
+            ><button data-turn="side">side</button
+            ><button data-turn="threeQuarterBack">3/4 B</button
+            ><button data-turn="back">back</button
+            ><button data-turn="sideLeft">side L</button>
             <button data-rot="-1">Q</button><button data-rot="1">E</button>
           </div>
           <div>
-            <button data-cmd="reach">reach (R)</button><button data-cmd="grip">grip (R)</button><button data-cmd="place">place (F)</button
-            ><button data-cmd="toss">toss (T)</button><button data-cmd="tossTurn">toss while turning (G)</button>
+            <button data-cmd="reach">reach (R)</button
+            ><button data-cmd="grip">grip (R)</button
+            ><button data-cmd="place">place (F)</button
+            ><button data-cmd="toss">toss (T)</button
+            ><button data-cmd="tossTurn">toss while turning (G)</button>
           </div>
           <div>
-            <button data-cmd="hitL">light hit (H)</button><button data-cmd="hitH">heavy hit (J)</button><button data-cmd="prop">prop here (P)</button>
+            <button data-cmd="hitL">light hit (H)</button
+            ><button data-cmd="hitH">heavy hit (J)</button
+            ><button data-cmd="prop">prop here (P)</button>
           </div>
         </fieldset>
         <fieldset>
           <legend>playback</legend>
-          <button id="pause">pause</button><button id="back1">&lt; frame</button><button id="fwd1">frame &gt;</button><button id="live">live</button>
-          <div class="row"><span id="speedLabel">speed 1.0x</span><input id="speed" type="range" min="0.1" max="1" step="0.05" value="1" /></div>
+          <button id="pause">pause</button><button id="back1">&lt; frame</button
+          ><button id="fwd1">frame &gt;</button><button id="live">live</button>
+          <div class="row">
+            <span id="speedLabel">speed 1.0x</span
+            ><input
+              id="speed"
+              type="range"
+              min="0.1"
+              max="1"
+              step="0.05"
+              value="1"
+            />
+          </div>
           <div>
-            sequence: <select id="seq"></select> <button id="runSeq">run test sequence</button>
+            sequence:
+            <select id="seq"></select>
+            <button id="runSeq">run test sequence</button>
           </div>
         </fieldset>
         <div id="hud"></div>

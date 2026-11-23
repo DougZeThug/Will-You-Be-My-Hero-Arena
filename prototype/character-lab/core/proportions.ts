@@ -66,7 +66,10 @@ const KEYS: (keyof Proportions)[] = [
 ];
 
 /** Accepts a parsed rigs/<id>/proportions.json; missing or invalid fields fall back to the default. */
-export function sanitizeProportions(raw: unknown, base: Proportions = defaultProportions()): Proportions {
+export function sanitizeProportions(
+  raw: unknown,
+  base: Proportions = defaultProportions(),
+): Proportions {
   const out = { ...base };
   if (raw && typeof raw === 'object') {
     for (const k of KEYS) {

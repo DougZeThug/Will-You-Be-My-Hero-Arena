@@ -285,7 +285,7 @@ async function main(): Promise<void> {
     result.tests.map((t) => `${t.pass ? 'PASS' : 'FAIL'} ${t.name}: ${t.detail}`).join('\n') + '\n\n' + feetLog.join('\n');
 }
 
-main()
+(sheetName === 'doug34' ? import('./views/move34').then((module) => module.run(query)) : main())
   .catch((error: Error) => {
     result.error = error.stack ?? error.message;
     document.getElementById('log')!.textContent = result.error;

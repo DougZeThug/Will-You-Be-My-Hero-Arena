@@ -56,6 +56,11 @@ export interface Pose {
   legR?: LegPose;
   /** Bean bag held in this hand. */
   bag?: Side;
+  /** Shoulder joint offset, metres: [up, back]. */
+  shrugL?: [number, number];
+  shrugR?: [number, number];
+  /** World heel targets (legs solved by IK; the pelvis drops if they are out of reach). `yaw` deg = the foot's facing, `lift` m. */
+  feet?: Partial<Record<Side, { x: number; z: number; yaw?: number; lift?: number; pitch?: number }>>;
   /** World-locked feet: keep ankle/heel/toe where a yaw-0 stance puts them. */
   feetLocked?: boolean;
   squash?: number;
@@ -100,7 +105,8 @@ export function buildFrame(p: Proportions, pose: Pose, step = 0): ViewFrame {
       outward = scale(leftC, sign);
     // Arm.
     const a = rad(arm.forward ?? 0),
-      shoulder = add(J.chest, outward, p.shoulderWidth / 2),
+      shrug = (s === 'L' ? pose.shrugL : pose.shrugR) ?? [0, 0],
+      shoulder = add(add(add(J.chest, outward, p.shoulderWidth / 2), upC, shrug[0]), fc, -shrug[1]),
       down = scale(upC, -1),
       upperDir = norm(mix(mix(down, fc, a), outward, rad(arm.out ?? 4))),
       bend = norm(mix(fc, upC, a)),
@@ -138,6 +144,51 @@ export function buildFrame(p: Proportions, pose: Pose, step = 0): ViewFrame {
   // Stand on the ground: the lowest heel or toe at y = 0.
   const low = Math.min(J.heelL.y, J.heelR.y, J.toeL.y, J.toeR.y);
   for (const name of Object.keys(J) as JointName[]) J[name] = add(J[name], UP, -low);
+  if (pose.feet) {
+    // Feet given in the world: place them, drop the pelvis until both are in reach, solve the knees.
+    const targets = {} as Record<Side, { ankle: Vec3; heel: Vec3; toe: Vec3; dir: Vec3 }>;
+    for (const s of ['L', 'R'] as Side[]) {
+      const foot = pose.feet[s];
+      if (!foot) {
+        targets[s] = { ankle: J[`ankle${s}`], heel: J[`heel${s}`], toe: J[`toe${s}`], dir: f };
+        continue;
+      }
+      const flat = facing(rad(foot.yaw ?? pose.yaw ?? -90)),
+        dir = norm(mix(flat, scale(UP, -1), rad(foot.pitch ?? 0))),
+        heel = v(foot.x, foot.lift ?? 0, foot.z),
+        ankle = add(add(heel, UP, p.ankleHeight), dir, 0.25 * p.footLen);
+      targets[s] = { ankle, heel, toe: add(heel, dir, p.footLen), dir };
+    }
+    const reach = p.thigh + p.shin - 1e-4;
+    let drop = 0;
+    for (let n = 0; n < 200; n++) {
+      const far = (['L', 'R'] as Side[]).some((s) => {
+        const hip = add(J[`hip${s}`], UP, -drop),
+          a = targets[s].ankle;
+        return Math.hypot(a.x - hip.x, a.y - hip.y, a.z - hip.z) > reach;
+      });
+      if (!far) break;
+      drop += 0.002;
+    }
+    for (const name of Object.keys(J) as JointName[]) if (!/^(knee|ankle|heel|toe)/.test(name)) J[name] = add(J[name], UP, -drop);
+    for (const s of ['L', 'R'] as Side[]) {
+      const hip = J[`hip${s}`],
+        { ankle, heel, toe, dir } = targets[s],
+        to = add(ankle, hip, -1),
+        d = Math.min(reach, Math.hypot(to.x, to.y, to.z)),
+        along = norm(to),
+        cosA = Math.min(1, Math.max(-1, (p.thigh * p.thigh + d * d - p.shin * p.shin) / (2 * p.thigh * d))),
+        pole = norm(add(f, along, -dot(f, along))),
+        knee = add(add(hip, along, p.thigh * cosA), pole, p.thigh * Math.sqrt(1 - cosA * cosA));
+      J[`knee${s}`] = knee;
+      J[`ankle${s}`] = ankle;
+      J[`heel${s}`] = heel;
+      J[`toe${s}`] = toe;
+      B[`thigh${s}`] = basisFrom(add(knee, hip, -1), f);
+      B[`shin${s}`] = basisFrom(add(ankle, knee, -1), f);
+      B[`foot${s}`] = basisFrom(dir, UP);
+    }
+  }
   if (pose.feetLocked) {
     const rest = buildFrame(p, { yaw: -90, x: pose.x, z: pose.z });
     for (const name of ['ankleL', 'heelL', 'toeL', 'ankleR', 'heelR', 'toeR'] as JointName[]) J[name] = rest.joints[name];

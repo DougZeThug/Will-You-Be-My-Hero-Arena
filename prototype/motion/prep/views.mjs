@@ -10,6 +10,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assembleRig, buildCharacter, writeRig } from './build.mjs';
 import { BODY, bodyCut } from './body.mjs';
+import { WHOLE, wholeCut } from './whole.mjs';
 import { FRONT, frontCut } from './front.mjs';
 import { decodePng, encodePng } from './png.mjs';
 import { alphaMask, blankImage, compositeOver, cutout } from './raster.mjs';
@@ -241,6 +242,48 @@ function buildBody(id, character, view, debug) {
   return { rig: built.rig, notes: cut.notes, out };
 }
 
+/** One whole-figure drawing kept as one continuous mesh plus limb layers (see whole.mjs). */
+function buildWhole(id, character, view, debug) {
+  const spec = character[view],
+    file = readFileSync(resolve(repository, spec.source)),
+    cut = wholeCut(decodePng(file), spec),
+    built = assembleRig(cut, {
+      integerGrid: true,
+      width: cut.width,
+      heightPx: round(cut.heightPx, 2),
+      meta: (placement) => ({
+        id,
+        generator: VIEW_GENERATOR,
+        derived: true,
+        note: 'Bind pose is the source drawing. One continuous body mesh (head, trunk, shorts) plus arm and leg layers; hidden overlap under the layers is derived (mirrored neighbouring pixels, ink line, sticker contour).',
+        inputs: [{ path: spec.source, sha256: sha256(file) }],
+        landmarks: { handEntered: { joints: spec.joints, neckLine: spec.neckLine, pieces: spec.pieces } },
+        hints: spec.overrides ?? {},
+        facing: 1,
+        ...placement,
+        whole: WHOLE,
+        notes: cut.notes,
+        lab: {
+          view,
+          construction: 'whole',
+          generator: VIEW_GENERATOR,
+          nearSide: cut.nearSide,
+          canonicalAngle: 45,
+          sourceSize: [cut.width, cut.height],
+          joints: Object.fromEntries(Object.entries(cut.joints).map(([name, point]) => [name, [round(point[0] - placement.sheetOrigin[0], 2), round(point[1] - placement.sheetOrigin[1], 2)]])),
+        },
+      }),
+    }),
+    out = resolve(lab, 'rigs', id, view);
+  writeRig(out, built);
+  if (debug) {
+    const folder = resolve(repository, 'work/qa/character-lab/doug-34/work');
+    mkdirSync(folder, { recursive: true });
+    for (const part of cut.parts) writeFileSync(resolve(folder, `layer-${id}-${part.name}.png`), encodePng(part.image));
+  }
+  return { rig: built.rig, notes: cut.notes, out };
+}
+
 /** Bind-pose composite of the cut parts, for eyeballing the assembly. */
 function debugBind(id, view, rig, out, cut, set = 'views') {
   if (!cut) return;
@@ -401,6 +444,7 @@ export function buildView(id, view, { debug = false } = {}) {
     let result;
     if (name === 'side' || name === 'sideRear') result = buildSide(id, character, name, debug);
     else if (name === 'front' || name === 'backStandIn' || (name === 'back' && !character.back)) result = buildFront(id, character, name === 'back' ? 'backStandIn' : name, debug);
+    else if (character[name]?.construction === 'whole') result = buildWhole(id, character, name, debug);
     else if (name === 'back' || name === 'threeQuarterFront') result = buildBody(id, character, name, debug);
     else throw new Error(`unknown view ${name}`);
     console.log(`${id} ${name}: ${result.rig.parts.length} parts, ${result.rig.parts.reduce((n, p) => n + p.xy.length / 2, 0)} vertices, atlas ${result.rig.atlas.width}x${result.rig.atlas.height}, height ${result.rig.meta.heightPx}px -> ${result.out} (${Date.now() - started} ms)`);

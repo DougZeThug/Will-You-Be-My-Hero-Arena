@@ -8,7 +8,18 @@
 //       -> spine/chest/head (springs: lag, overshoot, lead with the head)
 //         -> arms (pendulum springs, blended to analytic IK for reach/toss)
 //           -> prop (rigid in the palm between the grip and release steps)
-import type { Basis, Command, Frame, HandPose, JointName, Proportions, PropState, SegmentName, Side, Vec3 } from './types';
+import type {
+  Basis,
+  Command,
+  Frame,
+  HandPose,
+  JointName,
+  Proportions,
+  PropState,
+  SegmentName,
+  Side,
+  Vec3,
+} from './types';
 import { DT, VIEW_ANGLE } from './types';
 import type { MotionStyle } from './style';
 import {
@@ -55,7 +66,15 @@ export interface SimOptions {
 
 export interface SimEvent {
   step: number;
-  type: 'grip' | 'release' | 'place' | 'drop' | 'land' | 'footPlant' | 'footLift' | 'ignored';
+  type:
+    | 'grip'
+    | 'release'
+    | 'place'
+    | 'drop'
+    | 'land'
+    | 'footPlant'
+    | 'footLift'
+    | 'ignored';
   /** |palm - prop| at the event (m) */
   posMismatch?: number;
   /** |palmVelocity - propVelocity| at the event (m/s) */
@@ -146,8 +165,19 @@ interface Arm {
 }
 
 type Task =
-  | { kind: 'reach'; phase: 'approach' | 'extend' | 'ready' | 'lift'; wantGrip: boolean; spot: { x: number; z: number }; n: number }
-  | { kind: 'place'; phase: 'approach' | 'extend' | 'release' | 'withdraw'; spot: { x: number; z: number }; n: number }
+  | {
+      kind: 'reach';
+      phase: 'approach' | 'extend' | 'ready' | 'lift';
+      wantGrip: boolean;
+      spot: { x: number; z: number };
+      n: number;
+    }
+  | {
+      kind: 'place';
+      phase: 'approach' | 'extend' | 'release' | 'withdraw';
+      spot: { x: number; z: number };
+      n: number;
+    }
   | {
       kind: 'toss';
       phase: 'settle' | 'load' | 'swing' | 'follow' | 'recover';
@@ -184,9 +214,13 @@ const G = 9.81;
 const BAG_REST = 0.03;
 const STAND_H = 0.8;
 const PRON_REST = 1.75; // relaxed forearm: palm toward the thigh, slightly back
-const FLAT: Basis = { x: { x: 1, y: 0, z: 0 }, y: { x: 0, y: 1, z: 0 }, z: { x: 0, y: 0, z: 1 } };
+const FLAT: Basis = {
+  x: { x: 1, y: 0, z: 0 },
+  y: { x: 0, y: 1, z: 0 },
+  z: { x: 0, y: 0, z: 1 },
+};
 const ARM_MAX = 0.985;
-const LEG_SOFT = 0.982;
+const LEG_SOFT = 0.99;
 
 class CharacterSim implements Sim {
   readonly options: SimOptions;
@@ -221,6 +255,7 @@ class CharacterSim implements Sim {
   private leanRoll = new Spring(0);
   private headPitch = new Spring(0);
   private lookPitchF = 0;
+  private lookRelF = 0;
   private headRoll = new Spring(0);
   private twist = new Spring(0);
   private squashS = new Spring(1);
@@ -259,14 +294,26 @@ class CharacterSim implements Sim {
   private tossRootLock = false;
 
   // hit
-  private hit: { n: number; heavy: boolean; dir: number; phase: 'impact' | 'stagger' | 'recover'; recoverAt: number } | null = null;
+  private hit: {
+    n: number;
+    heavy: boolean;
+    dir: number;
+    phase: 'impact' | 'stagger' | 'recover';
+    recoverAt: number;
+  } | null = null;
   private auth = new Mover(1);
   private hitCrouch = new Spring(0);
   private swaggerN = -1;
 
   // prop
   private stand = { x: 0, z: 0 };
-  private prop: PropState = { id: 'bag', pos: v3(), vel: v3(), heldBy: null, basis: FLAT };
+  private prop: PropState = {
+    id: 'bag',
+    pos: v3(),
+    vel: v3(),
+    heldBy: null,
+    basis: FLAT,
+  };
   private propRel: Basis = FLAT; // bag basis inside the hand basis, captured at the grip step
   private propAxis: Vec3 = v3(0, 0, 1);
   private tossPron = new Mover(PRON_REST);
@@ -352,12 +399,27 @@ class CharacterSim implements Sim {
       palmPrev: v3(),
     });
     this.arms = { L: mkArm('L'), R: mkArm('R') };
-    this.pelvisY = P.ankleHeight + this.legLen * (1 - this.S.posture.kneeSoftness) + this.hipDrop;
+    this.pelvisY =
+      P.ankleHeight +
+      this.legLen * (1 - this.S.posture.kneeSoftness) +
+      this.hipDrop;
     const prop = opts.prop ?? { x: 0.9, z: 0.55 };
     this.stand = { x: prop.x, z: prop.z };
     this.prop.pos = this.standTop();
-    this.nextShift = Math.round(lerp(this.S.acting.idle.shiftEvery[0], this.S.acting.idle.shiftEvery[1], this.rng()) * 30);
-    this.nextGlance = Math.round(lerp(this.S.acting.idle.lookEvery[0], this.S.acting.idle.lookEvery[1], this.rng()) * 30);
+    this.nextShift = Math.round(
+      lerp(
+        this.S.acting.idle.shiftEvery[0],
+        this.S.acting.idle.shiftEvery[1],
+        this.rng(),
+      ) * 30,
+    );
+    this.nextGlance = Math.round(
+      lerp(
+        this.S.acting.idle.lookEvery[0],
+        this.S.acting.idle.lookEvery[1],
+        this.rng(),
+      ) * 30,
+    );
     // Solve the rest pose once so `frame` is valid before the first step.
     this.n = -1;
     this._frame = this.solve(true);
@@ -380,16 +442,28 @@ class CharacterSim implements Sim {
         }
         const k = Math.min(1, m) / m;
         this.interruptForLocomotion();
-        this.cmdVd = { x: cmd.x * k * this.walkSpeed(), z: cmd.z * k * this.walkSpeed() };
+        this.cmdVd = {
+          x: cmd.x * k * this.walkSpeed(),
+          z: cmd.z * k * this.walkSpeed(),
+        };
         this.setFacing(yawOf(cmd.x, cmd.z));
         break;
       }
       case 'stop':
         this.cmdVd = { x: 0, z: 0 };
-        if (this.task && (this.task.kind === 'reach' || this.task.kind === 'place') && this.task.phase === 'approach') {
+        if (
+          this.task &&
+          (this.task.kind === 'reach' || this.task.kind === 'place') &&
+          this.task.phase === 'approach'
+        ) {
           this.task = null;
         }
-        if (this.task && this.task.kind === 'toss' && this.task.phase === 'settle') this.task = null;
+        if (
+          this.task &&
+          this.task.kind === 'toss' &&
+          this.task.phase === 'settle'
+        )
+          this.task = null;
         break;
       case 'face':
         if (!Number.isFinite(cmd.yaw)) break;
@@ -416,33 +490,69 @@ class CharacterSim implements Sim {
         }
         break;
       case 'place':
-        if (this.propState !== 'held' || (this.task && this.task.kind !== 'reach')) {
+        if (
+          this.propState !== 'held' ||
+          (this.task && this.task.kind !== 'reach')
+        ) {
           this.note('ignored', 'place: nothing in hand or busy');
           break;
         }
-        if (this.task && this.task.kind === 'reach' && this.task.phase !== 'lift') break;
+        if (
+          this.task &&
+          this.task.kind === 'reach' &&
+          this.task.phase !== 'lift'
+        )
+          break;
         this.cmdVd = { x: 0, z: 0 };
-        this.reachTarget = this.reachS.x > 1e-9 ? this.reachTarget : this.standTop();
-        this.task = { kind: 'place', phase: 'approach', spot: this.approachSpot(this.standTop()), n: 0 };
+        this.reachTarget =
+          this.reachS.x > 1e-9 ? this.reachTarget : this.standTop();
+        this.task = {
+          kind: 'place',
+          phase: 'approach',
+          spot: this.approachSpot(this.standTop()),
+          n: 0,
+        };
         break;
       case 'toss':
-        if (this.propState !== 'held' || (this.task && this.task.kind !== 'reach')) {
+        if (
+          this.propState !== 'held' ||
+          (this.task && this.task.kind !== 'reach')
+        ) {
           this.note('ignored', 'toss: nothing in hand or busy');
           break;
         }
-        if (this.task && this.task.kind === 'reach' && this.task.phase !== 'lift') break;
+        if (
+          this.task &&
+          this.task.kind === 'reach' &&
+          this.task.phase !== 'lift'
+        )
+          break;
         this.cmdVd = { x: 0, z: 0 };
-        if (cmd.yaw !== undefined && Number.isFinite(cmd.yaw)) this.setFacing(cmd.yaw);
-        this.task = { kind: 'toss', phase: 'settle', power: clamp01(Number.isFinite(cmd.power) ? cmd.power : 0.5), n: 0, plan: null };
+        if (cmd.yaw !== undefined && Number.isFinite(cmd.yaw))
+          this.setFacing(cmd.yaw);
+        this.task = {
+          kind: 'toss',
+          phase: 'settle',
+          power: clamp01(Number.isFinite(cmd.power) ? cmd.power : 0.5),
+          n: 0,
+          plan: null,
+        };
         if (this.reachS.x > 0) this.reachS.to(0, 0.3);
         break;
       case 'hit':
-        if (Number.isFinite(cmd.dirYaw)) this.applyHit(cmd.dirYaw, cmd.strength === 'heavy');
+        if (Number.isFinite(cmd.dirYaw))
+          this.applyHit(cmd.dirYaw, cmd.strength === 'heavy');
         break;
       case 'placeProp':
         if (!Number.isFinite(cmd.x) || !Number.isFinite(cmd.z)) break;
-        if (this.task && (this.task.kind === 'reach' || this.task.kind === 'place')) this.abortTask();
-        this.stand = cmd.relative ? { x: this.root.x + cmd.x, z: this.root.z + cmd.z } : { x: cmd.x, z: cmd.z };
+        if (
+          this.task &&
+          (this.task.kind === 'reach' || this.task.kind === 'place')
+        )
+          this.abortTask();
+        this.stand = cmd.relative
+          ? { x: this.root.x + cmd.x, z: this.root.z + cmd.z }
+          : { x: cmd.x, z: cmd.z };
         if (this.propState !== 'held') {
           this.propState = 'stand';
           this.prop.pos = this.standTop();
@@ -460,9 +570,24 @@ class CharacterSim implements Sim {
 
   private setFacing(yaw: number): void {
     let d = wrap(yaw - this.yawBase.x);
-    // An exact about-face is ambiguous: prefer turning
-    // the negative way (through the front view at camera yaw 0) so the face stays visible.
-    if (d > Math.PI - 0.3) d -= Math.PI * 2;
+    if (Math.abs(d) > Math.PI - 0.5) {
+      // An about-face can go either way round. Turn AWAY from the leading foot (right foot
+      // forward -> turn left), so the planted foot ends up on its own side instead of
+      // crossed; with the feet level, go the way that shows the face at camera yaw 0.
+      const f = fwd(this.yawBase.x);
+      const ahead = (ft: Foot): number => {
+        const x = ft.planted ? ft.x : ft.gx;
+        const z = ft.planted ? ft.z : ft.gz;
+        return (
+          (x - this.root.x) * f.x +
+          (z - this.root.z) * f.z +
+          (ft.planted ? 0 : 0.05)
+        );
+      };
+      const lead = ahead(this.feet.R) - ahead(this.feet.L);
+      const sign = Math.abs(lead) > 0.06 * this.K ? (lead > 0 ? 1 : -1) : -1;
+      if (Math.sign(d) !== sign) d += sign * Math.PI * 2;
+    }
     this.facing = this.yawBase.x + d;
   }
 
@@ -506,7 +631,11 @@ class CharacterSim implements Sim {
   }
 
   private propAtRest(): boolean {
-    return this.propState === 'stand' || (this.propState === 'ground' && Math.hypot(this.prop.vel.x, this.prop.vel.z) < 0.05);
+    return (
+      this.propState === 'stand' ||
+      (this.propState === 'ground' &&
+        Math.hypot(this.prop.vel.x, this.prop.vel.z) < 0.05)
+    );
   }
 
   private startReach(wantGrip: boolean): void {
@@ -514,11 +643,23 @@ class CharacterSim implements Sim {
       this.note('ignored', 'reach: already holding');
       return;
     }
-    if (this.task && this.task.kind === 'toss' && this.task.phase !== 'follow' && this.task.phase !== 'recover') return;
+    if (
+      this.task &&
+      this.task.kind === 'toss' &&
+      this.task.phase !== 'follow' &&
+      this.task.phase !== 'recover'
+    )
+      return;
     if (this.task) this.abortTask();
     if (this.tossW.x > 0) this.endToss(0.3);
     this.cmdVd = { x: 0, z: 0 };
-    this.task = { kind: 'reach', phase: 'approach', wantGrip, spot: { x: this.root.x, z: this.root.z }, n: 0 };
+    this.task = {
+      kind: 'reach',
+      phase: 'approach',
+      wantGrip,
+      spot: { x: this.root.x, z: this.root.z },
+      n: 0,
+    };
     // The spot is chosen once the prop is at rest (it may still be sliding).
     this.task.n = -1;
   }
@@ -527,9 +668,13 @@ class CharacterSim implements Sim {
     const dx = target.x - this.root.x;
     const dz = target.z - this.root.z;
     const D = Math.hypot(dx, dz);
-    const standoff = lerp(0.3, 0.43, clamp01(target.y / STAND_H)) * (this.armLen / 0.64);
+    const standoff =
+      lerp(0.3, 0.43, clamp01(target.y / STAND_H)) * (this.armLen / 0.64);
     const yawTo = yawOf(dx, dz);
-    const inRange = D > standoff - 0.13 && D < standoff + 0.1 && Math.abs(wrap(yawTo - this.yawBase.x)) < 0.5;
+    const inRange =
+      D > standoff - 0.13 &&
+      D < standoff + 0.1 &&
+      Math.abs(wrap(yawTo - this.yawBase.x)) < 0.5;
     if (inRange || D < 1e-6) return { x: this.root.x, z: this.root.z };
     // Stand so the reaching shoulder, not the sternum, lines up with the prop.
     const side = this.hand === 'R' ? 1 : -1;
@@ -543,11 +688,11 @@ class CharacterSim implements Sim {
   private applyHit(dir: number, heavy: boolean): void {
     const H = this.S.acting.hit;
     const k = heavy ? 2.3 : 1;
-    const push = heavy ? 2.2 : 1.1;
+    const push = heavy ? 2.0 : 1.1;
     const d = fwd(dir);
     this.vel.x += d.x * push;
     this.vel.z += d.z * push;
-    const vmax = 2.6;
+    const vmax = 2.4;
     const vs = Math.hypot(this.vel.x, this.vel.z);
     if (vs > vmax) {
       this.vel.x *= vmax / vs;
@@ -559,18 +704,23 @@ class CharacterSim implements Sim {
     const pr = d.x * rC.x + d.z * rC.z;
     // The struck part goes first: the chest moves this very step ...
     const kk = heavy ? 1.9 : 1;
-    this.pitchS.kick((pf * kk * 1.5) / H.brace);
-    this.leanRoll.kick((pr * kk * 1.5) / H.brace);
+    this.pitchS.kick((pf * kk * 1.3) / H.brace);
+    this.leanRoll.kick((pr * kk * 1.3) / H.brace);
     // ... the head is left behind and snaps after it.
     this.headPitch.kick(-pf * kk * 3.2 * H.headWhip);
     this.headRoll.kick(-pr * kk * 2.8 * H.headWhip);
     this.twist.kick(-pr * kk * 1.6);
-    this.hitCrouch.kick(H.absorb * k * 0.55);
+    this.hitCrouch.kick(H.absorb * kk * 0.4);
     this.squashS.kick(-0.5 * k);
     for (const side of ['L', 'R'] as Side[]) {
       const a = this.arms[side];
       a.phi.kick(-pf * kk * 4.2 * H.flail);
-      a.alpha.kick((1.6 + 1.8 * Math.abs(pr) + 0.9 * Math.abs(pf)) * kk * H.flail * (1 + 0.35 * a.sgn * pr));
+      a.alpha.kick(
+        (1.6 + 1.8 * Math.abs(pr) + 0.9 * Math.abs(pf)) *
+          kk *
+          H.flail *
+          (1 + 0.35 * a.sgn * pr),
+      );
       a.eps.kick(-1.4 * kk * H.flail);
       a.elev.kick(H.guard * 14 * Math.sqrt(k));
     }
@@ -587,7 +737,13 @@ class CharacterSim implements Sim {
       this.prop.vel = v3(pv.x + d.x * 1.3, pv.y + 1.6, pv.z + d.z * 1.3);
       this.propSpin = 9;
       this.propAxis = norm(v3(d.z, 0.3, -d.x));
-      this.events.push({ step: this.n, type: 'drop', posMismatch: 0, velMismatch: 0, note: 'knocked loose by heavy hit' });
+      this.events.push({
+        step: this.n,
+        type: 'drop',
+        posMismatch: 0,
+        velMismatch: 0,
+        note: 'knocked loose by heavy hit',
+      });
     }
     this.auth.x = 0;
     this.auth.v = 0;
@@ -609,7 +765,10 @@ class CharacterSim implements Sim {
 
   /** Standing stance: the style's width, but never narrower than the hips can carry. */
   private stanceWidth(): number {
-    return Math.max(this.S.posture.stanceWidth * Math.pow(this.K, 0.5), this.P.hipWidth * 0.9);
+    return Math.max(
+      this.S.posture.stanceWidth * this.K,
+      this.P.hipWidth * 0.85,
+    );
   }
 
   private swingTime(): number {
@@ -624,7 +783,12 @@ class CharacterSim implements Sim {
     return clamp01(s / this.walkSpeed());
   }
 
-  private footGeom(f: Foot): { ankle: Vec3; heel: Vec3; toe: Vec3; ball: Vec3 } {
+  private footGeom(f: Foot): {
+    ankle: Vec3;
+    heel: Vec3;
+    toe: Vec3;
+    ball: Vec3;
+  } {
     const L = this.P.footLen;
     const H = this.P.ankleHeight;
     const back = 0.25 * L;
@@ -632,7 +796,13 @@ class CharacterSim implements Sim {
     const toeF = 0.75 * L;
     const fx = Math.cos(f.yaw);
     const fz = -Math.sin(f.yaw);
-    const at = (px: number, pz: number, u: number, h: number, a: number): Vec3 => {
+    const at = (
+      px: number,
+      pz: number,
+      u: number,
+      h: number,
+      a: number,
+    ): Vec3 => {
       const c = Math.cos(a);
       const s = Math.sin(a);
       const along = u * c + h * s;
@@ -644,23 +814,38 @@ class CharacterSim implements Sim {
       const a = f.pitch;
       const toe = at(bx, bz, toeF - ballF, 0, a * (1 - f.toeFlat));
       if (toe.y < 0) toe.y = 0;
-      return { ankle: at(bx, bz, -ballF, H, a), heel: at(bx, bz, -(back + ballF), 0, a), toe, ball: v3(bx, f.lift, bz) };
+      return {
+        ankle: at(bx, bz, -ballF, H, a),
+        heel: at(bx, bz, -(back + ballF), 0, a),
+        toe,
+        ball: v3(bx, f.lift, bz),
+      };
     }
     const hx = f.x - fx * back;
     const hz = f.z - fz * back;
     const a = f.pitch;
-    return { ankle: at(hx, hz, back, H, a), heel: v3(hx, f.lift, hz), toe: at(hx, hz, L, 0, a), ball: at(hx, hz, back + ballF, 0, a) };
+    return {
+      ankle: at(hx, hz, back, H, a),
+      heel: v3(hx, f.lift, hz),
+      toe: at(hx, hz, L, 0, a),
+      ball: at(hx, hz, back + ballF, 0, a),
+    };
   }
 
   private accelLimit(): number {
     const T = this.S.timing;
-    if (this.hit && this.hit.phase !== 'recover') return this.S.acting.hit.staggerDecel * (this.hit.heavy ? 0.85 : 1);
+    if (this.hit && this.hit.phase !== 'recover')
+      return this.S.acting.hit.staggerDecel * (this.hit.heavy ? 0.85 : 1);
     const sd = Math.hypot(this.vdEff.x, this.vdEff.z);
     return sd >= this.speed() ? T.accel : T.decel;
   }
 
   /** Where (and at what yaw) a foot should come down if it lands `tRem` seconds from now. */
-  private stepTarget(foot: Foot, tRem: number, swingT: number): { x: number; z: number; yaw: number } {
+  private stepTarget(
+    foot: Foot,
+    tRem: number,
+    swingT: number,
+  ): { x: number; z: number; yaw: number } {
     const st = this.S;
     const o = this.other(foot);
     const acc = this.accelLimit();
@@ -693,10 +878,10 @@ class CharacterSim implements Sim {
     const stanceBody = o.yaw + o.sgn * toe;
     let rel = this.facing - stanceBody;
     const ext = 1.5; // a foot opens outward (right foot: negative yaw) further than it turns in
-    const int = 1.0;
+    const int = 1.4;
     rel = foot.sgn > 0 ? clamp(rel, -ext, int) : clamp(rel, -int, ext);
     const bodyYaw = stanceBody + rel;
-    const width = this.stanceWidth() * (1 - 0.4 * this.speedFrac(sl));
+    const width = this.stanceWidth() * (1 - 0.5 * this.speedFrac(sl));
     const r = rgt(bodyYaw);
     let x = px + lx + r.x * foot.sgn * width * 0.5;
     let z = pz + lz + r.z * foot.sgn * width * 0.5;
@@ -708,6 +893,22 @@ class CharacterSim implements Sim {
       x += ra.x * foot.sgn * (minSep - sep);
       z += ra.z * foot.sgn * (minSep - sep);
     }
+    // never plant further from the body than the leg will comfortably reach when it lands
+    const maxR = 0.42 * this.legLen;
+    const dr = Math.hypot(x - px, z - pz);
+    if (dr > maxR) {
+      x = px + ((x - px) * maxR) / dr;
+      z = pz + ((z - pz) * maxR) / dr;
+    }
+    {
+      // ... and never land crossed over the stance foot as the body will then be facing
+      const sepL = ((x - o.x) * r.x + (z - o.z) * r.z) * foot.sgn;
+      if (sepL < minSep) {
+        const push = Math.min(minSep - sepL, 0.16 * this.legLen);
+        x += r.x * foot.sgn * push;
+        z += r.z * foot.sgn * push;
+      }
+    }
     const maxD = 0.82 * this.legLen;
     const d = Math.hypot(x - o.x, z - o.z);
     if (d > maxD) {
@@ -717,7 +918,12 @@ class CharacterSim implements Sim {
     return { x, z, yaw: bodyYaw - foot.sgn * toe };
   }
 
-  private liftFoot(f: Foot, target: { x: number; z: number; yaw: number }, T: number, forced: boolean): void {
+  private liftFoot(
+    f: Foot,
+    target: { x: number; z: number; yaw: number },
+    T: number,
+    forced: boolean,
+  ): void {
     const st = this.S;
     f.planted = false;
     f.fx = f.x;
@@ -741,7 +947,9 @@ class CharacterSim implements Sim {
     const d = Math.hypot(dx, dz);
     const K = this.K;
     const along = dx * Math.cos(target.yaw) - dz * Math.sin(target.yaw);
-    f.h = K * st.gait.stepHeight * (0.42 + 0.58 * clamp01(d / (0.5 * K))) + (this.hit ? 0.02 : 0);
+    f.h =
+      K * st.gait.stepHeight * (0.42 + 0.58 * clamp01(d / (0.5 * K))) +
+      (this.hit ? 0.02 : 0);
     f.landPitch = -st.gait.heelStrike * clamp(along / (0.5 * K), -0.5, 1);
     f.toeDown = 0.3 * clamp01(along / (0.4 * K));
     this.pending = null;
@@ -772,16 +980,36 @@ class CharacterSim implements Sim {
       taskVd = this.updateTask();
       if (this.task && this.task.kind === 'toss') {
         const ph = this.task.phase;
-        const aligned = Math.abs(this.facing - this.yawBase.x) < 0.12 && this.feet.L.planted && this.feet.R.planted && !this.pending;
-        if (ph === 'swing' || ph === 'follow' || (ph === 'load' && aligned && !this.tossHolding)) stepperLocked = true;
+        const aligned =
+          Math.abs(this.facing - this.yawBase.x) < 0.12 &&
+          this.feet.L.planted &&
+          this.feet.R.planted &&
+          !this.pending;
+        if (
+          ph === 'swing' ||
+          ph === 'follow' ||
+          (ph === 'load' && aligned && !this.tossHolding)
+        )
+          stepperLocked = true;
       }
     }
-    if (this.task && (this.task.kind === 'reach' || this.task.kind === 'place')) {
+    if (
+      this.task &&
+      (this.task.kind === 'reach' || this.task.kind === 'place')
+    ) {
       // eyes on the prop / the spot it is going to, until it is in the hand or let go
-      if (this.task.kind === 'reach' && this.task.phase !== 'lift') lookAt = this.prop.pos;
-      if (this.task.kind === 'place' && this.task.phase !== 'withdraw') lookAt = this.standTop();
+      if (this.task.kind === 'reach' && this.task.phase !== 'lift')
+        lookAt = this.prop.pos;
+      if (this.task.kind === 'place' && this.task.phase !== 'withdraw')
+        lookAt = this.standTop();
     }
-    if (this.task && this.task.kind === 'toss' && this.task.plan && this.task.plan.released && this.propState !== 'held') {
+    if (
+      this.task &&
+      this.task.kind === 'toss' &&
+      this.task.plan &&
+      this.task.plan.released &&
+      this.propState !== 'held'
+    ) {
       lookAt = this.prop.pos;
     }
 
@@ -792,7 +1020,12 @@ class CharacterSim implements Sim {
       h.n++;
       const bothDown = this.feet.L.planted && this.feet.R.planted;
       if (h.phase === 'impact' && h.n >= 6) h.phase = 'stagger';
-      if (h.phase === 'stagger' && h.n >= (h.heavy ? 40 : 14) && this.speed() < 0.15 && bothDown) {
+      if (
+        h.phase === 'stagger' &&
+        h.n >= (h.heavy ? 40 : 14) &&
+        this.speed() < 0.15 &&
+        bothDown
+      ) {
         h.phase = 'recover';
         h.recoverAt = h.n;
         this.auth.to(1, H.recoverTime * (h.heavy ? 1.5 : 1));
@@ -801,7 +1034,11 @@ class CharacterSim implements Sim {
       if (h.phase === 'recover' && this.auth.arrived) this.hit = null;
     }
     if (live) this.auth.step(dt);
-    if (this.hit && this.hit.n > 10 && this.hit.n < (this.hit.heavy ? 85 : 45)) {
+    if (
+      this.hit &&
+      this.hit.n > 10 &&
+      this.hit.n < (this.hit.heavy ? 85 : 45)
+    ) {
       // Check where that came from.
       lookYawOverride = this.hit.dir + Math.PI;
     }
@@ -813,7 +1050,7 @@ class CharacterSim implements Sim {
     let align = 1;
     if (vdMag > 1e-6) {
       const c = Math.cos(wrap(yawOf(vd.x, vd.z) - this.yawBase.x));
-      align = clamp01((c + 0.25) / 0.85);
+      align = clamp01((c + 0.55) / 1.1);
       if (taskVd) align = Math.max(align, 0.6); // short approach steps may go sideways/backwards
     }
     const a = this.auth.x;
@@ -821,7 +1058,12 @@ class CharacterSim implements Sim {
     this.vdEff = { x: vd.x * a * align, z: vd.z * a * align };
     this.velPrev = { x: this.vel.x, z: this.vel.z };
     if (live) {
-      if (this.tossRootLock && this.task && this.task.kind === 'toss' && this.task.plan) {
+      if (
+        this.tossRootLock &&
+        this.task &&
+        this.task.kind === 'toss' &&
+        this.task.plan
+      ) {
         const pl = this.task.plan;
         const d = fwd(pl.yaw);
         const g0 = this.tossG.x;
@@ -842,7 +1084,7 @@ class CharacterSim implements Sim {
         // The body cannot outrun its support: as the root nears the reach of a planted leg, the
         // velocity away from that foot fades out (the leg "holds" it) instead of the leg stretching.
         {
-          const Rmax = 0.47 * this.legLen * LEG_SOFT + this.P.hipWidth * 0.5;
+          const Rmax = 0.5 * this.legLen * LEG_SOFT + this.P.hipWidth * 0.5;
           for (const f of [this.feet.L, this.feet.R]) {
             if (!f.planted) continue;
             const ox = this.root.x - f.x;
@@ -856,13 +1098,22 @@ class CharacterSim implements Sim {
             // only bites while this is the only support, or the other foot cannot take over yet
             const o = this.other(f);
             const bite = o.planted ? 0.15 : this.hit ? 0.35 : 1;
-            this.vel.x -= (ox / d) * vo * (1 - keep) * bite;
-            this.vel.z -= (oz / d) * vo * (1 - keep) * bite;
+            // (a braking force, never an instant stop)
+            const dv = Math.min(
+              vo * (1 - keep) * bite,
+              30 * (1 - keep) * dt + 0.02,
+            );
+            this.vel.x -= (ox / d) * dv;
+            this.vel.z -= (oz / d) * dv;
           }
         }
         this.root.x += this.vel.x * dt;
         this.root.z += this.vel.z * dt;
-        if (wasStill && Math.hypot(this.vdEff.x, this.vdEff.z) > 0.1 && this.speed() < 0.2) {
+        if (
+          wasStill &&
+          Math.hypot(this.vdEff.x, this.vdEff.z) > 0.1 &&
+          this.speed() < 0.2
+        ) {
           // Start: unlock the knees on the very first step.
           this.dip.kick((-0.16 * st.acting.anticipation - 0.06) * this.K);
         }
@@ -885,7 +1136,8 @@ class CharacterSim implements Sim {
       }
       if (lo > hi) lo = hi = 0.5 * (lo + hi);
       const target = clamp(this.facing, lo, hi);
-      if (live) this.yawBase.step(target, T.pelvisFollow * (0.25 + 0.75 * a), 1, dt);
+      if (live)
+        this.yawBase.step(target, T.pelvisFollow * (0.25 + 0.75 * a), 1, dt);
     }
 
     // ---- 5. feet -------------------------------------------------------------
@@ -896,24 +1148,47 @@ class CharacterSim implements Sim {
     const fB = fwd(this.yawBase.x);
     const rB = rgt(this.yawBase.x);
     const stride = (fR.x - fL.x) * fB.x + (fR.z - fL.z) * fB.z;
-    const halfSep = Math.max(0.06, 0.5 * Math.abs((fR.x - fL.x) * rB.x + (fR.z - fL.z) * rB.z));
+    const halfSep = Math.max(
+      0.06,
+      0.5 * Math.abs((fR.x - fL.x) * rB.x + (fR.z - fL.z) * rB.z),
+    );
 
     // ---- 6. idle acting ------------------------------------------------------
-    const idle = !this.task && !this.hit && vdMag < 1e-6 && speed < 0.05 && fL.planted && fR.planted && !this.pending && this.propState !== 'air';
+    const idle =
+      !this.task &&
+      !this.hit &&
+      vdMag < 1e-6 &&
+      speed < 0.05 &&
+      fL.planted &&
+      fR.planted &&
+      !this.pending &&
+      this.propState !== 'air';
     if (live) {
       this.idleFor = idle ? this.idleFor + 1 : 0;
       const I = st.acting.idle;
       if (idle && this.idleFor > 20) {
         if (this.idleFor >= this.nextShift) {
           const r = this.rng();
-          this.idleShift = this.idleShift === 0 ? (r < 0.5 ? -1 : 1) : r < 0.75 ? -this.idleShift : 0;
-          this.nextShift = this.idleFor + Math.round(lerp(I.shiftEvery[0], I.shiftEvery[1], this.rng()) * 60);
+          this.idleShift =
+            this.idleShift === 0
+              ? r < 0.5
+                ? -1
+                : 1
+              : r < 0.75
+                ? -this.idleShift
+                : 0;
+          this.nextShift =
+            this.idleFor +
+            Math.round(lerp(I.shiftEvery[0], I.shiftEvery[1], this.rng()) * 60);
         }
         if (this.idleFor >= this.nextGlance) {
           this.glance = (this.rng() * 2 - 1) * I.lookAmount;
           this.glancePitch = (this.rng() - 0.6) * 0.25 * I.lookAmount;
-          this.glanceEnd = this.idleFor + Math.round(lerp(0.5, 1.3, this.rng()) * 60);
-          this.nextGlance = this.glanceEnd + Math.round(lerp(I.lookEvery[0], I.lookEvery[1], this.rng()) * 60);
+          this.glanceEnd =
+            this.idleFor + Math.round(lerp(0.5, 1.3, this.rng()) * 60);
+          this.nextGlance =
+            this.glanceEnd +
+            Math.round(lerp(I.lookEvery[0], I.lookEvery[1], this.rng()) * 60);
         }
         if (this.idleFor >= this.glanceEnd) {
           this.glance = 0;
@@ -923,26 +1198,58 @@ class CharacterSim implements Sim {
         this.idleShift = 0;
         this.glance = 0;
         this.glancePitch = 0;
-        this.nextShift = Math.round(lerp(I.shiftEvery[0], I.shiftEvery[1], 0.3) * 40);
+        this.nextShift = Math.round(
+          lerp(I.shiftEvery[0], I.shiftEvery[1], 0.3) * 40,
+        );
         this.nextGlance = 30;
         this.glanceEnd = 0;
       }
-      const waiting = speed < 0.05 && !this.hit && fL.planted && fR.planted && (!this.task || this.task.kind !== 'toss');
+      const waiting =
+        speed < 0.05 &&
+        !this.hit &&
+        fL.planted &&
+        fR.planted &&
+        (!this.task || this.task.kind !== 'toss');
       this.bounceEnv.step(waiting ? 1 : 0, 5, 1, dt);
     }
     const tsec = this.n * DT;
     const breath = Math.sin(tsec * Math.PI * 2 * st.acting.idle.breathHz);
-    const idleBounce = st.acting.idle.bounce * this.bounceEnv.x * (0.5 - 0.5 * Math.cos(tsec * Math.PI * 2 * st.acting.idle.bounceHz));
+    const idleBounce =
+      st.acting.idle.bounce *
+      this.bounceEnv.x *
+      (0.5 - 0.5 * Math.cos(tsec * Math.PI * 2 * st.acting.idle.bounceHz));
 
     // ---- 7. lateral weight: over the stance foot before the other lifts ----------
     let swayTarget: number;
     {
-      const latOf = (f: Foot) => (f.x - this.root.x) * rB.x + (f.z - this.root.z) * rB.z;
+      const latOf = (f: Foot) =>
+        (f.x - this.root.x) * rB.x + (f.z - this.root.z) * rB.z;
       const frac = Math.min(0.95, lerp(0.85, 0.3, sf) * st.gait.sway);
-      const single = !fL.planted ? fR : !fR.planted ? fL : this.pending ? this.other(this.feet[this.pending.side]) : null;
+      const single = !fL.planted
+        ? fR
+        : !fR.planted
+          ? fL
+          : this.pending
+            ? this.other(this.feet[this.pending.side])
+            : null;
       if (single) swayTarget = latOf(single) * frac;
-      else swayTarget = 0.5 * (latOf(fL) + latOf(fR)) * 0.6 + this.idleShift * st.acting.idle.shiftAmount * halfSep;
-      if (live) this.swayS.step(swayTarget, this.pending ? 15 : lerp(9, 13, sf), 0.85, dt);
+      else
+        swayTarget =
+          0.5 * (latOf(fL) + latOf(fR)) * 0.6 +
+          this.idleShift * st.acting.idle.shiftAmount * halfSep;
+      // a weight shift, not a way to travel: never more than the stance is wide
+      swayTarget = clamp(
+        swayTarget,
+        -0.55 * this.stanceWidth(),
+        0.55 * this.stanceWidth(),
+      );
+      if (live)
+        this.swayS.step(
+          swayTarget,
+          this.pending ? 15 : lerp(9, 13, sf),
+          0.85,
+          dt,
+        );
     }
 
     // ---- 8. crouch channels ----------------------------------------------------
@@ -996,10 +1303,15 @@ class CharacterSim implements Sim {
     }
     if (live) {
       this.reachLean.step(eReach * (ffLean + this.reachHelp), 11, 1, dt);
-      this.reachCrouch.step(eReach * (ffCrouch + this.reachHelp * 0.35), 9, 1, dt);
+      this.reachCrouch.step(
+        eReach * (ffCrouch + this.reachHelp * 0.35),
+        9,
+        1,
+        dt,
+      );
     }
     const crouch = clamp(
-      0.012 * sf +
+      0.008 * sf * this.K +
         this.sinkS.x +
         this.reachCrouch.x +
         this.tossCrouch.x +
@@ -1012,19 +1324,28 @@ class CharacterSim implements Sim {
 
     // ---- 9. trunk springs ------------------------------------------------------
     const brace = this.hit && this.hit.phase !== 'recover' ? 0.55 * H.brace : 1;
-    const zeta = this.hit ? Math.min(st.timing.settleDamping, 0.45) : st.timing.settleDamping;
+    const zeta = this.hit
+      ? Math.min(st.timing.settleDamping, 0.45)
+      : st.timing.settleDamping;
     if (live) {
       this.twist.step(0, 9, 0.5, dt);
       this.rollS.step(
-        (!fR.planted ? 0.07 * Math.sin(Math.PI * fR.u) : !fL.planted ? -0.07 * Math.sin(Math.PI * fL.u) : 0) * (0.4 + 0.6 * sf) -
+        (!fR.planted
+          ? 0.07 * Math.sin(Math.PI * fR.u)
+          : !fL.planted
+            ? -0.07 * Math.sin(Math.PI * fL.u)
+            : 0) *
+          (0.4 + 0.6 * sf) -
           0.09 * clamp(this.swayS.x / halfSep, -1, 1) * (1 - sf),
         10,
         0.9,
         dt,
       );
     }
-    const pelvisRot = (st.gait.pelvisRotation * stride * clamp01(0.3 + sf)) / this.K;
-    const yawP = this.yawBase.x + pelvisRot + this.tossYawP.x + 0.4 * this.twist.x;
+    const pelvisRot =
+      (st.gait.pelvisRotation * stride * clamp01(0.3 + sf)) / this.K;
+    const yawP =
+      this.yawBase.x + pelvisRot + this.tossYawP.x + 0.4 * this.twist.x;
     // swagger: a decaying shoulder roll + head shake when gathering after a hit
     let swagChest = 0;
     let swagHead = 0;
@@ -1069,7 +1390,8 @@ class CharacterSim implements Sim {
       this.tossLean.x -
       0.012 * breath +
       0.25 * Math.max(0, this.hitCrouch.x) * 4 * 0.3;
-    const rollTarget = st.gait.leanIntoMotion * clamp(aR, -8, 8) - 0.7 * this.rollS.x;
+    const rollTarget =
+      st.gait.leanIntoMotion * clamp(aR, -8, 8) - 0.7 * this.rollS.x;
     if (live) {
       this.pitchS.step(pitchTarget, st.timing.settleFreq * brace, zeta, dt);
       this.leanRoll.step(rollTarget, st.timing.settleFreq * brace, zeta, dt);
@@ -1080,12 +1402,13 @@ class CharacterSim implements Sim {
     const roll = this.leanRoll.x;
 
     // ---- 10. pelvis position: carried by the legs ---------------------------------
-    const hinge = 0.3 * P.spine * Math.sin(clamp(pitch - st.posture.lean, -0.5, 1.2));
+    const hinge =
+      0.3 * P.spine * Math.sin(clamp(pitch - st.posture.lean, -0.5, 1.2));
     const fP = fwd(yawP);
     const rP = rgt(yawP);
     const hw = P.hipWidth * 0.5;
     const Lmax = this.legLen * LEG_SOFT;
-    const dmax = 0.47 * Lmax;
+    const dmax = 0.5 * Lmax;
     let px = 0;
     let pz = 0;
     const gL = this.footGeom(fL);
@@ -1104,14 +1427,24 @@ class CharacterSim implements Sim {
         const dz = hz - an.z;
         const d = Math.hypot(dx, dz);
         if (d > dmax) {
-          // The body cannot leave its support: the root is pulled back onto it.
-          const push = d - dmax;
+          // The body cannot leave its support: the root is drawn back onto it (firmly, not
+          // instantly; only the absolute limit of the leg is enforced in one step).
+          const dHard = 0.8 * Lmax;
+          const push =
+            d > dHard
+              ? d - dHard
+              : pass === 0 && !this.other(f).planted
+                ? 0.1 * (d - dmax)
+                : 0;
+          if (push <= 0) continue;
           this.root.x -= (dx / d) * push;
           this.root.z -= (dz / d) * push;
           const vn = (this.vel.x * dx + this.vel.z * dz) / d;
-          if (vn > 0) {
-            this.vel.x -= (dx / d) * vn * 0.5;
-            this.vel.z -= (dz / d) * vn * 0.5;
+          // (if the other foot is down, the weight is simply passing on to it: no braking)
+          if (vn > 0 && pass === 0 && !this.other(f).planted) {
+            const dv = Math.min(vn, 0.12 + vn * 0.15);
+            this.vel.x -= (dx / d) * dv;
+            this.vel.z -= (dz / d) * dv;
           }
           moved = true;
         }
@@ -1127,9 +1460,14 @@ class CharacterSim implements Sim {
         const hx = px + rP.x * f.sgn * hw;
         const hz = pz + rP.z * f.sgn * hw;
         const dF = (hx - f.x) * Math.cos(f.yaw) - (hz - f.z) * Math.sin(f.yaw);
-        let target = 0.95 * smooth((dF - 0.17 * this.legLen) / (0.33 * this.legLen));
+        let target =
+          0.95 * smooth((dF - 0.17 * this.legLen) / (0.33 * this.legLen));
         const wN = clamp(this.swayS.x / halfSep, -1, 1);
-        if (idle) target = Math.max(target, st.acting.idle.relaxedHeel * clamp01((-wN * f.sgn - 0.25) / 0.45));
+        if (idle)
+          target = Math.max(
+            target,
+            st.acting.idle.relaxedHeel * clamp01((-wN * f.sgn - 0.25) / 0.45),
+          );
         // deep crouch (ground pick-up): heels come up
         target = Math.max(target, 0.55 * clamp01((crouch - 0.22) / 0.25));
         const rate = (f.pitch < 0 ? 5.5 : 5) * dt;
@@ -1148,19 +1486,41 @@ class CharacterSim implements Sim {
       // The pelvis has vertical inertia: it springs toward its standing height and is only
       // ever limited from above by the legs, so a leg coming off the ground never pops it up.
       const yPrev = this.pelvisYS.x;
-      let y = initial ? this.pelvisStand() - crouch : this.pelvisYS.step(this.pelvisStand() - crouch, 20, 0.85, dt);
-      const ySpring = y;
-      for (const f of [fL, fR]) {
-        // A foot in the air does not hold the pelvis down, but the body starts to come down onto
-        // it over the last part of the swing, so touch-down is met, not hit.
-        const slack = f.planted ? 0 : 0.1 * this.legLen * (1 - smooth((f.u - 0.4) / 0.6));
-        if (!f.planted && f.u < 0.4) continue;
+      const limitOf = (f: Foot, an: Vec3, tRem: number): number => {
         const hx = px + rP.x * f.sgn * hw;
         const hz = pz + rP.z * f.sgn * hw;
-        const an = geom[f.side].ankle;
-        const d = Math.hypot(hx - an.x, hz - an.z);
-        const lim = an.y + Math.sqrt(Math.max(0.0004, Lmax * Lmax - d * d)) + this.hipDrop + f.sgn * rho * hw + slack;
-        y = smin(y, lim, 0.03);
+        const d = Math.hypot(
+          hx + this.vel.x * tRem - an.x,
+          hz + this.vel.z * tRem - an.z,
+        );
+        return (
+          an.y +
+          Math.sqrt(Math.max(0.0004, Lmax * Lmax - d * d)) +
+          this.hipDrop +
+          f.sgn * rho * hw
+        );
+      };
+      // A foot in the air does not hold the pelvis down, but the body starts to come down
+      // onto it over the last part of the swing (where it will land, against where the hip
+      // will be then), so touch-down is met, not hit. That is a goal for the spring only.
+      let goal = this.pelvisStand() - crouch;
+      for (const f of [fL, fR]) {
+        if (f.planted || f.u < 0.4) continue;
+        const slack = 0.1 * this.legLen * (1 - smooth((f.u - 0.4) / 0.6));
+        goal = Math.max(
+          smin(
+            goal,
+            limitOf(f, v3(f.tx, P.ankleHeight, f.tz), (1 - f.u) * f.T) + slack,
+            0.03,
+          ),
+          this.pelvisStand() - crouch - 0.05 * this.legLen,
+        );
+      }
+      let y = initial ? goal : this.pelvisYS.step(goal, 20, 0.85, dt);
+      const ySpring = y;
+      // Planted legs are the only hard limit.
+      for (const f of [fL, fR]) {
+        if (f.planted) y = smin(y, limitOf(f, geom[f.side].ankle, 0), 0.05);
       }
       if (initial) {
         this.pelvisYS.x = y;
@@ -1179,7 +1539,11 @@ class CharacterSim implements Sim {
     J.pelvis = pelvis;
     B.pelvis = mkBasis(v3(rP.x * rho, 1, rP.z * rho), fP);
     for (const f of [fL, fR]) {
-      const hip = v3(px + rP.x * f.sgn * hw, this.pelvisY - this.hipDrop - f.sgn * rho * hw, pz + rP.z * f.sgn * hw);
+      const hip = v3(
+        px + rP.x * f.sgn * hw,
+        this.pelvisY - this.hipDrop - f.sgn * rho * hw,
+        pz + rP.z * f.sgn * hw,
+      );
       const g = geom[f.side];
       const ff = fwd(f.yaw);
       if (!f.planted) {
@@ -1198,7 +1562,14 @@ class CharacterSim implements Sim {
       // The knee hinges about an axis between the foot's and the pelvis's lateral axes, so the
       // knee tracks over the toes and can never flip (a leg is never parallel to its hinge).
       const fr = rgt(f.yaw);
-      const nLeg = norm(v3(fr.x * 0.55 + rP.x * 0.6 - fP.x * f.sgn * 0.1, 0, fr.z * 0.55 + rP.z * 0.6 - fP.z * f.sgn * 0.1), rP);
+      const nLeg = norm(
+        v3(
+          fr.x * 0.55 + rP.x * 0.6 - fP.x * f.sgn * 0.1,
+          0,
+          fr.z * 0.55 + rP.z * 0.6 - fP.z * f.sgn * 0.1,
+        ),
+        rP,
+      );
       const dLeg = norm(sub(g.ankle, hip), v3(0, -1, 0));
       const pole = norm(cross(nLeg, dLeg), ff);
       const ik = solveTwoBone(hip, g.ankle, P.thigh, P.shin, pole, 0.995);
@@ -1217,8 +1588,19 @@ class CharacterSim implements Sim {
 
     // ---- 12. spine, chest, head --------------------------------------------------
     const u = (p: number, r: number, f: Vec3, rr: Vec3): Vec3 =>
-      norm(v3(f.x * Math.sin(p) + rr.x * Math.sin(r), Math.cos(p) * Math.cos(r), f.z * Math.sin(p) + rr.z * Math.sin(r)));
-    const uLow = u(pitch * 0.45 - st.posture.spineCurve, roll * 0.4 + rho * 0.6, fC, rC);
+      norm(
+        v3(
+          f.x * Math.sin(p) + rr.x * Math.sin(r),
+          Math.cos(p) * Math.cos(r),
+          f.z * Math.sin(p) + rr.z * Math.sin(r),
+        ),
+      );
+    const uLow = u(
+      pitch * 0.45 - st.posture.spineCurve,
+      roll * 0.4 + rho * 0.6,
+      fC,
+      rC,
+    );
     const uUp = u(pitch - st.posture.chestOut * 2.5, roll, fC, rC);
     const breathLift = st.acting.idle.breath * (0.5 + 0.5 * breath);
     J.spine = madd(pelvis, uLow, P.spine);
@@ -1227,13 +1609,19 @@ class CharacterSim implements Sim {
     // head: leads with the eyes. Absolute spring toward the look direction, limited by the neck.
     let lookYaw = this.facing + this.glance + swagHead;
     let lookPitch = this.glancePitch;
-    if (vdMag > 1e-6) lookYaw = this.yawBase.x + wrap(yawOf(vd.x, vd.z) - this.yawBase.x);
+    if (vdMag > 1e-6)
+      lookYaw = this.yawBase.x + wrap(yawOf(vd.x, vd.z) - this.yawBase.x);
     if (lookAt) {
       const hx = lookAt.x - J.chest.x;
       const hz = lookAt.z - J.chest.z;
       const hd = Math.hypot(hx, hz);
       if (hd > 0.05) lookYaw = yawOf(hx, hz);
-      lookPitch = clamp(Math.atan2(J.chest.y + P.neck + 0.1 - lookAt.y, Math.max(0.2, hd)) * 0.55, -0.5, 0.7);
+      lookPitch = clamp(
+        Math.atan2(J.chest.y + P.neck + 0.1 - lookAt.y, Math.max(0.2, hd)) *
+          0.55,
+        -0.5,
+        0.7,
+      );
     }
     if (lookYawOverride !== null) {
       const k = st.acting.hit.lookBack;
@@ -1241,7 +1629,10 @@ class CharacterSim implements Sim {
       lookYaw = yawC + clamp(rel, -1.3, 1.3) * k;
     }
     {
-      const rel = clamp(wrap(lookYaw - yawC), -1.3, 1.3);
+      const relRaw = clamp(wrap(lookYaw - yawC), -1.3, 1.3);
+      // the eyes pick a new target instantly; the neck is given it over a couple of frames
+      if (live) this.lookRelF += (relRaw - this.lookRelF) * 0.4;
+      const rel = this.lookRelF;
       const targetAbs = yawC + rel;
       const tgt = this.headYaw.x + wrap(targetAbs - this.headYaw.x);
       if (live) {
@@ -1258,7 +1649,12 @@ class CharacterSim implements Sim {
           this.headYaw.v *= 0.5;
         }
         this.lookPitchF += (lookPitch - this.lookPitchF) * 0.2; // a glance eases in; it never snaps the chin
-        this.headPitch.step(this.lookPitchF, this.hit ? 9 : 12, this.hit ? 0.3 : 0.75, dt);
+        this.headPitch.step(
+          this.lookPitchF,
+          this.hit ? 9 : 12,
+          this.hit ? 0.3 : 0.75,
+          dt,
+        );
         this.headRoll.step(0, this.hit ? 9 : 12, this.hit ? 0.3 : 0.75, dt);
         this.headPitch.x = clamp(this.headPitch.x, -0.75, 0.85);
         this.headRoll.x = clamp(this.headRoll.x, -0.6, 0.6);
@@ -1267,11 +1663,21 @@ class CharacterSim implements Sim {
     const yawH = this.headYaw.x;
     const fH = fwd(yawH);
     const rH = rgt(yawH);
-    const uNeck = u(pitch * 0.55 + st.posture.headForward + this.headPitch.x * 0.4, roll * 0.5 + this.headRoll.x * 0.4, fC, rC);
+    const uNeck = u(
+      pitch * 0.55 + st.posture.headForward + this.headPitch.x * 0.4,
+      roll * 0.5 + this.headRoll.x * 0.4,
+      fC,
+      rC,
+    );
     J.neck = madd(J.chest, uNeck, P.neck * 0.35);
     J.head = madd(J.chest, uNeck, P.neck);
     // The head stays level against the trunk's lean (eyes on the horizon), plus its own nod.
-    const uHead = u(pitch * 0.25 + st.posture.headPitch + this.headPitch.x, roll * 0.25 + this.headRoll.x, fH, rH);
+    const uHead = u(
+      pitch * 0.25 + st.posture.headPitch + this.headPitch.x,
+      roll * 0.25 + this.headRoll.x,
+      fH,
+      rH,
+    );
     J.headTop = madd(J.head, uHead, P.headLen);
     B.spine = mkBasis(uLow, v3(fP.x + fC.x, 0, fP.z + fC.z), fC);
     B.chest = mkBasis(uUp, fC);
@@ -1284,34 +1690,60 @@ class CharacterSim implements Sim {
     const held = this.propState === 'held' ? this.prop.heldBy : null;
     const hands: { L: HandPose; R: HandPose } = { L: 'relaxed', R: 'relaxed' };
     let tossPathPoint: Vec3 | null = null;
-    if (this.tossW.x > 0 || (this.task && this.task.kind === 'toss' && this.task.plan)) tossPathPoint = this.tossTarget;
+    if (
+      this.tossW.x > 0 ||
+      (this.task && this.task.kind === 'toss' && this.task.plan)
+    )
+      tossPathPoint = this.tossTarget;
     for (const side of ['L', 'R'] as Side[]) {
       const A = this.arms[side];
       const isTask = side === this.hand;
       const carrying = held === side;
       const hitLoose = this.hit && this.hit.phase !== 'recover' ? 0.55 : 1;
-      const swing = clamp((-A.sgn * stride * st.gait.armSwing * clamp01(0.25 + sf)) / this.K, -0.6, 0.75) * (carrying ? 0.35 : 1);
+      const swing =
+        clamp(
+          (-A.sgn * stride * st.gait.armSwing * clamp01(0.25 + sf)) / this.K,
+          -0.5,
+          0.5,
+        ) * (carrying ? 0.35 : 1);
       const off = isTask ? 0 : this.tossOff.x;
       const phiT = swing + 0.06 * sf + off + (carrying ? 0.05 : 0);
-      const alphaT = st.posture.armAbduct + 0.04 * sf + Math.abs(off) * 0.35 + (isTask ? 0 : 0.5 * this.reachLean.x);
+      const alphaT =
+        st.posture.armAbduct +
+        0.04 * sf +
+        Math.abs(off) * 0.35 +
+        (isTask ? 0 : 0.5 * this.reachLean.x);
       const epsT =
         st.posture.elbowRest +
         st.gait.elbowSwing * Math.max(0, A.phi.x) +
-        0.3 * sf +
+        0.1 * sf +
         (carrying ? 0.22 : 0) -
         clamp(-0.045 * A.phi.v, -0.3, 0.3) +
         Math.abs(off) * 0.4;
-      const betaT = clamp(-0.06 * A.phi.v, -0.45, 0.45) + (isTask ? this.tossWrist.x : 0) + (carrying ? -0.12 : 0) - (isTask ? 0.35 * this.reachS.x : 0);
+      const betaT =
+        clamp(-0.06 * A.phi.v, -0.45, 0.45) +
+        (isTask ? this.tossWrist.x : 0) +
+        (carrying ? -0.12 : 0) -
+        (isTask ? 0.35 * this.reachS.x : 0);
       const elevT =
         st.posture.shoulderLift +
         st.acting.idle.breath * 0.6 * breath -
         (carrying ? 0.008 : 0) +
-        (isTask ? 0.035 * this.reachS.x * clamp01((this.reachTarget.y - 1.0) / 0.4) + 0.03 * this.tossShoulder.x : 0) +
+        (isTask
+          ? 0.035 * this.reachS.x * clamp01((this.reachTarget.y - 1.0) / 0.4) +
+            0.03 * this.tossShoulder.x
+          : 0) +
         A.sgn * 0.02 * roll;
-      const protT = (isTask ? 0.05 * this.reachS.x + 0.05 * this.tossShoulder.x : -0.02 * this.reachS.x) - 0.01 * A.phi.x * -1;
+      const protT =
+        (isTask
+          ? 0.05 * this.reachS.x + 0.05 * this.tossShoulder.x
+          : -0.02 * this.reachS.x) -
+        0.01 * A.phi.x * -1;
       if (live) {
         const w = st.timing.armFreq * hitLoose;
-        const z = this.hit ? Math.min(0.4, st.timing.armDamping) : st.timing.armDamping;
+        const z = this.hit
+          ? Math.min(0.4, st.timing.armDamping)
+          : st.timing.armDamping;
         A.phi.step(phiT, w, z, dt);
         A.alpha.step(alphaT, w, z + 0.15, dt);
         A.eps.step(epsT, w * 1.3, z + 0.1, dt);
@@ -1326,12 +1758,20 @@ class CharacterSim implements Sim {
       }
       const shoulder = add(
         J.chest,
-        add(mul(rCb, A.sgn * P.shoulderWidth * 0.5), add(mul(uC, A.elev.x), mul(fCb, A.prot.x - st.posture.chestOut))),
+        add(
+          mul(rCb, A.sgn * P.shoulderWidth * 0.5),
+          add(mul(uC, A.elev.x), mul(fCb, A.prot.x - st.posture.chestOut)),
+        ),
       );
       const cphi = Math.cos(A.phi.x);
       const sphi = Math.sin(A.phi.x);
       let dirU = add(mul(uC, -cphi), mul(fCb, sphi));
-      dirU = norm(add(mul(dirU, Math.cos(A.alpha.x)), mul(rCb, A.sgn * Math.sin(A.alpha.x))));
+      dirU = norm(
+        add(
+          mul(dirU, Math.cos(A.alpha.x)),
+          mul(rCb, A.sgn * Math.sin(A.alpha.x)),
+        ),
+      );
       const qRaw = add(fCb, add(mul(uC, 0.35), mul(rCb, -A.sgn * 0.22)));
       const q = norm(sub(qRaw, mul(dirU, dot(qRaw, dirU))));
       const dirF = add(mul(dirU, Math.cos(A.eps.x)), mul(q, Math.sin(A.eps.x)));
@@ -1339,7 +1779,10 @@ class CharacterSim implements Sim {
       const hh = P.hand * 0.5;
       const beta = A.beta.x;
       const handDir = add(mul(dirF, Math.cos(beta)), mul(q2, Math.sin(beta)));
-      const fkPalm = add(shoulder, add(mul(dirU, P.upperArm), add(mul(dirF, P.forearm), mul(handDir, hh))));
+      const fkPalm = add(
+        shoulder,
+        add(mul(dirU, P.upperArm), add(mul(dirF, P.forearm), mul(handDir, hh))),
+      );
       let palmT = fkPalm;
       let w = 0;
       if (isTask) {
@@ -1366,21 +1809,32 @@ class CharacterSim implements Sim {
       // (and flips either side of it). So the elbow has memory: it turns toward the wanted
       // side at a bounded rate, and simply keeps its side where the rule has no opinion.
       const wantRaw = cross(nArm, dArm);
-      const trust = smooth((Math.hypot(wantRaw.x, wantRaw.y, wantRaw.z) - 0.1) / 0.35);
+      const trust = smooth(
+        (Math.hypot(wantRaw.x, wantRaw.y, wantRaw.z) - 0.1) / 0.35,
+      );
       const want = norm(wantRaw, mul(q, -1));
       let pole = want;
       if (!initial && A.hasPole) {
         const prev = norm(sub(A.pole, mul(dArm, dot(A.pole, dArm))), want);
         const ang = Math.atan2(dot(cross(prev, want), dArm), dot(prev, want));
-        const maxTurn = w > 0.02 || this.hit ? 0.2 : 0.45;
-        pole = rotate(prev, dArm, clamp(ang * (0.25 + 0.75 * trust), -maxTurn, maxTurn) * trust);
+        const maxTurn = this.hit ? 0.2 : lerp(0.45, 0.2, smooth(w / 0.3));
+        pole = rotate(
+          prev,
+          dArm,
+          clamp(ang * (0.25 + 0.75 * trust), -maxTurn, maxTurn) * trust,
+        );
       }
       if (live || initial) {
         A.pole = pole;
         A.hasPole = true;
       }
-      const l2 = Math.sqrt(P.forearm * P.forearm + hh * hh + 2 * P.forearm * hh * Math.cos(beta));
-      const delta = Math.atan2(hh * Math.sin(beta), P.forearm + hh * Math.cos(beta));
+      const l2 = Math.sqrt(
+        P.forearm * P.forearm + hh * hh + 2 * P.forearm * hh * Math.cos(beta),
+      );
+      const delta = Math.atan2(
+        hh * Math.sin(beta),
+        P.forearm + hh * Math.cos(beta),
+      );
       const ik = solveTwoBone(shoulder, palmT, P.upperArm, l2, pole, ARM_MAX);
       this.armAsked[side] = ik.asked;
       const c = norm(sub(ik.end, ik.mid));
@@ -1389,14 +1843,18 @@ class CharacterSim implements Sim {
       const qp = norm(cross(c, nPlane), q);
       // Forearm pronation/supination: which way the palm faces. qp is the elbow-crease
       // side; the palm side `m` is qp rolled about the forearm by the pronation angle.
-      let pronT = PRON_REST + (carrying ? 0.15 : 0) + clamp(0.5 * A.phi.x, -0.3, 0.5);
+      let pronT =
+        PRON_REST + (carrying ? 0.15 : 0) + clamp(0.5 * A.phi.x, -0.3, 0.5);
       if (isTask) {
         const e = this.reachS.x;
         if (e > 0) {
           // palm toward the prop on the way in, flat down onto it at contact
           const toT = norm(sub(this.reachTarget, ik.end), v3(0, -1, 0));
           const k = smooth(e * 1.25);
-          const want = norm(v3(toT.x * (1 - k), toT.y * (1 - k) - k, toT.z * (1 - k)), v3(0, -1, 0));
+          const want = norm(
+            v3(toT.x * (1 - k), toT.y * (1 - k) - k, toT.z * (1 - k)),
+            v3(0, -1, 0),
+          );
           const wp = sub(want, mul(c, dot(want, c)));
           if (Math.hypot(wp.x, wp.y, wp.z) > 0.2) {
             const nP = norm(wp);
@@ -1405,14 +1863,17 @@ class CharacterSim implements Sim {
             pronT = lerp(pronT, clamp(ang, -0.2, 3.5), smooth(e * 1.6));
           }
         }
-        if (this.tossW.x > 0) pronT = lerp(pronT, this.tossPron.x, this.tossW.x);
+        if (this.tossW.x > 0)
+          pronT = lerp(pronT, this.tossPron.x, this.tossW.x);
       }
       if (live) {
         A.pron.step(pronT, 15, 0.9, dt);
         limit(A.pron, -0.3, 3.6);
       }
       const m = rotate(qp, c, -A.sgn * A.pron.x);
-      const foreDir = norm(sub(mul(c, Math.cos(delta)), mul(m, Math.sin(delta))));
+      const foreDir = norm(
+        sub(mul(c, Math.cos(delta)), mul(m, Math.sin(delta))),
+      );
       const wrist = madd(ik.mid, foreDir, P.forearm);
       const handX = norm(sub(ik.end, wrist), foreDir);
       A.basis = mkBasis(handX, m, qp);
@@ -1427,7 +1888,8 @@ class CharacterSim implements Sim {
       A.palmPrev = initial ? ik.end : A.palm;
       A.palm = ik.end;
       if (carrying) hands[side] = 'grip';
-      else if (isTask && (this.reachS.x > 0.25 || this.openTimer > 0)) hands[side] = 'open';
+      else if (isTask && (this.reachS.x > 0.25 || this.openTimer > 0))
+        hands[side] = 'open';
       else if (this.hit && this.hit.n < 22) hands[side] = 'open';
     }
     if (live && this.openTimer > 0) this.openTimer--;
@@ -1436,8 +1898,13 @@ class CharacterSim implements Sim {
     if (live) {
       const asked = this.armAsked[this.hand];
       if (this.reachS.x > 0.5 && this.task && this.task.kind !== 'toss') {
-        if (asked > 0.955) this.reachHelp = Math.min(0.3, this.reachHelp + (asked - 0.955) * 2.2 * dt * 14 + dt * 0.1);
-        else if (asked < 0.9) this.reachHelp = Math.max(0, this.reachHelp - dt * 0.5);
+        if (asked > 0.955)
+          this.reachHelp = Math.min(
+            0.3,
+            this.reachHelp + (asked - 0.955) * 2.2 * dt * 14 + dt * 0.1,
+          );
+        else if (asked < 0.9)
+          this.reachHelp = Math.max(0, this.reachHelp - dt * 0.5);
       } else if (this.reachS.x < 0.05) {
         this.reachHelp = Math.max(0, this.reachHelp - dt * 1.5);
       }
@@ -1448,7 +1915,12 @@ class CharacterSim implements Sim {
 
     // ---- 15. squash (root-level, subtle) -----------------------------------------------
     if (live) {
-      this.squashS.step(1 - 0.25 * this.tossCrouch.x + 0.012 * this.tossShoulder.x, 16, 0.45, dt);
+      this.squashS.step(
+        1 - 0.25 * this.tossCrouch.x + 0.012 * this.tossShoulder.x,
+        16,
+        0.45,
+        dt,
+      );
       this.squashS.x = clamp(this.squashS.x, 0.93, 1.06);
     }
 
@@ -1461,15 +1933,39 @@ class CharacterSim implements Sim {
       hands,
       contacts: { footL: fL.planted, footR: fR.planted },
       props: [
-        { id: this.prop.id, pos: { ...this.prop.pos }, vel: { ...this.prop.vel }, heldBy: this.prop.heldBy, basis: this.prop.basis },
-        { id: 'stand', pos: v3(this.stand.x, STAND_H, this.stand.z), vel: v3(), heldBy: null, basis: FLAT },
+        {
+          id: this.prop.id,
+          pos: { ...this.prop.pos },
+          vel: { ...this.prop.vel },
+          heldBy: this.prop.heldBy,
+          basis: this.prop.basis,
+        },
+        {
+          id: 'stand',
+          pos: v3(this.stand.x, STAND_H, this.stand.z),
+          vel: v3(),
+          heldBy: null,
+          basis: FLAT,
+        },
       ],
       squash: this.squashS.x,
       phase: this.phaseLabel(idle, speed, vdMag),
       debug: {
         feet: {
-          L: { planted: fL.planted, x: fL.x, z: fL.z, yaw: fL.yaw, pitch: fL.pitch },
-          R: { planted: fR.planted, x: fR.x, z: fR.z, yaw: fR.yaw, pitch: fR.pitch },
+          L: {
+            planted: fL.planted,
+            x: fL.x,
+            z: fL.z,
+            yaw: fL.yaw,
+            pitch: fL.pitch,
+          },
+          R: {
+            planted: fR.planted,
+            x: fR.x,
+            z: fR.z,
+            yaw: fR.yaw,
+            pitch: fR.pitch,
+          },
         },
         legAsked: { ...this.legAsked },
         armAsked: { ...this.armAsked },
@@ -1485,17 +1981,32 @@ class CharacterSim implements Sim {
   }
 
   private pelvisStand(): number {
-    return this.P.ankleHeight + this.legLen * (1 - this.S.posture.kneeSoftness) + this.hipDrop;
+    return (
+      this.P.ankleHeight +
+      this.legLen * (1 - this.S.posture.kneeSoftness) +
+      this.hipDrop
+    );
   }
 
   private phaseLabel(idle: boolean, speed: number, vdMag: number): string {
-    if (this.hit) return `hit:${this.hit.heavy ? 'heavy' : 'light'}:${this.hit.phase}`;
+    if (this.hit)
+      return `hit:${this.hit.heavy ? 'heavy' : 'light'}:${this.hit.phase}`;
     const carry = this.propState === 'held' ? '+carry' : '';
-    if (this.task) return `${this.task.kind}:${this.task.phase}${this.task.kind === 'toss' ? '' : carry}`;
-    const stepping = !this.feet.L.planted || !this.feet.R.planted || this.pending !== null;
+    if (this.task)
+      return `${this.task.kind}:${this.task.phase}${this.task.kind === 'toss' ? '' : carry}`;
+    const stepping =
+      !this.feet.L.planted || !this.feet.R.planted || this.pending !== null;
     if (vdMag > 1e-6) {
-      const mis = Math.abs(wrap(yawOf(this.cmdVd.x, this.cmdVd.z) - this.yawBase.x));
-      return (mis > 1.2 ? 'reverse' : speed < 0.5 * this.walkSpeed() ? 'start' : 'walk') + carry;
+      const mis = Math.abs(
+        wrap(yawOf(this.cmdVd.x, this.cmdVd.z) - this.yawBase.x),
+      );
+      return (
+        (mis > 1.2
+          ? 'reverse'
+          : speed < 0.5 * this.walkSpeed()
+            ? 'start'
+            : 'walk') + carry
+      );
     }
     if (speed > 0.08) return 'stop' + carry;
     if (Math.abs(this.facing - this.yawBase.x) > 0.12) return 'turn' + carry;
@@ -1525,7 +2036,12 @@ class CharacterSim implements Sim {
         f.age = 0;
         f.forced = false;
         const d = Math.hypot(f.tx - f.fx, f.tz - f.fz);
-        this.dip.kick(-st.gait.bounce * this.K * (0.25 + Math.min(speed, 1.6)) * clamp01(0.3 + d / (0.4 * this.K)));
+        this.dip.kick(
+          -st.gait.bounce *
+            this.K *
+            (0.25 + Math.min(speed, 1.6)) *
+            clamp01(0.3 + d / (0.4 * this.K)),
+        );
         this.squashS.kick(-0.25 * st.gait.bounce * (0.3 + speed));
         this.events.push({ step: this.n, type: 'footPlant', note: f.side });
         continue;
@@ -1546,7 +2062,8 @@ class CharacterSim implements Sim {
         f.tx += f.tvx * dt;
         f.tz += f.tvz * dt;
         f.tyaw += f.tvyaw * dt;
-        const along = (f.tx - f.fx) * Math.cos(f.tyaw) - (f.tz - f.fz) * Math.sin(f.tyaw);
+        const along =
+          (f.tx - f.fx) * Math.cos(f.tyaw) - (f.tz - f.fz) * Math.sin(f.tyaw);
         const lp = -st.gait.heelStrike * clamp(along / (0.5 * this.K), -0.5, 1);
         f.landPitch += (lp - f.landPitch) * 0.2;
       }
@@ -1554,11 +2071,12 @@ class CharacterSim implements Sim {
       f.x = lerp(f.fx, f.tx, e);
       f.z = lerp(f.fz, f.tz, e);
       f.yaw = lerp(f.fyaw, f.tyaw, smooth(f.u));
-      f.lift = f.h * Math.pow(Math.sin(Math.PI * Math.pow(f.u, 0.82)), 1.25);
+      // leaves and meets the ground with no vertical speed (toe peels off, heel is set down)
+      f.lift = f.h * (0.5 - 0.5 * Math.cos(2 * Math.PI * Math.pow(f.u, 0.85)));
       if (!(f.lift > 0)) f.lift = 0;
       f.pitch =
         f.fpitch * (1 - smooth(f.u / 0.45)) +
-        f.toeDown * Math.sin(Math.PI * clamp01(f.u / 0.62)) +
+        f.toeDown * Math.pow(Math.sin(Math.PI * clamp01(f.u / 0.62)), 2) +
         f.landPitch * smooth((f.u - 0.5) / 0.5);
       f.toeFlat = Math.max(0, f.toeFlat - dt * 9);
     }
@@ -1581,7 +2099,11 @@ class CharacterSim implements Sim {
     let bestT = 0;
     let bestTarget = { x: 0, z: 0, yaw: 0 };
     for (const f of [L, R]) {
-      const swingGuess = lerp(st.timing.turnSwingTime, this.swingTime(), this.speedFrac(Math.max(speed, sdEff)));
+      const swingGuess = lerp(
+        st.timing.turnSwingTime,
+        this.swingTime(),
+        this.speedFrac(Math.max(speed, sdEff)),
+      );
       const t = this.stepTarget(f, swingGuess, swingGuess);
       const posErr = Math.hypot(t.x - f.x, t.z - f.z);
       const yawErr = Math.abs(t.yaw - f.yaw);
@@ -1597,9 +2119,13 @@ class CharacterSim implements Sim {
         best = f;
         bestTarget = t;
         const travel = clamp01(posErr / (0.5 * this.K));
-        bestT = lerp(st.timing.turnSwingTime * (1 + 0.25 * travel), this.swingTime(), travel * this.speedFrac(speed));
+        bestT = lerp(
+          st.timing.turnSwingTime * (1 + 0.25 * travel),
+          this.swingTime(),
+          travel * this.speedFrac(speed),
+        );
         // a stagger is caught with quick, short steps
-        if (inHit) bestT = lerp(0.2, 0.13, clamp01(speed / 2.4));
+        if (inHit) bestT = lerp(0.24, 0.19, clamp01(speed / 2.4));
       }
     }
     if (!best || bestU < 1) {
@@ -1607,7 +2133,9 @@ class CharacterSim implements Sim {
       return;
     }
     const o = this.other(best);
-    const ds = Math.round(st.timing.doubleSupport * 60 * (inHit || !moving ? 0.5 : 1));
+    const ds = inHit
+      ? 0
+      : Math.round(st.timing.doubleSupport * 60 * (!moving ? 0.5 : 1));
     if (o.age < ds) return;
     const slow = speed < 0.4 * this.K && !inHit;
     if (slow) {
@@ -1619,12 +2147,16 @@ class CharacterSim implements Sim {
       this.pending.wait++;
       const rB = rgt(this.yawBase.x);
       const lat = (o.x - this.root.x) * rB.x + (o.z - this.root.z) * rB.z;
-      const frac = Math.min(0.95, lerp(0.85, 0.3, this.speedFrac()) * st.gait.sway);
+      const frac = Math.min(
+        0.95,
+        lerp(0.85, 0.3, this.speedFrac()) * st.gait.sway,
+      );
       const tgt = lat * frac;
       const total = Math.abs(tgt - this.pending.start);
       const done = total < 1e-4 ? 1 : 1 - Math.abs(tgt - this.swayS.x) / total;
       const maxWait = sdEff > 0.1 ? 4 : 6;
-      if (this.pending.wait < 2 || (done < 0.4 && this.pending.wait < maxWait)) return;
+      if (this.pending.wait < 2 || (done < 0.4 && this.pending.wait < maxWait))
+        return;
     }
     this.liftFoot(best, bestTarget, bestT, false);
   }
@@ -1636,12 +2168,23 @@ class CharacterSim implements Sim {
     const t = this.task;
     const st = this.S;
     if (this.reachS.moving) this.reachS.step(DT);
-    for (const m of [this.tossW, this.tossCrouch, this.tossLean, this.tossYawP, this.tossYawC, this.tossWrist, this.tossOff, this.tossShoulder, this.tossPron]) {
+    for (const m of [
+      this.tossW,
+      this.tossCrouch,
+      this.tossLean,
+      this.tossYawP,
+      this.tossYawC,
+      this.tossWrist,
+      this.tossOff,
+      this.tossShoulder,
+      this.tossPron,
+    ]) {
       m.step(DT);
     }
     if (!this.tossRootLock) this.tossG.step(DT);
     if (!t) return null;
-    const bothDown = this.feet.L.planted && this.feet.R.planted && !this.pending;
+    const bothDown =
+      this.feet.L.planted && this.feet.R.planted && !this.pending;
 
     if (t.kind === 'reach' || t.kind === 'place') {
       const target = t.kind === 'reach' ? this.prop.pos : this.standTop();
@@ -1664,12 +2207,17 @@ class CharacterSim implements Sim {
           return { x: (dx / D) * sp, z: (dz / D) * sp };
         }
         // the hand starts out as the last step settles; it does not wait for a dead-still stance
-        if (this.speed() < 0.2 && Math.abs(this.facing - this.yawBase.x) < 0.4) {
+        if (
+          this.speed() < 0.2 &&
+          Math.abs(this.facing - this.yawBase.x) < 0.4
+        ) {
           t.phase = 'extend';
           if (this.reachS.x <= 1e-9) this.reachTarget = { ...target };
           else this.reachTarget = { ...target };
           const from = this.arms[this.hand].palm;
-          const T = st.timing.reachTime * clamp(0.75 + dist(from, target) * 0.5, 0.8, 1.6);
+          const T =
+            st.timing.reachTime *
+            clamp(0.75 + dist(from, target) * 0.5, 0.8, 1.6);
           this.reachS.to(1, T);
         }
         return { x: 0, z: 0 };
@@ -1682,7 +2230,10 @@ class CharacterSim implements Sim {
             if (t.kind === 'reach') {
               t.phase = 'ready';
               t.n = 0;
-            } else if (dist(this.arms[this.hand].palm, this.arms[this.hand].palmPrev) < 1e-9) {
+            } else if (
+              dist(this.arms[this.hand].palm, this.arms[this.hand].palmPrev) <
+              1e-12
+            ) {
               // PLACE: the bag is let go exactly where the palm is, at rest.
               const A = this.arms[this.hand];
               const pv = mul(sub(A.palm, A.palmPrev), 1 / DT);
@@ -1690,22 +2241,37 @@ class CharacterSim implements Sim {
               this.prop.heldBy = null;
               this.prop.pos = { ...A.palm };
               this.prop.vel = v3();
-              this.events.push({ step: this.n, type: 'place', posMismatch: dist(A.palm, this.standTop()), velMismatch: Math.hypot(pv.x, pv.y, pv.z) });
+              this.events.push({
+                step: this.n,
+                type: 'place',
+                posMismatch: dist(A.palm, this.standTop()),
+                velMismatch: Math.hypot(pv.x, pv.y, pv.z),
+              });
               t.phase = 'release';
               t.n = 0;
               this.openTimer = 30;
             }
           } else if (t.n > 240) {
             // could not get there (should not happen): give up cleanly
-            this.note('ignored', `${t.kind}: target out of reach by ${off.toFixed(4)} m`);
+            this.note(
+              'ignored',
+              `${t.kind}: target out of reach by ${off.toFixed(4)} m`,
+            );
             this.abortTask();
           }
         }
         return { x: 0, z: 0 };
       }
       if (t.kind === 'reach' && t.phase === 'ready') {
-        const onIt = dist(this.arms[this.hand].palm, this.prop.pos) < 1e-6 && dist(this.arms[this.hand].palm, this.arms[this.hand].palmPrev) < 1e-9;
-        if (!onIt && t.n > 2 && dist(this.arms[this.hand].palm, this.prop.pos) > 1e-6) {
+        const onIt =
+          dist(this.arms[this.hand].palm, this.prop.pos) < 1e-6 &&
+          dist(this.arms[this.hand].palm, this.arms[this.hand].palmPrev) <
+            1e-12;
+        if (
+          !onIt &&
+          t.n > 2 &&
+          dist(this.arms[this.hand].palm, this.prop.pos) > 1e-6
+        ) {
           // the body moved the hand off the prop (still settling): keep reaching
           t.phase = 'extend';
           return { x: 0, z: 0 };
@@ -1784,7 +2350,10 @@ class CharacterSim implements Sim {
     const side = this.hand === 'R' ? 1 : -1;
     const nSwing = pl.n1 + pl.n2;
     this.tossHolding = false;
-    if (k === pl.nLoad - 4 && !(bothDown && Math.abs(this.facing - this.yawBase.x) < 0.32)) {
+    if (
+      k === pl.nLoad - 4 &&
+      !(bothDown && Math.abs(this.facing - this.yawBase.x) < 0.75)
+    ) {
       // Loaded, but the turn has not come round yet: hold the wind-up until the feet are under the throw.
       this.tossTarget = this.tossBackPoint(pl);
       this.tossHolding = true;
@@ -1797,7 +2366,17 @@ class CharacterSim implements Sim {
         const d = fwd(pl.yaw);
         const Tst = clamp((nSwing + 1) * DT, 0.2, 0.34);
         const sl = Ts.strideLen * this.K;
-        this.liftFoot(f, { x: f.x + d.x * sl, z: f.z + d.z * sl, yaw: f.yaw }, Tst, true);
+        // the stride foot comes down pointing along the throw: the last of the turn happens in the stride
+        this.liftFoot(
+          f,
+          {
+            x: f.x + d.x * sl,
+            z: f.z + d.z * sl,
+            yaw: pl.yaw - f.sgn * st.posture.toeOut,
+          },
+          Tst,
+          true,
+        );
       }
     }
     if (k === pl.nLoad) {
@@ -1826,14 +2405,37 @@ class CharacterSim implements Sim {
     const zero = v3();
     if (k < pl.nLoad) this.tossTarget = this.tossBackPoint(pl);
     else if (k === pl.nLoad) this.tossTarget = pl.pB;
-    else if (k <= pl.nLoad + pl.n1) this.tossTarget = hermite(pl.pB, zero, pl.pLow, pl.vLow, pl.n1 * DT, (k - pl.nLoad) / pl.n1);
+    else if (k <= pl.nLoad + pl.n1)
+      this.tossTarget = hermite(
+        pl.pB,
+        zero,
+        pl.pLow,
+        pl.vLow,
+        pl.n1 * DT,
+        (k - pl.nLoad) / pl.n1,
+      );
     else if (k < pl.nLoad + nSwing) {
       // The arc arrives one step early at (release point - v0 * dt) already moving at v0, so the
       // palm's velocity over the release step is exactly the launch velocity.
       const pRm = madd(pl.pR, pl.v0, -DT);
-      this.tossTarget = hermite(pl.pLow, pl.vLow, pRm, pl.v0, (pl.n2 - 1) * DT, (k - pl.nLoad - pl.n1) / (pl.n2 - 1));
+      this.tossTarget = hermite(
+        pl.pLow,
+        pl.vLow,
+        pRm,
+        pl.v0,
+        (pl.n2 - 1) * DT,
+        (k - pl.nLoad - pl.n1) / (pl.n2 - 1),
+      );
     } else if (k === pl.nLoad + nSwing) this.tossTarget = pl.pR;
-    else if (k <= pl.nLoad + nSwing + pl.n3) this.tossTarget = hermite(pl.pR, pl.v0, pl.pF, zero, pl.n3 * DT, (k - pl.nLoad - nSwing) / pl.n3);
+    else if (k <= pl.nLoad + nSwing + pl.n3)
+      this.tossTarget = hermite(
+        pl.pR,
+        pl.v0,
+        pl.pF,
+        zero,
+        pl.n3 * DT,
+        (k - pl.nLoad - nSwing) / pl.n3,
+      );
     else this.tossTarget = pl.pF;
     if (k === pl.nLoad + nSwing + 1) t.phase = 'follow';
     const endAt = pl.nLoad + nSwing + pl.n3 + pl.hold;
@@ -1848,14 +2450,21 @@ class CharacterSim implements Sim {
 
   /** The wound-up hand position, carried by the body so it comes round with a turn. */
   private tossBackPoint(pl: TossPlan): Vec3 {
+    // Measured from where the shoulder actually is, so the arm really is long and low behind
+    // the hip (a wound-up arm that is short of straight folds into a chicken wing).
     const side = this.hand === 'R' ? 1 : -1;
     const yaw = this.yawBase.x;
     const d = fwd(yaw);
     const r = rgt(yaw);
+    const sh = this._frame.joints[`shoulder${this.hand}`];
     const rad = 0.972 * this.armLen;
-    const along = pl.leanB + rad * Math.sin(pl.thB);
-    const lat = side * (this.P.shoulderWidth * 0.5 + 0.08);
-    return v3(this.root.x + d.x * along + r.x * lat, pl.shY - pl.dropB - rad * Math.cos(pl.thB), this.root.z + d.z * along + r.z * lat);
+    const along = rad * Math.sin(pl.thB);
+    const lat = side * 0.07;
+    return v3(
+      sh.x + d.x * along + r.x * lat,
+      sh.y - rad * Math.cos(pl.thB),
+      sh.z + d.z * along + r.z * lat,
+    );
   }
 
   private planToss(power: number): TossPlan {
@@ -1869,7 +2478,11 @@ class CharacterSim implements Sim {
     const range = lerp(1.8, 6.0, power);
     const el = lerp(0.74, 0.62, power);
     const speed0 = Math.sqrt((range * G) / Math.sin(2 * el)) * 0.92;
-    const v0 = v3(d.x * speed0 * Math.cos(el), speed0 * Math.sin(el), d.z * speed0 * Math.cos(el));
+    const v0 = v3(
+      d.x * speed0 * Math.cos(el),
+      speed0 * Math.sin(el),
+      d.z * speed0 * Math.cos(el),
+    );
     const vLowMag = 0.7 * speed0;
     const vLow = v3(d.x * vLowMag, 0, d.z * vLowMag);
     const back = (Ts.stride ? 0.07 : 0.045) * this.K;
@@ -1879,9 +2492,18 @@ class CharacterSim implements Sim {
     const shY = sh.y;
     const ox = this.root.x;
     const oz = this.root.z;
-    const base = (g: number, dy: number): Vec3 => v3(ox + d.x * g + r.x * side * (P.shoulderWidth * 0.5), shY + dy, oz + d.z * g + r.z * side * (P.shoulderWidth * 0.5));
+    const base = (g: number, dy: number): Vec3 =>
+      v3(
+        ox + d.x * g + r.x * side * (P.shoulderWidth * 0.5),
+        shY + dy,
+        oz + d.z * g + r.z * side * (P.shoulderWidth * 0.5),
+      );
     const pt = (s: Vec3, ang: number, rad: number, lat: number): Vec3 =>
-      v3(s.x + d.x * rad * Math.sin(ang) + r.x * side * lat, s.y - rad * Math.cos(ang), s.z + d.z * rad * Math.sin(ang) + r.z * side * lat);
+      v3(
+        s.x + d.x * rad * Math.sin(ang) + r.x * side * lat,
+        s.y - rad * Math.cos(ang),
+        s.z + d.z * rad * Math.sin(ang) + r.z * side * lat,
+      );
     const thB = -Ts.backswing * (0.75 + 0.25 * power);
     const leanB = Ts.loadLean * 0.3;
     const thR = el * 0.92;
@@ -1897,14 +2519,36 @@ class CharacterSim implements Sim {
     let pF = v3();
     const Tg = (n: number) => (n1 + n2 + 9) * DT || n;
     for (let pass = 0; pass < 2; pass++) {
-      const gAt = (n: number): number => -back + (forward + back) * minJerk((n * DT) / Tg(n));
-      pB = pt(base(-back + leanB, -Ts.loadCrouch * 0.8 - 0.03), thB, 0.972 * A, 0.08);
-      pLow = pt(base(gAt(n1) + 0.05, -Ts.loadCrouch * 0.3 - 0.02), 0.06, 0.93 * A, 0.1);
+      const gAt = (n: number): number =>
+        -back + (forward + back) * minJerk((n * DT) / Tg(n));
+      pB = pt(
+        base(-back + leanB, -Ts.loadCrouch * 0.8 - 0.03),
+        thB,
+        0.972 * A,
+        0.08,
+      );
+      pLow = pt(
+        base(gAt(n1) + 0.05, -Ts.loadCrouch * 0.3 - 0.02),
+        0.06,
+        0.93 * A,
+        0.1,
+      );
       pR = pt(base(gAt(n1 + n2), 0.0), thR, 0.88 * A, 0.05);
-      pF = pt(base(pass === 0 ? forward : gAt(n1 + n2 + n3), 0.01), thF, 0.84 * A, -0.04);
+      pF = pt(
+        base(pass === 0 ? forward : gAt(n1 + n2 + n3), 0.01),
+        thF,
+        0.84 * A,
+        -0.04,
+      );
       n1 = Math.max(6, Math.round((1.9 * dist(pB, pLow)) / vLowMag / DT));
-      n2 = Math.max(3, Math.round(dist(pLow, pR) / (0.5 * (vLowMag + speed0)) / DT));
-      n3 = Math.max(7, Math.round(((2.1 * dist(pR, pF)) / speed0 / DT) * Ts.followLen));
+      n2 = Math.max(
+        3,
+        Math.round(dist(pLow, pR) / (0.5 * (vLowMag + speed0)) / DT),
+      );
+      n3 = Math.max(
+        7,
+        Math.round(((2.1 * dist(pR, pF)) / speed0 / DT) * Ts.followLen),
+      );
     }
     return {
       ox,
@@ -1942,7 +2586,13 @@ class CharacterSim implements Sim {
       const palm = J[`hand${side}`];
       const pv = mul(sub(A.palm, A.palmPrev), 1 / DT);
       // RELEASE: on exactly this step the bag takes the palm's position and velocity.
-      if (t && t.kind === 'toss' && t.plan && !t.plan.released && t.n - 1 === t.plan.nLoad + t.plan.n1 + t.plan.n2) {
+      if (
+        t &&
+        t.kind === 'toss' &&
+        t.plan &&
+        !t.plan.released &&
+        t.n - 1 === t.plan.nLoad + t.plan.n1 + t.plan.n2
+      ) {
         t.plan.released = true;
         p.pos = { ...palm };
         p.vel = { ...pv };
@@ -1998,9 +2648,14 @@ class CharacterSim implements Sim {
       const sn = Math.hypot(ax.x, ax.y, ax.z);
       if (sn > 1e-6) {
         const ang = Math.asin(Math.min(1, sn));
-        p.basis = rotateBasis(p.basis, mul(ax, 1 / sn), Math.min(ang, Math.max(ang * 0.3, 0.02)));
+        p.basis = rotateBasis(
+          p.basis,
+          mul(ax, 1 / sn),
+          Math.min(ang, Math.max(ang * 0.3, 0.02)),
+        );
       }
-      if (s > 1e-6) p.basis = rotateBasis(p.basis, UP, this.propSpin * 0.2 * DT);
+      if (s > 1e-6)
+        p.basis = rotateBasis(p.basis, UP, this.propSpin * 0.2 * DT);
     }
   }
 }
@@ -2029,7 +2684,10 @@ function swingAround(pivot: Vec3, a: Vec3, b: Vec3, t: number): Vec3 {
     return lerp3(a, b, t);
   } else {
     const sn = Math.sin(ang);
-    dir = add(mul(ua, Math.sin((1 - t) * ang) / sn), mul(ub, Math.sin(t * ang) / sn));
+    dir = add(
+      mul(ua, Math.sin((1 - t) * ang) / sn),
+      mul(ub, Math.sin(t * ang) / sn),
+    );
   }
   return madd(pivot, dir, lerp(la, lb, t));
 }

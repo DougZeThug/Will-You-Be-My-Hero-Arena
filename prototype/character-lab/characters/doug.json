@@ -1,25 +1,433 @@
 {
-  "id": "doug",
-  "height": 1.73,
-  "side": {
-    "config": "prototype/motion/characters/doug.json"
+ "id": "doug",
+ "height": 1.73,
+ "side": {
+  "config": "prototype/motion/characters/doug.json"
+ },
+ "sideRear": {
+  "config": "prototype/motion/characters/doug.json",
+  "source": "lab/human-motion/assets/directional/doug-rear-source.png"
+ },
+ "front": {
+  "sheet": "public/assets/doug/puppet-v3.png",
+  "landmarks": "lib/arena/puppet-assets.json",
+  "landmarksKey": "doug",
+  "overrides": {}
+ },
+ "threeQuarterFront": {
+  "source": "prototype/character-lab/source-art/doug-three-quarter.png",
+  "construction": "whole",
+  "nearSide": "R",
+  "note": "Every number below was read by hand off a gridded print of the drawing (source pixels).",
+  "joints": {
+   "pelvis": [
+    395,
+    1051
+   ],
+   "spine": [
+    395,
+    760
+   ],
+   "chest": [
+    385,
+    470
+   ],
+   "neck": [
+    415,
+    385
+   ],
+   "head": [
+    430,
+    318
+   ],
+   "headTop": [
+    440,
+    22
+   ],
+   "shoulderR": [
+    205,
+    455
+   ],
+   "elbowR": [
+    133,
+    755
+   ],
+   "wristR": [
+    135,
+    937
+   ],
+   "handR": [
+    168,
+    1112
+   ],
+   "shoulderL": [
+    545,
+    455
+   ],
+   "elbowL": [
+    622,
+    760
+   ],
+   "wristL": [
+    655,
+    925
+   ],
+   "handL": [
+    650,
+    1105
+   ],
+   "hipR": [
+    315,
+    1051
+   ],
+   "kneeR": [
+    285,
+    1310
+   ],
+   "ankleR": [
+    215,
+    1690
+   ],
+   "heelR": [
+    160,
+    1800
+   ],
+   "toeR": [
+    355,
+    1850
+   ],
+   "hipL": [
+    470,
+    1051
+   ],
+   "kneeL": [
+    495,
+    1300
+   ],
+   "ankleL": [
+    468,
+    1645
+   ],
+   "heelL": [
+    410,
+    1745
+   ],
+   "toeL": [
+    660,
+    1775
+   ]
   },
-  "sideRear": {
-    "config": "prototype/motion/characters/doug.json",
-    "source": "lab/human-motion/assets/directional/doug-rear-source.png"
-  },
-  "front": {
-    "sheet": "public/assets/doug/puppet-v3.png",
-    "landmarks": "lib/arena/puppet-assets.json",
-    "landmarksKey": "doug",
-    "overrides": {}
-  },
-  "back": {
-    "source": "prototype/character-lab/source-art/doug-back.png",
-    "landmarks": {}
-  },
-  "threeQuarterFront": {
-    "source": "prototype/character-lab/source-art/doug-three-quarter.png",
-    "landmarks": {}
+  "neckLine": [
+   [
+    335,
+    285
+   ],
+   [
+    495,
+    335
+   ]
+  ],
+  "pieces": {
+   "armNear": {
+    "polygon": [
+     [
+      227,
+      378
+     ],
+     [
+      263,
+      450
+     ],
+     [
+      283,
+      500
+     ],
+     [
+      301,
+      555
+     ],
+     [
+      288,
+      610
+     ],
+     [
+      251,
+      640
+     ],
+     [
+      222,
+      672
+     ],
+     [
+      200,
+      705
+     ],
+     [
+      199,
+      745
+     ],
+     [
+      196,
+      800
+     ],
+     [
+      180,
+      840
+     ],
+     [
+      171,
+      900
+     ],
+     [
+      176,
+      930
+     ],
+     [
+      207,
+      968
+     ],
+     [
+      224,
+      1010
+     ],
+     [
+      229,
+      1066
+     ],
+     [
+      206,
+      1084
+     ],
+     [
+      196,
+      1102
+     ],
+     [
+      190,
+      1135
+     ],
+     [
+      60,
+      1135
+     ],
+     [
+      30,
+      900
+     ],
+     [
+      30,
+      560
+     ],
+     [
+      60,
+      450
+     ],
+     [
+      150,
+      350
+     ],
+     [
+      214,
+      348
+     ]
+    ],
+    "inner": [
+     0,
+     18
+    ],
+    "seam": [
+     0,
+     4
+    ],
+    "under": [
+     0,
+     7
+    ],
+    "fill": [
+     12,
+     17
+    ]
+   },
+   "armFar": {
+    "polygon": [
+     [
+      602,
+      650
+     ],
+     [
+      640,
+      640
+     ],
+     [
+      790,
+      640
+     ],
+     [
+      790,
+      1150
+     ],
+     [
+      640,
+      1150
+     ],
+     [
+      640,
+      1100
+     ],
+     [
+      640,
+      960
+     ],
+     [
+      628,
+      935
+     ],
+     [
+      618,
+      900
+     ],
+     [
+      612,
+      860
+     ],
+     [
+      604,
+      760
+     ]
+    ],
+    "cut": [
+     0,
+     1
+    ]
+   },
+   "legNear": {
+    "polygon": [
+     [
+      188,
+      1230
+     ],
+     [
+      245,
+      1247
+     ],
+     [
+      300,
+      1259
+     ],
+     [
+      392,
+      1266
+     ],
+     [
+      403,
+      1232
+     ],
+     [
+      392,
+      1300
+     ],
+     [
+      372,
+      1400
+     ],
+     [
+      350,
+      1500
+     ],
+     [
+      345,
+      1620
+     ],
+     [
+      380,
+      1730
+     ],
+     [
+      392,
+      1800
+     ],
+     [
+      400,
+      1904
+     ],
+     [
+      40,
+      1904
+     ],
+     [
+      40,
+      1300
+     ]
+    ],
+    "hem": [
+     0,
+     3
+    ]
+   },
+   "legFar": {
+    "polygon": [
+     [
+      403,
+      1228
+     ],
+     [
+      408,
+      1240
+     ],
+     [
+      470,
+      1252
+     ],
+     [
+      570,
+      1247
+     ],
+     [
+      600,
+      1228
+     ],
+     [
+      720,
+      1300
+     ],
+     [
+      790,
+      1904
+     ],
+     [
+      400,
+      1904
+     ],
+     [
+      392,
+      1800
+     ],
+     [
+      380,
+      1730
+     ],
+     [
+      345,
+      1620
+     ],
+     [
+      350,
+      1500
+     ],
+     [
+      372,
+      1400
+     ],
+     [
+      392,
+      1300
+     ]
+    ],
+    "hem": [
+     1,
+     4
+    ]
+   }
   }
+ }
 }

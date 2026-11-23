@@ -28,12 +28,17 @@ export class Timeline {
   }
 
   get last(): SimFrame {
-    return this.frames.length ? this.frames[this.frames.length - 1] : this.sim.frame;
+    return this.frames.length
+      ? this.frames[this.frames.length - 1]
+      : this.sim.frame;
   }
 
   /** Applies a command at the live head (never in the past). */
   command(cmd: Command): void {
-    this.commands.push({ step: this.frames.length, cmd: JSON.parse(JSON.stringify(cmd)) as Command });
+    this.commands.push({
+      step: this.frames.length,
+      cmd: JSON.parse(JSON.stringify(cmd)) as Command,
+    });
     this.sim.command(cmd);
   }
 
@@ -57,7 +62,8 @@ export class Timeline {
     const out: SimFrame[] = [];
     let c = 0;
     for (let i = 0; i < steps; i++) {
-      while (c < this.commands.length && this.commands[c].step <= i) sim.command(this.commands[c++].cmd);
+      while (c < this.commands.length && this.commands[c].step <= i)
+        sim.command(this.commands[c++].cmd);
       out.push(sim.step());
     }
     return out;
@@ -66,12 +72,15 @@ export class Timeline {
   /** Drops everything after `step` and continues live from there (re-simulated from the log). */
   truncate(step: number): void {
     const keep = Math.max(0, Math.min(this.frames.length, Math.round(step)));
-    this.commands = this.commands.filter((c) => c.step < keep || (c.step === keep && false));
+    this.commands = this.commands.filter(
+      (c) => c.step < keep || (c.step === keep && false),
+    );
     this.sim = createSim(this.options);
     const frames: SimFrame[] = [];
     let c = 0;
     for (let i = 0; i < keep; i++) {
-      while (c < this.commands.length && this.commands[c].step <= i) this.sim.command(this.commands[c++].cmd);
+      while (c < this.commands.length && this.commands[c].step <= i)
+        this.sim.command(this.commands[c++].cmd);
       frames.push(this.sim.step());
     }
     this.frames = frames;

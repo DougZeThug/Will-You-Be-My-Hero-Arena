@@ -6,8 +6,11 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const repository = fileURLToPath(new URL('../../', import.meta.url));
-const page = (name: string) => fileURLToPath(new URL(`./${name}`, import.meta.url));
-const pages = ['index.html', 'stick.html', 'viewtest.html'].filter((name) => existsSync(page(name)));
+const page = (name: string) =>
+  fileURLToPath(new URL(`./${name}`, import.meta.url));
+const pages = ['index.html', 'stick.html', 'viewtest.html'].filter((name) =>
+  existsSync(page(name)),
+);
 
 export default defineConfig({
   root: fileURLToPath(new URL('./', import.meta.url)),
@@ -20,7 +23,9 @@ export default defineConfig({
     fs: { allow: [repository] },
   },
   build: {
-    outDir: fileURLToPath(new URL('../../work/proto-character-lab-dist', import.meta.url)),
+    outDir: fileURLToPath(
+      new URL('../../work/proto-character-lab-dist', import.meta.url),
+    ),
     emptyOutDir: true,
     rolldownOptions: { input: pages.map(page) },
   },

@@ -62,7 +62,11 @@ export function yawForViewAngle(angle: number, camYaw: number): number {
 }
 
 /** World ground direction for a screen-space direction (dx right, dy "into the screen"), for camera-relative input. */
-export function screenToGround(dx: number, dy: number, cam: Camera): { x: number; z: number } {
+export function screenToGround(
+  dx: number,
+  dy: number,
+  cam: Camera,
+): { x: number; z: number } {
   const c = Math.cos(cam.yaw);
   const s = Math.sin(cam.yaw);
   // right = (c, -s); away from the viewer = (-s, -c)
