@@ -1,0 +1,55 @@
+{
+  "height": 1.73,
+  "pelvisHeight": 0.7543,
+  "spine": 0.2494,
+  "chestLen": 0.2772,
+  "neck": 0.1634,
+  "headLen": 0.2856,
+  "shoulderWidth": 0.4591,
+  "hipWidth": 0.2093,
+  "upperArm": 0.2988,
+  "forearm": 0.1673,
+  "hand": 0.1705,
+  "thigh": 0.2763,
+  "shin": 0.3608,
+  "footLen": 0.2999,
+  "ankleHeight": 0.1173,
+  "_extra": {
+    "source": "prototype/character-lab/source-art/doug-three-quarter.png",
+    "definitions": "Measured from the three-quarter drawing by volume/prep/fit.mjs: 2D landmarks (characters/<id>.json threeQuarterFront.joints with volume.threeQuarterFront.jointOverrides) + one depth prior per joint, at view angle 45 deg under core/camera project(). pelvisHeight = thigh + shin + ankleHeight (straight legs); pelvisHeight + spine + chestLen + neck + headLen = height. hand = wrist -> fingertips. Limb lengths are the mean of the two drawn sides.",
+    "perSide": {
+      "upperArm": {
+        "R": 0.2977,
+        "L": 0.2998
+      },
+      "forearm": {
+        "R": 0.1744,
+        "L": 0.1602
+      },
+      "hand": {
+        "R": 0.1693,
+        "L": 0.1717
+      },
+      "thigh": {
+        "R": 0.2851,
+        "L": 0.2674
+      },
+      "shin": {
+        "R": 0.3911,
+        "L": 0.3304
+      },
+      "footLen": {
+        "R": 0.2833,
+        "L": 0.3165
+      },
+      "ankleHeight": {
+        "R": 0.1173,
+        "L": 0.1173
+      },
+      "ankleHeightDrawn": {
+        "R": 0.1308,
+        "L": 0.1037
+      }
+    }
+  }
+}

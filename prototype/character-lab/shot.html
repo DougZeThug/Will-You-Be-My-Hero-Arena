@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Character Lab: the shot (mannequin)</title>
+    <style>
+      body {
+        margin: 0;
+        background: #1d1f24;
+        color: #dfe3ea;
+        font:
+          13px/1.35 system-ui,
+          sans-serif;
+      }
+      #wrap {
+        display: flex;
+        gap: 10px;
+        padding: 8px;
+        align-items: flex-start;
+      }
+      canvas {
+        background: #f1ead9;
+        border-radius: 6px;
+        display: block;
+      }
+      #bar {
+        padding: 0 8px 8px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button,
+      select {
+        background: #2e3440;
+        color: #e8ecf3;
+        border: 1px solid #4a5263;
+        border-radius: 4px;
+        padding: 3px 8px;
+        cursor: pointer;
+        font: inherit;
+      }
+      button.on {
+        background: #5a7bd8;
+        border-color: #7f9bea;
+      }
+      #scrub {
+        width: 620px;
+      }
+      #info {
+        font:
+          12px ui-monospace,
+          monospace;
+        color: #b9c2d0;
+        min-width: 330px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="stage" width="964" height="542"></canvas>
+      <canvas id="inspect" width="560" height="542"></canvas>
+    </div>
+    <div id="bar">
+      <button id="play">pause</button>
+      <button id="back">&lt; frame</button>
+      <button id="fwd">frame &gt;</button>
+      <button id="slow">0.25x</button>
+      <button id="trail">trails</button>
+      <input id="scrub" type="range" min="0" max="0" value="0" />
+      <span>cam yaw</span>
+      <input id="cam" type="range" min="-180" max="180" value="0" />
+      <span id="camLabel">0</span>
+      <select id="props"></select>
+      <span id="info"></span>
+    </div>
+    <script type="module" src="./shot/viewer.ts"></script>
+  </body>
+</html>

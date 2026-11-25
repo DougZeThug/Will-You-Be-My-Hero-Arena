@@ -429,5 +429,172 @@
     ]
    }
   }
+ },
+ "volume": {
+  "note": "Drawing-on-volume prototype (prototype/character-lab/volume). Every number here was typed by hand; source pixels of the named drawing.",
+  "threeQuarterFront": {
+   "uses": "threeQuarterFront",
+   "viewAngleDeg": 45,
+   "jointOverrides": {
+    "pelvis": [
+     395,
+     1020
+    ],
+    "hipR": [
+     315,
+     1020
+    ],
+    "hipL": [
+     470,
+     1020
+    ]
+   },
+   "trunkHidden": [
+    [
+     227,
+     378
+    ],
+    [
+     212,
+     420
+    ],
+    [
+     203,
+     500
+    ],
+    [
+     200,
+     620
+    ],
+    [
+     198,
+     760
+    ],
+    [
+     196,
+     900
+    ],
+    [
+     198,
+     1000
+    ],
+    [
+     200,
+     1140
+    ],
+    [
+     330,
+     1140
+    ],
+    [
+     330,
+     378
+    ]
+   ],
+   "trunkCutY": 1215,
+   "legTopY": 1010,
+   "legSplit": [
+    [
+     395,
+     1010
+    ],
+    [
+     403,
+     1232
+    ]
+   ],
+   "farArmRadius": 55,
+   "priors": {
+    "elbowOut": 0.04,
+    "wristOut": 0.04,
+    "handOut": 0.03,
+    "kneeOut": 0,
+    "ankleOut": 0.02,
+    "toeOut": 0.04
+   },
+   "trunk": {
+    "flatten": 0.87,
+    "shear": -0.48,
+    "headFlatten": 0.9,
+    "headShear": 0.3,
+    "blendY": [
+     300,
+     420
+    ]
+   },
+   "inkPx": 6,
+   "grid": {
+    "trunk": 8,
+    "armNear": 6,
+    "armFar": 6,
+    "legNear": 8,
+    "legFar": 8
+   },
+   "weights": {
+    "spineBand": 70,
+    "neckBand": 22,
+    "neckFrom": -70,
+    "neckTo": -25,
+    "neckHalfWidth": 95,
+    "girdleShare": 0.85,
+    "girdleInner": 60,
+    "girdleOuter": 200,
+    "sleeveInner": 35,
+    "farSleeveHem": 205,
+    "elbowBand": 0.16,
+    "wristBand": 0.1,
+    "kneeBand": 0.16,
+    "ankleBand": 0.1,
+    "sleeveBlend": [
+     -20,
+     90
+    ],
+    "legBlend": [
+     -30,
+     110
+    ]
+   },
+   "inkLuminance": 70,
+   "armSeeds": {
+    "near": [
+     [
+      205,
+      455
+     ],
+     [
+      190,
+      470
+     ],
+     [
+      180,
+      520
+     ],
+     [
+      160,
+      650
+     ],
+     [
+      133,
+      755
+     ],
+     [
+      135,
+      937
+     ],
+     [
+      150,
+      1030
+     ]
+    ],
+    "far": null
+   },
+   "farArmFill": {
+    "cut": 215,
+    "skip": 25,
+    "amplitude": 70,
+    "centre": 42,
+    "halfWidth": 30
+   }
+  }
  }
 }

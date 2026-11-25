@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Character Lab: one shot, two constructions</title>
+    <style>
+      body { margin: 10px; background: #26262b; color: #e8e8ea; font: 13px/1.4 system-ui, sans-serif; }
+      #stages { display: flex; flex-wrap: wrap; gap: 8px; }
+      figure { margin: 0; }
+      figcaption { font-weight: 600; padding: 2px 0 4px; }
+      canvas { display: block; background: #cfc6b4; }
+      #controls { margin: 8px 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      #scrub { flex: 1 1 420px; }
+      button { background: #3a3b44; color: #eee; border: 1px solid #555; border-radius: 4px; padding: 3px 10px; font: inherit; }
+      button.on { background: #7a5a1e; }
+      #info { font-variant-numeric: tabular-nums; min-width: 30em; }
+      pre { white-space: pre-wrap; color: #f88; }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <button id="play">Play</button>
+      <button id="back">&lt; frame</button>
+      <button id="forward">frame &gt;</button>
+      <button id="slow">0.25x</button>
+      <button id="zoom">Inspect zoom</button>
+      <input id="scrub" type="range" min="0" max="0" value="0" />
+      <span id="info"></span>
+    </div>
+    <div id="stages">
+      <figure><figcaption id="captionA">CURRENT: frozen cut-out rig</figcaption><canvas id="stageA"></canvas></figure>
+      <figure><figcaption id="captionB">NEW: drawing on volume</figcaption><canvas id="stageB"></canvas></figure>
+    </div>
+    <canvas id="sheet" style="display: none"></canvas>
+    <pre id="log"></pre>
+    <script type="module" src="./compare.ts"></script>
+  </body>
+</html>
