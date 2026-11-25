@@ -9,11 +9,23 @@
 //   shoulders        = the drawn socket, moved by the change of the projected
 //                      shoulder offset from the chest (shrug, twist)
 //
+//   sleeve helpers  = bones listed in `meta.lab.helpers`: they sit on the shoulder
+//                      pivot and turn by a FRACTION of the upper arm's rotation
+//                      relative to the shoulder girdle, so cloth weighted across
+//                      girdle -> helpers -> arm bends round the joint instead of
+//                      collapsing into it (linear blending of two far-apart
+//                      rotations shrinks toward the pivot)
+//   border           = none baked in: the posed figure goes to an offscreen target
+//                      and a constant-width border is drawn from its silhouette
+//
 // Nothing is placed absolutely from the projection, so a neutral frame cannot
 // re-assemble the figure, and a planted foot (whose projection does not move)
-// keeps its drawn place exactly.
+// keeps its drawn place exactly. The same driver runs the profile rig (its
+// spine has two lumbar bones and its hand drawings are placed along +x, so the
+// hand alone is set absolutely there).
 import type { Rig } from '../../motion/rig/rig';
 import { project as coreProject } from '../core/camera';
+import { OutlineTarget, type OutlineSpec } from './outline';
 import { RigLayers } from './renderer';
 import type { JointName, ProjectFn, Proportions, Side, ViewCamera, ViewFrame } from './contract';
 import type { Placement } from './poser';
@@ -37,6 +49,8 @@ export interface DeltaDebug {
   /** Canvas px. */
   feet: Record<Side, { heel: P2; projectedHeel: P2; offset: P2 }>;
   joints: Record<string, P2>;
+  /** Canvas px: where each bone's drawn tip is now. */
+  tips: Record<string, P2>;
   scale: Record<string, number>;
   ikStretch: Record<Side, number>;
 }
@@ -48,13 +62,29 @@ export function createDeltaView(
   rig: Rig,
   proportions: Proportions,
   rest: { frame: ViewFrame; camera: ViewCamera },
-  options: { project?: ProjectFn } = {},
+  options: { project?: ProjectFn; outline?: OutlineSpec | null } = {},
 ) {
   const project = options.project ?? (coreProject as ProjectFn),
     layers = new RigLayers(gl, rig),
     bones = rig.data.bones,
-    lab = rig.data.meta.lab as { nearSide: Side },
-    near = lab.nearSide,
+    lab = rig.data.meta.lab as {
+      view?: string;
+      nearSide?: Side;
+      helpers?: { name: string; girdle: string; follows: string; fraction: number }[];
+      outline?: { widthPx: number; colour: [number, number, number] };
+    },
+    profile = lab.view === 'side' || lab.view === 'sideRear',
+    // Depth-true side: a rig that faces +x shows the camera the character's right.
+    near: Side = profile ? 'R' : (lab.nearSide ?? 'R'),
+    outline: OutlineSpec | null =
+      options.outline !== undefined
+        ? options.outline
+        : lab.outline
+          ? { width: (lab.outline.widthPx * proportions.height) / rig.data.meta.heightPx, colour: lab.outline.colour }
+          : null,
+    target = outline ? new OutlineTarget(gl) : null,
+    hasBone = (name: string) => name in rig.boneIndex,
+    lastArm: Record<string, number> = { near: 0, far: 0 },
     far: Side = near === 'R' ? 'L' : 'R',
     ppm = rig.data.meta.heightPx / proportions.height,
     skin = new Float32Array(bones.length * 6),
@@ -152,8 +182,9 @@ export function createDeltaView(
           l = Math.hypot(u[0], u[1]) || 1;
         return ((P[a][0] - P[b][0]) * -u[1] + (P[a][1] - P[b][1]) * u[0]) / l;
       },
-      shoulders = clamp(span(C, 'shoulderL', 'shoulderR', 'spine', 'chest') / span(R, 'shoulderL', 'shoulderR', 'spine', 'chest'), DELTA.across),
-      hips = clamp(span(C, 'hipL', 'hipR', 'pelvis', 'spine') / span(R, 'hipL', 'hipR', 'pelvis', 'spine'), DELTA.across);
+      // (A profile has no width across the camera to scale.)
+      shoulders = profile ? 1 : clamp(span(C, 'shoulderL', 'shoulderR', 'spine', 'chest') / span(R, 'shoulderL', 'shoulderR', 'spine', 'chest'), DELTA.across),
+      hips = profile ? 1 : clamp(span(C, 'hipL', 'hipR', 'pelvis', 'spine') / span(R, 'hipL', 'hipR', 'pelvis', 'spine'), DELTA.across);
     // Root and spine.
     state[index.root].origin = [0, 0];
     set('root', 0);
@@ -161,10 +192,20 @@ export function createDeltaView(
       m = move('pelvis');
     state[pelvis].origin = [bones[pelvis].x + m[0], bones[pelvis].y + m[1]];
     set('pelvis', delta('pelvis', 'spine'), ratio('pelvis', 'spine', DELTA.spineAlong), hips);
-    attach('spine');
-    set('spine', delta('spine', 'chest'), ratio('spine', 'chest', DELTA.spineAlong), (hips + shoulders) / 2);
-    attach('chest');
-    set('chest', delta('chest', 'neck'), ratio('chest', 'neck', DELTA.spineAlong), shoulders);
+    if (hasBone('spine')) {
+      attach('spine');
+      set('spine', delta('spine', 'chest'), ratio('spine', 'chest', DELTA.spineAlong), (hips + shoulders) / 2);
+      attach('chest');
+      set('chest', delta('chest', 'neck'), ratio('chest', 'neck', DELTA.spineAlong), shoulders);
+    } else {
+      // Profile rig: pelvis, two lumbar bones, then a chest bone that runs through the shoulder line.
+      attach('spine_lower');
+      set('spine_lower', (delta('pelvis', 'spine') + delta('spine', 'chest')) / 2, ratio('pelvis', 'spine', DELTA.spineAlong));
+      attach('spine_mid');
+      set('spine_mid', delta('spine', 'chest'), ratio('spine', 'chest', DELTA.spineAlong));
+      attach('chest');
+      set('chest', delta('spine', 'chest'));
+    }
     attach('neck');
     set('neck', delta('neck', 'head'), ratio('neck', 'head', DELTA.spineAlong));
     attach('head');
@@ -196,11 +237,32 @@ export function createDeltaView(
         dy = bones[upper].y - bones[clavicle].y;
       state[clavicle].origin = [at[0] - (l[0] * dx + l[2] * dy), at[1] - (l[1] * dx + l[3] * dy)];
       state[upper].origin = at;
-      set(`upper_arm_${tag}`, delta(shoulder, elbow), ratio(shoulder, elbow, DELTA.along));
+      // Keep the arm's rotation continuous through +-180 deg (an arm raised overhead).
+      let turn = delta(shoulder, elbow);
+      while (turn - lastArm[tag] > Math.PI) turn -= 2 * Math.PI;
+      while (turn - lastArm[tag] < -Math.PI) turn += 2 * Math.PI;
+      lastArm[tag] = turn;
+      set(`upper_arm_${tag}`, turn, ratio(shoulder, elbow, DELTA.along));
       attach(`forearm_${tag}`);
-      set(`forearm_${tag}`, delta(elbow, wrist), ratio(elbow, wrist, DELTA.along));
+      set(`forearm_${tag}`, turn + wrap(delta(elbow, wrist) - turn), ratio(elbow, wrist, DELTA.along));
       attach(`hand_${tag}`);
-      set(`hand_${tag}`, dist(R[wrist], R[hand]) > 1 && dist(C[wrist], C[hand]) > 0.3 * dist(R[wrist], R[hand]) ? delta(wrist, hand) : state[index[`forearm_${tag}`]].rot);
+      const forearmRot = state[index[`forearm_${tag}`]].rot,
+        handSeen = dist(R[wrist], R[hand]) > 1 && dist(C[wrist], C[hand]) > 0.3 * dist(R[wrist], R[hand]);
+      if (profile && tag === 'near')
+        // The profile's hand drawings lie along +x in the bind, not on the drawn arm: set absolutely.
+        set(`hand_${tag}`, handSeen ? angle(C[wrist], C[hand]) - bones[index[`hand_${tag}`]].rotation : forearmRot + bones[index[`forearm_${tag}`]].rotation - bones[index[`hand_${tag}`]].rotation);
+      else set(`hand_${tag}`, handSeen ? forearmRot + wrap(delta(wrist, hand) - forearmRot) : forearmRot);
+    }
+    // Sleeve helpers: on the shoulder pivot, a fraction of the way from the girdle to the arm.
+    for (const helper of lab.helpers ?? []) {
+      const h = state[index[helper.name]],
+        girdle = state[index[helper.girdle]],
+        arm = state[index[helper.follows]];
+      h.origin = arm.origin;
+      h.rot = girdle.rot + helper.fraction * (arm.rot - girdle.rot);
+      h.along = 1 + helper.fraction * (arm.along - 1);
+      h.across = 1;
+      setLinear(index[helper.name]);
     }
     // Legs: FK from the deltas, then two-bone IK onto the drawn ankle moved by the projection.
     const stretch = {} as Record<Side, number>;
@@ -255,7 +317,13 @@ export function createDeltaView(
       skin[o + 4] = origin[0] + (s.origin[0] - (s.linear[0] * b.x + s.linear[2] * b.y)) * k;
       skin[o + 5] = origin[1] + (s.origin[1] - (s.linear[1] * b.x + s.linear[3] * b.y)) * k;
     }
-    for (const part of rig.data.parts) layers.drawPart(part.name, skin, 1);
+    const handArt = `hand_${frame.hands[near] === 'grip' ? 'grip' : frame.hands[near] === 'open' ? 'open' : 'relaxed'}`;
+    target?.begin();
+    for (const part of rig.data.parts) {
+      if (part.group === 'hand' ? part.name !== handArt : !part.visible) continue;
+      layers.drawPart(part.name, skin, 1);
+    }
+    if (target && outline) target.end(outline.width * ppm * k, outline.colour);
     const toCanvas = (p: P2): P2 => [origin[0] + p[0] * k, origin[1] + p[1] * k],
       feet = {} as DeltaDebug['feet'];
     for (const tag of ['near', 'far']) {
@@ -267,12 +335,14 @@ export function createDeltaView(
       feet[s] = { heel, projectedHeel, offset: [heel[0] - projectedHeel[0], heel[1] - projectedHeel[1]] };
     }
     const joints: Record<string, P2> = {},
+      tips: Record<string, P2> = {},
       scale: Record<string, number> = {};
     bones.forEach((b, i) => {
       joints[b.name] = toCanvas(state[i].origin);
+      tips[b.name] = toCanvas(through(i, b.x + Math.cos(b.rotation) * b.length, b.y + Math.sin(b.rotation) * b.length));
       scale[b.name] = state[i].along;
     });
-    debug = { feet, joints, scale, ikStretch: stretch };
+    debug = { feet, joints, tips, scale, ikStretch: stretch };
   }
 
   return {
