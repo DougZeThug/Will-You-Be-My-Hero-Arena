@@ -9,7 +9,12 @@ import {
 } from '../core/proportions';
 import type { Frame, Proportions, Vec3 } from '../core/types';
 import { drawMannequin } from './mannequin';
+import { REACH_BEATS, buildReach } from './reach';
 import { SHOT_BEATS, SHOT_CAMERA, buildShot } from './shot';
+
+// ?shot=reach plays the standalone reach (load, extend, recover); default is the full shot
+const REACH = new URLSearchParams(location.search).get('shot') === 'reach';
+const BEATS = REACH ? REACH_BEATS : SHOT_BEATS;
 
 const query = new URLSearchParams(location.search);
 const $ = <E extends HTMLElement>(id: string) =>
@@ -49,7 +54,7 @@ async function loadJson(path: string): Promise<Proportions | null> {
 
 function rebuild(): void {
   prop = sets[propsId] ?? sets.default;
-  frames = buildShot(prop);
+  frames = REACH ? buildReach(prop) : buildShot(prop);
   // fixed world framing: the middle of the travel
   let x0 = Infinity;
   let x1 = -Infinity;
@@ -67,7 +72,7 @@ function rebuild(): void {
 }
 
 function beatName(i: number): string {
-  return SHOT_BEATS.find((b) => i >= b.from && i < b.to)?.name ?? '';
+  return BEATS.find((b) => i >= b.from && i < b.to)?.name ?? '';
 }
 
 function redraw(): void {
@@ -252,7 +257,8 @@ async function main(): Promise<void> {
     get frames() {
       return frames;
     },
-    beats: SHOT_BEATS,
+    beats: BEATS,
+    shot: REACH ? 'reach' : 'shot',
     seek(i: number) {
       setPlaying(false);
       seek(i);

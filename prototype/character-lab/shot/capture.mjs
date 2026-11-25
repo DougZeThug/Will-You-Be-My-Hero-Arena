@@ -11,7 +11,12 @@ import { chromium } from 'playwright';
 const args = process.argv.slice(2);
 const opt = (name, fallback) =>
   args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
-const out = path.resolve(opt('--out', 'work/qa/character-lab/shot/mannequin'));
+// --shot reach captures the standalone reach (camera yaw 0 and 20) instead of the full shot
+const reach = opt('--shot', 'shot') === 'reach';
+const cams = reach ? [0, 20] : [0, 35];
+const out = path.resolve(
+  opt('--out', `work/qa/character-lab/${reach ? 'reach2' : 'shot'}/mannequin`),
+);
 const props = opt('--p', '');
 const tag = opt('--tag', '');
 const url = opt('--url', 'http://127.0.0.1:3034/shot.html');
@@ -26,11 +31,16 @@ const page = await browser.newPage({
   viewport: { width: 1560, height: 620 },
 });
 page.on('pageerror', (e) => console.error('pageerror', e.message));
-await page.goto(`${url}?f=0${props ? `&p=${props}` : ''}`);
+await page.goto(
+  `${url}?f=0${props ? `&p=${props}` : ''}${reach ? '&shot=reach' : ''}`,
+);
 await page.waitForFunction(() => window.__SHOT__ && window.__SHOT__.ready);
 const beats = await page.evaluate(() => window.__SHOT__.beats);
 const count = await page.evaluate(() => window.__SHOT__.frames.length);
 const dense = new Set([
+  'load',
+  'extend',
+  'recover',
   'plant',
   'reach',
   'reachHold',
@@ -39,7 +49,9 @@ const dense = new Set([
   'settle',
 ]);
 // sheets: one group per run of beats, so each sheet has one fixed world framing
-const groups = [
+const groups = reach
+  ? [['hold'], ['load'], ['extend'], ['recover'], ['settled']]
+  : [
   ['hold', 'anticipation'],
   ['step1', 'step2'],
   ['plant'],
@@ -48,7 +60,7 @@ const groups = [
   ['finish'],
 ];
 const suffix = tag ? `-${tag}` : '';
-for (const camDeg of [0, 35]) {
+for (const camDeg of cams) {
   for (const [gi, names] of groups.entries()) {
     const list = [];
     for (const b of beats) {
@@ -73,7 +85,7 @@ for (const camDeg of [0, 35]) {
   }
 }
 // the whole shot at game size (about 230 px tall), every 3rd frame, one fixed world framing
-for (const camDeg of [0, 35]) {
+for (const camDeg of cams) {
   const list = [];
   for (let i = 0; i < count; i += 3) list.push(i);
   const gamePx = await page.evaluate(() => 230 / 1.73);
@@ -86,7 +98,7 @@ for (const camDeg of [0, 35]) {
   console.log(file);
 }
 if (video) {
-  for (const camDeg of [0, 35]) {
+  for (const camDeg of cams) {
     const dir = path.join(out, `frames-cam${camDeg}`);
     fs.rmSync(dir, { recursive: true, force: true });
     fs.mkdirSync(dir, { recursive: true });
@@ -101,7 +113,10 @@ if (video) {
         path: path.join(dir, `${String(i).padStart(4, '0')}.png`),
       });
     }
-    const mp4 = path.join(out, `shot-cam${camDeg}${suffix}.mp4`);
+    const mp4 = path.join(
+      out,
+      `${reach ? 'reach' : 'shot'}-cam${camDeg}${suffix}.mp4`,
+    );
     execFileSync(
       'ffmpeg',
       [

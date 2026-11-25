@@ -141,19 +141,19 @@ const CHANNELS = [
   'Relv',
   'Rprt',
 ] as const;
-type Channel = (typeof CHANNELS)[number];
+export type Channel = (typeof CHANNELS)[number];
 export type ShotPose = Partial<Record<Channel, number>>;
 
 type ArmKeys = Partial<
   Record<'phi' | 'alp' | 'tw' | 'eps' | 'bet' | 'pro' | 'elv' | 'prt', number>
 >;
-const arm = (side: Side, k: ArmKeys): ShotPose => {
+export const arm = (side: Side, k: ArmKeys): ShotPose => {
   const out: ShotPose = {};
   for (const [name, v] of Object.entries(k))
     out[`${side}${name}` as Channel] = v as number;
   return out;
 };
-const arms = (k: ArmKeys): ShotPose => ({ ...arm('L', k), ...arm('R', k) });
+export const arms = (k: ArmKeys): ShotPose => ({ ...arm('L', k), ...arm('R', k) });
 
 const PRON_REST = 1.75; // core/sim: relaxed forearm, palm toward the thigh
 
@@ -498,7 +498,7 @@ export const SHOT_POSES: Record<string, ShotPose> = {
 };
 
 /** [frame, pose, tangent]: 'f' = the value stops there (an extreme or a hold), 'a' = it flows through. */
-type TimelineKey = [number, ShotPose | string, 'f' | 'a'];
+export type TimelineKey = [number, ShotPose | string, 'f' | 'a'];
 
 export const SHOT_TIMELINE: TimelineKey[] = [
   [0, 'stand', 'f'],
@@ -566,17 +566,20 @@ const OFFSET: Partial<Record<Channel, number>> = {
   Ralp: 0.5,
 };
 
-interface Track {
+export interface Track {
   t: number[];
   v: number[];
   m: number[]; // tangents (per frame)
 }
 
-function buildTracks(): Record<Channel, Track> {
+export function buildTracks(
+  timeline: TimelineKey[] = SHOT_TIMELINE,
+  poses: Record<string, ShotPose> = SHOT_POSES,
+): Record<Channel, Track> {
   const raw = {} as Record<Channel, [number, number, 'f' | 'a'][]>;
   for (const c of CHANNELS) raw[c] = [];
-  for (const [f, p, mode] of SHOT_TIMELINE) {
-    const pose = typeof p === 'string' ? SHOT_POSES[p] : p;
+  for (const [f, p, mode] of timeline) {
+    const pose = typeof p === 'string' ? poses[p] : p;
     for (const c of CHANNELS) {
       const v = pose[c];
       if (v !== undefined) raw[c].push([f, v, mode]);
@@ -597,7 +600,7 @@ function buildTracks(): Record<Channel, Track> {
   return out;
 }
 
-function sample(tr: Track, f: number): number {
+export function sample(tr: Track, f: number): number {
   const n = tr.t.length;
   if (f <= tr.t[0]) return tr.v[0];
   if (f >= tr.t[n - 1]) return tr.v[n - 1];
@@ -618,7 +621,7 @@ function sample(tr: Track, f: number): number {
 // ------------------------------------------------------------------ feet
 
 /** A foot placement in travel coordinates (leg-scale units) with a world yaw offset in degrees from the start yaw. */
-interface Plant {
+export interface Plant {
   s: number;
   t: number;
   yaw: number;
@@ -636,7 +639,7 @@ interface Step {
   /** swing AROUND the other foot's finishing plant (a step-around), not straight to the target */
   around?: boolean;
 }
-interface FootState {
+export interface FootState {
   x: number;
   z: number;
   yaw: number;
@@ -882,7 +885,58 @@ function footGeometry(
   return { ankle, heel, toe };
 }
 
+/** What the shared solver needs to turn keyed channels into frames. */
+export interface ShotSpec {
+  frames: number;
+  tracks: Record<Channel, Track>;
+  beats: ShotBeat[];
+  /** -1..1, already scaled by how calm the moment is */
+  breath: (f: number) => number;
+  hands: (f: number) => { L: HandPose; R: HandPose };
+  /** replaces the shot's step plan (for a performance that never steps) */
+  feet?: (
+    side: Side,
+    f: number,
+    plantWorld: (p: Plant, side: Side) => { x: number; z: number; yaw: number },
+  ) => FootState;
+  /** extra optional fields merged into each frame */
+  extra?: (f: number) => Record<string, unknown>;
+}
+
+/** The plants both feet stand on in the shot's `ready` key (frame 76): left foot leading. */
+export function readyPlant(side: Side): Plant {
+  return side === 'L' ? footPlan('L').steps[0].to : footPlan('R').steps[1].to;
+}
+
+/** All channels exactly as buildShot plays them at a frame (overlap offsets included). */
+export function shotChannelsAt(f: number): Required<ShotPose> {
+  const tracks = buildTracks();
+  const out = {} as Required<ShotPose>;
+  for (const c of CHANNELS) out[c] = sample(tracks[c], f - (OFFSET[c] ?? 0));
+  return out;
+}
+
 export function buildShot(proportions: Proportions): Frame[] {
+  return solveShot(proportions, {
+    frames: T.end,
+    tracks: buildTracks(),
+    beats: SHOT_BEATS,
+    breath: (f) => {
+      // full in the holds, a trace elsewhere
+      const calm = Math.max(
+        1 - smooth((f - (T.antic - 4)) / 6),
+        smooth((f - (T.finish - 6)) / 14),
+      );
+      return Math.sin((f / 132) * Math.PI * 2 - 0.4) * (0.2 + 0.8 * calm);
+    },
+    hands: (f) => ({
+      L: 'relaxed',
+      R: f >= 82 && f < 108 ? 'open' : 'relaxed',
+    }),
+  });
+}
+
+export function solveShot(proportions: Proportions, spec: ShotSpec): Frame[] {
   const P = proportions;
   const legLen = P.thigh + P.shin;
   const K = legLen / 0.86; // leg scale: travel, dips and step heights scale with the legs
@@ -893,7 +947,7 @@ export function buildShot(proportions: Proportions): Frame[] {
   const F0 = fwd(yaw0);
   const R0 = rgt(yaw0);
   const stance = hw + STANCE * K;
-  const tracks = buildTracks();
+  const tracks = spec.tracks;
   const ch = (c: Channel, f: number): number =>
     sample(tracks[c], f - (OFFSET[c] ?? 0));
 
@@ -930,6 +984,7 @@ export function buildShot(proportions: Proportions): Frame[] {
   };
 
   const footAt = (side: Side, f: number): FootState => {
+    if (spec.feet) return spec.feet(side, f, plantWorld);
     const plan = plans[side];
     let st: Step | null = null;
     for (const s of plan.steps) if (f >= s.peel) st = s;
@@ -998,16 +1053,12 @@ export function buildShot(proportions: Proportions): Frame[] {
   };
 
   const beatOf = (f: number): string =>
-    SHOT_BEATS.find((b) => f >= b.from && f < b.to)?.name ?? 'finish';
+    spec.beats.find((b) => f >= b.from && f < b.to)?.name ??
+    spec.beats[spec.beats.length - 1].name;
 
   const frames: Frame[] = [];
-  for (let f = 0; f < T.end; f++) {
-    // breath: full in the holds, a trace elsewhere
-    const calm = Math.max(
-      1 - smooth((f - (T.antic - 4)) / 6),
-      smooth((f - (T.finish - 6)) / 14),
-    );
-    const breath = Math.sin((f / 132) * Math.PI * 2 - 0.4) * (0.2 + 0.8 * calm);
+  for (let f = 0; f < spec.frames; f++) {
+    const breath = spec.breath(f);
 
     const yawP = yaw0 + ch('yP', f) * DEG;
     const yawC = yaw0 + ch('yC', f) * DEG;
@@ -1170,10 +1221,7 @@ export function buildShot(proportions: Proportions): Frame[] {
     }
 
     const yaw = { pelvis: wrap(yawP), chest: wrap(yawC), head: wrap(yawH) };
-    const hands: { L: HandPose; R: HandPose } = {
-      L: 'relaxed',
-      R: f >= 82 && f < 108 ? 'open' : 'relaxed',
-    };
+    const hands = spec.hands(f);
     frames.push({
       step: f,
       joints: J,
@@ -1185,6 +1233,7 @@ export function buildShot(proportions: Proportions): Frame[] {
       props: [],
       squash: ch('sq', f),
       phase: beatOf(f),
+      ...(spec.extra ? spec.extra(f) : {}),
     });
   }
   return frames;

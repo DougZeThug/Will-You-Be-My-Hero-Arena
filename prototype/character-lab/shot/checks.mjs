@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 const { buildShot, segmentBases, SHOT_BEATS, SHOT_CAMERA, SHOT_START_VIEW, SHOT_END_VIEW, T } =
   await import('./shot.ts');
+const { buildReach, REACH_BEATS } = await import('./reach.ts');
 const { defaultProportions, lankyProportions, sanitizeProportions } =
   await import('../core/proportions.ts');
 const { viewAngle } = await import('../core/camera.ts');
@@ -20,6 +21,10 @@ const { dougStyle } = await import('../styles/doug.ts');
 
 const LIMITS = {
   frames: [198, 228], // 3.3 .. 3.8 s at 60 fps
+  reachFrames: [88, 112], // hold 20, load 12, extend 24, recover 24, settled 20
+  loop: 1e-9, // reach: first frame against last frame (m)
+  loopBasis: 1e-6, // and their bases (rad; the angle comes from an acos, so 1e-8 is its noise floor)
+  readyMatch: 0.004, // reach frame 0 against buildShot frame 76 (m): only the breath differs
   plantDrift: 1e-9, // m
   plantYaw: 1e-9, // rad
   ground: 1e-9, // m a foot joint may be below the floor
@@ -33,6 +38,9 @@ const LIMITS = {
   stepHand: 0.15, // wrist / palm outside the turn (9 m/s: a sprinter's arm pump)
   stepBody: 0.1, // every other joint outside the turn (6 m/s)
   accel: 0.07, // second difference outside the turn (the peak is the stomp); a pop is a one-frame spike above this
+  // the reach uses buildShot's reach keys (0.097 there) and adds the weight transfer from the
+  // rear foot to the lead foot while the arm goes out, so its elbow peaks a little higher
+  reachStepBody: 0.11,
   turnStepHand: 0.26,
   turnStepBody: 0.2,
   turnAccel: 0.13,
@@ -80,16 +88,21 @@ const fmt = (x) => (Math.abs(x) < 1e-3 && x !== 0 ? x.toExponential(2) : x.toFix
 const horiz = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 
 for (const [label, P] of configs) {
-  const tag = (s) => `${label}: ${s}`;
-  const frames = buildShot(P);
-  const again = buildShot(P);
+for (const kind of ['shot', 'reach']) {
+  const isShot = kind === 'shot';
+  const build = isShot ? buildShot : buildReach;
+  const BEATS = isShot ? SHOT_BEATS : REACH_BEATS;
+  const tag = (s) => `${label} ${kind}: ${s}`;
+  const frames = build(P);
+  const again = build(P);
   add(tag('deterministic (two builds identical)'), '', 'equal', JSON.stringify(frames) === JSON.stringify(again));
-  add(tag('frame count'), String(frames.length), `${LIMITS.frames[0]}..${LIMITS.frames[1]}`, frames.length >= LIMITS.frames[0] && frames.length <= LIMITS.frames[1]);
+  const range = isShot ? LIMITS.frames : LIMITS.reachFrames;
+  add(tag('frame count'), String(frames.length), `${range[0]}..${range[1]}`, frames.length >= range[0] && frames.length <= range[1]);
 
   // beats cover the shot, phases name them
-  let beatsOk = SHOT_BEATS[0].from === 0 && SHOT_BEATS[SHOT_BEATS.length - 1].to === frames.length;
-  for (let i = 1; i < SHOT_BEATS.length; i++) beatsOk &&= SHOT_BEATS[i].from === SHOT_BEATS[i - 1].to;
-  beatsOk &&= frames.every((f, i) => f.step === i && SHOT_BEATS.some((b) => b.name === f.phase && i >= b.from && i < b.to));
+  let beatsOk = BEATS[0].from === 0 && BEATS[BEATS.length - 1].to === frames.length;
+  for (let i = 1; i < BEATS.length; i++) beatsOk &&= BEATS[i].from === BEATS[i - 1].to;
+  beatsOk &&= frames.every((f, i) => f.step === i && BEATS.some((b) => b.name === f.phase && i >= b.from && i < b.to));
   add(tag('beats contiguous, phase = beat name, step = index'), '', 'true', beatsOk);
 
   // finite everywhere
@@ -200,7 +213,7 @@ for (const [label, P] of configs) {
   // the core convention: core/sim frames (standing with the arms hanging, then walking and a
   // turn) put through OUR basis builder must give core's bases back. The only thing taken
   // from core's bases is the palm normal (hand z), which joints alone cannot determine.
-  for (const [what, script] of [
+  for (const [what, script] of !isShot ? [] : [
     ['standing, arms hanging', []],
     ['walking then turning to the back view', [[5, { type: 'move', x: 1, z: 0 }], [80, { type: 'stop' }], [110, { type: 'turnTo', view: 'back' }]]],
   ]) {
@@ -229,7 +242,7 @@ for (const [label, P] of configs) {
   }
 
   // frame 0 is the relaxed three-quarter stance; the last frame is the back view
-  {
+  if (isShot) {
     const f = frames[0];
     const v0 = ['pelvis', 'chest', 'head'].map((b) => viewAngle(f.yaw[b], SHOT_CAMERA.camYaw));
     add(tag('frame 0 view angle of pelvis/chest/head (deg)'), v0.map((v) => (v * DEG).toFixed(2)).join(' '), `${SHOT_START_VIEW * DEG} each`, v0.every((v) => Math.abs(v - SHOT_START_VIEW) < 1e-9));
@@ -247,7 +260,7 @@ for (const [label, P] of configs) {
   }
 
   // the turn: never through the front; head, then chest, then hips
-  {
+  if (isShot) {
     const front = new Max();
     const cross0 = {};
     frames.forEach((f, i) => {
@@ -274,20 +287,65 @@ for (const [label, P] of configs) {
     add(tag('frames with both feet off the floor'), `${airborne} from frame ${first}`, 'info', true);
   }
 
+  // the reach: starts where buildShot's ready key is, ends where it started, never steps
+  if (!isShot) {
+    const first = frames[0];
+    const last = frames[frames.length - 1];
+    const loop = new Max();
+    const ready = new Max();
+    const shotReady = buildShot(P)[T.reach];
+    for (const j of JOINT_NAMES) {
+      loop.add(len(sub(first.joints[j], last.joints[j])), j);
+      ready.add(len(sub(first.joints[j], shotReady.joints[j])), j);
+    }
+    const loopBasis = new Max();
+    for (const sname of SEGMENT_NAMES) loopBasis.add(basisAngle(first.basis[sname], last.basis[sname]), sname);
+    add(tag('first and last frame the same pose (max joint distance, m)'), fmt(loop.v), `<= ${LIMITS.loop}`, loop.v <= LIMITS.loop, loop.at);
+    add(tag('first and last frame the same bases (rad)'), fmt(loopBasis.v), `<= ${LIMITS.loopBasis}`, loopBasis.v <= LIMITS.loopBasis, loopBasis.at);
+    add(tag('frame 0 against buildShot frame 76 (max joint distance, m; breath phase differs)'), fmt(ready.v), `<= ${LIMITS.readyMatch}`, ready.v <= LIMITS.readyMatch, ready.at);
+    const feetSame = new Max();
+    for (const j of ['heelL', 'toeL', 'ankleL', 'heelR', 'toeR', 'ankleR']) feetSame.add(len(sub(first.joints[j], shotReady.joints[j])), j);
+    add(tag('feet stand on buildShot frame 76 plants (m)'), fmt(feetSame.v), `<= ${LIMITS.plantDrift}`, feetSame.v <= LIMITS.plantDrift, feetSame.at);
+    add(tag('both feet flagged planted on every frame'), '', 'true', frames.every((f) => f.contacts.footL && f.contacts.footR));
+    const lead = new Max();
+    const rearToe = new Max();
+    const rearHeel = new Max();
+    frames.forEach((f, i) => {
+      for (const j of ['heelL', 'toeL', 'ankleL']) lead.add(len(sub(f.joints[j], first.joints[j])), `frame ${i} ${j}`);
+      rearToe.add(len(sub(f.joints.toeR, first.joints.toeR)), `frame ${i}`);
+      rearHeel.add(f.joints.heelR.y, `frame ${i}`);
+    });
+    add(tag('lead (left) foot heel, toe and ankle against frame 0, every frame (m)'), fmt(lead.v), `<= ${LIMITS.plantDrift}`, lead.v <= LIMITS.plantDrift, lead.at);
+    add(tag('rear (right) foot toe against frame 0, every frame (m)'), fmt(rearToe.v), `<= ${LIMITS.plantDrift}`, rearToe.v <= LIMITS.plantDrift, rearToe.at);
+    add(tag('rear heel peel while unloaded (max height, m; toes stay locked)'), fmt(rearHeel.v), 'info', true, rearHeel.at);
+    let lo = Infinity;
+    let curlOk = true;
+    for (const f of frames) {
+      curlOk &&= !!f.curl && [f.curl.L, f.curl.R].every((c) => c >= 0 && c <= 1);
+      if (f.curl) lo = Math.min(lo, f.curl.R);
+    }
+    add(tag('curl present, 0..1, same at both ends; reaching hand opens to'), lo.toFixed(2), '<= 0.15', curlOk && lo <= 0.15 && first.curl.R === last.curl.R && first.curl.L === last.curl.L);
+    const front = new Max();
+    frames.forEach((f, i) => {
+      for (const b of ['pelvis', 'chest', 'head']) front.add(viewAngle(f.yaw[b], SHOT_CAMERA.camYaw) * DEG, `frame ${i} ${b}`);
+    });
+    add(tag('largest view angle toward the front, any block (deg)'), front.v.toFixed(1), `<= ${LIMITS.front}`, front.v <= LIMITS.front, front.at);
+  }
+
   // speed and smoothness
   {
     const isHand = (j) => /^(hand|wrist)/.test(j);
     // travel, dips and step heights scale with the legs (shot.ts K), so the limits do too
     const scale = Math.max(P.height / 1.73, (P.thigh + P.shin) / 0.86);
     for (const [what, inside, lim] of [
-      ['outside the turn', false, [LIMITS.stepHand, LIMITS.stepBody, LIMITS.accel]],
-      [`in the turn (frames ${TURN_WINDOW[0]}..${TURN_WINDOW[1]})`, true, [LIMITS.turnStepHand, LIMITS.turnStepBody, LIMITS.turnAccel]],
+      [isShot ? 'outside the turn' : 'all frames', false, [LIMITS.stepHand, isShot ? LIMITS.stepBody : LIMITS.reachStepBody, LIMITS.accel]],
+      ...(isShot ? [[`in the turn (frames ${TURN_WINDOW[0]}..${TURN_WINDOW[1]})`, true, [LIMITS.turnStepHand, LIMITS.turnStepBody, LIMITS.turnAccel]]] : []),
     ]) {
       const hand = new Max();
       const body = new Max();
       const acc = new Max();
       for (let i = 1; i < frames.length; i++) {
-        if ((i >= TURN_WINDOW[0] && i <= TURN_WINDOW[1]) !== inside) continue;
+        if ((isShot && i >= TURN_WINDOW[0] && i <= TURN_WINDOW[1]) !== inside) continue;
         for (const j of JOINT_NAMES) {
           const v = len(sub(frames[i].joints[j], frames[i - 1].joints[j]));
           (isHand(j) ? hand : body).add(v, `frame ${i} ${j}`);
@@ -352,6 +410,7 @@ for (const [label, P] of configs) {
     add(tag('root squash range'), `${lo.toFixed(3)}..${hi.toFixed(3)}`, `${LIMITS.squash[0]}..${LIMITS.squash[1]}, rest 1 at both ends`, lo >= LIMITS.squash[0] && hi <= LIMITS.squash[1] && frames[0].squash === 1 && Math.abs(frames[frames.length - 1].squash - 1) < 1e-9);
     add(tag('props empty, hand poses valid'), '', 'true', frames.every((f) => f.props.length === 0 && ['relaxed', 'open', 'grip'].includes(f.hands.L) && ['relaxed', 'open', 'grip'].includes(f.hands.R)));
   }
+}
 }
 
 let pass = 0;
