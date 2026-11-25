@@ -24,7 +24,7 @@ const here = dirname(fileURLToPath(import.meta.url)),
   volumeName = process.argv[3] ?? 'volume',
   character = JSON.parse(readFileSync(resolve(repository, `prototype/character-lab/characters/${id}.json`), 'utf8')),
   view = VIEWS[volumeName](character, repository),
-  out = resolve(repository, `prototype/character-lab/rigs/${id}/${volumeName}`),
+  out = resolve(repository, 'prototype/character-lab', view.outDir ?? `rigs/${id}/${volumeName}`),
   review = resolve(repository, 'work/qa/character-lab/shot/prep', volumeName),
   ATLAS = 2048,
   INK_LUMINANCE = 70,
@@ -38,7 +38,7 @@ const sheet = view.sheet,
   H = sheet.height,
   V = view.settings,
   J2 = view.joints,
-  fit = fitBind(J2, { viewAngleDeg: view.viewAngleDeg, plan: view.plan, height: character.height, fixed: view.fixed }),
+  fit = view.fit ?? fitBind(J2, { viewAngleDeg: view.viewAngleDeg, plan: view.plan, height: character.height, fixed: view.fixed }),
   notes = [...(view.notes ?? [])],
   idx = (x, y) => y * W + x;
 
@@ -107,7 +107,7 @@ for (const part of parts) {
         h = thickness[i] * part.flatten(x, y);
       part.centreDepth[i] = c;
       part.front[i] = c + h;
-      part.back[i] = c - h;
+      part.back[i] = c - h * (part.backFlatten ? part.backFlatten(x, y) : 1);
     }
 }
 // The drawing is the truth for what is in front at the bind pose: where a part the

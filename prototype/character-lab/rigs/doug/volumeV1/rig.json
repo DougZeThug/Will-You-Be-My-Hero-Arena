@@ -1,0 +1,511 @@
+{
+ "generator": "prototype/character-lab/volume/prep/build.mjs@1",
+ "id": "doug",
+ "volume": "volume",
+ "derived": true,
+ "source": {
+  "path": "prototype/character-lab/source-art/doug-three-quarter.png",
+  "sha256": "4d2578d0f6d9087a080314088c0efe56c1f86e180c2feb2acdd494e085fa0b37",
+  "note": "Read only. atlas.png is DERIVED from it: baked sticker border removed, baked silhouette ink recoloured, hidden regions filled by reflection, back sheets reuse the front texture mirrored."
+ },
+ "view": {
+  "angleDeg": 45,
+  "yawDeg": -45,
+  "cameraYaw": 0,
+  "cameraPitchDeg": 8
+ },
+ "sheet": {
+  "width": 825,
+  "height": 1905,
+  "pelvisPx": [
+   395,
+   1020
+  ],
+  "source": "prototype/character-lab/source-art/doug-three-quarter.png"
+ },
+ "pxPerMetre": 1052.572,
+ "inkWidth": 0.0076,
+ "stickerWidth": 0.01235,
+ "stickerColour": [
+  251,
+  247,
+  236
+ ],
+ "inkColour": [
+  26,
+  22,
+  24
+ ],
+ "atlas": {
+  "file": "atlas.png",
+  "size": 2048
+ },
+ "mesh": {
+  "file": "mesh.bin",
+  "bytes": 1675300
+ },
+ "bindJoints": {
+  "pelvis": [
+   0,
+   0.74494,
+   0
+  ],
+  "spine": [
+   0,
+   0.99438,
+   0
+  ],
+  "chest": [
+   -0.0095,
+   1.27127,
+   -0.0095
+  ],
+  "head": [
+   0.03325,
+   1.4231,
+   0.03325
+  ],
+  "headTop": [
+   0.04275,
+   1.70842,
+   0.04275
+  ],
+  "shoulderR": [
+   -0.18051,
+   1.30969,
+   0.16151
+  ],
+  "elbowR": [
+   -0.24891,
+   1.02021,
+   0.14967
+  ],
+  "wristR": [
+   -0.24701,
+   0.84587,
+   0.15157
+  ],
+  "handR": [
+   -0.23134,
+   0.76313,
+   0.16018
+  ],
+  "hipR": [
+   -0.076,
+   0.75562,
+   0.076
+  ],
+  "kneeR": [
+   -0.10451,
+   0.47339,
+   0.0475
+  ],
+  "ankleR": [
+   -0.17101,
+   0.08988,
+   0.00928
+  ],
+  "heelR": [
+   -0.22326,
+   -0.00942,
+   -0.04297
+  ],
+  "toeR": [
+   -0.038,
+   -0.02738,
+   0.17057
+  ],
+  "shoulderL": [
+   0.14251,
+   1.2643,
+   -0.16151
+  ],
+  "elbowL": [
+   0.21566,
+   0.97401,
+   -0.14492
+  ],
+  "wristL": [
+   0.24701,
+   0.82012,
+   -0.11357
+  ],
+  "handL": [
+   0.24464,
+   0.73444,
+   -0.10888
+  ],
+  "hipL": [
+   0.07125,
+   0.73493,
+   -0.07125
+  ],
+  "kneeL": [
+   0.09501,
+   0.46963,
+   -0.0475
+  ],
+  "ankleL": [
+   0.06935,
+   0.14464,
+   -0.10144
+  ],
+  "heelL": [
+   0.01425,
+   0.02738,
+   -0.15654
+  ],
+  "toeL": [
+   0.25176,
+   0.028,
+   0.05269
+  ],
+  "neck": [
+   0.00546,
+   1.32441,
+   0.00546
+  ],
+  "fingertipR": [
+   -0.21566,
+   0.6804,
+   0.16878
+  ],
+  "fingertipL": [
+   0.24226,
+   0.64875,
+   -0.10418
+  ]
+ },
+ "bones": [
+  "pelvis",
+  "spine",
+  "chest",
+  "neck",
+  "head",
+  "girdleR",
+  "upperR0",
+  "upperR1",
+  "upperR2",
+  "upperR3",
+  "upperR4",
+  "foreR0",
+  "foreR1",
+  "foreR2",
+  "foreR3",
+  "foreR4",
+  "handR",
+  "thighR0",
+  "thighR1",
+  "thighR2",
+  "thighR3",
+  "thighR4",
+  "shinR",
+  "footR",
+  "girdleL",
+  "upperL0",
+  "upperL1",
+  "upperL2",
+  "upperL3",
+  "upperL4",
+  "foreL0",
+  "foreL1",
+  "foreL2",
+  "foreL3",
+  "foreL4",
+  "handL",
+  "thighL0",
+  "thighL1",
+  "thighL2",
+  "thighL3",
+  "thighL4",
+  "shinL",
+  "footL"
+ ],
+ "parts": [
+  {
+   "name": "trunk",
+   "id": 1,
+   "vertexCount": 14492,
+   "indexCount": 83682,
+   "positions": 0,
+   "uvs": 173904,
+   "weights": 289840,
+   "bones": 521712,
+   "indices": 579680,
+   "grid": 8,
+   "derivedPx": 18911
+  },
+  {
+   "name": "armR",
+   "id": 2,
+   "vertexCount": 5826,
+   "indexCount": 32442,
+   "positions": 747044,
+   "uvs": 816956,
+   "weights": 863564,
+   "bones": 956780,
+   "indices": 980084,
+   "grid": 6,
+   "derivedPx": 0
+  },
+  {
+   "name": "armL",
+   "id": 3,
+   "vertexCount": 3148,
+   "indexCount": 16866,
+   "positions": 1044968,
+   "uvs": 1082744,
+   "weights": 1107928,
+   "bones": 1158296,
+   "indices": 1170888,
+   "grid": 6,
+   "derivedPx": 15635
+  },
+  {
+   "name": "legR",
+   "id": 4,
+   "vertexCount": 4662,
+   "indexCount": 25710,
+   "positions": 1204620,
+   "uvs": 1260564,
+   "weights": 1297860,
+   "bones": 1372452,
+   "indices": 1391100,
+   "grid": 8,
+   "derivedPx": 1018
+  },
+  {
+   "name": "legL",
+   "id": 5,
+   "vertexCount": 4552,
+   "indexCount": 25350,
+   "positions": 1442520,
+   "uvs": 1497144,
+   "weights": 1533560,
+   "bones": 1606392,
+   "indices": 1624600,
+   "grid": 8,
+   "derivedPx": 0
+  }
+ ],
+ "fit": {
+  "sides": {
+   "upperArm": {
+    "R": 0.2977,
+    "L": 0.2998
+   },
+   "forearm": {
+    "R": 0.1744,
+    "L": 0.1602
+   },
+   "hand": {
+    "R": 0.1693,
+    "L": 0.1717
+   },
+   "thigh": {
+    "R": 0.2851,
+    "L": 0.2674
+   },
+   "shin": {
+    "R": 0.3911,
+    "L": 0.3304
+   },
+   "footLen": {
+    "R": 0.2833,
+    "L": 0.3165
+   },
+   "ankleHeight": {
+    "R": 0.1173,
+    "L": 0.1173
+   },
+   "ankleHeightDrawn": {
+    "R": 0.1308,
+    "L": 0.1037
+   }
+  },
+  "drawnSoleGap": {
+   "R": -0.0274,
+   "L": 0.0274
+  },
+  "pelvisDrawnHeight": 0.7449
+ },
+ "settings": {
+  "uses": "threeQuarterFront",
+  "viewAngleDeg": 45,
+  "jointOverrides": {
+   "pelvis": [
+    395,
+    1020
+   ],
+   "hipR": [
+    315,
+    1020
+   ],
+   "hipL": [
+    470,
+    1020
+   ]
+  },
+  "trunkHidden": [
+   [
+    227,
+    378
+   ],
+   [
+    212,
+    420
+   ],
+   [
+    203,
+    500
+   ],
+   [
+    200,
+    620
+   ],
+   [
+    198,
+    760
+   ],
+   [
+    196,
+    900
+   ],
+   [
+    198,
+    1000
+   ],
+   [
+    200,
+    1140
+   ],
+   [
+    330,
+    1140
+   ],
+   [
+    330,
+    378
+   ]
+  ],
+  "trunkCutY": 1215,
+  "legTopY": 1010,
+  "legSplit": [
+   [
+    395,
+    1010
+   ],
+   [
+    403,
+    1232
+   ]
+  ],
+  "farArmRadius": 45,
+  "priors": {
+   "elbowOut": 0.04,
+   "wristOut": 0.04,
+   "handOut": 0.03,
+   "kneeOut": 0,
+   "ankleOut": 0.02,
+   "toeOut": 0.04
+  },
+  "trunk": {
+   "flatten": 0.87,
+   "shear": -0.48,
+   "headFlatten": 0.9,
+   "headShear": 0.3,
+   "blendY": [
+    300,
+    420
+   ]
+  },
+  "inkPx": 8,
+  "grid": {
+   "trunk": 8,
+   "armNear": 6,
+   "armFar": 6,
+   "legNear": 8,
+   "legFar": 8
+  },
+  "weights": {
+   "spineBand": 70,
+   "neckBand": 22,
+   "neckFrom": -70,
+   "neckTo": -25,
+   "neckHalfWidth": 95,
+   "girdleShare": 0.85,
+   "girdleInner": 60,
+   "girdleOuter": 200,
+   "sleeveInner": 35,
+   "farSleeveHem": 205,
+   "elbowBand": 0.16,
+   "wristBand": 0.1,
+   "kneeBand": 0.16,
+   "ankleBand": 0.1,
+   "sleeveBlend": [
+    -20,
+    90
+   ],
+   "legBlend": [
+    -30,
+    110
+   ]
+  },
+  "inkLuminance": 70,
+  "armSeeds": {
+   "near": [
+    [
+     205,
+     455
+    ],
+    [
+     190,
+     470
+    ],
+    [
+     180,
+     520
+    ],
+    [
+     160,
+     650
+    ],
+    [
+     133,
+     755
+    ],
+    [
+     135,
+     937
+    ],
+    [
+     150,
+     1030
+    ]
+   ],
+   "far": null
+  },
+  "farArmFill": {
+   "cut": 215,
+   "skip": 25,
+   "amplitude": 70,
+   "centre": 42,
+   "halfWidth": 30
+  },
+  "farArmStub": 70,
+  "farForearmHidden": 0.85
+ },
+ "notes": [
+  "sticker border removed: 83833 px, measured width 13 px, colour 251,247,236",
+  "figure pixels in no part: 0",
+  "trunk: 15 px of pinholes in the silhouette closed",
+  "trunk: 23939 px of baked outline ink recoloured from just inside it; 18911 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "armR: 18 px of pinholes in the silhouette closed",
+  "armR: 12440 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "armL: 1172 px of the hidden upper arm taken from the drawn forearm below the sleeve hem (derived)",
+  "armL: 6896 px of baked outline ink recoloured from just inside it; 15635 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "legR: 15596 px of baked outline ink recoloured from just inside it; 1018 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "legL: 15360 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "bind depth order: 3 px of hidden surface pressed behind the drawn part (worst 0.000 m)"
+ ]
+}

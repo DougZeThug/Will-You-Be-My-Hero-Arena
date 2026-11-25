@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 import { decodePng } from '../../../motion/prep/png.mjs';
 import { alphaMask, close, dilate, erode, flood, luminance, polygonMask, smoothstep as ss } from '../../../motion/prep/raster.mjs';
 import { stripSticker } from '../../../motion/prep/sticker.mjs';
+import { reachView } from '../../corrections/reach.mjs';
 import { nearestOnChain } from './inflate.mjs';
 
 const sub = (a, b) => [a[0] - b[0], a[1] - b[1]],
@@ -174,8 +175,10 @@ function figure(C, repository) {
           }),
         trunkWeights = (x, y) => {
           const p = [x, y],
-            t1 = ss(-T.spineBand, T.spineBand, dot(sub(p, J.spine), dir1)),
-            t2 = ss(-T.spineBand, T.spineBand, dot(sub(p, J.chest), dir2)),
+            // Shirt and tee hang from the shoulders: with `pelvisBelow` only what is under
+            // the shirt hem (the shorts) belongs to the pelvis; the cloth above follows the spine.
+            t1 = T.pelvisBelow ? 1 - ss(T.pelvisBelow[0], T.pelvisBelow[1], y) : ss(-T.spineBand, T.spineBand, dot(sub(p, J.spine), dir1)),
+            t2 = T.chestDown ? 1 - ss(T.chestDown[0], T.chestDown[1], y) : ss(-T.spineBand, T.spineBand, dot(sub(p, J.chest), dir2)),
             out = { pelvis: 1 - t1, spine: t1 * (1 - t2), chest: t1 * t2 },
             q = dot(sub(p, C.neckLine[0]), headUp),
             side = Math.abs(dot(sub(p, neckMid), napeToThroat)),
@@ -235,8 +238,13 @@ function figure(C, repository) {
           },
           flatten: (x, y) => {
             const b = trunkBlend(y);
-            return C.trunk.headFlatten * (1 - b) + C.trunk.flatten * b;
+            // Below the ribs the silhouette is mostly hanging cloth, not body: less depth there.
+            const waist = C.trunk.waist ? 1 + (C.trunk.waist.flatten - 1) * ss(C.trunk.waist.y[0], C.trunk.waist.y[1], y) : 1;
+            return C.trunk.headFlatten * (1 - b) + C.trunk.flatten * b * waist;
           },
+          // A back is flatter than a chest: the sheet the drawing does not show is not
+          // given the full mirrored depth of the one it does.
+          backFlatten: (x, y) => 1 + ((C.trunk.back ?? 1) - 1) * trunkBlend(y),
         };
 
       // ---- Arms: (sleeve +) upper arm + forearm + hand, one tube each.
@@ -514,4 +522,4 @@ function sideHead(character, repository) {
   };
 }
 
-export const VIEWS = { volume: threeQuarter, volumeBack: back, volumeSideHead: sideHead };
+export const VIEWS = { volume: threeQuarter, volumeBack: back, volumeSideHead: sideHead, 'corrections/reach': reachView };

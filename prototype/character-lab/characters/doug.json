@@ -455,27 +455,31 @@
      378
     ],
     [
-     212,
+     228,
      420
     ],
     [
-     203,
+     240,
      500
     ],
     [
-     200,
+     252,
      620
     ],
     [
-     198,
+     250,
      760
     ],
     [
-     196,
-     900
+     232,
+     880
     ],
     [
-     198,
+     208,
+     960
+    ],
+    [
+     200,
      1000
     ],
     [
@@ -520,7 +524,15 @@
     "blendY": [
      300,
      420
-    ]
+    ],
+    "back": 0.6,
+    "waist": {
+     "flatten": 0.6,
+     "y": [
+      560,
+      800
+     ]
+    }
    },
    "inkPx": 8,
    "grid": {
@@ -546,12 +558,24 @@
     "kneeBand": 0.16,
     "ankleBand": 0.1,
     "sleeveBlend": [
-     -20,
-     90
+     -70,
+     30
     ],
     "legBlend": [
      -30,
      110
+    ],
+    "sleeveBlendV1": [
+     -20,
+     90
+    ],
+    "pelvisBelow": [
+     940,
+     1040
+    ],
+    "chestDown": [
+     420,
+     860
     ]
    },
    "inkLuminance": 70,
@@ -596,7 +620,49 @@
     "halfWidth": 30
    },
    "farArmStub": 70,
-   "farForearmHidden": 0.85
+   "farForearmHidden": 0.85,
+   "trunkHiddenV1": [
+    [
+     227,
+     378
+    ],
+    [
+     212,
+     420
+    ],
+    [
+     203,
+     500
+    ],
+    [
+     200,
+     620
+    ],
+    [
+     198,
+     760
+    ],
+    [
+     196,
+     900
+    ],
+    [
+     198,
+     1000
+    ],
+    [
+     200,
+     1140
+    ],
+    [
+     330,
+     1140
+    ],
+    [
+     330,
+     378
+    ]
+   ]
   },
   "back": {
    "note": "Back drawing. No landmarks existed: every number here was typed by hand off a gridded print (source pixels). L/R are anatomical: his left arm (watch) is on the screen left.",
@@ -1048,6 +1114,106 @@
     503,
     126
    ]
+  }
+ },
+ "corrections": {
+  "note": "Corrective pieces: one connected piece of art for one pose, ASSEMBLED FROM EXISTING DRAWINGS (not newly drawn). Every number is hand-entered.",
+  "reach": {
+   "frame": 88,
+   "canvas": [
+    1000,
+    820
+   ],
+   "shoulderAt": [
+    300,
+    330
+   ],
+   "cheat": {
+    "side": "R",
+    "forearmFlatten": 0.8,
+    "handFlatten": 0.85,
+    "forearmLength": 0.175,
+    "palmLength": 0.1
+   },
+   "sheet": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+   "chroma": [
+    255,
+    0,
+    255
+   ],
+   "chromaDistance": [
+    90,
+    200
+   ],
+   "arm": {
+    "rect": [
+     864,
+     163,
+     172,
+     454
+    ],
+    "joints": [
+     [
+      925,
+      225
+     ],
+     [
+      938,
+      399
+     ],
+     [
+      1002,
+      593
+     ]
+    ],
+    "across": 1.6,
+    "elbowBlend": 14,
+    "pastWrist": 26,
+    "from": 70
+   },
+   "hand": {
+    "rect": [
+     878,
+     812,
+     248,
+     125
+    ],
+    "wrist": [
+     938,
+     869
+    ],
+    "tip": [
+     1110,
+     922
+    ],
+    "length": 0.215,
+    "mirror": false,
+    "overlap": 30,
+    "blend": 26,
+    "depth": 0.5
+   },
+   "sleeve": {
+    "hem": 160,
+    "along": 1,
+    "across": 1,
+    "mirror": false
+   },
+   "weights": {
+    "elbowBand": 0.14,
+    "wristBand": 0.07,
+    "root": [
+     -70,
+     20
+    ],
+    "rootGirdle": 0.75
+   },
+   "grid": 5,
+   "inkPx": 8,
+   "switch": {
+    "on": 83,
+    "off": 103,
+    "ramp": 4
+   }
   }
  }
 }

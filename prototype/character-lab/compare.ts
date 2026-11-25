@@ -1,7 +1,9 @@
 // One shot, two constructions, the same frames and the same camera.
 //   LEFT   the frozen cut-out rig, used exactly as it is (views/deltaRig.ts for the
 //          three-quarter drawing, views/poser.ts for every other angle)
-//   RIGHT  "drawing on volume" (volume/): the drawing wrapped on an inflated 3D body
+//   MIDDLE "drawing on volume" (volume/) as first delivered (rigs/<id>/volumeV1)
+//   RIGHT  the volume with the reach CORRECTIVE piece (corrections/, assembled from the
+//          owner's existing drawings, not newly drawn) and the later fixes
 // Frames: shot/shot.ts buildShot(proportions). Camera: core/camera.ts project().
 //   compare.html                 the comparison (play, pause, step, scrub, 0.25x, zoom)
 //   compare.html?mode=turntable  the volume's bind pose from -60..+60 degrees
@@ -16,8 +18,9 @@ import type { ViewFrame } from './views/contract';
 import { createDeltaView } from './views/deltaRig';
 import { createCharacterView, loadCharacterRigs } from './views/poser';
 import { runDevPage } from './volume/devpage';
-import { RENDER } from './volume/renderer';
-import { loadVolumeRig } from './volume/rig';
+import { cheatFrame, type CheatSettings } from './volume/cheat';
+import { RENDER, type RenderItem } from './volume/renderer';
+import { SOLVER, loadVolumeRig } from './volume/rig';
 import { VolumeStage, createVolumeView, type Placement, type VolumeView } from './volume/view';
 
 const BACKGROUND = '#cfc6b4',
@@ -61,47 +64,59 @@ async function main(): Promise<void> {
     reference = frames[0],
     canvasA = document.getElementById('stageA') as HTMLCanvasElement,
     canvasB = document.getElementById('stageB') as HTMLCanvasElement,
+    canvasC = document.getElementById('stageC') as HTMLCanvasElement,
     glCanvasA = document.createElement('canvas'),
     glCanvasB = document.createElement('canvas'),
     options = { premultipliedAlpha: true, preserveDrawingBuffer: true, antialias: true },
     glA = glCanvasA.getContext('webgl', options) as WebGLRenderingContext,
     glB = glCanvasB.getContext('webgl', { ...options, antialias: false, depth: false }) as WebGLRenderingContext,
     stage = new VolumeStage(glB),
-    volumes: VolumeEntry[] = [];
-  for (const [name, whole, label] of [
-    ['volume', true, 'three-quarter drawing'],
-    ['volumeBack', true, 'back drawing'],
-    ['volumeSideHead', false, 'profile drawing'],
-  ] as const) {
-    if (name !== 'volume' && query.get('single') === '1') continue;
-    const response = await fetch(`./rigs/${id}/${name}/rig.json`);
-    if (!response.ok) continue;
-    const rig = await loadVolumeRig(`./rigs/${id}/${name}`);
-    volumes.push({ name, view: createVolumeView(stage, rig, reference), angle: rig.data.view.angleDeg, whole, label });
-  }
+    character = (await (await fetch(`./characters/${id}.json`)).json()) as { corrections?: { reach?: { frame: number; cheat: CheatSettings; switch?: { on: number; off: number; ramp: number } } } },
+    load = async (name: string, whole: boolean, label: string, ref = reference): Promise<VolumeEntry | null> => {
+      const response = await fetch(`./rigs/${id}/${name}/rig.json`);
+      if (!response.ok) return null;
+      const rig = await loadVolumeRig(`./rigs/${id}/${name}`);
+      return { name, view: createVolumeView(stage, rig, ref), angle: rig.data.view.angleDeg, whole, label };
+    },
+    single = query.get('single') === '1',
+    back = single ? null : await load('volumeBack', true, 'back drawing'),
+    sideHead = single ? null : await load('volumeSideHead', false, 'profile drawing'),
+    current = (await load('volume', true, 'three-quarter drawing'))!,
+    first = (await load('volumeV1', true, 'three-quarter drawing')) ?? current,
+    extra = [back, sideHead].filter((v): v is VolumeEntry => !!v),
+    reachSpec = character.corrections?.reach,
+    reachFrame = reachSpec ? cheatFrame(frames[reachSpec.frame], camera, reachSpec.cheat, 1) : null,
+    reach = reachSpec && !single ? await load('corrections/reach', false, 'reach corrective', reachFrame!) : null,
+    volumes = [current, ...extra];
   api.frames = frames.length;
+  const debugOnly = query.get('only')?.split(',');
   if (query.get('ink') === '0') RENDER.ink = false;
+  if (query.get('girdle')) SOLVER.girdleFollow = Number(query.get('girdle'));
   if (query.get('ss')) RENDER.supersample = Number(query.get('ss')) === 4 ? 4 : 2;
+  const override = (name: string, fallback: number | undefined) => (query.get(name) !== null ? Number(query.get(name)) : fallback),
+    reachSwitch = { on: override('on', reachSpec?.switch?.on) ?? 80, off: override('off', reachSpec?.switch?.off) ?? 102, ramp: override('ramp', reachSpec?.switch?.ramp) ?? 3 },
+    headRule = query.get('head') ?? 'lead';
 
   if (query.get('mode')) {
-    await runDevPage(query, { stage, glCanvas: glCanvasB, volumes: volumes.map((v) => v.view), camera, proportions, frames });
+    await runDevPage(query, { stage, glCanvas: glCanvasB, volumes: [...volumes, ...(reach ? [reach] : [])].map((v) => v.view), camera, proportions, frames });
     api.ready = true;
     return;
   }
 
   // ---- LEFT: the frozen rig, as it is.
-  const character = await loadCharacterRigs('./rigs', id),
+  const frozen = await loadCharacterRigs('./rigs', id),
     threeQuarter = await loadRig(`./rigs/${id}/threeQuarterFront/rig.json`),
     delta = createDeltaView(glA, threeQuarter, proportions, { frame: reference as ViewFrame, camera }),
-    poser = createCharacterView(glA, character);
+    poser = createCharacterView(glA, frozen);
   let lastLeft = '',
+    lastMiddle = '',
     lastRight = '';
 
   let layout = GAME,
-    current = 0;
+    now = 0;
   const place = (): Placement => ({ x: layout.width * layout.x, y: layout.height - layout.ground, scale: layout.scale });
   function resize(): void {
-    for (const c of [canvasA, canvasB, glCanvasA, glCanvasB]) {
+    for (const c of [canvasA, canvasB, canvasC, glCanvasA, glCanvasB]) {
       c.width = layout.width;
       c.height = layout.height;
     }
@@ -138,12 +153,55 @@ async function main(): Promise<void> {
       g.fillText(warning, 10, 54);
     }
   }
+  /** How much of the reach corrective is on at a frame: 0 = not shown; else the cheat amount (ramped at both ends). */
+  const reachAmount = (i: number): number | null => {
+    if (!reach || i < reachSwitch.on || i > reachSwitch.off) return null;
+    return Math.min(1, (i - reachSwitch.on) / reachSwitch.ramp, (reachSwitch.off - i) / reachSwitch.ramp);
+  };
+  /** One volume panel: body and head each from the nearest drawing; optionally the reach corrective. */
+  function volumePanel(frame: Frame, i: number, list: VolumeEntry[], corrected: boolean, rule: string) {
+    const mid = Math.atan2(Math.sin(frame.yaw.pelvis) + Math.sin(frame.yaw.chest), Math.cos(frame.yaw.pelvis) + Math.cos(frame.yaw.chest)),
+      bodyAngle = viewAngle(mid, camera.yaw) * DEG,
+      headAngle = viewAngle(frame.yaw.head, camera.yaw) * DEG,
+      nearest = (from: VolumeEntry[], to: number) => from.reduce((best, v) => (apart(v.angle, to) < apart(best.angle, to) ? v : best)),
+      body = nearest(list.filter((v) => v.whole), bodyAngle);
+    let head = nearest(list, headAngle);
+    // 'sync': the head may not go to another WHOLE-figure drawing before the body does.
+    if (rule === 'sync' && head.whole && head !== body) head = nearest(list.filter((v) => !v.whole || v === body), headAngle);
+    const amount = corrected ? reachAmount(i) : null,
+      hide = amount !== null ? [`arm${reachSpec!.cheat.side}`] : undefined,
+      items: RenderItem[] = head === body ? [{ layers: body.view.layers, world: body.view.pose(frame), subset: 'all', hide, only: debugOnly }] : [{ layers: body.view.layers, world: body.view.pose(frame), subset: 'body', hide, only: debugOnly }, { layers: head.view.layers, world: head.view.pose(frame), subset: 'head' }];
+    if (amount !== null) items.push({ layers: reach!.view.layers, world: reach!.view.pose(cheatFrame(frame, camera, reachSpec!.cheat, amount)), subset: 'all' });
+    const bodyOff = apart(body.angle, bodyAngle),
+      headOff = apart(head.angle, headAngle),
+      beyond = [bodyOff > LIMIT ? `body ${bodyOff.toFixed(0)} deg` : '', headOff > LIMIT ? `head ${headOff.toFixed(0)} deg` : ''].filter(Boolean).join(', ');
+    return {
+      items,
+      detail: (head === body ? `${body.label} on one volume` : `body: ${body.label} | head: ${head.label}`) + (amount !== null ? ' | arm: REACH CORRECTIVE (assembled from existing drawings, not newly drawn)' : ''),
+      warning: beyond ? `STAND-IN: ${beyond} past the nearest drawing` : '',
+      name: `${body.name}${head === body ? '' : `+${head.name}`}${amount !== null ? '+reach' : ''}`,
+      bodyOff,
+      headOff,
+      amount,
+    };
+  }
+  function show(canvas: HTMLCanvasElement, frame: Frame, at: Placement, items: RenderItem[], title: string, detail: string, warning: string): void {
+    glB.bindFramebuffer(glB.FRAMEBUFFER, null);
+    glB.viewport(0, 0, layout.width, layout.height);
+    glB.clearColor(0, 0, 0, 0);
+    glB.clear(glB.COLOR_BUFFER_BIT);
+    stage.render(items, camera, at, layout.width, layout.height);
+    const g = canvas.getContext('2d')!;
+    backdrop(g, frame, at);
+    g.drawImage(glCanvasB, 0, 0);
+    caption(g, title, detail, warning);
+  }
   function draw(i: number): Record<string, unknown> {
-    current = Math.max(0, Math.min(frames.length - 1, Math.round(i)));
-    const frame = frames[current],
+    now = Math.max(0, Math.min(frames.length - 1, Math.round(i)));
+    const frame = frames[now],
       at = place(),
       angle = viewAngle(frame.yaw.pelvis, camera.yaw) * DEG,
-      beat = `${frame.phase} | frame ${current} | view angle ${angle.toFixed(0)} deg`;
+      beat = `${frame.phase} | frame ${now}`;
     // LEFT
     const leftKind = angle >= 22.5 && angle <= 67.5 ? 'threeQuarter' : 'poser';
     glA.bindFramebuffer(glA.FRAMEBUFFER, null);
@@ -166,45 +224,16 @@ async function main(): Promise<void> {
     backdrop(gA, frame, at);
     gA.drawImage(glCanvasA, 0, 0);
     caption(gA, 'CURRENT: frozen cut-out rig', `${leftDetail} | ${beat}`, leftWarning);
-    // RIGHT: the body from the drawing nearest the body's angle, the head from the one
-    // nearest the head's. A change of drawing is a hard switch on one frame.
-    const mid = Math.atan2(Math.sin(frame.yaw.pelvis) + Math.sin(frame.yaw.chest), Math.cos(frame.yaw.pelvis) + Math.cos(frame.yaw.chest)),
-      bodyAngle = viewAngle(mid, camera.yaw) * DEG,
-      headAngle = viewAngle(frame.yaw.head, camera.yaw) * DEG,
-      nearest = (list: VolumeEntry[], to: number) => list.reduce((best, v) => (apart(v.angle, to) < apart(best.angle, to) ? v : best)),
-      body = nearest(volumes.filter((v) => v.whole), bodyAngle),
-      head = nearest(volumes, headAngle),
-      bodyOff = apart(body.angle, bodyAngle),
-      headOff = apart(head.angle, headAngle);
-    glB.bindFramebuffer(glB.FRAMEBUFFER, null);
-    glB.viewport(0, 0, layout.width, layout.height);
-    glB.clearColor(0, 0, 0, 0);
-    glB.clear(glB.COLOR_BUFFER_BIT);
-    stage.render(
-      head === body
-        ? [{ layers: body.view.layers, world: body.view.pose(frame), subset: 'all' }]
-        : [
-            { layers: body.view.layers, world: body.view.pose(frame), subset: 'body' },
-            { layers: head.view.layers, world: head.view.pose(frame), subset: 'head' },
-          ],
-      camera,
-      at,
-      layout.width,
-      layout.height,
-    );
-    const gB = canvasB.getContext('2d')!,
-      rightDetail = head === body ? `${body.label} on one volume` : `body: ${body.label} | head: ${head.label}`,
-      beyond = [bodyOff > LIMIT ? `body ${bodyOff.toFixed(0)} deg` : '', headOff > LIMIT ? `head ${headOff.toFixed(0)} deg` : ''].filter(Boolean).join(', '),
-      rightWarning = beyond ? `STAND-IN: ${beyond} past the nearest drawing` : '';
-    backdrop(gB, frame, at);
-    gB.drawImage(glCanvasB, 0, 0);
-    caption(gB, 'NEW: drawing on volume', `${rightDetail} | ${beat}`, rightWarning);
-    const right = `${body.name}${head === body ? '' : `+${head.name}`}`,
-      switchedRight = lastRight !== '' && lastRight !== right;
-    lastRight = right;
-    const info = { frame: current, phase: frame.phase, angle, bodyAngle, headAngle, left: leftKind, switchedLeft, right, switchedRight, bodyOff, headOff, twist: body.view.twist };
-    (document.getElementById('info') as HTMLElement).textContent = `frame ${current}/${frames.length - 1}  ${frame.phase}  view ${angle.toFixed(0)} deg`;
-    (document.getElementById('scrub') as HTMLInputElement).value = String(current);
+    // MIDDLE: the volume as first delivered. RIGHT: with the reach corrective and the later fixes.
+    const middle = volumePanel(frame, now, [first, ...extra], false, 'lead');
+    show(canvasB, frame, at, middle.items, 'VOLUME as first delivered', `${middle.detail} | ${beat}`, middle.warning);
+    const right = volumePanel(frame, now, volumes, true, headRule);
+    show(canvasC, frame, at, right.items, 'VOLUME + reach corrective', `${right.detail} | ${beat}`, right.warning);
+    const info = { frame: now, phase: frame.phase, angle, left: leftKind, switchedLeft, middle: middle.name, switchedMiddle: lastMiddle !== '' && lastMiddle !== middle.name, right: right.name, switchedRight: lastRight !== '' && lastRight !== right.name, bodyOff: right.bodyOff, headOff: right.headOff, reach: right.amount };
+    lastMiddle = middle.name;
+    lastRight = right.name;
+    (document.getElementById('info') as HTMLElement).textContent = `frame ${now}/${frames.length - 1}  ${frame.phase}  view ${angle.toFixed(0)} deg`;
+    (document.getElementById('scrub') as HTMLInputElement).value = String(now);
     return info;
   }
 
@@ -218,10 +247,10 @@ async function main(): Promise<void> {
     clock = 0,
     last = 0;
   scrub.max = String(frames.length - 1);
-  const tick = (now: number) => {
+  const tick = (time: number) => {
     if (!playing) return;
-    clock += ((now - last) / 1000) * 60 * speed;
-    last = now;
+    clock += ((time - last) / 1000) * 60 * speed;
+    last = time;
     if (clock >= frames.length) clock -= frames.length;
     draw(Math.floor(clock));
     requestAnimationFrame(tick);
@@ -230,7 +259,7 @@ async function main(): Promise<void> {
     playing = !playing;
     playButton.textContent = playing ? 'Pause' : 'Play';
     if (playing) {
-      clock = current;
+      clock = now;
       last = performance.now();
       requestAnimationFrame(tick);
     }
@@ -241,11 +270,11 @@ async function main(): Promise<void> {
   };
   document.getElementById('back')!.onclick = () => {
     pause();
-    draw(current - 1);
+    draw(now - 1);
   };
   document.getElementById('forward')!.onclick = () => {
     pause();
-    draw(current + 1);
+    draw(now + 1);
   };
   slowButton.onclick = () => {
     speed = speed === 1 ? 0.25 : 1;
@@ -256,7 +285,7 @@ async function main(): Promise<void> {
     zoomButton.classList.toggle('on', on);
     resize();
     lastLeft = '';
-    draw(current);
+    draw(now);
   };
   zoomButton.onclick = () => zoom(layout === GAME);
   scrub.oninput = () => {
@@ -267,7 +296,7 @@ async function main(): Promise<void> {
   api.zoom = zoom;
   api.option = (name, value) => {
     (RENDER as Record<string, unknown>)[name] = value;
-    draw(current);
+    draw(now);
   };
   api.joints = (i: number) => {
     const at = place();
@@ -277,6 +306,41 @@ async function main(): Promise<void> {
         return [name, [at.x + q.x * at.scale, at.y - q.y * at.scale]];
       }),
     );
+  };
+  /**
+   * Hand-off measure at a frame: pixels where the volume's own arm and the corrective
+   * (at cheat `amount`) differ, and the size of their union (current layout, no border).
+   */
+  api.silhouette = (i: number, amount: number) => {
+    if (!reach || !reachSpec) return null;
+    const frame = frames[i],
+      at = place(),
+      w = layout.width,
+      h = layout.height,
+      border = RENDER.border,
+      mask = (items: RenderItem[]) => {
+        glB.bindFramebuffer(glB.FRAMEBUFFER, null);
+        glB.viewport(0, 0, w, h);
+        glB.clearColor(0, 0, 0, 0);
+        glB.clear(glB.COLOR_BUFFER_BIT);
+        stage.render(items, camera, at, w, h);
+        const pixels = new Uint8Array(w * h * 4);
+        glB.readPixels(0, 0, w, h, glB.RGBA, glB.UNSIGNED_BYTE, pixels);
+        return pixels;
+      };
+    RENDER.border = false;
+    const a = mask([{ layers: current.view.layers, world: current.view.pose(frame), subset: 'all', only: [`arm${reachSpec.cheat.side}`] }]),
+      b = mask([{ layers: reach.view.layers, world: reach.view.pose(cheatFrame(frame, camera, reachSpec.cheat, amount)), subset: 'all' }]);
+    RENDER.border = border;
+    let differ = 0,
+      union = 0;
+    for (let k = 3; k < a.length; k += 4) {
+      const p = a[k] > 127,
+        q = b[k] > 127;
+      if (p !== q) differ++;
+      if (p || q) union++;
+    }
+    return { frame: i, differ, union, share: +(differ / Math.max(1, union)).toFixed(3) };
   };
   resize();
   draw(Number(query.get('n') ?? 0));

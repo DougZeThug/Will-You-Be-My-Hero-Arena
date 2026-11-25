@@ -13,7 +13,7 @@ import { createServer } from 'vite';
 
 const here = dirname(fileURLToPath(import.meta.url)),
   repository = resolve(here, '../../..'),
-  out = resolve(repository, 'work/qa/character-lab/shot'),
+  out = resolve(repository, process.env.CAPTURE_OUT ?? 'work/qa/character-lab/shot'),
   [command = 'clips', ...rest] = process.argv.slice(2),
   png = (dataUrl) => Buffer.from(dataUrl.split(',')[1], 'base64');
 mkdirSync(out, { recursive: true });
@@ -34,19 +34,21 @@ const open = async (query = '') => {
   return page;
 };
 const canvasPng = (page, id) => page.evaluate((name) => document.getElementById(name).toDataURL('image/png'), id);
-/** Both stages side by side as one PNG. */
+/** Every stage side by side as one PNG. */
 const pair = (page) =>
   page.evaluate(() => {
-    const a = document.getElementById('stageA'),
-      b = document.getElementById('stageB'),
+    const stages = [...document.querySelectorAll('#stages canvas')],
       c = document.createElement('canvas');
-    c.width = a.width + b.width + 4;
-    c.height = a.height;
+    c.width = stages.reduce((n, s) => n + s.width + 4, -4);
+    c.height = stages[0].height;
     const g = c.getContext('2d');
     g.fillStyle = '#26262b';
     g.fillRect(0, 0, c.width, c.height);
-    g.drawImage(a, 0, 0);
-    g.drawImage(b, a.width + 4, 0);
+    let x = 0;
+    for (const s of stages) {
+      g.drawImage(s, x, 0);
+      x += s.width + 4;
+    }
     return c.toDataURL('image/png');
   });
 try {
@@ -73,7 +75,7 @@ try {
   } else if (command === 'clips') {
     const page = await open(rest[0] ?? ''),
       length = await page.evaluate(() => window.__CMP__.frames);
-    for (const [name, zoomed] of [['compare-game', false], ['compare-inspect', true]]) {
+    for (const [name, zoomed] of [[`${process.env.CAPTURE_PREFIX ?? ''}compare-game`, false], [`${process.env.CAPTURE_PREFIX ?? ''}compare-inspect`, true]]) {
       await page.evaluate((on) => window.__CMP__.zoom(on), zoomed);
       const frames = resolve(out, `frames/${name}`),
         log = [];
@@ -90,6 +92,14 @@ try {
       execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '60', '-i', resolve(frames, '%04d.png'), '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '14', resolve(out, `${name}.mp4`)]);
       console.log(resolve(out, `${name}.mp4`), `${length} frames`);
     }
+  } else if (command === 'silhouette') {
+    // Hand-off measure for the reach corrective: per frame, volume arm vs corrective at cheat amount 0.
+    const page = await open(''),
+      [from, to] = rest[0].split('-').map(Number),
+      rows = [];
+    for (let n = from; n <= to; n++) rows.push(await page.evaluate((k) => window.__CMP__.silhouette(k, 0), n));
+    writeFileSync(resolve(out, 'handoff-silhouette.json'), JSON.stringify(rows, null, 1) + '\n');
+    console.log(rows.map((r) => `${r.frame}:${r.differ}/${r.union}=${r.share}`).join('  '));
   } else throw new Error(`unknown command ${command}`);
 } finally {
   await browser.close();

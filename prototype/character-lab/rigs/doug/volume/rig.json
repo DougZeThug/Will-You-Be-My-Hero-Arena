@@ -42,7 +42,7 @@
  },
  "mesh": {
   "file": "mesh.bin",
-  "bytes": 1675300
+  "bytes": 1658740
  },
  "bindJoints": {
   "pelvis": [
@@ -225,26 +225,26 @@
   {
    "name": "trunk",
    "id": 1,
-   "vertexCount": 14492,
-   "indexCount": 83682,
+   "vertexCount": 14180,
+   "indexCount": 81732,
    "positions": 0,
-   "uvs": 173904,
-   "weights": 289840,
-   "bones": 521712,
-   "indices": 579680,
+   "uvs": 170160,
+   "weights": 283600,
+   "bones": 510480,
+   "indices": 567200,
    "grid": 8,
-   "derivedPx": 18911
+   "derivedPx": 8430
   },
   {
    "name": "armR",
    "id": 2,
    "vertexCount": 5826,
    "indexCount": 32442,
-   "positions": 747044,
-   "uvs": 816956,
-   "weights": 863564,
-   "bones": 956780,
-   "indices": 980084,
+   "positions": 730664,
+   "uvs": 800576,
+   "weights": 847184,
+   "bones": 940400,
+   "indices": 963704,
    "grid": 6,
    "derivedPx": 0
   },
@@ -253,11 +253,11 @@
    "id": 3,
    "vertexCount": 3148,
    "indexCount": 16866,
-   "positions": 1044968,
-   "uvs": 1082744,
-   "weights": 1107928,
-   "bones": 1158296,
-   "indices": 1170888,
+   "positions": 1028588,
+   "uvs": 1066364,
+   "weights": 1091548,
+   "bones": 1141916,
+   "indices": 1154508,
    "grid": 6,
    "derivedPx": 15635
   },
@@ -265,25 +265,25 @@
    "name": "legR",
    "id": 4,
    "vertexCount": 4662,
-   "indexCount": 25710,
-   "positions": 1204620,
-   "uvs": 1260564,
-   "weights": 1297860,
-   "bones": 1372452,
-   "indices": 1391100,
+   "indexCount": 25620,
+   "positions": 1188240,
+   "uvs": 1244184,
+   "weights": 1281480,
+   "bones": 1356072,
+   "indices": 1374720,
    "grid": 8,
-   "derivedPx": 1018
+   "derivedPx": 957
   },
   {
    "name": "legL",
    "id": 5,
    "vertexCount": 4552,
    "indexCount": 25350,
-   "positions": 1442520,
-   "uvs": 1497144,
-   "weights": 1533560,
-   "bones": 1606392,
-   "indices": 1624600,
+   "positions": 1425960,
+   "uvs": 1480584,
+   "weights": 1517000,
+   "bones": 1589832,
+   "indices": 1608040,
    "grid": 8,
    "derivedPx": 0
   }
@@ -352,27 +352,31 @@
     378
    ],
    [
-    212,
+    228,
     420
    ],
    [
-    203,
+    240,
     500
    ],
    [
-    200,
+    252,
     620
    ],
    [
-    198,
+    250,
     760
    ],
    [
-    196,
-    900
+    232,
+    880
    ],
    [
-    198,
+    208,
+    960
+   ],
+   [
+    200,
     1000
    ],
    [
@@ -417,7 +421,15 @@
    "blendY": [
     300,
     420
-   ]
+   ],
+   "back": 0.6,
+   "waist": {
+    "flatten": 0.6,
+    "y": [
+     560,
+     800
+    ]
+   }
   },
   "inkPx": 8,
   "grid": {
@@ -443,12 +455,24 @@
    "kneeBand": 0.16,
    "ankleBand": 0.1,
    "sleeveBlend": [
-    -20,
-    90
+    -70,
+    30
    ],
    "legBlend": [
     -30,
     110
+   ],
+   "sleeveBlendV1": [
+    -20,
+    90
+   ],
+   "pelvisBelow": [
+    940,
+    1040
+   ],
+   "chestDown": [
+    420,
+    860
    ]
   },
   "inkLuminance": 70,
@@ -493,19 +517,61 @@
    "halfWidth": 30
   },
   "farArmStub": 70,
-  "farForearmHidden": 0.85
+  "farForearmHidden": 0.85,
+  "trunkHiddenV1": [
+   [
+    227,
+    378
+   ],
+   [
+    212,
+    420
+   ],
+   [
+    203,
+    500
+   ],
+   [
+    200,
+    620
+   ],
+   [
+    198,
+    760
+   ],
+   [
+    196,
+    900
+   ],
+   [
+    198,
+    1000
+   ],
+   [
+    200,
+    1140
+   ],
+   [
+    330,
+    1140
+   ],
+   [
+    330,
+    378
+   ]
+  ]
  },
  "notes": [
   "sticker border removed: 83833 px, measured width 13 px, colour 251,247,236",
   "figure pixels in no part: 0",
   "trunk: 15 px of pinholes in the silhouette closed",
-  "trunk: 23939 px of baked outline ink recoloured from just inside it; 18911 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "trunk: 23939 px of baked outline ink recoloured from just inside it; 8430 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
   "armR: 18 px of pinholes in the silhouette closed",
   "armR: 12440 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
   "armL: 1172 px of the hidden upper arm taken from the drawn forearm below the sleeve hem (derived)",
   "armL: 6896 px of baked outline ink recoloured from just inside it; 15635 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
-  "legR: 15596 px of baked outline ink recoloured from just inside it; 1018 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "legR: 15596 px of baked outline ink recoloured from just inside it; 957 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
   "legL: 15360 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
-  "bind depth order: 3 px of hidden surface pressed behind the drawn part (worst 0.000 m)"
+  "bind depth order: 15 px of hidden surface pressed behind the drawn part (worst 0.002 m)"
  ]
 }

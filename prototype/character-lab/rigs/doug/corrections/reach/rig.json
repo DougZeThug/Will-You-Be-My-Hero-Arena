@@ -1,0 +1,339 @@
+{
+ "generator": "prototype/character-lab/volume/prep/build.mjs@1",
+ "id": "doug",
+ "volume": "corrections/reach",
+ "derived": true,
+ "source": {
+  "path": "lab/loongbones/assets/cornhole-side-v3/doug_source.png + prototype/character-lab/source-art/doug-three-quarter.png",
+  "sha256": "a9ec98a336dc589e535f97645f4f49e81216cba9ca437b87a10faf801be6b5c8",
+  "note": "Read only. atlas.png is DERIVED from it: baked sticker border removed, baked silhouette ink recoloured, hidden regions filled by reflection, back sheets reuse the front texture mirrored."
+ },
+ "view": {
+  "angleDeg": 0,
+  "yawDeg": -56,
+  "cameraYaw": 0,
+  "cameraPitchDeg": 8
+ },
+ "sheet": {
+  "width": 1000,
+  "height": 820,
+  "pelvisPx": [
+   131.71000875690618,
+   878.1629071592764
+  ],
+  "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png + prototype/character-lab/source-art/doug-three-quarter.png"
+ },
+ "pxPerMetre": 1052.572,
+ "inkWidth": 0.0076,
+ "stickerWidth": 0.01235,
+ "stickerColour": [
+  251,
+  247,
+  236
+ ],
+ "inkColour": [
+  26,
+  22,
+  24
+ ],
+ "atlas": {
+  "file": "atlas.png",
+  "size": 2048
+ },
+ "mesh": {
+  "file": "mesh.bin",
+  "bytes": 431364
+ },
+ "bindJoints": {
+  "pelvis": [
+   0.37868,
+   0.73154,
+   0.31058
+  ],
+  "hipL": [
+   0.46528,
+   0.73781,
+   0.25217
+  ],
+  "kneeL": [
+   0.51045,
+   0.47234,
+   0.31403
+  ],
+  "ankleL": [
+   0.45251,
+   0.1173,
+   0.28631
+  ],
+  "heelL": [
+   0.39424,
+   0,
+   0.23913
+  ],
+  "toeL": [
+   0.62731,
+   0,
+   0.42786
+  ],
+  "hipR": [
+   0.29208,
+   0.72527,
+   0.369
+  ],
+  "kneeR": [
+   0.25356,
+   0.45941,
+   0.43361
+  ],
+  "ankleR": [
+   0.14565,
+   0.1173,
+   0.39495
+  ],
+  "heelR": [
+   0.11396,
+   0,
+   0.327
+  ],
+  "toeR": [
+   0.24071,
+   0,
+   0.5988
+  ],
+  "spine": [
+   0.4038,
+   0.97962,
+   0.30564
+  ],
+  "chest": [
+   0.51215,
+   1.23308,
+   0.27632
+  ],
+  "neck": [
+   0.52921,
+   1.28764,
+   0.27472
+  ],
+  "head": [
+   0.56089,
+   1.38897,
+   0.27175
+  ],
+  "headTop": [
+   0.58871,
+   1.67304,
+   0.26178
+  ],
+  "shoulderL": [
+   0.53437,
+   1.20942,
+   0.04765
+  ],
+  "elbowL": [
+   0.30343,
+   1.09609,
+   -0.10436
+  ],
+  "wristL": [
+   0.20974,
+   0.97644,
+   -0.17432
+  ],
+  "handL": [
+   0.16199,
+   0.91547,
+   -0.20997
+  ],
+  "shoulderR": [
+   0.53856,
+   1.28519,
+   0.50804
+  ],
+  "elbowR": [
+   0.74393,
+   1.09269,
+   0.40781
+  ],
+  "wristR": [
+   0.8998,
+   1.07801,
+   0.32961
+  ],
+  "handR": [
+   0.99857,
+   1.063,
+   0.32526
+  ],
+  "fingertipR": [
+   1.11216,
+   1.04573,
+   0.32025
+  ]
+ },
+ "bones": [
+  "pelvis",
+  "spine",
+  "chest",
+  "neck",
+  "head",
+  "girdleR",
+  "upperR0",
+  "upperR1",
+  "upperR2",
+  "upperR3",
+  "upperR4",
+  "foreR0",
+  "foreR1",
+  "foreR2",
+  "foreR3",
+  "foreR4",
+  "handR",
+  "thighR0",
+  "thighR1",
+  "thighR2",
+  "thighR3",
+  "thighR4",
+  "shinR",
+  "footR",
+  "girdleL",
+  "upperL0",
+  "upperL1",
+  "upperL2",
+  "upperL3",
+  "upperL4",
+  "foreL0",
+  "foreL1",
+  "foreL2",
+  "foreL3",
+  "foreL4",
+  "handL",
+  "thighL0",
+  "thighL1",
+  "thighL2",
+  "thighL3",
+  "thighL4",
+  "shinL",
+  "footL"
+ ],
+ "parts": [
+  {
+   "name": "armR",
+   "id": 2,
+   "vertexCount": 8418,
+   "indexCount": 47322,
+   "positions": 0,
+   "uvs": 101016,
+   "weights": 168360,
+   "bones": 303048,
+   "indices": 336720,
+   "grid": 5,
+   "derivedPx": 0
+  }
+ ],
+ "fit": {
+  "partial": true
+ },
+ "settings": {
+  "frame": 88,
+  "canvas": [
+   1000,
+   820
+  ],
+  "shoulderAt": [
+   300,
+   330
+  ],
+  "cheat": {
+   "side": "R",
+   "forearmFlatten": 0.8,
+   "handFlatten": 0.85,
+   "forearmLength": 0.175,
+   "palmLength": 0.1
+  },
+  "sheet": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+  "chroma": [
+   255,
+   0,
+   255
+  ],
+  "chromaDistance": [
+   90,
+   200
+  ],
+  "arm": {
+   "rect": [
+    864,
+    163,
+    172,
+    454
+   ],
+   "joints": [
+    [
+     925,
+     225
+    ],
+    [
+     938,
+     399
+    ],
+    [
+     1002,
+     593
+    ]
+   ],
+   "across": 1.6,
+   "elbowBlend": 14,
+   "pastWrist": 26,
+   "from": 70
+  },
+  "hand": {
+   "rect": [
+    878,
+    812,
+    248,
+    125
+   ],
+   "wrist": [
+    938,
+    869
+   ],
+   "tip": [
+    1110,
+    922
+   ],
+   "length": 0.215,
+   "mirror": false,
+   "overlap": 30,
+   "blend": 26,
+   "depth": 0.5
+  },
+  "sleeve": {
+   "hem": 160,
+   "along": 1,
+   "across": 1,
+   "mirror": false
+  },
+  "weights": {
+   "elbowBand": 0.14,
+   "wristBand": 0.07,
+   "root": [
+    -70,
+    20
+   ],
+   "rootGirdle": 0.75
+  },
+  "grid": 5,
+  "inkPx": 8,
+  "switch": {
+   "on": 83,
+   "off": 103,
+   "ramp": 4
+  }
+ },
+ "notes": [
+  "ASSEMBLED FROM EXISTING DRAWINGS, NOT NEWLY DRAWN. Laid out at shot frame 88 (cheated, see volume/cheat.ts) for camera yaw 0.",
+  "armR: 11872 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "bind depth order: 0 px of hidden surface pressed behind the drawn part (worst 0.000 m)"
+ ]
+}

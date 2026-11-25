@@ -237,7 +237,7 @@ export class VolumeStage {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.useProgram(program);
       gl.uniform2f(gl.getUniformLocation(program, 'canvas'), width, height);
-      items.forEach((item, k) => item.layers.geometry(program, program === this.meshInfo, item.subset, k));
+      items.forEach((item, k) => item.layers.geometry(program, program === this.meshInfo, item.subset, k, item.hide, item.only));
     }
     gl.disable(gl.DEPTH_TEST);
     gl.disableVertexAttribArray(1);
@@ -289,6 +289,10 @@ export interface RenderItem {
   layers: VolumeLayers;
   world: Float32Array[];
   subset: Subset;
+  /** Part names not to draw (a corrective piece replaces them). */
+  hide?: string[];
+  /** When given, only these parts are drawn. */
+  only?: string[];
 }
 
 /** One volume rig on the GPU. */
@@ -368,7 +372,7 @@ export class VolumeLayers {
     });
   }
 
-  geometry(program: WebGLProgram, info: boolean, subset: Subset, item: number): void {
+  geometry(program: WebGLProgram, info: boolean, subset: Subset, item: number, hide?: string[], only?: string[]): void {
     const gl = this.stage.gl;
     if (!info) {
       gl.activeTexture(gl.TEXTURE0);
@@ -378,7 +382,7 @@ export class VolumeLayers {
     this.rig.parts.forEach((part, k) => {
       const b = this.buffers[k],
         [first, count] = b.ranges[subset];
-      if (!count) return;
+      if (!count || hide?.includes(part.name) || (only && !only.includes(part.name))) return;
       // Part ids differ between volumes too, so a head from another drawing gets its contour.
       if (info) gl.uniform1f(gl.getUniformLocation(program, 'part'), part.id * 20 + item * 7);
       gl.bindBuffer(gl.ARRAY_BUFFER, b.position);
