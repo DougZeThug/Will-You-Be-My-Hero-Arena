@@ -12,7 +12,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { decodePng, encodePng } from '../../../motion/prep/png.mjs';
-import { alphaMask, blankImage, bleed, bounds, flood, luminance, polygonMask, smoothstep } from '../../../motion/prep/raster.mjs';
+import { blankImage, bounds, flood, luminance } from '../../../motion/prep/raster.mjs';
 import { stripSticker } from '../../../motion/prep/sticker.mjs';
 import { fitBind } from './fit.mjs';
 import { ballUnion, insideDistance, nearestMap, nearestOnChain, reflectFill } from './inflate.mjs';
@@ -28,7 +28,8 @@ const here = dirname(fileURLToPath(import.meta.url)),
   review = resolve(repository, 'work/qa/character-lab/shot/prep', volumeName),
   ATLAS = 2048,
   INK_LUMINANCE = 70,
-  INK_BAND = 8;
+  INK_BAND = 9,
+  RIM = 6; // px at the edge of a drawn part that are always replaced (they hold ink and the neighbour's colours)
 mkdirSync(out, { recursive: true });
 mkdirSync(review, { recursive: true });
 
@@ -37,13 +38,29 @@ const sheet = view.sheet,
   H = sheet.height,
   V = view.settings,
   J2 = view.joints,
-  fit = fitBind(J2, { viewAngleDeg: V.viewAngleDeg, priors: V.priors, height: character.height, facingSign: view.facingSign ?? 1 }),
+  fit = fitBind(J2, { viewAngleDeg: view.viewAngleDeg, plan: view.plan, height: character.height, fixed: view.fixed }),
   notes = [...(view.notes ?? [])],
   idx = (x, y) => y * W + x;
 
 // ---- 1. Parts: silhouette, drawn pixels, derived fills.
 const parts = view.parts({ W, H, fit, notes });
 for (const part of parts) {
+  // Pinholes in a silhouette would pinch the two sheets together: close them.
+  {
+    const outside = new Uint8Array(W * H),
+      seeds = [];
+    for (let i = 0; i < W * H; i++) outside[i] = part.mask[i] ^ 1;
+    for (let x = 0; x < W; x++) seeds.push([x, 0], [x, H - 1]);
+    for (let y = 0; y < H; y++) seeds.push([0, y], [W - 1, y]);
+    const reached = flood(outside, W, H, seeds);
+    let closed = 0;
+    for (let i = 0; i < W * H; i++)
+      if (!part.mask[i] && !reached[i]) {
+        part.mask[i] = 1;
+        closed++;
+      }
+    if (closed) notes.push(`${part.name}: ${closed} px of pinholes in the silhouette closed`);
+  }
   // Baked ink at the edge of what the drawing shows of this part -> the colour just inside it.
   const dOwned = insideDistance(part.owned, W, H),
     deep = new Uint8Array(W * H);
@@ -57,7 +74,7 @@ for (const part of parts) {
       continue;
     }
     data[i * 4 + 3] = 255;
-    if (dOwned[i] >= INK_BAND || near[i] < 0 || luminance(data, i * 4) >= INK_LUMINANCE) continue;
+    if (near[i] < 0 || dOwned[i] >= INK_BAND || (dOwned[i] >= RIM && luminance(data, i * 4) >= INK_LUMINANCE)) continue;
     for (let c = 0; c < 3; c++) data[i * 4 + c] = data[near[i] * 4 + c];
     cleaned++;
   }
@@ -120,7 +137,7 @@ for (const part of parts) {
 // ---- 3. Atlas.
 const atlas = blankImage(ATLAS, ATLAS);
 {
-  const PAD = 20;
+  const PAD = 40;
   let cursorX = 0,
     cursorY = 0,
     rowHeight = 0;
@@ -138,16 +155,20 @@ const atlas = blankImage(ATLAS, ATLAS);
       rowHeight = 0;
     }
     if (cursorY + h > ATLAS) throw new Error('atlas full');
-    // Crop, then bleed colour past the silhouette so mip levels never pull in emptiness.
-    const crop = blankImage(w, h);
+    // Crop; every texel outside the silhouette takes the nearest silhouette colour, so
+    // no mip level (a wall seen edge-on samples very coarse ones) can pull in emptiness.
+    const crop = blankImage(w, h),
+      inCrop = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) inCrop[y * w + x] = part.mask[idx(x0 + x, y0 + y)];
+    const nearest = nearestMap(inCrop, w, h);
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
-        const i = idx(x0 + x, y0 + y);
-        if (!part.mask[i]) continue;
-        for (let c = 0; c < 4; c++) crop.data[(y * w + x) * 4 + c] = part.image.data[i * 4 + c];
+        const n = nearest[y * w + x],
+          i = idx(x0 + (n % w), y0 + ((n / w) | 0));
+        for (let c = 0; c < 3; c++) crop.data[(y * w + x) * 4 + c] = part.image.data[i * 4 + c];
         crop.data[(y * w + x) * 4 + 3] = 255;
       }
-    bleed(crop, PAD);
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
         const o = ((cursorY + y) * ATLAS + cursorX + x) * 4,
@@ -197,8 +218,12 @@ for (const part of parts) {
     for (let c = 0; c < cols; c++) {
       const k = r * cols + c;
       if (inside[k]) {
+        // A grid point sitting on the silhouette itself is rim: both sheets meet there.
+        const x = c * g,
+          y = r * g,
+          edge = x === 0 || y === 0 || x === W - 1 || y === H - 1 || !part.mask[idx(x - 1, y)] || !part.mask[idx(x + 1, y)] || !part.mask[idx(x, y - 1)] || !part.mask[idx(x, y + 1)];
         slot[k] = node.length;
-        node.push({ x: c * g, y: r * g, rim: false });
+        node.push({ x, y, rim: edge });
         continue;
       }
       let touches = false;
@@ -213,6 +238,20 @@ for (const part of parts) {
       slot[k] = node.length;
       node.push({ x: n % W, y: (n / W) | 0, rim: true });
     }
+  if (process.env.VOLUME_DEBUG) {
+    // Nodes whose half-thickness is far from all of their grid neighbours'.
+    const half = (n) => (n.rim ? 0 : (part.front[idx(n.x, n.y)] - part.back[idx(n.x, n.y)]) / 2);
+    let shown = 0;
+    for (let r = 1; r + 1 < rows; r++)
+      for (let c = 1; c + 1 < cols; c++) {
+        const k = slot[r * cols + c];
+        if (k < 0) continue;
+        const around = [slot[r * cols + c - 1], slot[r * cols + c + 1], slot[(r - 1) * cols + c], slot[(r + 1) * cols + c]].filter((q) => q >= 0).map((q) => half(node[q])),
+          h = half(node[k]);
+        if (around.length && (h > Math.max(...around) + 12 || h < Math.min(...around) - 12) && shown++ < 12) console.log(part.name, 'outlier', node[k], h.toFixed(1), around.map((v) => v.toFixed(1)).join(' '), 'mid', part.centreDepth[idx(node[k].x, node[k].y)].toFixed(1), 'front', part.front[idx(node[k].x, node[k].y)].toFixed(1));
+      }
+    console.log(part.name, 'outliers', shown);
+  }
   const count = node.length * 2,
     positions = new Float32Array(count * 3),
     uvs = new Float32Array(count * 2),
@@ -247,9 +286,11 @@ for (const part of parts) {
         e = slot[(r + 1) * cols + c + 1];
       if (a < 0 || b < 0 || d < 0 || e < 0) continue;
       if (!inside[r * cols + c] && !inside[r * cols + c + 1] && !inside[(r + 1) * cols + c] && !inside[(r + 1) * cols + c + 1]) continue;
-      const area = (p, q, s) => Math.abs((node[q].x - node[p].x) * (node[s].y - node[p].y) - (node[q].y - node[p].y) * (node[s].x - node[p].x));
+      // A triangle that is a sliver in the drawing can still be a real wall in depth:
+      // only drop it when two of its corners are the same point.
+      const same = (p, q) => node[p].x === node[q].x && node[p].y === node[q].y;
       for (const [p, q, s] of [[a, b, e], [a, e, d]]) {
-        if (area(p, q, s) < 0.5) continue;
+        if (same(p, q) || same(q, s) || same(p, s)) continue;
         indices.push(p * 2, q * 2, s * 2, p * 2 + 1, s * 2 + 1, q * 2 + 1);
       }
     }
@@ -271,7 +312,7 @@ for (const part of parts) {
 
 // ---- 5. Write.
 const round = (v, n = 5) => +v.toFixed(n),
-  proportions = Object.fromEntries(Object.entries(fit.proportions).map(([k, v]) => [k, round(v, 4)])),
+  proportions = Object.fromEntries(Object.entries(fit.proportions ?? {}).map(([k, v]) => [k, round(v, 4)])),
   sourceHash = createHash('sha256').update(readFileSync(view.sourcePath)).digest('hex'),
   rig = {
     generator: 'prototype/character-lab/volume/prep/build.mjs@1',
@@ -279,7 +320,8 @@ const round = (v, n = 5) => +v.toFixed(n),
     volume: volumeName,
     derived: true,
     source: { path: view.sourceRelative, sha256: sourceHash, note: 'Read only. atlas.png is DERIVED from it: baked sticker border removed, baked silhouette ink recoloured, hidden regions filled by reflection, back sheets reuse the front texture mirrored.' },
-    view: { angleDeg: V.viewAngleDeg * (view.facingSign ?? 1), yawDeg: round((fit.yaw * 180) / Math.PI, 3), cameraYaw: 0, cameraPitchDeg: round((fit.camera.pitch * 180) / Math.PI, 3) },
+    view: { angleDeg: view.viewAngleDeg, yawDeg: round((fit.yaw * 180) / Math.PI, 3), cameraYaw: 0, cameraPitchDeg: round((fit.camera.pitch * 180) / Math.PI, 3) },
+    sheet: { width: W, height: H, pelvisPx: J2.pelvis, source: view.sourceRelative },
     pxPerMetre: round(fit.ppm, 3),
     inkWidth: round(V.inkPx / fit.ppm),
     stickerWidth: round(view.sticker.width / fit.ppm),
@@ -290,11 +332,13 @@ const round = (v, n = 5) => +v.toFixed(n),
     bindJoints: Object.fromEntries(Object.entries(fit.joints).map(([name, p]) => [name, [round(p.x), round(p.y), round(p.z)]])),
     bones: boneNames,
     parts: partTable,
-    fit: {
-      sides: JSON.parse(JSON.stringify(fit.sides, (k, v) => (typeof v === 'number' ? round(v, 4) : v))),
-      drawnSoleGap: { R: round(fit.soleGap.R, 4), L: round(fit.soleGap.L, 4) },
-      pelvisDrawnHeight: round(fit.pelvisDrawn, 4),
-    },
+    fit: fit.sides
+      ? {
+          sides: JSON.parse(JSON.stringify(fit.sides, (k, v) => (typeof v === 'number' ? round(v, 4) : v))),
+          drawnSoleGap: { R: round(fit.soleGap.R, 4), L: round(fit.soleGap.L, 4) },
+          pelvisDrawnHeight: round(fit.pelvisDrawn, 4),
+        }
+      : { partial: true },
     settings: V,
     notes,
   };

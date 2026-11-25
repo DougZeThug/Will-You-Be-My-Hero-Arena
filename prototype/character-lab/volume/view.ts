@@ -7,6 +7,9 @@ import { createSolver, skinPart, type PoseFrame, type VolumeRig } from './rig';
 
 export interface VolumeView {
   rig: VolumeRig;
+  layers: VolumeLayers;
+  /** Skins the rig to a frame; the returned world positions are reused on the next call. */
+  pose(frame: PoseFrame): Float32Array[];
   /** Draws into the context's default framebuffer (premultiplied alpha, cleared by the caller). */
   draw(frame: PoseFrame, camera: Camera, place: Placement, width: number, height: number): void;
   /** The drawing's own pose: skinning is the identity for it. */
@@ -23,7 +26,8 @@ export function createVolumeView(stage: VolumeStage, rig: VolumeRig, reference: 
       rig,
       twist: {},
       bindFrame: solver.bindFrame,
-      draw(frame, camera, place, width, height) {
+      layers,
+      pose(frame) {
         const { matrices, twist } = solver.solve(frame);
         view.twist = { ...twist };
         rig.parts.forEach((part, k) => skinPart(part, matrices, world[k]));
@@ -40,7 +44,10 @@ export function createVolumeView(stage: VolumeStage, rig: VolumeRig, reference: 
               out[i + 2] = cz + (out[i + 2] - cz) * wide;
             }
         }
-        layers.draw(world, camera, place, width, height);
+        return world;
+      },
+      draw(frame, camera, place, width, height) {
+        stage.render([{ layers, world: view.pose(frame), subset: 'all' }], camera, place, width, height);
       },
     };
   return view;

@@ -171,6 +171,7 @@ export function createSolver(rig: VolumeRig, reference: PoseFrame) {
     bindLength = {} as Record<SegmentName, number>,
     info = Object.fromEntries(SEGMENTS.map((s) => [s.name, s])) as Record<SegmentName, (typeof SEGMENTS)[number]>;
   for (const segment of SEGMENTS) {
+    if (!bind[segment.to] || !bind[segment.from] || !bind[segment.origin]) continue; // a partial rig (a head alone)
     const ref = reference.basis[segment.name],
       turned: Basis = { x: rotate(ref.x, Y, turn), y: rotate(ref.y, Y, turn), z: rotate(ref.z, Y, turn) },
       refDir = norm(rotate(sub(reference.joints[segment.to as JointName], reference.joints[segment.from as JointName]), Y, turn)),
@@ -214,6 +215,7 @@ export function createSolver(rig: VolumeRig, reference: PoseFrame) {
     put('head', head, bind.head, frame.joints.head);
     put('neck', slerp(chest, head, SOLVER.neckShare), bind.neck, frame.joints.neck);
     for (const s of ['L', 'R'] as const) {
+      if (!bindBasis[`upperArm${s}`] || !bindBasis[`thigh${s}`]) continue;
       const upperNow = frame.basis[`upperArm${s}`],
         carried = norm(apply(chest, bindBasis[`upperArm${s}`].x)),
         sw = swing(carried, upperNow.x),

@@ -142,7 +142,12 @@ interface PartBuffers {
   uv: WebGLBuffer;
   index: WebGLBuffer;
   projected: Float32Array;
+  /** [first index, count] per subset. */
+  ranges: Record<Subset, [number, number]>;
 }
+
+/** Head/neck share of a trunk triangle: above `headFrom` it is in the head block, below `bodyTo` in the body block. */
+export const BLOCKS = { headFrom: 0.3, bodyTo: 0.9 };
 
 /** GPU side of the programs and targets, shared by every rig drawn into one context. */
 export class VolumeStage {
@@ -205,6 +210,85 @@ export class VolumeStage {
     }
     return this.targets;
   }
+
+  /**
+   * Draws any number of volumes (or blocks of them) into ONE depth buffer, then the
+   * ink and the sticker border once over the union. `place` and the size are canvas pixels.
+   */
+  render(items: RenderItem[], camera: Camera, place: Placement, width: number, height: number): void {
+    const gl = this.gl,
+      ss = RENDER.supersample,
+      w = width * ss,
+      h = height * ss,
+      targets = this.ensure(w, h);
+    for (const item of items) item.layers.project(item.world, camera, place);
+    gl.disable(gl.BLEND);
+    gl.disable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LESS);
+    gl.depthMask(true);
+    gl.enableVertexAttribArray(0);
+    gl.enableVertexAttribArray(1);
+    for (const [program, target] of [[this.meshColour, targets.colour], [this.meshInfo, targets.info]] as const) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
+      gl.viewport(0, 0, w, h);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clearDepth(1);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.uniform2f(gl.getUniformLocation(program, 'canvas'), width, height);
+      items.forEach((item, k) => item.layers.geometry(program, program === this.meshInfo, item.subset, k));
+    }
+    gl.disable(gl.DEPTH_TEST);
+    gl.disableVertexAttribArray(1);
+    // Composite: ink and sticker border from the depth/part image.
+    const data = items[0].layers.rig.data,
+      quad = () => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      };
+    gl.bindFramebuffer(gl.FRAMEBUFFER, targets.out.framebuffer);
+    gl.viewport(0, 0, w, h);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(this.composite);
+    const U = (name: string) => gl.getUniformLocation(this.composite, name);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, targets.colour.texture);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, targets.info.texture);
+    gl.uniform1i(U('colour'), 0);
+    gl.uniform1i(U('info'), 1);
+    gl.uniform2f(U('texel'), 1 / w, 1 / h);
+    gl.uniform1f(U('inkRadius'), Math.max(1.2, data.inkWidth * place.scale * ss));
+    gl.uniform1f(U('borderRadius'), RENDER.border ? Math.max(1.5, data.stickerWidth * place.scale * ss) : 0);
+    gl.uniform3f(U('inkColour'), data.inkColour[0] / 255, data.inkColour[1] / 255, data.inkColour[2] / 255);
+    gl.uniform3f(U('borderColour'), data.stickerColour[0] / 255, data.stickerColour[1] / 255, data.stickerColour[2] / 255);
+    gl.uniform1f(U('stepSame'), RENDER.stepSame);
+    gl.uniform1f(U('stepOther'), RENDER.stepOther);
+    gl.uniform1f(U('inkOn'), RENDER.ink ? 1 : 0);
+    quad();
+    // Resolve to the canvas.
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, width, height);
+    gl.useProgram(this.resolve);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, targets.out.texture);
+    gl.uniform1i(gl.getUniformLocation(this.resolve, 'source'), 0);
+    gl.uniform2f(gl.getUniformLocation(this.resolve, 'texel'), 1 / w, 1 / h);
+    gl.uniform1f(gl.getUniformLocation(this.resolve, 'taps'), ss === 4 ? 2 : 1);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    quad();
+  }
+}
+
+/** Which block of a volume to draw: everything, only the head and neck, or everything but them. */
+export type Subset = 'all' | 'head' | 'body';
+export interface RenderItem {
+  layers: VolumeLayers;
+  world: Float32Array[];
+  subset: Subset;
 }
 
 /** One volume rig on the GPU. */
@@ -230,29 +314,43 @@ export class VolumeLayers {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const anisotropy = gl.getExtension('EXT_texture_filter_anisotropic');
     if (anisotropy) gl.texParameterf(gl.TEXTURE_2D, anisotropy.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(anisotropy.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+    const headBones = new Set(['head', 'neck'].map((name) => rig.data.bones.indexOf(name)));
     this.buffers = rig.parts.map((part) => {
-      const b: PartBuffers = { position: gl.createBuffer()!, uv: gl.createBuffer()!, index: gl.createBuffer()!, projected: new Float32Array(part.vertexCount * 3) };
+      const b: PartBuffers = { position: gl.createBuffer()!, uv: gl.createBuffer()!, index: gl.createBuffer()!, projected: new Float32Array(part.vertexCount * 3), ranges: { all: [0, part.indexCount], head: [0, 0], body: [0, part.indexCount] } };
       gl.bindBuffer(gl.ARRAY_BUFFER, b.uv);
       gl.bufferData(gl.ARRAY_BUFFER, part.uvs, gl.STATIC_DRAW);
+      let indices = part.indices;
+      if (part.name === 'trunk') {
+        // The same triangles again, sorted into "head and neck" and "the rest". The two
+        // blocks overlap through the neck, so a head from one drawing sits INSIDE the
+        // collar of another and the depth buffer joins them.
+        const share = (v: number) => {
+          let sum = 0;
+          for (let k = 0; k < 4; k++) if (headBones.has(part.bones[v * 4 + k])) sum += part.weights[v * 4 + k];
+          return sum;
+        };
+        const head: number[] = [],
+          body: number[] = [];
+        for (let i = 0; i < part.indexCount; i += 3) {
+          const tri = [part.indices[i], part.indices[i + 1], part.indices[i + 2]],
+            mean = (share(tri[0]) + share(tri[1]) + share(tri[2])) / 3;
+          if (mean > BLOCKS.headFrom) head.push(...tri);
+          if (mean < BLOCKS.bodyTo) body.push(...tri);
+        }
+        indices = Uint16Array.from([...part.indices, ...head, ...body]);
+        b.ranges.head = [part.indexCount, head.length];
+        b.ranges.body = [part.indexCount + head.length, body.length];
+      }
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.index);
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, part.indices, gl.STATIC_DRAW);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
       return b;
     });
   }
 
-  /**
-   * @param world skinned world positions per part (xyz per vertex)
-   * @param width,height the canvas size in pixels; `place` is in the same pixels
-   */
-  draw(world: Float32Array[], camera: Camera, place: Placement, width: number, height: number): void {
-    const stage = this.stage,
-      gl = stage.gl,
-      ss = RENDER.supersample,
-      w = width * ss,
-      h = height * ss,
-      targets = stage.ensure(w, h),
+  /** World positions -> canvas px + depth, with the one shared projection. */
+  project(world: Float32Array[], camera: Camera, place: Placement): void {
+    const gl = this.stage.gl,
       point = { x: 0, y: 0, z: 0 };
-    // Project on the CPU with the one shared projection.
     this.rig.parts.forEach((part, k) => {
       const source = world[k],
         out = this.buffers[k].projected;
@@ -268,77 +366,27 @@ export class VolumeLayers {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[k].position);
       gl.bufferData(gl.ARRAY_BUFFER, out, gl.DYNAMIC_DRAW);
     });
-    gl.disable(gl.BLEND);
-    gl.disable(gl.CULL_FACE);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LESS);
-    gl.depthMask(true);
-    gl.enableVertexAttribArray(0);
-    gl.enableVertexAttribArray(1);
-    for (const [program, target] of [[stage.meshColour, targets.colour], [stage.meshInfo, targets.info]] as const) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, target.framebuffer);
-      gl.viewport(0, 0, w, h);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clearDepth(1);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.useProgram(program);
-      gl.uniform2f(gl.getUniformLocation(program, 'canvas'), width, height);
-      if (program === stage.meshColour) {
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.atlas);
-        gl.uniform1i(gl.getUniformLocation(program, 'atlas'), 0);
-      }
-      this.rig.parts.forEach((part, k) => {
-        const b = this.buffers[k];
-        if (program === stage.meshInfo) gl.uniform1f(gl.getUniformLocation(program, 'part'), part.id * 20);
-        gl.bindBuffer(gl.ARRAY_BUFFER, b.position);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, b.uv);
-        gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.index);
-        gl.drawElements(gl.TRIANGLES, part.indexCount, gl.UNSIGNED_SHORT, 0);
-      });
+  }
+
+  geometry(program: WebGLProgram, info: boolean, subset: Subset, item: number): void {
+    const gl = this.stage.gl;
+    if (!info) {
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.atlas);
+      gl.uniform1i(gl.getUniformLocation(program, 'atlas'), 0);
     }
-    gl.disable(gl.DEPTH_TEST);
-    gl.disableVertexAttribArray(1);
-    // Composite: ink and sticker border from the depth/part image.
-    const data = this.rig.data,
-      quad = () => {
-        gl.bindBuffer(gl.ARRAY_BUFFER, stage.quad);
-        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      };
-    gl.bindFramebuffer(gl.FRAMEBUFFER, targets.out.framebuffer);
-    gl.viewport(0, 0, w, h);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.useProgram(stage.composite);
-    const U = (name: string) => gl.getUniformLocation(stage.composite, name);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, targets.colour.texture);
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, targets.info.texture);
-    gl.uniform1i(U('colour'), 0);
-    gl.uniform1i(U('info'), 1);
-    gl.uniform2f(U('texel'), 1 / w, 1 / h);
-    gl.uniform1f(U('inkRadius'), Math.max(1.2, data.inkWidth * place.scale * ss));
-    gl.uniform1f(U('borderRadius'), RENDER.border ? Math.max(1.5, data.stickerWidth * place.scale * ss) : 0);
-    gl.uniform3f(U('inkColour'), data.inkColour[0] / 255, data.inkColour[1] / 255, data.inkColour[2] / 255);
-    gl.uniform3f(U('borderColour'), data.stickerColour[0] / 255, data.stickerColour[1] / 255, data.stickerColour[2] / 255);
-    gl.uniform1f(U('stepSame'), RENDER.stepSame);
-    gl.uniform1f(U('stepOther'), RENDER.stepOther);
-    gl.uniform1f(U('inkOn'), RENDER.ink ? 1 : 0);
-    quad();
-    // Resolve to the canvas.
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.viewport(0, 0, width, height);
-    gl.useProgram(stage.resolve);
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, targets.out.texture);
-    gl.uniform1i(gl.getUniformLocation(stage.resolve, 'source'), 0);
-    gl.uniform2f(gl.getUniformLocation(stage.resolve, 'texel'), 1 / w, 1 / h);
-    gl.uniform1f(gl.getUniformLocation(stage.resolve, 'taps'), ss === 4 ? 2 : 1);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    quad();
+    this.rig.parts.forEach((part, k) => {
+      const b = this.buffers[k],
+        [first, count] = b.ranges[subset];
+      if (!count) return;
+      // Part ids differ between volumes too, so a head from another drawing gets its contour.
+      if (info) gl.uniform1f(gl.getUniformLocation(program, 'part'), part.id * 20 + item * 7);
+      gl.bindBuffer(gl.ARRAY_BUFFER, b.position);
+      gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, b.uv);
+      gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.index);
+      gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, first * 2);
+    });
   }
 }

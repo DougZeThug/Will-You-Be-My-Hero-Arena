@@ -1,0 +1,233 @@
+{
+ "generator": "prototype/character-lab/volume/prep/build.mjs@1",
+ "id": "doug",
+ "volume": "volumeSideHead",
+ "derived": true,
+ "source": {
+  "path": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+  "sha256": "a9ec98a336dc589e535f97645f4f49e81216cba9ca437b87a10faf801be6b5c8",
+  "note": "Read only. atlas.png is DERIVED from it: baked sticker border removed, baked silhouette ink recoloured, hidden regions filled by reflection, back sheets reuse the front texture mirrored."
+ },
+ "view": {
+  "angleDeg": 0,
+  "yawDeg": 0,
+  "cameraYaw": 0,
+  "cameraPitchDeg": 8
+ },
+ "sheet": {
+  "width": 1254,
+  "height": 1254,
+  "pelvisPx": [
+   510,
+   687
+  ],
+  "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png"
+ },
+ "pxPerMetre": 688.44,
+ "inkWidth": 0.00726,
+ "stickerWidth": 0.01307,
+ "stickerColour": [
+  251,
+  247,
+  236
+ ],
+ "inkColour": [
+  26,
+  22,
+  24
+ ],
+ "atlas": {
+  "file": "atlas.png",
+  "size": 2048
+ },
+ "mesh": {
+  "file": "mesh.bin",
+  "bytes": 145052
+ },
+ "bindJoints": {
+  "pelvis": [
+   0,
+   0.7543,
+   0
+  ],
+  "spine": [
+   0.00291,
+   1.00513,
+   0
+  ],
+  "chest": [
+   -0.00726,
+   1.28529,
+   0
+  ],
+  "head": [
+   -0.01888,
+   1.44958,
+   0
+  ],
+  "headTop": [
+   -0.01453,
+   1.73268,
+   0
+  ],
+  "neck": [
+   -0.01133,
+   1.34279,
+   0
+  ]
+ },
+ "bones": [
+  "pelvis",
+  "spine",
+  "chest",
+  "neck",
+  "head",
+  "girdleR",
+  "upperR0",
+  "upperR1",
+  "upperR2",
+  "upperR3",
+  "upperR4",
+  "foreR0",
+  "foreR1",
+  "foreR2",
+  "foreR3",
+  "foreR4",
+  "handR",
+  "thighR0",
+  "thighR1",
+  "thighR2",
+  "thighR3",
+  "thighR4",
+  "shinR",
+  "footR",
+  "girdleL",
+  "upperL0",
+  "upperL1",
+  "upperL2",
+  "upperL3",
+  "upperL4",
+  "foreL0",
+  "foreL1",
+  "foreL2",
+  "foreL3",
+  "foreL4",
+  "handL",
+  "thighL0",
+  "thighL1",
+  "thighL2",
+  "thighL3",
+  "thighL4",
+  "shinL",
+  "footL"
+ ],
+ "parts": [
+  {
+   "name": "trunk",
+   "id": 1,
+   "vertexCount": 2840,
+   "indexCount": 15726,
+   "positions": 0,
+   "uvs": 34080,
+   "weights": 56800,
+   "bones": 102240,
+   "indices": 113600,
+   "grid": 5,
+   "derivedPx": 0
+  }
+ ],
+ "fit": {
+  "partial": true
+ },
+ "settings": {
+  "note": "HEAD ONLY of the profile drawing. Hand-typed (source pixels): joints, neck line, the keep outline. head/pelvis follow doug_authoring.json; chest/spine/headTop were placed by the three-quarter proportions at this sheet scale.",
+  "source": "lab/loongbones/assets/cornhole-side-v3/doug_source.png",
+  "viewAngleDeg": 0,
+  "pxPerMetre": 688.44,
+  "joints": {
+   "pelvis": [
+    510,
+    687
+   ],
+   "spine": [
+    512,
+    516
+   ],
+   "chest": [
+    505,
+    325
+   ],
+   "head": [
+    497,
+    213
+   ],
+   "headTop": [
+    500,
+    20
+   ]
+  },
+  "neckLine": [
+   [
+    440,
+    180
+   ],
+   [
+    545,
+    210
+   ]
+  ],
+  "keep": [
+   [
+    330,
+    0
+   ],
+   [
+    730,
+    0
+   ],
+   [
+    730,
+    262
+   ],
+   [
+    548,
+    262
+   ],
+   [
+    442,
+    170
+   ],
+   [
+    330,
+    170
+   ]
+  ],
+  "chroma": [
+   255,
+   0,
+   255
+  ],
+  "chromaDistance": 150,
+  "neckBand": 16,
+  "chestFrom": -400,
+  "chestTo": -300,
+  "flatten": 0.8,
+  "grid": 5,
+  "inkPx": 5,
+  "stickerPx": 9,
+  "stickerColour": [
+   251,
+   247,
+   236
+  ],
+  "seed": [
+   503,
+   126
+  ]
+ },
+ "notes": [
+  "no sticker border on this sheet; background removed by chroma key",
+  "trunk: 5055 px of baked outline ink recoloured from just inside it; 0 px DERIVED (hidden in the drawing, reflected from this part's own drawn pixels)",
+  "bind depth order: 0 px of hidden surface pressed behind the drawn part (worst 0.000 m)"
+ ]
+}

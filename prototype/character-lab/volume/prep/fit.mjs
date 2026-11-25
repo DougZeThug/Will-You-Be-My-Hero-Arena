@@ -42,11 +42,10 @@ export function fitBind(joints2d, options) {
     }),
     check = project(unproject(0.3, -0.2, 0.5), camera);
   if (Math.abs(check.x - 0.3) + Math.abs(check.y + 0.2) + Math.abs(check.depth - 0.5) > 1e-9) throw new Error('project() is not a rotation');
-  const P = options.priors,
-    height = options.height,
+  const height = options.height,
     origin = joints2d.pelvis,
     depthAxis = unproject(0, 0, 1);
-  let ppm = (Math.max(joints2d.heelL[1], joints2d.heelR[1], joints2d.toeL[1], joints2d.toeR[1]) - joints2d.headTop[1]) / height,
+  let ppm = options.fixed?.ppm ?? (Math.max(...['heelL', 'heelR', 'toeL', 'toeR'].map((name) => joints2d[name]?.[1] ?? 0)) - joints2d.headTop[1]) / height,
     result = null;
   for (let pass = 0; pass < 8; pass++) {
     const J = {},
@@ -56,27 +55,31 @@ export function fitBind(joints2d, options) {
       place = (name, axis, value) => {
         const a = flat(name),
           d = (value - dot(axis, a)) / dot(axis, depthAxis);
-        depth[name] = d;
         J[name] = add(a, depthAxis, d);
-      },
-      lateral = (name) => dot(r, J[name]),
-      forward = (name) => dot(f, J[name]);
-    place('pelvis', r, 0);
-    for (const name of ['spine', 'chest', 'head', 'headTop']) place(name, r, 0);
-    for (const s of ['R', 'L']) {
-      const out = s === 'R' ? 1 : -1;
-      place(`shoulder${s}`, f, forward('chest'));
-      place(`elbow${s}`, r, lateral(`shoulder${s}`) + out * P.elbowOut);
-      place(`wrist${s}`, r, lateral(`shoulder${s}`) + out * P.wristOut);
-      place(`hand${s}`, r, lateral(`shoulder${s}`) + out * P.handOut);
-      place(`hip${s}`, f, forward('pelvis'));
-      place(`knee${s}`, r, lateral(`hip${s}`) + out * P.kneeOut);
-      place(`ankle${s}`, r, lateral(`hip${s}`) + out * P.ankleOut);
-      place(`heel${s}`, r, lateral(`ankle${s}`));
-      place(`toe${s}`, r, lateral(`hip${s}`) + out * P.toeOut);
+      };
+    const axes = { r, f };
+    J.pelvis = flat('pelvis');
+    for (const op of options.plan) {
+      if (op[0] === 'at') {
+        // ['at', joint, 'r' | 'f', base joint | null, offset m]: that coordinate = the base joint's + offset.
+        const [, name, axis, base, offset] = op;
+        place(name, axes[axis], (base ? dot(axes[axis], J[base]) : 0) + offset);
+      } else {
+        // ['offset', joint, base joint, forward m, right m, up m]: no landmark, a world offset.
+        const [, name, base, forward, right, up] = op;
+        J[name] = { x: J[base].x + f.x * forward + r.x * right, y: J[base].y + up, z: J[base].z + f.z * forward + r.z * right };
+      }
     }
+    for (const name of Object.keys(J)) depth[name] = dot(J[name], depthAxis);
     J.neck = add(J.chest, sub(J.head, J.chest), 0.35);
     depth.neck = depth.chest + 0.35 * (depth.head - depth.chest);
+    if (options.fixed) {
+      // A partial figure (a head on its own): scale and pelvis height are given, not measured.
+      const lift = options.fixed.pelvisHeight - J.pelvis.y;
+      for (const name of Object.keys(J)) J[name] = { x: J[name].x, y: J[name].y + lift, z: J[name].z };
+      result = { ppm, yaw, camera, joints: J, depth, ground: -lift };
+      break;
+    }
     const sole = { R: Math.min(J.heelR.y, J.toeR.y), L: Math.min(J.heelL.y, J.toeL.y) },
       ground = (sole.R + sole.L) / 2;
     for (const name of Object.keys(J)) J[name] = { x: J[name].x, y: J[name].y - ground, z: J[name].z };
